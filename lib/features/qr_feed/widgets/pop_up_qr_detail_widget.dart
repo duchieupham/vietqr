@@ -4,9 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/qr_create_type_dto.dart';
 
 class PopUpQrDetail extends StatefulWidget {
-  const PopUpQrDetail({super.key});
+  final QrCreateFeedDTO dto;
+  const PopUpQrDetail({super.key, required this.dto});
 
   @override
   State<PopUpQrDetail> createState() => _PopUpQrDetailState();

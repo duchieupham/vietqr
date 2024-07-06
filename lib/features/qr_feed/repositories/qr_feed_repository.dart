@@ -22,6 +22,34 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
+  Future<ResponseMessageDTO> addCommend(
+      {required String qrWalletId, required String message}) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      Map<String, dynamic> param = {};
+      param['qrWalletId'] = qrWalletId;
+      param['userId'] = userId;
+      param['message'] = message;
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-comment/add';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: param,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
   Future<ResponseMessageDTO> createQrLink(
       {required QrCreateFeedDTO dto, File? file}) async {
     ResponseMessageDTO result =
@@ -64,18 +92,18 @@ class QrFeedRepository extends BaseRepo {
       required String qrWalletId}) async {
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/public/details?userId=$userId&page=$page&size=$size';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/details/$qrWalletId?userId=$userId&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
-          url: url,
-          type: AuthenticationType.SYSTEM,
-          queryParameters: {
-            'qrWalletId': qrWalletId,
-          });
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        // queryParameters: {
+        //   'qrWalletId': qrWalletId,
+        // },
+      );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
-          metaDataDTO = MetaDataDTO.fromJson(data['comments']['metadata']);
-          return QrFeedDetailDTO.fromJson(data['comments']['data']);
+          return QrFeedDetailDTO.fromJson(data);
         }
       }
     } catch (e) {
@@ -115,8 +143,8 @@ class QrFeedRepository extends BaseRepo {
     //     const ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url =
-          "https://dev.vietqr.org/vqr/api/qr-interaction/interact";
+      String url =
+          "${getIt.get<AppConfig>().getBaseUrl}qr-interaction/interact";
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {

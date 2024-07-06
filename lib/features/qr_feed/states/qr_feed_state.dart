@@ -16,6 +16,8 @@ class QrFeedState extends Equatable {
   final BankNameInformationDTO? bankDto;
   final QrFeedDTO? qrFeed;
   final QrFeedDetailDTO? detailQr;
+  final QrFeedDetailDTO? loadCmt;
+
   final MetaDataDTO? detailMetadata;
   // final bool is
 
@@ -29,6 +31,7 @@ class QrFeedState extends Equatable {
     this.bankDto,
     this.qrFeed,
     this.detailQr,
+    this.loadCmt,
     this.detailMetadata,
   });
 
@@ -42,6 +45,7 @@ class QrFeedState extends Equatable {
     BankNameInformationDTO? bankDto,
     QrFeedDTO? qrFeed,
     QrFeedDetailDTO? detailQr,
+    QrFeedDetailDTO? loadCmt,
     MetaDataDTO? detailMetadata,
   }) {
     return QrFeedState(
@@ -55,6 +59,7 @@ class QrFeedState extends Equatable {
       qrFeed: qrFeed ?? this.qrFeed,
       detailQr: detailQr ?? this.detailQr,
       detailMetadata: detailMetadata ?? this.detailMetadata,
+      loadCmt: loadCmt ?? this.loadCmt,
     );
   }
 
@@ -69,6 +74,7 @@ class QrFeedState extends Equatable {
         bankDto,
         qrFeed,
         detailQr,
+        loadCmt,
         detailMetadata,
       ];
 }

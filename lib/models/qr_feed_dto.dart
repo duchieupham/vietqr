@@ -5,6 +5,7 @@ class QrFeedDTO {
   String id;
   String fullName;
   String imageId;
+  String fileAttachmentId;
   String description;
   String data;
   String userId;
@@ -34,6 +35,7 @@ class QrFeedDTO {
     required this.hasLiked,
     required this.style,
     required this.theme,
+    required this.fileAttachmentId,
   });
 
   // Factory constructor to create an instance from a map (JSON)
@@ -54,6 +56,7 @@ class QrFeedDTO {
       likeCount: json['likeCount'],
       commentCount: json['commentCount'],
       hasLiked: json['hasLiked'] == 1,
+      fileAttachmentId: json['fileAttachmentId'] ?? '',
     );
   }
 
@@ -73,6 +76,7 @@ class QrFeedDTO {
       'likeCount': likeCount,
       'commentCount': commentCount,
       'hasLiked': hasLiked ? 1 : 0,
+      'fileAttachmentId': fileAttachmentId,
     };
   }
 

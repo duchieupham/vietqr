@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:vierqr/models/metadata_dto.dart';
+
 class Comment {
   final String message;
   final String id;
@@ -29,19 +31,18 @@ class Comment {
   }
 }
 
-
 class Comments {
-  // final CommentsMetadata metadata;
+  final MetaDataDTO metadata;
   final List<Comment> data;
 
   Comments({
-    // required this.metadata,
+    required this.metadata,
     required this.data,
   });
 
   factory Comments.fromJson(Map<String, dynamic> json) {
     return Comments(
-      // metadata: CommentsMetadata.fromJson(json['metadata']),
+      metadata: MetaDataDTO.fromJson(json['metadata']),
       data: (json['data'] as List).map((i) => Comment.fromJson(i)).toList(),
     );
   }
@@ -63,6 +64,8 @@ class QrFeedDetailDTO {
   final String imageId;
   final String style;
   final String theme;
+  final String fileAttachmentId;
+
   final Comments comments;
 
   QrFeedDetailDTO({
@@ -82,6 +85,7 @@ class QrFeedDetailDTO {
     required this.style,
     required this.theme,
     required this.comments,
+    required this.fileAttachmentId,
   });
 
   factory QrFeedDetailDTO.fromJson(Map<String, dynamic> json) {
@@ -101,6 +105,7 @@ class QrFeedDetailDTO {
       imageId: json['imageId'],
       style: json['style'],
       theme: json['theme'],
+      fileAttachmentId: json['fileAttachmentId'],
       comments: Comments.fromJson(json['comments']),
     );
   }

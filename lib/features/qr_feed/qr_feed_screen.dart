@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:readmore/readmore.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
@@ -15,6 +17,7 @@ import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -99,6 +102,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     const _buildLoading(),
     const _buildLoading(),
     const _buildLoading(),
+    const _buildLoading(),
   ];
 
   @override
@@ -109,7 +113,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
   Future<void> onRefresh() async {
     _bloc.add(GetQrFeedEvent(
-        isLoading: false, type: tab == TabView.COMMUNITY ? 0 : 1));
+        isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
   }
 
   void startBarcodeScanStream() async {
@@ -246,7 +250,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     color: AppColor.BLUE_BGR,
                     width: MediaQuery.of(context).size.width,
                     height: (list.isEmpty || list.length < 4)
-                        ? MediaQuery.of(context).size.height
+                        ? MediaQuery.of(context).size.height - 150
                         : null,
                     child: Column(
                       children: [
@@ -254,7 +258,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                           if (state.request == QrFeed.GET_QR_FEED_LIST &&
                               state.status == BlocStatus.LOADING_PAGE)
                             ...listLoading
-                          else if (list.isNotEmpty)
+                          else
                             ...list.map(
                               (e) => _buildQRFeed(
                                 onTap: (id) {
@@ -379,15 +383,15 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       );
                 },
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   height: 42,
                   // width: double.infinity,
                   alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(color: AppColor.GREY_DADADA),
-                    color: AppColor.GREY_F0F4FA,
+                  decoration: const BoxDecoration(
+                    // borderRadius: BorderRadius.circular(40),
+                    border:
+                        Border(bottom: BorderSide(color: AppColor.GREY_DADADA)),
+                    // color: AppColor.GREY_F0F4FA,
                   ),
                   child: Text(
                     textAlign: TextAlign.center,
@@ -398,7 +402,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 20),
             InkWell(
               onTap: startBarcodeScanStream,
               child: Container(
@@ -478,7 +482,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       margin: const EdgeInsets.only(bottom: 80, right: 5),
       child: FloatingActionButton(
         backgroundColor: Colors.transparent,
-        elevation: 0,
+        elevation: 4,
         onPressed: () {
           _scrollToTop();
         },
@@ -490,7 +494,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: AppColor.GREY_DADADA.withOpacity(0.4),
+            color: AppColor.WHITE,
             borderRadius: BorderRadius.circular(50),
           ),
           child: const Icon(
@@ -641,12 +645,6 @@ class _buildQRFeed extends StatelessWidget {
       [const Color(0xFFB4FFEE), const Color(0xFFEDFF96)],
       [const Color(0xFF91E2FF), const Color(0xFF91FFFF)],
     ];
-    String timestampToHour(int timestamp) {
-      // Convert the timestamp to a DateTime object
-      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-      DateFormat formatter = DateFormat('HH');
-      return formatter.format(dateTime);
-    }
 
     String qrType = '';
     switch (dto.qrType) {
@@ -670,224 +668,246 @@ class _buildQRFeed extends StatelessWidget {
       width: double.infinity,
       // margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          XImage(
-            borderRadius: BorderRadius.circular(100),
-            imagePath:
-                dto.imageId.isNotEmpty ? dto.imageId : ImageConstant.icAvatar,
-            width: 30,
-            height: 30,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              child: Column(
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              XImage(
+                borderRadius: BorderRadius.circular(100),
+                imagePath: dto.imageId.isNotEmpty
+                    ? dto.imageId
+                    : ImageConstant.icAvatar,
+                width: 30,
+                height: 30,
+              ),
+              const SizedBox(width: 7),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        dto.fullName.isNotEmpty ? dto.fullName : 'Undefined',
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        children: [
-                          const XImage(
-                            imagePath: 'assets/images/ic-global.png',
-                            width: 15,
-                            height: 15,
-                            fit: BoxFit.cover,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            TimeUtils.instance
-                                .formatTimeNotification(dto.timeCreated),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                color: AppColor.GREY_TEXT),
-                          ),
-                        ],
-                      )
-                    ],
+                  Text(
+                    dto.fullName.isNotEmpty ? dto.fullName : 'Undefined',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 2),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.only(right: 25),
-                    child: RichText(
-                      text: TextSpan(children: [
-                        TextSpan(
-                          text: dto.description,
-                          style: const TextStyle(
+                  const SizedBox(width: 3),
+                  Row(
+                    children: [
+                      const XImage(
+                        imagePath: 'assets/images/ic-global.png',
+                        width: 12,
+                        height: 12,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        TimeUtils.instance
+                            .formatTimeNotification(dto.timeCreated),
+                        style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
-                            color: AppColor.BLACK,
-                          ),
-                          children: <TextSpan>[
-                            // TextSpan(
-                            //     text: 'Xem Thêm',
-                            //     style: const TextStyle(
-                            //         color: AppColor.BLUE_TEXT,
-                            //         fontSize: 12,
-                            //         decoration: TextDecoration.underline,
-                            //         decorationColor: AppColor.BLUE_TEXT),
-                            //     recognizer: TapGestureRecognizer()
-                            //       ..onTap = () {})
-                          ],
-                        ),
-                      ]),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () {
-                      getIt.get<QrFeedBloc>().add(
-                          GetQrFeedDetailEvent(id: dto.id, isLoading: true));
-                      onTap(dto.id);
-                      // Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
-                      //     arguments: {'id': dto.id});
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 30),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        gradient: LinearGradient(
-                          colors: _gradients[int.parse(dto.theme) - 1],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          QrImageView(
-                            padding: EdgeInsets.zero,
-                            data: dto.value,
-                            size: 80,
-                            backgroundColor: AppColor.WHITE,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: SizedBox(
-                              height: 80,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        dto.title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        dto.data,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.normal),
-                                      ),
-                                    ],
-                                  ),
-                                  Text(
-                                    qrType,
-                                    style: const TextStyle(
-                                        fontSize: 10,
-                                        color: AppColor.GREY_TEXT,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-
-                        // mainAxisSize: MainAxisSize.min,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              getIt.get<QrFeedBloc>().add(InteractWithQrEvent(
-                                  qrWalletId: dto.id,
-                                  interactionType: dto.hasLiked ? '0' : '1'));
-                            },
-                            child: XImage(
-                              imagePath: dto.hasLiked
-                                  ? 'assets/images/ic-heart-red.png'
-                                  : 'assets/images/ic-heart-grey.png',
-                              height: 45,
-                              fit: BoxFit.fitHeight,
-                            ),
-                          ),
-                          Text(
-                            dto.likeCount.toString(),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColor.GREY_TEXT,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 18),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        // mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const XImage(
-                            imagePath: 'assets/images/ic-comment.png',
-                            height: 17,
-                            fit: BoxFit.fitHeight,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            dto.commentCount.toString(),
-                            style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColor.GREY_TEXT,
-                                fontWeight: FontWeight.normal),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 8),
-                      const XImage(
-                        imagePath: 'assets/images/ic-share-grey.png',
-                        width: 40,
-                        fit: BoxFit.fitWidth,
+                            color: AppColor.GREY_TEXT),
                       ),
                     ],
                   )
                 ],
               ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ReadMoreText(
+            dto.description,
+            trimLines: 2,
+            trimCollapsedText: 'Xem thêm',
+            trimExpandedText: '\nĐóng',
+            trimMode: TrimMode.Line,
+            style: const TextStyle(
+              fontSize: 12,
             ),
-          )
+          ),
+          // AutoSizeText.rich(
+          //   TextSpan(
+          //     text: dto.description,
+          //     style: const TextStyle(
+          //       fontSize: 12,
+          //       fontWeight: FontWeight.normal,
+          //       color: AppColor.BLACK,
+          //     ),
+          //     children: <TextSpan>[
+          //       // TextSpan(
+          //       //     text: 'Xem Thêm',
+          //       //     style: const TextStyle(
+          //       //         color: AppColor.BLUE_TEXT,
+          //       //         fontSize: 12,
+          //       //         decoration: TextDecoration.underline,
+          //       //         decorationColor: AppColor.BLUE_TEXT),
+          //       //     recognizer: TapGestureRecognizer()..onTap = () {})
+          //     ],
+          //   ),
+          //   minFontSize: 12,
+          //   maxLines: 2,
+          //   overflow: TextOverflow.ellipsis,
+          // ),
+          const SizedBox(height: 10),
+          InkWell(
+            onTap: () {
+              getIt
+                  .get<QrFeedBloc>()
+                  .add(GetQrFeedDetailEvent(id: dto.id, isLoading: true));
+              onTap(dto.id);
+            },
+            child: Container(
+              height: 120,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                gradient: LinearGradient(
+                  colors: _gradients[int.parse(dto.theme) - 1],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    color: AppColor.WHITE,
+                    // padding: EdgeInsets.all(dto.qrType == '2' ? 0 : 0),
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    child: Center(
+                      child: QrImageView(
+                        // gapless: dto.qrType != '2' ? true : true,
+                        padding: dto.qrType == '2'
+                            ? const EdgeInsets.all(10)
+                            : EdgeInsets.zero,
+                        data: dto.value,
+                        size: dto.qrType == '2' ? 100 : 90,
+                        backgroundColor: AppColor.WHITE,
+                        embeddedImage: ImageUtils.instance
+                            .getImageNetworkCache(dto.fileAttachmentId),
+                        embeddedImageStyle: const QrEmbeddedImageStyle(
+                          size: Size(20, 20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.max,
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            dto.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            dto.data,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.normal),
+                          ),
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: Text(
+                              qrType,
+                              style: const TextStyle(
+                                  fontSize: 10,
+                                  color: AppColor.GREY_TEXT,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                // mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      getIt.get<QrFeedBloc>().add(
+                                          InteractWithQrEvent(
+                                              qrWalletId: dto.id,
+                                              interactionType:
+                                                  dto.hasLiked ? '0' : '1'));
+                                    },
+                                    child: XImage(
+                                      imagePath: dto.hasLiked
+                                          ? 'assets/images/ic-heart-red.png'
+                                          : 'assets/images/ic-heart-black.png',
+                                      height: 25,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                  ),
+                                  Text(
+                                    dto.likeCount.toString(),
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColor.GREY_TEXT,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 20),
+                              InkWell(
+                                onTap: () {
+                                  getIt.get<QrFeedBloc>().add(
+                                      GetQrFeedDetailEvent(
+                                          id: dto.id, isLoading: true));
+                                  onTap(dto.id);
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  // mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const XImage(
+                                      imagePath: 'assets/images/ic-comment.png',
+                                      height: 25,
+                                      fit: BoxFit.fitHeight,
+                                    ),
+                                    Text(
+                                      dto.commentCount.toString(),
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.GREY_TEXT,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 20),
+                              const XImage(
+                                imagePath: 'assets/images/ic-share-black.png',
+                                width: 25,
+                                fit: BoxFit.fitWidth,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

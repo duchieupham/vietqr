@@ -17,9 +17,78 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<SearchBankEvent>(_searchBankName);
     on<InteractWithQrEvent>(_interactWithQr);
     on<GetQrFeedDetailEvent>(_getDetailQrFeed);
+    on<LoadConmmentEvent>(_loadCmt);
+    on<AddCommendEvent>(_addCmt);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
+
+  void _addCmt(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is AddCommendEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.ADD_CMT));
+
+        final result = await _qrFeedRepository.addCommend(
+            qrWalletId: event.qrWalletId, message: event.message);
+        if (result.status == 'SUCCESS') {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS, request: QrFeed.ADD_CMT));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, request: QrFeed.ADD_CMT));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        request: QrFeed.ADD_CMT,
+        status: BlocStatus.ERROR,
+      ));
+    }
+  }
+
+  void _loadCmt(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is LoadConmmentEvent) {
+        emit(state.copyWith(
+            status: event.isLoadMore
+                ? BlocStatus.LOADING
+                : (event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE),
+            request: QrFeed.LOAD_CMT));
+
+        final result = await _qrFeedRepository.getDetailQrFeed(
+            page: event.isLoadMore ? event.page! + 1 : (event.page ?? 1),
+            size: event.size ?? 10,
+            qrWalletId: event.id);
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (result != null) {
+          emit(state.copyWith(
+            status: event.isLoadMore
+                ? BlocStatus.LOAD_MORE
+                : (event.isLoading ? BlocStatus.SUCCESS : BlocStatus.UNLOADING),
+            request: QrFeed.LOAD_CMT,
+            loadCmt: result,
+            detailQr: null,
+            detailMetadata: result.comments.metadata,
+          ));
+        } else {
+          emit(
+            state.copyWith(
+              request: QrFeed.LOAD_CMT,
+              status: BlocStatus.ERROR,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        request: QrFeed.LOAD_CMT,
+        status: BlocStatus.ERROR,
+      ));
+    }
+  }
 
   void _getDetailQrFeed(QrFeedEvent event, Emitter emit) async {
     try {
@@ -30,13 +99,14 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
 
         final result = await _qrFeedRepository.getDetailQrFeed(
             page: event.page ?? 1,
-            size: event.size ?? 20,
+            size: event.size ?? 10,
             qrWalletId: event.id);
         if (result != null) {
           emit(state.copyWith(
             status: event.isLoading ? BlocStatus.SUCCESS : BlocStatus.UNLOADING,
             request: QrFeed.GET_DETAIL_QR,
             detailQr: result,
+            detailMetadata: result.comments.metadata,
           ));
         } else {
           emit(
