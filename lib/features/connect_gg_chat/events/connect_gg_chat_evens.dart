@@ -48,15 +48,21 @@ class CheckWebhookUrlEvent extends ConnectGgChatEvent {
 
 class MakeGgChatConnectionEvent extends ConnectGgChatEvent {
   final List<String>? listBankId;
+  final List<String>? notificationTypes;
+  final List<String>? notificationContents;
+
   final String? webhook;
 
-  MakeGgChatConnectionEvent({
+  const MakeGgChatConnectionEvent({
     this.listBankId,
+    this.notificationTypes,
+    this.notificationContents,
     this.webhook,
   });
 
   @override
-  List<Object?> get props => [listBankId, webhook];
+  List<Object?> get props =>
+      [listBankId, webhook, notificationTypes, notificationContents];
 }
 
 class DeleteWebhookEvent extends ConnectGgChatEvent {
