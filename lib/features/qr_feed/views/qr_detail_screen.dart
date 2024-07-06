@@ -327,8 +327,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         ),
                       ),
                       isLoading == false
-                          ? SizedBox(
-                              width: 200,
+                          ? Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
