@@ -73,6 +73,7 @@ class _UpdateUrlScreenState extends State<UpdateUrlScreen> {
 
         if (state.request == ConnectMedia.UPDATE_URL &&
             state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
           Fluttertoast.showToast(
             msg: 'Cập nhật thành công',
             toastLength: Toast.LENGTH_SHORT,

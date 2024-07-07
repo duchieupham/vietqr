@@ -15,9 +15,10 @@ import 'package:vierqr/models/qr_feed_private_dto.dart';
 class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
+    on<GetQrFeedFolderEvent>(_getQrFeedFolder);
     on<GetQrFeedPrivateEvent>(_getQrFeedPrivate);
     on<GetMoreQrPrivateEvent>(_getMoreQrPrivate);
-    // on<GetQrFeedFolderEvent>(_getQrFeedFolder);
+
     on<GetMoreQrFeedEvent>(_getMoreQrFeed);
     on<CreateQrFeedLink>(_createQr);
     on<LoadBanksEvent>(_getBankTypes);
@@ -354,6 +355,33 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     }
   }
 
+  void _getQrFeedFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetQrFeedFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.GET_QR_FEED_FOLDER));
+
+        final result = await _qrFeedRepository.getQrFeedFolder(
+            type: event.type,
+            value: event.value,
+            page: event.page ?? 1,
+            size: event.size ?? 20);
+
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_QR_FEED_FOLDER,
+          privateMetadata: _qrFeedRepository.folderMetadata,
+          listQrFeedFolder: [...result],
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_QR_FEED_FOLDER));
+    }
+  }
+
   void _getQrFeedPrivate(QrFeedEvent event, Emitter emit) async {
     List<QrFeedPrivateDTO> result1 = [];
     List<QrFeedFolderDTO> result2 = [];
@@ -371,6 +399,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
             size: event.size ?? 20);
         if (event.isGetFolder) {
           result2 = await _qrFeedRepository.getQrFeedFolder(
+              type: event.type ?? 1,
               value: '',
               page: event.folderPage ?? 1,
               size: event.folderSize ?? 20);

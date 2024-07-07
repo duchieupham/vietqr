@@ -91,21 +91,20 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-                        state.status == BlocStatus.SUCCESS)
+                        state.status == BlocStatus.LOADING)
+                      const ShimmerBlock(
+                          height: 15, width: 120, borderRadius: 50)
+                    else
                       const Text(
                         'Thư mục QR',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
-                      )
-                    else
-                      const ShimmerBlock(
-                          height: 15, width: 120, borderRadius: 50),
+                      ),
                     Row(
                       children: [
-                        if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-                            state.status == BlocStatus.SUCCESS)
+                        if (state.status != BlocStatus.LOADING)
                           InkWell(
                             onTap: () {},
                             child: Container(
@@ -123,8 +122,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                             ),
                           ),
                         if (listQrFolder.isNotEmpty &&
-                            (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-                                state.status == BlocStatus.SUCCESS)) ...[
+                            (state.status != BlocStatus.LOADING)) ...[
                           const SizedBox(width: 10),
                           InkWell(
                             onTap: () {
@@ -206,7 +204,8 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                   ),
                 ),
                 // const SizedBox(height: 10),
-                if (listQrFolder.isNotEmpty)
+                if (listQrFolder.isNotEmpty &&
+                    state.status != BlocStatus.LOADING)
                   ScrollIndicator(
                     alignment: Alignment.centerLeft,
                     scrollController: _scrollHorizontal,
@@ -223,16 +222,16 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                   ),
                 const SizedBox(height: 30),
                 if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-                    state.status == BlocStatus.SUCCESS)
+                    state.status == BlocStatus.LOADING)
+                  const ShimmerBlock(height: 15, width: 120, borderRadius: 50)
+                else
                   const Text(
                     'Danh sách mã QR',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
-                  )
-                else
-                  const ShimmerBlock(height: 15, width: 120, borderRadius: 50),
+                  ),
                 const SizedBox(height: 20),
                 if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
                     state.status == BlocStatus.LOADING)

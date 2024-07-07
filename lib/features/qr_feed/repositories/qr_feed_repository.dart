@@ -162,9 +162,9 @@ class QrFeedRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        // privateMetadata = MetaDataDTO.fromJson(data['metadata']);
+        privateMetadata = MetaDataDTO.fromJson(data['metadata']);
         if (data != null) {
-          result = data.map<QrFeedPrivateDTO>((json) {
+          result = data['data'].map<QrFeedPrivateDTO>((json) {
             return QrFeedPrivateDTO.fromJson(json);
           }).toList();
         }
@@ -176,6 +176,7 @@ class QrFeedRepository extends BaseRepo {
   }
 
   Future<List<QrFeedFolderDTO>> getQrFeedFolder({
+    required int type,
     required String value,
     required int page,
     required int size,
@@ -183,19 +184,16 @@ class QrFeedRepository extends BaseRepo {
     List<QrFeedFolderDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders&userId=$userId&page=$page&size=$size&type=&value=$value';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders?userId=$userId&page=$page&size=$size&type=$type&value=$value';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
-        queryParameters: {
-          'userId': userId,
-        },
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         folderMetadata = MetaDataDTO.fromJson(data['metadata']);
         if (data != null) {
-          result = data.map<QrFeedFolderDTO>((json) {
+          result = data['data'].map<QrFeedFolderDTO>((json) {
             return QrFeedFolderDTO.fromJson(json);
           }).toList();
         }

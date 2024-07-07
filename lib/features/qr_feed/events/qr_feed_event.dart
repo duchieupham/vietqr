@@ -81,6 +81,23 @@ class GetQrFeedPrivateEvent extends QrFeedEvent {
       ];
 }
 
+class GetQrFeedFolderEvent extends QrFeedEvent {
+  final String value;
+  final int type;
+  final int? size;
+  final int? page;
+
+  const GetQrFeedFolderEvent({
+    required this.value,
+    required this.type,
+    this.size,
+    this.page,
+  });
+
+  @override
+  List<Object?> get props => [value, type, size, page];
+}
+
 class GetQrFeedDetailEvent extends QrFeedEvent {
   final String id;
   final bool isLoading;

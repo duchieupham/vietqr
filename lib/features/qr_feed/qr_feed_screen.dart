@@ -539,26 +539,27 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       inputType: TextInputType.text,
                       isObscureText: false)),
             const SizedBox(width: 10),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                height: 42,
-                width: 42,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                ),
-                child: const XImage(
-                  fit: BoxFit.cover,
-                  width: 42,
+            if (tab == TabView.INDIVIDUAL)
+              InkWell(
+                onTap: () {},
+                child: Container(
+                  padding: const EdgeInsets.all(8),
                   height: 42,
-                  imagePath: 'assets/images/ic-plus-black.png',
-                  // svgIconColor: ColorFilter.mode(
-                  //     AppColor.RED_TEXT, BlendMode.),
+                  width: 42,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                  ),
+                  child: const XImage(
+                    fit: BoxFit.cover,
+                    width: 42,
+                    height: 42,
+                    imagePath: 'assets/images/ic-plus-black.png',
+                    // svgIconColor: ColorFilter.mode(
+                    //     AppColor.RED_TEXT, BlendMode.),
+                  ),
                 ),
               ),
-            ),
             const SizedBox(width: 10),
 
             InkWell(
