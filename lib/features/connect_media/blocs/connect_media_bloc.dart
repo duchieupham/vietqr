@@ -17,9 +17,69 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
     on<MakeMediaConnectionEvent>(_makeConnection);
     on<AddBankMediaEvent>(_addBanks);
     on<RemoveMediaEvent>(_removeBank);
+    on<UpdateSharingEvent>(_updateSharing);
+    on<UpdateUrlEvent>(_updateUrl);
   }
 
   ConnectGgChatRepository _repository = ConnectGgChatRepository();
+
+  void _updateUrl(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateUrlEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_PAGE, request: ConnectMedia.UPDATE_URL));
+
+        final result = await _repository.updateUrl(
+            url: event.url, type: event.type, id: event.id);
+        if (result!) {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: ConnectMedia.UPDATE_URL,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.ERROR,
+            request: ConnectMedia.UPDATE_URL,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.UPDATE_URL));
+    }
+  }
+
+  void _updateSharing(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateSharingEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_PAGE,
+            request: ConnectMedia.UPDATE_SHARING));
+
+        final result = await _repository.updateSharingInfo(
+            type: event.type,
+            notificationTypes: event.notificationTypes,
+            notificationContents: event.notificationContents,
+            id: event.id);
+        if (result!) {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: ConnectMedia.UPDATE_SHARING,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.ERROR,
+            request: ConnectMedia.UPDATE_SHARING,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.UPDATE_SHARING));
+    }
+  }
 
   void _getInfo(ConnectMediaEvent event, Emitter emit) async {
     try {

@@ -47,6 +47,8 @@ class Routes {
   static const String CONNECT_GG_CHAT_SCREEN = '/connect_gg_chat_screen';
   static const String CONNECT_TELE_SCREEN = '/connect_tele_screen';
   static const String CONNECT_LARK_SCREEN = '/connect_lark_screen';
+  static const String UPDATE_SHARE_INFO_MEDIA = '/update_share_info_media';
+  static const String UPDATE_MEDIA_URL = '/update_media_url';
 
   static const String MAINTAIN_CHARGE_SCREEN = '/maintain_charge_screen';
   static const String CONFIRM_ACTIVE_KEY_SCREEN = '/confirm_active_key_screen';
@@ -61,6 +63,7 @@ class Routes {
   static const String QR_DETAIL_SCREEN = '/qr_detail_screen';
   static const String QR_STYLE = '/qr_style';
   static const String QR_SCREEN = '/qr_screen';
+  static const String QR_FOLDER_SCREEN = '/qr_folder_screen';
 
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';

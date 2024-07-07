@@ -19,6 +19,39 @@ class GetInfoEvent extends ConnectMediaEvent {
   List<Object?> get props => [type];
 }
 
+class UpdateUrlEvent extends ConnectMediaEvent {
+  final TypeConnect type;
+  final String id;
+  final String url;
+
+  const UpdateUrlEvent({
+    required this.type,
+    required this.id,
+    required this.url,
+  });
+
+  @override
+  List<Object?> get props => [type, id, url];
+}
+
+class UpdateSharingEvent extends ConnectMediaEvent {
+  final TypeConnect type;
+  final List<String> notificationTypes;
+  final List<String> notificationContents;
+  final String id;
+
+  const UpdateSharingEvent({
+    required this.type,
+    required this.notificationTypes,
+    required this.notificationContents,
+    required this.id,
+  });
+
+  @override
+  List<Object?> get props =>
+      [type, id, notificationTypes, notificationContents];
+}
+
 class AddBankMediaEvent extends ConnectMediaEvent {
   final TypeConnect type;
 

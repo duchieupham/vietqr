@@ -105,7 +105,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 id: widget.id,
                 isLoadMore: false,
                 isLoading: false,
-                size: list.length));
+                size: list.isEmpty ? 10 : list.length));
           },
         );
         // _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
@@ -148,8 +148,20 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             state.status == BlocStatus.SUCCESS) {
           focusNode.unfocus();
           _cmtController.clear();
+          metadata = state.detailMetadata;
+          final detail = state.loadCmt;
+
+          if (detail != null) {
+            qrInteract = QrInteract(
+              likes: detail.likeCount,
+              cmt: detail.commentCount,
+              hasLike: detail.hasLiked == 1 ? true : false,
+              timeCreate: detail.timeCreated,
+            );
+            list = [...detail.comments.data];
+          }
           updateState();
-          onRefresh();
+          // onRefresh();
         }
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.SUCCESS) {
@@ -553,7 +565,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         ] else if (list.isNotEmpty && isLoading == false)
           ...list.map(
             (e) => _buildCommend(e),
-          ),
+          )
+        else
+          const SizedBox(height: 300),
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.LOADING)
           const Padding(
@@ -753,7 +767,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                                 onTap: () {
                                   _bloc.add(AddCommendEvent(
                                       qrWalletId: e.id,
-                                      message: _cmtController.text));
+                                      message: _cmtController.text,
+                                      size:
+                                          list.isEmpty ? 10 : list.length + 1));
                                 },
                                 child: Container(
                                   width: 30,

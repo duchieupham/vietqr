@@ -21,6 +21,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/commons/widgets/scroll_indicator.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
@@ -28,6 +29,7 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/qr_private_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -52,6 +54,7 @@ class QrFeedScreen extends StatefulWidget {
 class _QrFeedScreenState extends State<QrFeedScreen> {
   late TextEditingController _searchController;
   late ScrollController _scrollController;
+
   TabView tab = TabView.COMMUNITY;
 
   FocusNode focusNode = FocusNode();
@@ -67,8 +70,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   double height = 0.0;
 
   List<QrFeedDTO> list = [];
-  List<QrFeedPrivateDTO> listQrPrivate = [];
-  List<QrFeedFolderDTO> listQrFolder = [];
 
   QrFeedDTO? qrFeedAction;
   String selectedQrId = '';
@@ -82,6 +83,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+
     _searchController = TextEditingController();
     initData();
   }
@@ -107,10 +109,17 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           },
         );
         _scrollController.jumpTo(_scrollController.position.minScrollExtent);
-        _bloc.add(GetQrFeedEvent(
-            isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
-        _bloc.add(GetQrFeedPrivateEvent(type: _qrTypeDTO.type));
-        _bloc.add(GetQrFeedFolderEvent());
+        if (tab == TabView.COMMUNITY) {
+          _bloc.add(GetQrFeedEvent(
+              isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
+        } else {
+          _bloc.add(GetQrFeedPrivateEvent(
+              type: _qrTypeDTO.type,
+              isGetFolder: true,
+              isFolderLoading: true,
+              value: ''));
+          // _bloc.add(GetQrFeedFolderEvent());
+        }
 
         _searchController.addListener(
           () {
@@ -136,7 +145,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   @override
   void dispose() {
     super.dispose();
-    tab = TabView.COMMUNITY;
+    // tab = TabView.COMMUNITY;
     _scrollController.dispose();
     _searchController.dispose();
   }
@@ -178,16 +187,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           metadata = state.metadata;
           updateState();
         }
-        if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-            state.status == BlocStatus.SUCCESS) {
-          listQrPrivate = [...state.listQrFeedPrivate!];
-          updateState();
-        }
-        if (state.request == QrFeed.GET_QR_FEED_FOLDER &&
-            state.status == BlocStatus.SUCCESS) {
-          listQrFolder = [...state.listQrFeedFolder!];
-          updateState();
-        }
+
         if (state.request == QrFeed.GET_QR_FEED_LIST &&
             state.status == BlocStatus.NONE) {
           list = [];
@@ -230,7 +230,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             floatingActionButton: _isShowScrollToTop
                 ? _scrollToTopWidget()
                 : const SizedBox.shrink(),
-            backgroundColor: AppColor.BLUE_BGR,
+            backgroundColor:
+                tab == TabView.COMMUNITY ? AppColor.BLUE_BGR : AppColor.WHITE,
             body: CustomScrollView(
               shrinkWrap: true,
               controller: _scrollController,
@@ -331,181 +332,12 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     ),
                   )
                 else
-                  SliverToBoxAdapter(
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                      color: AppColor.WHITE,
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Thư mục QR',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  InkWell(
-                                    onTap: () {},
-                                    child: Container(
-                                      padding: const EdgeInsets.all(4),
-                                      height: 40,
-                                      width: 40,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          gradient: LinearGradient(
-                                              colors: _gradients[0],
-                                              begin: Alignment.centerLeft,
-                                              end: Alignment.centerRight)),
-                                      child: const XImage(
-                                          imagePath:
-                                              'assets/images/ic-add-folder.png'),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        gradient: LinearGradient(
-                                            colors: _gradients[0],
-                                            begin: Alignment.centerLeft,
-                                            end: Alignment.centerRight)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 10, 10, 10),
-                                      child: Text(
-                                        'Xem thêm',
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: List.generate(
-                                      (listQrFolder.length / 2).ceil(),
-                                      (index) {
-                                    if (index * 2 < listQrFolder.length) {
-                                      return _buildItemWidget(
-                                        listQrFolder[index * 2],
-                                      );
-                                    } else {
-                                      return SizedBox.shrink();
-                                    }
-                                  }),
-                                ),
-                                Row(
-                                  children: List.generate(
-                                      (listQrFolder.length / 2).floor(),
-                                      (index) {
-                                    if (index * 2 + 1 < listQrFolder.length) {
-                                      return _buildItemWidget(
-                                        listQrFolder[index * 2 + 1],
-                                      );
-                                    } else {
-                                      return SizedBox.shrink();
-                                    }
-                                  }),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'Danh sách mã QR',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-                              state.status == BlocStatus.NONE)
-                            ...listLoading
-                          else
-                            ...listQrPrivate.map(
-                              (e) => _buildRowQrPrivate(
-                                e,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  )
+                  QrPrivateScreen(listGradient: _gradients),
               ],
             ),
           ),
         );
       },
-    );
-  }
-
-  Widget _buildItemWidget(QrFeedFolderDTO dto) {
-    return Container(
-      width: 200,
-      height: 40,
-      margin: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(4),
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                gradient: const LinearGradient(
-                    colors: [Color(0xFFF5CEC7), Color(0xFFFFD7BF)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight)),
-            child: const XImage(imagePath: 'assets/images/ic-folder.png'),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  dto.title,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  maxLines: 1,
-                  softWrap: false,
-                ),
-                Text(
-                  dto.description,
-                  style: TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  maxLines: 1,
-                  softWrap: false,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -522,116 +354,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     [const Color(0xFF91E2FF), const Color(0xFF91FFFF)],
     [const Color(0xFFFFFFFF), const Color(0xFFF0F4FA)],
   ];
-
-  Widget _buildRowQrPrivate(QrFeedPrivateDTO dto) {
-    return Column(
-      children: [
-        Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(4),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: LinearGradient(
-                        colors: dto.qrType == '0'
-                            ? _gradients[9]
-                            : dto.qrType == '1'
-                                ? _gradients[3]
-                                : dto.qrType == '2'
-                                    ? _gradients[1]
-                                    : _gradients[10],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)),
-                child: XImage(
-                    imagePath: dto.qrType == '0'
-                        ? 'assets/images/ic-linked-bank-blue.png'
-                        : dto.qrType == '1'
-                            ? 'assets/images/ic-file-violet.png'
-                            : dto.qrType == '2'
-                                ? 'assets/images/ic-vcard1.png'
-                                : 'assets/images/ic-vietqr-trans.png'),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dto.title,
-                      style: const TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4.0),
-                    Text(
-                      dto.data,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.black54,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          gradient: LinearGradient(
-                              colors: _gradients[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: const XImage(
-                          imagePath: 'assets/images/ic-dowload.png'),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          gradient: LinearGradient(
-                              colors: _gradients[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: const XImage(
-                          imagePath: 'assets/images/ic-share-black.png'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const MySeparator(
-          color: AppColor.GREY_DADADA,
-        )
-      ],
-    );
-  }
 
   Widget _pinnedAppbar() {
     return Column(
@@ -677,9 +399,12 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             InkWell(
               onTap: () {
                 tab = TabView.INDIVIDUAL;
-                // _bloc.add(const GetQrFeedEvent(isLoading: true, type: 1));
-                _bloc.add(GetQrFeedPrivateEvent(type: _qrTypeDTO.type));
-                _bloc.add(GetQrFeedFolderEvent());
+                _bloc.add(GetQrFeedPrivateEvent(
+                    type: _qrTypeDTO.type,
+                    isGetFolder: true,
+                    isFolderLoading: true,
+                    value: _searchController.text));
+                // _bloc.add(GetQrFeedFolderEvent());
                 updateState();
               },
               child: Container(
@@ -774,6 +499,13 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       contentPadding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                       hintText: 'Tìm kiếm mã QR theo tên',
                       keyboardAction: TextInputAction.next,
+                      onSubmitted: (value) {
+                        _bloc.add(GetQrFeedPrivateEvent(
+                            type: _qrTypeDTO.type,
+                            isGetFolder: false,
+                            isFolderLoading: false,
+                            value: _searchController.text));
+                      },
                       onChange: (value) {},
                       inputType: TextInputType.text,
                       isObscureText: false)),
@@ -825,7 +557,11 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   return InkWell(
                     onTap: () {
                       _qrTypeDTO = _qrTypeList[index];
-                      _bloc.add(GetQrFeedPrivateEvent(type: _qrTypeDTO.type));
+                      _bloc.add(GetQrFeedPrivateEvent(
+                          type: _qrTypeDTO.type,
+                          isGetFolder: true,
+                          isFolderLoading: false,
+                          value: _searchController.text));
                       updateState();
                     },
                     child: Container(

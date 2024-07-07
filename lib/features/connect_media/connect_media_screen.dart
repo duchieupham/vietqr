@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
@@ -13,6 +14,7 @@ import 'package:vierqr/features/connect_media/widgets/popup_delete_webhook_widge
 import 'package:vierqr/features/connect_media/widgets/popup_guide_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/trans/trans_request_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/enums/enum_type.dart';
@@ -116,7 +118,7 @@ class __ScreenState extends State<_Screen> {
         bankId: bankId, webhookId: webhookId, type: typeConnect));
   }
 
-  void onPopupAddBank(List<BankInfoGgChat> listBank, String webhookId) async {
+  void onPopupAddBank(List<BankMedia> listBank, String webhookId) async {
     Set<String?> idsInList = listBank.map((bank) => bank.bankId).toSet();
     List<BankAccountDTO> filteredList =
         list.where((account) => !idsInList.contains(account.id)).toList();
@@ -192,6 +194,12 @@ class __ScreenState extends State<_Screen> {
           case ConnectMedia.REMOVE_BANK:
             _bloc.add(GetInfoEvent(type: typeConnect));
             break;
+          case ConnectMedia.UPDATE_SHARING:
+            _bloc.add(GetInfoEvent(type: typeConnect));
+            break;
+          case ConnectMedia.UPDATE_URL:
+            _bloc.add(GetInfoEvent(type: typeConnect));
+            break;
           default:
             break;
         }
@@ -202,234 +210,92 @@ class __ScreenState extends State<_Screen> {
             return Scaffold(
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: false,
+              appBar: _buildAppBar(state),
               bottomNavigationBar:
                   hasInfo == false && state.status != BlocStatus.LOADING_PAGE
                       ? bottomButton(state)
                       : const SizedBox.shrink(),
-              body: CustomScrollView(
-                physics: hasInfo == false
-                    ? const NeverScrollableScrollPhysics()
-                    : const AlwaysScrollableScrollPhysics(),
-                slivers: [
-                  SliverAppBar(
-                    pinned: false,
-                    leadingWidth: 100,
-                    leading: InkWell(
-                      onTap: () {
-                        if (currentPageIndex > 0 && hasInfo == false) {
-                          _pageController.previousPage(
-                            duration: const Duration(milliseconds: 200),
-                            curve: Curves.easeInOut,
-                          );
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.keyboard_arrow_left,
-                              color: Colors.black,
-                              size: 25,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              "Trở về",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    actions: [
-                      if (!hasInfo)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Image.asset(
-                            AppImages.icLogoVietQr,
-                            width: 95,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        )
-                      else
-                        GestureDetector(
-                          onTapDown: (TapDownDetails details) {
-                            showMenu(
-                              context: context,
-                              position: RelativeRect.fromLTRB(
-                                details.globalPosition.dx,
-                                details.globalPosition.dy + 20,
-                                details.globalPosition.dx,
-                                details.globalPosition.dy + 20,
-                              ),
-                              items: <PopupMenuEntry<int>>[
-                                const PopupMenuItem<int>(
-                                  value: 0,
-                                  child: ListTile(
-                                    title: Text(
-                                      'Thêm TK ngân hàng',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.blue),
-                                    ),
-                                  ),
-                                ),
-                                const PopupMenuItem<int>(
-                                  value: 1,
-                                  child: ListTile(
-                                    title: Text(
-                                      'Cập nhật Webhook',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.blue),
-                                    ),
-                                  ),
-                                ),
-                                const PopupMenuItem<int>(
-                                  value: 2,
-                                  child: ListTile(
-                                    title: Text(
-                                      'Cập nhật thông tin chia sẻ',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.blue),
-                                    ),
-                                  ),
-                                ),
-                                const PopupMenuItem<int>(
-                                  value: 3,
-                                  child: ListTile(
-                                    title: Text(
-                                      'Huỷ kết nối',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.red),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ).then(
-                              (value) {
-                                switch (value) {
-                                  case 0:
-                                    onPopupAddBank(
-                                        state.dto!.banks!.isNotEmpty
-                                            ? state.dto!.banks!
-                                            : [],
-                                        state.dto!.id!);
+              body: isFirst != true
+                  ? Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: hasInfo == false
+                          ? WebhookMediaScreen(
+                              type: typeConnect,
+                              isChecked1: isChecked1,
+                              isChecked2: isChecked2,
+                              isChecked3: isChecked3,
+                              isChecked4: isChecked4,
+                              isChecked5: isChecked5,
+                              isChecked6: isChecked6,
+                              onChecked: (value, type) {
+                                switch (type) {
+                                  case 1:
+                                    isChecked1 = value ?? true;
+                                    break;
+                                  case 2:
+                                    isChecked2 = value ?? true;
                                     break;
                                   case 3:
-                                    deleteWebhook(state.dto!.id!);
+                                    isChecked3 = value ?? true;
+                                    break;
+                                  case 4:
+                                    isChecked4 = value ?? true;
+                                    break;
+                                  case 5:
+                                    isChecked5 = value ?? true;
+                                    break;
+                                  case 6:
+                                    isChecked6 = value ?? true;
                                     break;
                                   default:
                                     break;
                                 }
+                                setState(() {});
                               },
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            margin: const EdgeInsets.only(right: 10),
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFE1EFFF),
-                                      const Color(0xFFE5F9FF)
-                                    ],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight)),
-                            child: const XImage(
-                                imagePath: 'assets/images/ic-option-black.png'),
-                          ),
-                        ),
-                    ],
-                  ),
-                  SliverToBoxAdapter(
-                    child: isFirst != true
-                        ? Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: hasInfo == false
-                                ? WebhookMediaScreen(
-                                    type: typeConnect,
-                                    isChecked1: isChecked1,
-                                    isChecked2: isChecked2,
-                                    isChecked3: isChecked3,
-                                    isChecked4: isChecked4,
-                                    isChecked5: isChecked5,
-                                    isChecked6: isChecked6,
-                                    onChecked: (value, type) {
-                                      switch (type) {
-                                        case 1:
-                                          isChecked1 = value ?? true;
-                                          break;
-                                        case 2:
-                                          isChecked2 = value ?? true;
-                                          break;
-                                        case 3:
-                                          isChecked3 = value ?? true;
-                                          break;
-                                        case 4:
-                                          isChecked4 = value ?? true;
-                                          break;
-                                        case 5:
-                                          isChecked5 = value ?? true;
-                                          break;
-                                        case 6:
-                                          isChecked6 = value ?? true;
-                                          break;
-                                        default:
-                                          break;
-                                      }
-                                      setState(() {});
-                                    },
-                                    textController: _textEditingController,
-                                    controller: _pageController,
-                                    onGuide: onOpenGuide,
-                                    onChangeInput: (text) {
-                                      provider.validateInput(text);
-                                    },
-                                    onSubmitInput: (value) {
-                                      _provider.setUnFocusNode();
-                                      _bloc.add(CheckWebhookUrlEvent(
-                                          url: value, type: typeConnect));
-                                    },
-                                    onPageChanged: (index) {
-                                      setState(() {
-                                        currentPageIndex = index;
-                                      });
-                                    },
-                                  )
-                                : InfoMediaScreen(
-                                    dto: state.dto!,
-                                    onPopup: () {
-                                      onPopupAddBank(
-                                          state.dto!.banks!.isNotEmpty
-                                              ? state.dto!.banks!
-                                              : [],
-                                          state.dto!.id!);
-                                    },
-                                    onDelete: () {
-                                      deleteWebhook(state.dto!.id!);
-                                    },
-                                    onRemoveBank: (bankId) {
-                                      if (bankId.isNotEmpty || bankId != null) {
-                                        onRemoveBank(bankId, state.dto!.id);
-                                      }
-                                    },
-                                  ),
-                          )
-                        : Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height,
-                            child: Center(
-                              child: CircularProgressIndicator(),
+                              textController: _textEditingController,
+                              controller: _pageController,
+                              onGuide: onOpenGuide,
+                              onChangeInput: (text) {
+                                provider.validateInput(text, typeConnect);
+                              },
+                              onSubmitInput: (value) {
+                                _provider.setUnFocusNode();
+                                _bloc.add(CheckWebhookUrlEvent(
+                                    url: value, type: typeConnect));
+                              },
+                              onPageChanged: (index) {
+                                setState(() {
+                                  currentPageIndex = index;
+                                });
+                              },
+                            )
+                          : InfoMediaScreen(
+                              type: typeConnect,
+                              dto: state.dto!,
+                              onPopup: () {
+                                onPopupAddBank(
+                                    state.dto!.banks.isNotEmpty
+                                        ? state.dto!.banks
+                                        : [],
+                                    state.dto!.id);
+                              },
+                              onDelete: () {
+                                deleteWebhook(state.dto!.id);
+                              },
+                              onRemoveBank: (bankId) {
+                                if (bankId.isNotEmpty || bankId != null) {
+                                  onRemoveBank(bankId, state.dto!.id);
+                                }
+                              },
                             ),
-                          ),
-                  )
-                ],
-              ),
+                    )
+                  : Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
             );
           },
         );
@@ -535,6 +401,157 @@ class __ScreenState extends State<_Screen> {
           ],
         ),
       ),
+    );
+  }
+
+  _buildAppBar(ConnectMediaStates state) {
+    return AppBar(
+      forceMaterialTransparency: true,
+      backgroundColor: AppColor.WHITE,
+      leadingWidth: double.infinity,
+      leading: InkWell(
+        onTap: () {
+          if (currentPageIndex > 0 && hasInfo == false) {
+            _pageController.previousPage(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+            );
+          } else {
+            Navigator.of(context).pop();
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.only(left: 8),
+          child: const Row(
+            children: [
+              Icon(
+                Icons.keyboard_arrow_left,
+                color: Colors.black,
+                size: 25,
+              ),
+              SizedBox(width: 2),
+              Text(
+                "Trở về",
+                style: TextStyle(color: Colors.black, fontSize: 14),
+              )
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        if (!hasInfo)
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Image.asset(
+              AppImages.icLogoVietQr,
+              width: 95,
+              fit: BoxFit.fitWidth,
+            ),
+          )
+        else
+          GestureDetector(
+            onTapDown: (TapDownDetails details) {
+              showMenu(
+                context: context,
+                position: RelativeRect.fromLTRB(
+                  details.globalPosition.dx,
+                  details.globalPosition.dy + 20,
+                  details.globalPosition.dx,
+                  details.globalPosition.dy + 20,
+                ),
+                items: <PopupMenuEntry<int>>[
+                  const PopupMenuItem<int>(
+                    value: 0,
+                    child: ListTile(
+                      title: Text(
+                        'Thêm TK ngân hàng',
+                        style: TextStyle(fontSize: 12, color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 1,
+                    child: ListTile(
+                      title: Text(
+                        'Cập nhật Webhook',
+                        style: TextStyle(fontSize: 12, color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 2,
+                    child: ListTile(
+                      title: Text(
+                        'Cập nhật thông tin chia sẻ',
+                        style: TextStyle(fontSize: 12, color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 3,
+                    child: ListTile(
+                      title: Text(
+                        'Huỷ kết nối',
+                        style: TextStyle(fontSize: 12, color: Colors.red),
+                      ),
+                    ),
+                  ),
+                ],
+              ).then(
+                (value) {
+                  switch (value) {
+                    case 0:
+                      onPopupAddBank(
+                          state.dto!.banks.isNotEmpty ? state.dto!.banks : [],
+                          state.dto!.id);
+                      break;
+                    case 1:
+                      final data = state.dto;
+                      if (data != null) {
+                        NavigationService.push(Routes.UPDATE_MEDIA_URL,
+                            arguments: {
+                              'type': typeConnect,
+                              'id': data.id,
+                            });
+                      }
+                      break;
+                    case 2:
+                      final data = state.dto;
+                      if (data != null) {
+                        NavigationService.push(Routes.UPDATE_SHARE_INFO_MEDIA,
+                            arguments: {
+                              'notificationTypes': data.notificationTypes,
+                              'notificationContents': data.notificationContents,
+                              'type': typeConnect,
+                              'id': data.id,
+                            });
+                      }
+                      break;
+                    case 3:
+                      deleteWebhook(state.dto!.id);
+                      break;
+                    default:
+                      break;
+                  }
+                },
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              margin: const EdgeInsets.only(right: 10),
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  gradient: const LinearGradient(
+                      colors: [Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight)),
+              child:
+                  const XImage(imagePath: 'assets/images/ic-option-black.png'),
+            ),
+          ),
+      ],
     );
   }
 }

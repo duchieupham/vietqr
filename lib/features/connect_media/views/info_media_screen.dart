@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/theme.dart';
@@ -16,11 +19,13 @@ class InfoMediaScreen extends StatelessWidget {
   final Function() onPopup;
   final Function() onDelete;
   final Function(String) onRemoveBank;
+  final TypeConnect type;
 
   final InfoMediaDTO dto;
   // final ConnectGgChatStates state;
   const InfoMediaScreen(
       {super.key,
+      required this.type,
       required this.onPopup,
       required this.onDelete,
       required this.onRemoveBank,
@@ -34,25 +39,48 @@ class InfoMediaScreen extends StatelessWidget {
       //   color: AppColor.GREY_DADADA,
       // ),
     ];
-    for (int i = 0; i < dto.banks!.length; i++) {
-      listWidget.add(_itemBank(dto.banks![i]));
-      if (i != dto.banks!.length - 1) {
+    for (int i = 0; i < dto.banks.length; i++) {
+      listWidget.add(_itemBank(dto.banks[i]));
+      if (i != dto.banks.length - 1) {
         listWidget.add(const MySeparator(
           color: AppColor.GREY_DADADA,
         ));
       }
     }
 
+    String mediaText = '';
+    String img = '';
+
+    switch (type) {
+      case TypeConnect.GG_CHAT:
+        mediaText = 'Google Chat';
+        img = 'assets/images/ic-gg-chat-home.png';
+
+        break;
+      case TypeConnect.TELE:
+        mediaText = 'Telegram';
+        img = 'assets/images/logo-telegram.png';
+
+        break;
+      case TypeConnect.LARK:
+        mediaText = 'Lark';
+        img = 'assets/images/logo-lark.png';
+
+        break;
+      default:
+        break;
+    }
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 45, 20, 30),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 30),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoConnect(),
+            _infoConnect(mediaText, img),
             const SizedBox(height: 35),
-            _bankList(listWidget),
+            _bankList(listWidget, mediaText),
             const SizedBox(height: 20),
             // _setting(),
             InkWell(
@@ -93,7 +121,7 @@ class InfoMediaScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoConnect() {
+  Widget _infoConnect(String media, String img) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -112,12 +140,12 @@ class InfoMediaScreen extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Google Chat',
+                  media,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
                 Image.asset(
-                  AppImages.icLogoGgChat,
+                  img,
                   width: 20,
                   fit: BoxFit.fitWidth,
                 )
@@ -134,13 +162,13 @@ class InfoMediaScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Webhook:',
+              type == TypeConnect.TELE ? 'ChatId' : 'Webhook:',
               style: TextStyle(fontSize: 15),
             ),
             Container(
               width: 250,
               child: Text(
-                dto.webhook ?? '-',
+                dto.chatId ?? '-',
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
                 style: TextStyle(
@@ -154,7 +182,7 @@ class InfoMediaScreen extends StatelessWidget {
         const SizedBox(height: 16),
         InkWell(
           onTap: () {
-            Clipboard.setData(new ClipboardData(text: dto.webhook ?? ''));
+            Clipboard.setData(new ClipboardData(text: dto.chatId ?? ''));
           },
           child: Align(
             alignment: Alignment.centerRight,
@@ -188,6 +216,46 @@ class InfoMediaScreen extends StatelessWidget {
   }
 
   Widget _buildInfoSharing() {
+    List<String> notificationTypes = [];
+    List<String> notificationContents = [];
+    for (var item in dto.notificationTypes) {
+      String text = '';
+      switch (item) {
+        case 'CREDIT':
+          text = 'Giao dịch có đối soát';
+          break;
+        case 'DEBIT':
+          text = 'Giao dịch nhận tiền đến (+)';
+
+          break;
+        case 'RECON':
+          text = 'Giao dịch chuyển tiền đi (-)';
+
+          break;
+        default:
+          break;
+      }
+      notificationTypes.add(text);
+    }
+
+    for (var item in dto.notificationContents) {
+      String text = '';
+      switch (item) {
+        case 'AMOUNT':
+          text = 'Số tiền';
+          break;
+        case 'REFERENCE_NUMBER':
+          text = 'Nội dung thanh toán';
+          break;
+        case 'CONTENT':
+          text = 'Mã giao dịch';
+          break;
+        default:
+          break;
+      }
+      notificationContents.add(text);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -196,88 +264,94 @@ class InfoMediaScreen extends StatelessWidget {
           'Thông tin chia sẻ',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
-        const SizedBox(height: 30),
+        if (notificationTypes.isNotEmpty) ...[
+          const SizedBox(height: 30),
+          const Text(
+            'Cấu hình chia sẻ loại giao dịch',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          const SizedBox(height: 10),
+          ...notificationTypes.map(
+            (e) => buildCheckboxRow(
+              e,
+              true,
+              (value) {},
+            ),
+          ),
+        ],
+        if (notificationContents.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          const Text(
+            'Cấu hình chia sẻ thông tin giao dịch',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+          ...notificationContents.map(
+            (e) => buildCheckboxRow(
+              e,
+              true,
+              (value) {},
+            ),
+          ),
+        ],
+        const SizedBox(height: 20),
+        if (notificationTypes.isNotEmpty && notificationContents.isNotEmpty)
+          InkWell(
+            onTap: () {
+              NavigationService.push(Routes.UPDATE_SHARE_INFO_MEDIA,
+                  arguments: {
+                    'notificationTypes': dto.notificationTypes,
+                    'notificationContents': dto.notificationContents,
+                    'type': type,
+                    'id': dto.id,
+                  });
+            },
+            child: Container(
+              // width: 250,
+              padding: const EdgeInsets.only(left: 10, right: 15),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: const LinearGradient(colors: [
+                    AppColor.D8ECF8,
+                    AppColor.FFEAD9,
+                    AppColor.F5C9D1,
+                  ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  XImage(
+                    imagePath: 'assets/images/ic-suggest.png',
+                    width: 30,
+                  ),
+                  Text(
+                    'Bạn có muốn cập nhật thông tin chia sẻ?',
+                    style: TextStyle(
+                      color: AppColor.BLACK,
+                      fontSize: 12,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+        // ...dto.notificationTypes.map((e) => buildCheckboxRow(e., isChecked, onChanged),)
+      ],
+    );
+  }
+
+  Widget _bankList(List<Widget> list, String media) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         const Text(
-          'Cấu hình chia sẻ loại giao dịch',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-        ),
-        const SizedBox(height: 10),
-      ],
-    );
-  }
-
-  Widget _setting() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Cài đặt',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        InkWell(
-          onTap: onPopup,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                  child: Image.asset(
-                    'assets/images/ic-card-blue.png',
-                    width: 40,
-                    height: 35,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  'Thêm tài khoản ngân hàng',
-                  style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
-                )
-              ],
-            ),
-          ),
-        ),
-        MySeparator(color: AppColor.GREY_DADADA),
-        InkWell(
-          onTap: onDelete,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.only(top: 18, bottom: 10),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 50,
-                  child: Image.asset(
-                    'assets/images/ic-cancel-red.png',
-                    height: 20,
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Text(
-                  'Huỷ kết nối Google Chat',
-                  style: TextStyle(fontSize: 15, color: AppColor.RED_TEXT),
-                )
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _bankList(List<Widget> list) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
           'Tài khoản ngân hàng',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         Text(
-          'Danh sách tài khoản ngân hàng được chia sẻ \nthông tin Biến động số dư qua Google Chat.',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+          'Danh sách tài khoản ngân hàng được chia sẻ \nthông tin Biến động số dư qua $media.',
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
         ),
         const SizedBox(height: 10),
         ...list,
@@ -285,7 +359,7 @@ class InfoMediaScreen extends StatelessWidget {
     );
   }
 
-  Widget _itemBank(BankInfoGgChat bank) {
+  Widget _itemBank(BankMedia bank) {
     return Container(
       padding: const EdgeInsets.only(top: 15, bottom: 15),
       child: Row(
@@ -343,21 +417,12 @@ class InfoMediaScreen extends StatelessWidget {
       String text, bool isChecked, ValueChanged<bool?> onChanged) {
     return Row(
       children: [
-        Theme(
-          data: ThemeData(
-            unselectedWidgetColor: AppColor.GREY_DADADA,
-            checkboxTheme: CheckboxThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(3.0),
-              ),
-            ),
-          ),
-          child: Checkbox(
-            value: isChecked,
-            onChanged: onChanged,
-            checkColor: AppColor.WHITE,
-            activeColor: AppColor.BLUE_TEXT,
-          ),
+        Checkbox(
+          visualDensity: VisualDensity.compact,
+          value: isChecked,
+          onChanged: onChanged,
+          checkColor: AppColor.BLUE_TEXT,
+          activeColor: AppColor.BLUE_BGR,
         ),
         Text(
           text,

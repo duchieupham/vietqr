@@ -276,6 +276,27 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
   }
 
   Widget finishConnectGgChat() {
+    String url = '';
+    String title = '';
+
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        url = 'assets/images/ic-gg-chat-home.png';
+        title = 'Google Chat';
+
+        break;
+      case TypeConnect.LARK:
+        url = 'assets/images/logo-lark.png';
+        title = 'Lark';
+
+        break;
+      case TypeConnect.TELE:
+        url = 'assets/images/logo-telegram.png';
+        title = 'Telegram';
+
+        break;
+      default:
+    }
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20),
       width: double.infinity,
@@ -286,12 +307,12 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
           SizedBox(
             height: 100,
             width: 100,
-            child: Image.asset('assets/images/ic-gg-chat-home.png'),
+            child: Image.asset(url),
           ),
           const SizedBox(height: 30),
-          const Text(
-            'Kết nối Google Chat thành công!',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          Text(
+            'Kết nối $title thành công!',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
             textAlign: TextAlign.center,
           ),
           const SizedBox(

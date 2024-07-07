@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -7,12 +9,14 @@ import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/repositories/qr_feed_repository.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/qr_feed_folder_dto.dart';
+import 'package:vierqr/models/qr_feed_private_dto.dart';
 
 class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
     on<GetQrFeedPrivateEvent>(_getQrFeedPrivate);
-    on<GetQrFeedFolderEvent>(_getQrFeedFolder);
+    // on<GetQrFeedFolderEvent>(_getQrFeedFolder);
     on<GetMoreQrFeedEvent>(_getMoreQrFeed);
     on<CreateQrFeedLink>(_createQr);
     on<LoadBanksEvent>(_getBankTypes);
@@ -32,13 +36,25 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
             status: BlocStatus.LOADING, request: QrFeed.ADD_CMT));
 
         final result = await _qrFeedRepository.addCommend(
-            qrWalletId: event.qrWalletId, message: event.message);
-        if (result.status == 'SUCCESS') {
+            qrWalletId: event.qrWalletId,
+            message: event.message,
+            page: event.page ?? 1,
+            size: event.size ?? 10);
+        if (result != null) {
           emit(state.copyWith(
-              status: BlocStatus.SUCCESS, request: QrFeed.ADD_CMT));
+            status: BlocStatus.SUCCESS,
+            request: QrFeed.ADD_CMT,
+            loadCmt: result,
+            detailQr: null,
+            detailMetadata: result.comments.metadata,
+          ));
         } else {
-          emit(state.copyWith(
-              status: BlocStatus.ERROR, request: QrFeed.ADD_CMT));
+          emit(
+            state.copyWith(
+              request: QrFeed.ADD_CMT,
+              status: BlocStatus.ERROR,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -249,7 +265,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
 
         final result = await _qrFeedRepository.getQrFeed(
             type: event.type, size: event.size ?? 10, page: event.page ?? 1);
-        Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
         if (result.isNotEmpty) {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,
@@ -273,63 +289,38 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   }
 
   void _getQrFeedPrivate(QrFeedEvent event, Emitter emit) async {
+    List<QrFeedPrivateDTO> result1 = [];
+    List<QrFeedFolderDTO> result2 = [];
     try {
       if (event is GetQrFeedPrivateEvent) {
         emit(state.copyWith(
-            status: BlocStatus.NONE, request: QrFeed.GET_QR_FEED_PRIVATE));
+            status: BlocStatus.LOADING,
+            request: QrFeed.GET_QR_FEED_PRIVATE,
+            isFolderLoading: event.isFolderLoading));
 
-        final result =
-            await _qrFeedRepository.getQrFeedPrivate(type: event.type);
-        Future.delayed(const Duration(milliseconds: 500));
-        if (result.isNotEmpty) {
-          emit(state.copyWith(
-            status: BlocStatus.SUCCESS,
-            request: QrFeed.GET_QR_FEED_PRIVATE,
-            listQrFeedPrivate: [...result],
-            // metadata: _qrFeedRepository.metaDataDTO,
-          ));
+        result1 = await _qrFeedRepository.getQrFeedPrivate(
+            type: event.type, value: event.value);
+        if (event.isGetFolder) {
+          result2 = await _qrFeedRepository.getQrFeedFolder();
         } else {
-          emit(state.copyWith(
-            status: BlocStatus.NONE,
-            request: QrFeed.GET_QR_FEED_PRIVATE,
-            listQrFeedPrivate: [],
-          ));
+          if (state.listQrFeedFolder != null) {
+            result2 = [...state.listQrFeedFolder!];
+          }
         }
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_QR_FEED_PRIVATE,
+          listQrFeedPrivate: [...result1],
+          listQrFeedFolder: [...result2],
+          isFolderLoading:
+              event.isFolderLoading ? !event.isFolderLoading : false,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: QrFeed.GET_QR_FEED_PRIVATE));
-    }
-  }
-
-  void _getQrFeedFolder(QrFeedEvent event, Emitter emit) async {
-    try {
-      if (event is GetQrFeedFolderEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.NONE, request: QrFeed.GET_QR_FEED_FOLDER));
-
-        final result = await _qrFeedRepository.getQrFeedFolder();
-        Future.delayed(const Duration(milliseconds: 500));
-        if (result.isNotEmpty) {
-          emit(state.copyWith(
-            status: BlocStatus.SUCCESS,
-            request: QrFeed.GET_QR_FEED_FOLDER,
-            listQrFeedFolder: [...result],
-            // metadata: _qrFeedRepository.metaDataDTO,
-          ));
-        } else {
-          emit(state.copyWith(
-            status: BlocStatus.NONE,
-            request: QrFeed.GET_QR_FEED_FOLDER,
-            listQrFeedFolder: [],
-          ));
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(
-          status: BlocStatus.ERROR, request: QrFeed.GET_QR_FEED_FOLDER));
     }
   }
 
@@ -343,7 +334,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
             type: event.type,
             size: 10,
             page: _qrFeedRepository.metaDataDTO.page! + 1);
-        Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
 
         if (result.isNotEmpty) {
           emit(state.copyWith(

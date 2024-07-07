@@ -16,7 +16,7 @@ class QrFeedState extends Equatable {
   final List<QrFeedDTO>? listQrFeed;
   final List<QrFeedPrivateDTO>? listQrFeedPrivate;
   final List<QrFeedFolderDTO>? listQrFeedFolder;
-
+  final bool isFolderLoading;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
   final QrFeedDTO? qrFeed;
@@ -40,6 +40,7 @@ class QrFeedState extends Equatable {
     this.detailQr,
     this.loadCmt,
     this.detailMetadata,
+    this.isFolderLoading = false,
   });
 
   QrFeedState copyWith({
@@ -50,6 +51,7 @@ class QrFeedState extends Equatable {
     List<QrFeedDTO>? listQrFeed,
     List<QrFeedPrivateDTO>? listQrFeedPrivate,
     List<QrFeedFolderDTO>? listQrFeedFolder,
+    bool? isFolderLoading,
     List<BankTypeDTO>? listBanks,
     BankNameInformationDTO? bankDto,
     QrFeedDTO? qrFeed,
@@ -65,6 +67,7 @@ class QrFeedState extends Equatable {
       listQrFeed: listQrFeed ?? this.listQrFeed,
       listQrFeedPrivate: listQrFeedPrivate ?? this.listQrFeedPrivate,
       listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,
+      isFolderLoading: isFolderLoading ?? this.isFolderLoading,
       listBanks: listBanks ?? this.listBanks,
       bankDto: bankDto ?? this.bankDto,
       qrFeed: qrFeed ?? this.qrFeed,

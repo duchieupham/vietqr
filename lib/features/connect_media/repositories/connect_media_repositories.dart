@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/models/info_tele_dto.dart';
@@ -14,6 +15,93 @@ import '../../../services/local_storage/shared_preference/shared_pref_utils.dart
 class ConnectGgChatRepository {
   String get userId => SharePrefUtils.getProfile().userId;
 
+  Future<bool?> updateUrl({
+    required String url,
+    required TypeConnect type,
+    required String id,
+  }) async {
+    try {
+      Map<String, dynamic> param = {};
+      String url = '';
+      switch (type) {
+        case TypeConnect.GG_CHAT:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/update-webhook/$id';
+          param['googleChatId'] = url;
+          break;
+        case TypeConnect.TELE:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/update-chatId/$id';
+          param['telegramId'] = url;
+
+          break;
+        case TypeConnect.LARK:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/larks/update-webhook/$id';
+          param['larkId'] = url;
+          break;
+        default:
+      }
+
+      final response = await BaseAPIClient.putAPI(
+        url: url,
+        body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool?> updateSharingInfo({
+    required TypeConnect type,
+    required List<String> notificationTypes,
+    required List<String> notificationContents,
+    required String id,
+  }) async {
+    try {
+      Map<String, dynamic> param = {};
+      String url = '';
+      switch (type) {
+        case TypeConnect.GG_CHAT:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/update-configure';
+          param['googleChatId'] = id;
+          break;
+        case TypeConnect.TELE:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/update-configure';
+          param['telegramId'] = id;
+
+          break;
+        case TypeConnect.LARK:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/larks/update-configure';
+          param['larkId'] = id;
+
+          break;
+        default:
+      }
+
+      param['notificationTypes'] = notificationTypes;
+      param['notificationContents'] = notificationContents;
+
+      final response = await BaseAPIClient.putAPI(
+        url: url,
+        body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
   Future<InfoMediaDTO?> getInfoMedia(TypeConnect type) async {
     try {
       String url = '';
@@ -21,15 +109,15 @@ class ConnectGgChatRepository {
       switch (type) {
         case TypeConnect.GG_CHAT:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/information?userId=$userId';
+              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/information-detail?userId=$userId';
           break;
         case TypeConnect.TELE:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/telegram/information?userId=$userId';
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/information-detail?userId=$userId';
           break;
         case TypeConnect.LARK:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/lark/information?userId=$userId';
+              '${getIt.get<AppConfig>().getBaseUrl}service/larks/information-detail?userId=$userId';
           break;
         default:
       }
@@ -41,7 +129,7 @@ class ConnectGgChatRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
-          return InfoMediaDTO.fromJson(data);
+          return InfoMediaDTO.fromJson(data, type);
         }
       }
     } catch (e) {
@@ -122,31 +210,40 @@ class ConnectGgChatRepository {
 
   Future<bool?> checkWebhookUrl(String? webhook, TypeConnect type) async {
     try {
-      Map<String, dynamic> param = {};
-      param['webhook'] = webhook;
       String url = '';
 
       switch (type) {
         case TypeConnect.GG_CHAT:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/send-message';
-          break;
+          Map<String, dynamic> param = {};
+          param['webhook'] = webhook;
+          final response = await BaseAPIClient.postAPI(
+            body: param,
+            url: url,
+            type: AuthenticationType.SYSTEM,
+          );
+          return response.statusCode == 200;
         case TypeConnect.TELE:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/telegram/send-message';
-          break;
-        case TypeConnect.LARK:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark/send-message';
-          break;
-        default:
-      }
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegram/send-message?chatId=$webhook';
+          final response = await BaseAPIClient.getAPI(
+            url: url,
+            type: AuthenticationType.SYSTEM,
+          );
+          return response.statusCode == 200;
 
-      final response = await BaseAPIClient.postAPI(
-        body: param,
-        url: url,
-        type: AuthenticationType.SYSTEM,
-      );
-      return response.statusCode == 200;
+        case TypeConnect.LARK:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/lark/send-message?webhook=$webhook';
+          final response = await BaseAPIClient.getAPI(
+            url: url,
+            type: AuthenticationType.SYSTEM,
+          );
+          return response.statusCode == 200;
+        default:
+          break;
+      }
     } catch (e) {
       LOG.error(e.toString());
     }
@@ -160,7 +257,18 @@ class ConnectGgChatRepository {
       required TypeConnect type}) async {
     try {
       Map<String, dynamic> param = {};
-      param['webhook'] = webhook;
+      switch (type) {
+        case TypeConnect.GG_CHAT:
+          param['webhook'] = webhook;
+          break;
+        case TypeConnect.TELE:
+          param['chatId'] = webhook;
+          break;
+        case TypeConnect.LARK:
+          param['webhook'] = webhook;
+          break;
+        default:
+      }
       param['userId'] = userId;
       param['bankIds'] = list;
       param['notificationTypes'] = notificationTypes;
@@ -170,14 +278,14 @@ class ConnectGgChatRepository {
 
       switch (type) {
         case TypeConnect.GG_CHAT:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/google-chat';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/google-chats';
           break;
         case TypeConnect.TELE:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegrams';
 
           break;
         case TypeConnect.LARK:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/larks';
           break;
         default:
       }
@@ -197,19 +305,22 @@ class ConnectGgChatRepository {
   Future<bool?> deleteWebhook(String? id, TypeConnect type) async {
     try {
       Map<String, dynamic> param = {};
-      param['id'] = id;
+      if (type == TypeConnect.GG_CHAT) {
+        param['id'] = id;
+      }
       String url = '';
-
       switch (type) {
         case TypeConnect.GG_CHAT:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/remove';
           break;
         case TypeConnect.TELE:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram/remove';
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegram/remove?id=$id';
           break;
         case TypeConnect.LARK:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark/remove';
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}service/lark/remove?id=$id';
           break;
         default:
       }
