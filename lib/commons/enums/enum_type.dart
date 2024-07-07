@@ -281,11 +281,13 @@ enum BankType {
   GET_BANK_LOCAL,
 }
 
-enum ConnectGgChat {
+enum ConnectMedia {
   NONE,
   GET_INFO,
   CHECK_URL,
   DELETE_URL,
+  UPDATE_SHARING,
+  UPDATE_URL,
   MAKE_CONNECTION,
   ADD_BANKS,
   REMOVE_BANK,
@@ -351,6 +353,7 @@ enum QrFeed {
   GET_QR_FEED_POPUP_DETAIL,
   GET_QR_FEED_FOLDER,
   GET_MORE,
+  GET_MORE_QR,
   GET_DETAIL_QR,
   LOAD_CMT,
   ADD_CMT,

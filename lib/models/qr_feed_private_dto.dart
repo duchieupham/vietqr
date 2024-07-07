@@ -1,74 +1,51 @@
 import 'dart:convert';
 
 class QrFeedPrivateDTO {
-  String value;
-  String id;
-  String fullName;
-  String imageId;
-  String fileAttachmentId;
-  String description;
-  String data;
-  String userId;
-  String title;
-  String style;
-  String theme;
-  int timeCreated;
-  String qrType;
+  final String data;
+  final String fullName;
+  final String theme;
+  final String style;
+  final String userId;
+  final String title;
+  final int timeCreated;
+  final String fileAttachmentId;
+  final String qrType;
+  final String imageId;
+  final String description;
+  final String value;
+  final String id;
 
   QrFeedPrivateDTO({
-    required this.value,
-    required this.id,
-    required this.fullName,
-    required this.imageId,
-    required this.description,
     required this.data,
+    required this.fullName,
+    required this.theme,
+    required this.style,
     required this.userId,
     required this.title,
     required this.timeCreated,
-    required this.qrType,
-    required this.style,
-    required this.theme,
     required this.fileAttachmentId,
+    required this.qrType,
+    required this.imageId,
+    required this.description,
+    required this.value,
+    required this.id,
   });
 
-  // Factory constructor to create an instance from a map (JSON)
   factory QrFeedPrivateDTO.fromJson(Map<String, dynamic> json) {
     return QrFeedPrivateDTO(
-      value: json['value'],
-      id: json['id'],
-      fullName: json['fullName'],
-      imageId: json['imageId'],
-      description: json['description'],
-      style: json['style'] ?? '',
-      theme: json['theme'] ?? '',
       data: json['data'],
+      fullName: json['fullName'],
+      theme: json['theme'],
+      style: json['style'],
       userId: json['userId'],
       title: json['title'],
       timeCreated: json['timeCreated'],
+      fileAttachmentId: json['fileAttachmentId'],
       qrType: json['qrType'],
-      fileAttachmentId: json['fileAttachmentId'] ?? '',
+      imageId: json['imageId'],
+      description: json['description'],
+      value: json['value'],
+      id: json['id'],
     );
-  }
-
-  // Method to convert an instance to a map (JSON)
-  Map<String, dynamic> toJson() {
-    return {
-      'value': value,
-      'id': id,
-      'fullName': fullName,
-      'imageId': imageId,
-      'description': description,
-      'data': data,
-      'userId': userId,
-      'title': title,
-      'timeCreated': timeCreated,
-      'qrType': qrType,
-      'fileAttachmentId': fileAttachmentId,
-    };
-  }
-
-  // Method to convert an instance to a JSON string
-  String toJsonString() {
-    return jsonEncode(toJson());
   }
 }

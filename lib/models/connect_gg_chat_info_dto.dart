@@ -1,65 +1,118 @@
-import 'dart:convert';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 
-class InfoGgChatDTO {
-  String? id;
-  String? webhook;
-  String? userId;
-  List<BankInfoGgChat>? banks;
+class BankMedia {
+  String bankId;
+  String bankShortName;
+  String bankAccount;
+  String bankCode;
+  String userBankName;
+  String imgId;
+  String mediaId;
 
-  InfoGgChatDTO({this.id, this.webhook, this.userId, this.banks});
-
-  factory InfoGgChatDTO.fromJson(Map<String, dynamic> json) => InfoGgChatDTO(
-        id: json['id'],
-        webhook: json['webhook'],
-        userId: json['userId'],
-        banks: List<BankInfoGgChat>.from(
-            json['banks'].map((x) => BankInfoGgChat.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'webhook': webhook,
-        'userId': userId,
-        'banks': List<dynamic>.from(banks!.map((x) => x.toJson())),
-      };
-}
-
-class BankInfoGgChat {
-  String? bankCode;
-  String? bankAccount;
-  String? bankShortName;
-  String? bankId;
-  String? userBankName;
-  String? imgId;
-  String? googleChatBankId;
-
-  BankInfoGgChat({
-    this.bankCode,
-    this.bankAccount,
-    this.bankShortName,
-    this.bankId,
-    this.userBankName,
-    this.imgId,
-    this.googleChatBankId,
+  BankMedia({
+    required this.bankId,
+    required this.bankShortName,
+    required this.bankAccount,
+    required this.bankCode,
+    required this.userBankName,
+    required this.imgId,
+    required this.mediaId,
   });
 
-  factory BankInfoGgChat.fromJson(Map<String, dynamic> json) => BankInfoGgChat(
-        bankCode: json['bankCode'],
-        bankAccount: json['bankAccount'],
-        bankShortName: json['bankShortName'],
-        bankId: json['bankId'],
-        userBankName: json['userBankName'],
-        imgId: json['imgId'],
-        googleChatBankId: json['googleChatBankId'],
-      );
+  factory BankMedia.fromJson(Map<String, dynamic> json, TypeConnect type) {
+    String typeJson = '';
+    switch (type) {
+      case TypeConnect.GG_CHAT:
+        typeJson = 'googleChatBankId';
+        break;
+      case TypeConnect.TELE:
+        typeJson = 'telBankId';
+        break;
+      case TypeConnect.LARK:
+        typeJson = 'larkBankId';
+        break;
+      default:
+        break;
+    }
+    return BankMedia(
+      bankId: json['bankId'],
+      bankShortName: json['bankShortName'],
+      bankAccount: json['bankAccount'],
+      bankCode: json['bankCode'],
+      userBankName: json['userBankName'],
+      imgId: json['imgId'],
+      mediaId: json[typeJson],
+    );
+  }
 
-  Map<String, dynamic> toJson() => {
-        'bankCode': bankCode,
-        'bankAccount': bankAccount,
-        'bankShortName': bankShortName,
-        'bankId': bankId,
-        'userBankName': userBankName,
-        'imgId': imgId,
-        'googleChatBankId': googleChatBankId,
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      'bankId': bankId,
+      'bankShortName': bankShortName,
+      'bankAccount': bankAccount,
+      'bankCode': bankCode,
+      'userBankName': userBankName,
+      'imgId': imgId,
+      'telBankId': mediaId,
+    };
+  }
+}
+
+class InfoMediaDTO {
+  String id;
+  String chatId;
+  String userId;
+  List<BankMedia> banks;
+  List<String> notificationTypes;
+  List<String> notificationContents;
+
+  InfoMediaDTO({
+    required this.id,
+    required this.chatId,
+    required this.userId,
+    required this.banks,
+    required this.notificationTypes,
+    required this.notificationContents,
+  });
+
+  factory InfoMediaDTO.fromJson(Map<String, dynamic> json, TypeConnect type) {
+    String typeJson = '';
+    switch (type) {
+      case TypeConnect.GG_CHAT:
+        typeJson = 'webhook';
+        break;
+      case TypeConnect.TELE:
+        typeJson = 'chatId';
+        break;
+      case TypeConnect.LARK:
+        typeJson = 'webhook';
+        break;
+      default:
+        break;
+    }
+    return InfoMediaDTO(
+      id: json['id'],
+      chatId: json[typeJson],
+      userId: json['userId'],
+      banks: List<BankMedia>.from(
+          json['banks'].map((bank) => BankMedia.fromJson(bank, type))),
+      notificationTypes: json['notificationTypes'] != null
+          ? List<String>.from(json['notificationTypes'])
+          : [],
+      notificationContents: json['notificationContents'] != null
+          ? List<String>.from(json['notificationContents'])
+          : [],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'chatId': chatId,
+      'userId': userId,
+      'banks': banks.map((bank) => bank.toJson()).toList(),
+      'notificationTypes': notificationTypes,
+      'notificationContents': notificationContents,
+    };
+  }
 }

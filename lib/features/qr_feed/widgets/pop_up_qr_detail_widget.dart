@@ -323,8 +323,7 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
             ],
           ),
           const SizedBox(height: 30),
-          _buildInfoRow('Ngân hàng', dto.bankCode != '' ? dto.bankCode! : '-',
-              canSave: true),
+          _buildInfoRow('Ngân hàng', dto.bankShortName!, canSave: true),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),

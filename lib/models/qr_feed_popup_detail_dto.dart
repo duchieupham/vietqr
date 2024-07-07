@@ -3,7 +3,7 @@ class QrFeedPopupDetailDTO {
   // final String? description;
   final String? bankAccount;
   final String? userBankName;
-  final String? bankCode;
+  final String? bankShortName;
   final String? amount;
   final String? content;
   final String? fullName;
@@ -19,7 +19,7 @@ class QrFeedPopupDetailDTO {
     // this.description,
     this.bankAccount,
     this.userBankName,
-    this.bankCode,
+    this.bankShortName,
     this.amount,
     this.content,
     this.fullName,
@@ -35,18 +35,18 @@ class QrFeedPopupDetailDTO {
     return QrFeedPopupDetailDTO(
       // title: json['title'],
       // description: json['description'],
-      bankAccount: json['bankAccount'],
-      userBankName: json['userBankName'],
-      bankCode: json['bankCode'],
-      amount: json['amount'],
-      content: json['content'],
-      fullName: json['fullName'],
-      phoneNo: json['phoneNo'],
-      email: json['email'],
-      companyName: json['companyName'],
-      website: json['website'],
-      address: json['address'],
-      value: json['value'],
+      bankAccount: json['bankAccount'] ?? '',
+      userBankName: json['userBankName'] ?? '',
+      bankShortName: json['bankShortName'] ?? '',
+      amount: json['amount'] ?? '',
+      content: json['content'] ?? '',
+      fullName: json['fullName'] ?? '',
+      phoneNo: json['phoneNo'] ?? '',
+      email: json['email'] ?? '',
+      companyName: json['companyName'] ?? '',
+      website: json['website'] ?? '',
+      address: json['address'] ?? '',
+      value: json['value'] ?? '',
     );
   }
 }

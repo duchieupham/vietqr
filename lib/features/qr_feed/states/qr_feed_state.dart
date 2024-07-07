@@ -14,10 +14,12 @@ class QrFeedState extends Equatable {
   final BlocStatus status;
   final QrFeed request;
   final MetaDataDTO? metadata;
+  final MetaDataDTO? privateMetadata;
+
   final List<QrFeedDTO>? listQrFeed;
   final List<QrFeedPrivateDTO>? listQrFeedPrivate;
   final List<QrFeedFolderDTO>? listQrFeedFolder;
-
+  final bool isFolderLoading;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
   final QrFeedPopupDetailDTO? qrFeedPopupDetail;
@@ -33,6 +35,7 @@ class QrFeedState extends Equatable {
     this.status = BlocStatus.NONE,
     this.request = QrFeed.NONE,
     this.metadata,
+    this.privateMetadata,
     this.listQrFeed,
     this.listQrFeedPrivate,
     this.listQrFeedFolder,
@@ -43,6 +46,7 @@ class QrFeedState extends Equatable {
     this.detailQr,
     this.loadCmt,
     this.detailMetadata,
+    this.isFolderLoading = false,
   });
 
   QrFeedState copyWith({
@@ -50,9 +54,11 @@ class QrFeedState extends Equatable {
     String? msg,
     QrFeed? request,
     MetaDataDTO? metadata,
+    MetaDataDTO? privateMetadata,
     List<QrFeedDTO>? listQrFeed,
     List<QrFeedPrivateDTO>? listQrFeedPrivate,
     List<QrFeedFolderDTO>? listQrFeedFolder,
+    bool? isFolderLoading,
     List<BankTypeDTO>? listBanks,
     BankNameInformationDTO? bankDto,
     QrFeedPopupDetailDTO? qrFeedPopupDetail,
@@ -66,9 +72,11 @@ class QrFeedState extends Equatable {
       msg: msg ?? this.msg,
       request: request ?? this.request,
       metadata: metadata ?? this.metadata,
+      privateMetadata: privateMetadata ?? this.privateMetadata,
       listQrFeed: listQrFeed ?? this.listQrFeed,
       listQrFeedPrivate: listQrFeedPrivate ?? this.listQrFeedPrivate,
       listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,
+      isFolderLoading: isFolderLoading ?? this.isFolderLoading,
       listBanks: listBanks ?? this.listBanks,
       qrFeedPopupDetail: qrFeedPopupDetail ?? this.qrFeedPopupDetail,
       bankDto: bankDto ?? this.bankDto,

@@ -25,16 +25,23 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
-  Future<ResponseMessageDTO> addCommend(
-      {required String qrWalletId, required String message}) async {
-    ResponseMessageDTO result =
-        const ResponseMessageDTO(status: '', message: '');
+  MetaDataDTO? privateMetadata;
+
+  MetaDataDTO? folderMetadata;
+
+  Future<QrFeedDetailDTO?> addCommend({
+    required String qrWalletId,
+    required String message,
+    required int page,
+    required int size,
+  }) async {
     try {
       Map<String, dynamic> param = {};
       param['qrWalletId'] = qrWalletId;
       param['userId'] = userId;
       param['message'] = message;
-      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-comment/add';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-comment/add?page=$page&size=$size';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -42,15 +49,14 @@ class QrFeedRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = ResponseMessageDTO.fromJson(data);
-      } else {
-        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+        if (data != null) {
+          return QrFeedDetailDTO.fromJson(data);
+        }
       }
     } catch (e) {
       LOG.error(e.toString());
-      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
-    return result;
+    return null;
   }
 
   Future<ResponseMessageDTO> createQrLink(
@@ -140,17 +146,23 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
-  Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({required int type}) async {
+  Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({
+    required int type,
+    String value = '',
+    required int page,
+    required int size,
+  }) async {
     List<QrFeedPrivateDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/private?userId=$userId&value=&type=$type';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/private?userId=$userId&value=$value&type=$type&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        // privateMetadata = MetaDataDTO.fromJson(data['metadata']);
         if (data != null) {
           result = data.map<QrFeedPrivateDTO>((json) {
             return QrFeedPrivateDTO.fromJson(json);
@@ -163,10 +175,15 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
-  Future<List<QrFeedFolderDTO>> getQrFeedFolder() async {
+  Future<List<QrFeedFolderDTO>> getQrFeedFolder({
+    required String value,
+    required int page,
+    required int size,
+  }) async {
     List<QrFeedFolderDTO> result = [];
     try {
-      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders&userId=$userId&page=$page&size=$size&type=&value=$value';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -176,6 +193,7 @@ class QrFeedRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        folderMetadata = MetaDataDTO.fromJson(data['metadata']);
         if (data != null) {
           result = data.map<QrFeedFolderDTO>((json) {
             return QrFeedFolderDTO.fromJson(json);

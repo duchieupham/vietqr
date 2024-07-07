@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
-import 'package:vierqr/features/connect_gg_chat/connect_gg_chat_screen.dart';
-import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
-import 'package:vierqr/features/connect_lark/widget/connect_screen.dart';
-import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
-import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
+import 'package:vierqr/features/connect_lark_old/connect_lark_screen.dart';
+import 'package:vierqr/features/connect_lark_old/widget/connect_screen.dart';
+import 'package:vierqr/features/connect_media/views/update_sharing_info_screen.dart';
+import 'package:vierqr/features/connect_media/views/update_url_screen.dart';
+import 'package:vierqr/features/connect_telegram_old/connect_telegram_screen.dart';
+import 'package:vierqr/features/connect_telegram_old/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
 import 'package:vierqr/features/customer_va/views/customer_va_confirm_otp_view.dart';
@@ -39,6 +41,7 @@ import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_folder_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/views/qr_update_screen.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
@@ -121,18 +124,44 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
-
       case Routes.QR_UPDATE_SCREEN:
         return _buildRoute(settings, const QrUpdateScreen());
       case Routes.QR_CREATE_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.QR_FOLDER_SCREEN:
+        return CupertinoPageRoute(
+            builder: (context) => const QrFolderScreen(), settings: settings);
       // case Routes.QR_STYLE:
       //   return CupertinoPageRoute(
       //       builder: (context) => const QrStyle(), settings: settings);
       // case Routes.QR_SCREEN:
       //   return CupertinoPageRoute(
       //       builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.UPDATE_MEDIA_URL:
+        Map map = settings.arguments as Map;
+        TypeConnect type = map['type'];
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            UpdateUrlScreen(
+              id: id,
+              type: type,
+            ));
+      case Routes.UPDATE_SHARE_INFO_MEDIA:
+        Map map = settings.arguments as Map;
+        List<String> notificationTypes = map['notificationTypes'];
+        List<String> notificationContents = map['notificationContents'];
+        TypeConnect type = map['type'];
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            UpdateSharingInfoScreen(
+              id: id,
+              notificationTypes: notificationTypes,
+              notificationContents: notificationContents,
+              type: type,
+            ));
       case Routes.QR_DETAIL_SCREEN:
         Map map = settings.arguments as Map;
         // String qrType = map['qrType'];
@@ -169,7 +198,17 @@ class NavigationService {
         }
         return _buildRoute(settings, QRBoxScreen(cert: cert));
       case Routes.CONNECT_GG_CHAT_SCREEN:
-        return _buildRoute(settings, const ConnectGgChatScreen());
+        return _buildRoute(
+            settings, const ConnectMediaScreen(type: TypeConnect.GG_CHAT));
+      case Routes.CONNECT_LARK_SCREEN:
+        return _buildRoute(
+            settings,
+            const ConnectMediaScreen(
+              type: TypeConnect.LARK,
+            ));
+      case Routes.CONNECT_TELE_SCREEN:
+        return _buildRoute(
+            settings, const ConnectMediaScreen(type: TypeConnect.TELE));
       case Routes.SHOW_QR:
         Map map = settings.arguments as Map;
 
