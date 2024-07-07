@@ -7,6 +7,7 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PopUpQrDetail extends StatefulWidget {
   final QrFeedPopupDetailDTO dto;
@@ -60,42 +61,40 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
             ],
           ),
           const SizedBox(height: 30),
-          _buildInfoRow(
-              'Số điện thoại', dto.phoneNo != null ? dto.phoneNo! : '-',
+          _buildInfoRow('Số điện thoại', dto.phoneNo != '' ? dto.phoneNo! : '-',
               canSave: true),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
-          _buildInfoRow(
-              'Tên liên hệ', dto.fullName != null ? dto.fullName! : '-',
+          _buildInfoRow('Tên liên hệ', dto.fullName != '' ? dto.fullName! : '-',
               canSave: true),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildInfoRow(
             'Email',
-            dto.email != null ? dto.email! : '-',
+            dto.email != '' ? dto.email! : '-',
           ),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildInfoRow(
             'Website',
-            dto.website != null ? dto.website! : '-',
+            dto.website != '' ? dto.website! : '-',
           ),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildInfoRow(
             'Tên công ty',
-            dto.companyName != null ? dto.companyName! : '-',
+            dto.companyName != '' ? dto.companyName! : '-',
           ),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildInfoRow(
             'Địa chỉ',
-            dto.address != null ? dto.address! : '-',
+            dto.address != '' ? dto.address! : '-',
           ),
         ],
       ),
@@ -220,18 +219,39 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
           const SizedBox(height: 30),
           const Text(
             'Đường dẫn',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 flex: 4,
-                child: Text(
-                  dto.value!,
-                  style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                child: GestureDetector(
+                  onTap: () async {
+                    if (dto.value != null) {
+                      final url = dto.value!;
+                      if (await canLaunch(url)) {
+                        await launch(url);
+                      } else {
+                        // Handle the error by showing a message to the user
+                        print('Could not launch $url');
+                      }
+                    }
+                  },
+                  child: Text(
+                    dto.value!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColor.BLUE_TEXT,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColor.BLUE_TEXT,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ),
               Padding(
@@ -303,29 +323,34 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
             ],
           ),
           const SizedBox(height: 30),
-          _buildInfoRow('Ngân hàng', dto.bankCode!, canSave: true),
+          _buildInfoRow('Ngân hàng', dto.bankCode != '' ? dto.bankCode! : '-',
+              canSave: true),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
-          _buildInfoRow('Số tài khoản', dto.bankAccount!, canSave: true),
+          _buildInfoRow(
+              'Số tài khoản', dto.bankAccount != '' ? dto.bankAccount! : '-',
+              canSave: true),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
-          _buildInfoRow('Chủ tài khoản', dto.userBankName!, canSave: true),
+          _buildInfoRow(
+              'Chủ tài khoản', dto.userBankName != '' ? dto.userBankName! : '-',
+              canSave: true),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildInfoRow(
             'Số tiền',
-            dto.amount != null
+            dto.amount != ''
                 ? '${CurrencyUtils.instance.getCurrencyFormatted(dto.amount!)} VND'
                 : '-',
           ),
           const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
-          _buildInfoRow('Nội dung chuyển khoản',
-              dto.content != null ? dto.content! : '-'),
+          _buildInfoRow(
+              'Nội dung chuyển khoản', dto.content != '' ? dto.content! : '-'),
         ],
       ),
     );
