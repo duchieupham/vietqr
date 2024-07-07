@@ -16,7 +16,7 @@ class ConnectGgChatRepository {
   String get userId => SharePrefUtils.getProfile().userId;
 
   Future<bool?> updateUrl({
-    required String url,
+    required String webhook,
     required TypeConnect type,
     required String id,
   }) async {
@@ -27,7 +27,7 @@ class ConnectGgChatRepository {
         case TypeConnect.GG_CHAT:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/update-webhook/$id';
-          param['webhook'] = url;
+          param['webhook'] = webhook;
           break;
         case TypeConnect.TELE:
           url =
@@ -153,10 +153,10 @@ class ConnectGgChatRepository {
           url = '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/bank';
           break;
         case TypeConnect.TELE:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
           break;
         case TypeConnect.LARK:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
           break;
         default:
       }

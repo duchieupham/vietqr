@@ -119,7 +119,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             } else {
               isExpand = false;
             }
-            updateState();
+            // updateState();
           },
         );
         scrollController.addListener(
@@ -138,7 +138,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               }
             }
 
-            updateState();
+            // updateState();
           },
         );
         _cmtController.addListener(_checkInputHeight);
@@ -190,6 +190,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       listener: (context, state) {
         if (state.request == QrFeed.ADD_CMT &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           focusNode.unfocus();
           _cmtController.clear();
           metadata = state.detailMetadata;
@@ -209,11 +210,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         }
         if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
           updateState();
         }
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           metadata = state.detailMetadata;
           final detail = state.loadCmt;
 
@@ -230,6 +233,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         }
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.LOAD_MORE) {
+          if (!mounted) return;
           metadata = state.detailMetadata;
           final detail = state.loadCmt;
 
@@ -247,6 +251,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
 
         if (state.request == QrFeed.INTERACT_WITH_QR &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           final result = state.qrFeed;
           if (result != null) {
             qrInteract = QrInteract(

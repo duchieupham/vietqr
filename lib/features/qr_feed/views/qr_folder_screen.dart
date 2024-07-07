@@ -10,6 +10,7 @@ import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 
 class QrFolderScreen extends StatefulWidget {
@@ -20,11 +21,13 @@ class QrFolderScreen extends StatefulWidget {
 }
 
 class _QrFolderScreenState extends State<QrFolderScreen> {
-  late ScrollController _scrollController;
+  final ScrollController _scrollController = ScrollController();
 
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
 
   List<QrFeedFolderDTO> list = [];
+
+  MetaDataDTO? metadata;
 
   @override
   void initState() {
@@ -33,9 +36,22 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
   }
 
   void initData() {
-    _scrollController = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
+        _scrollController.addListener(
+          () {
+            if (_scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent) {
+              if (metadata != null) {
+                int total = (metadata!.total! / 20).ceil();
+                if (total > metadata!.page!) {
+                  _bloc.add(const GetMoreQrFeedFolderEvent(
+                      value: '', type: 1, page: 1, size: 10));
+                }
+              }
+            }
+          },
+        );
         _bloc.add(const GetQrFeedFolderEvent(value: '', type: 1));
       },
     );
@@ -45,13 +61,6 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
     _bloc.add(const GetQrFeedFolderEvent(value: '', type: 1));
   }
 
-  List<Widget> listLoading = [
-    const BuidlLoading(),
-    const BuidlLoading(),
-    const BuidlLoading(),
-    const BuidlLoading(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
@@ -60,6 +69,13 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
         if (state.request == QrFeed.GET_QR_FEED_FOLDER &&
             state.status == BlocStatus.SUCCESS) {
           list = [...state.listQrFeedFolder!];
+          metadata = state.folderMetadata;
+          updateState();
+        }
+        if (state.request == QrFeed.GET_MORE_FOLDER &&
+            state.status == BlocStatus.SUCCESS) {
+          list = [...list, ...state.listQrFeedFolder!];
+          metadata = state.folderMetadata;
           updateState();
         }
       },
@@ -84,7 +100,7 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
       width: MediaQuery.of(context).size.width,
       child: ListView(
         controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         children: [
           const Text(
             'Danh sách thư mục QR',
@@ -95,8 +111,8 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(
-                listLoading.length,
-                (index) => BuidlLoading(),
+                6,
+                (index) => const BuidlLoading(),
               ),
             )
           else if (state.request == QrFeed.GET_QR_FEED_FOLDER &&
@@ -106,7 +122,19 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
                 .map(
                   (index, e) => MapEntry(index, _buildItem(e, index)),
                 )
-                .values
+                .values,
+          if (state.request == QrFeed.GET_MORE_FOLDER &&
+              state.status == BlocStatus.LOAD_MORE)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: SizedBox(
+                height: 25,
+                width: 25,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -261,6 +289,7 @@ class BuidlLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(bottom: 20, top: 20),
+      width: double.infinity,
       child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -270,22 +299,24 @@ class BuidlLoading extends StatelessWidget {
             borderRadius: 10,
           ),
           SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ShimmerBlock(
-                height: 12,
-                width: double.infinity,
-                borderRadius: 50,
-              ),
-              SizedBox(height: 3),
-              ShimmerBlock(
-                height: 12,
-                width: 200,
-                borderRadius: 50,
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ShimmerBlock(
+                  height: 12,
+                  width: double.infinity,
+                  borderRadius: 50,
+                ),
+                SizedBox(height: 3),
+                ShimmerBlock(
+                  height: 12,
+                  width: 200,
+                  borderRadius: 50,
+                ),
+              ],
+            ),
           ),
         ],
       ),

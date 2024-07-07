@@ -16,6 +16,8 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
     on<GetQrFeedFolderEvent>(_getQrFeedFolder);
+    on<GetMoreQrFeedFolderEvent>(_getMoreQrFeedFolder);
+
     on<GetQrFeedPrivateEvent>(_getQrFeedPrivate);
     on<GetMoreQrPrivateEvent>(_getMoreQrPrivate);
 
@@ -355,6 +357,33 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     }
   }
 
+  void _getMoreQrFeedFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetMoreQrFeedFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOAD_MORE, request: QrFeed.GET_MORE_FOLDER));
+
+        final result = await _qrFeedRepository.getQrFeedFolder(
+            type: event.type,
+            value: event.value,
+            page: event.page ?? 1,
+            size: event.size ?? 20);
+
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_MORE_FOLDER,
+          folderMetadata: _qrFeedRepository.folderMetadata,
+          listQrFeedFolder: [...result],
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_MORE_FOLDER));
+    }
+  }
+
   void _getQrFeedFolder(QrFeedEvent event, Emitter emit) async {
     try {
       if (event is GetQrFeedFolderEvent) {
@@ -371,7 +400,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
         emit(state.copyWith(
           status: BlocStatus.SUCCESS,
           request: QrFeed.GET_QR_FEED_FOLDER,
-          privateMetadata: _qrFeedRepository.folderMetadata,
+          folderMetadata: _qrFeedRepository.folderMetadata,
           listQrFeedFolder: [...result],
         ));
       }

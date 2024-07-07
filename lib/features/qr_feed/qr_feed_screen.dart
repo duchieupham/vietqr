@@ -118,7 +118,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
               }
             }
 
-            updateState();
+            // updateState();
           },
         );
         _scrollController.jumpTo(_scrollController.position.minScrollExtent);
@@ -141,7 +141,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             } else {
               isClear = false;
             }
-            updateState();
+            // updateState();
           },
         );
       },
@@ -205,18 +205,21 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       listener: (context, state) {
         if (state.request == QrFeed.GET_QR_FEED_LIST &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           list = [...state.listQrFeed!];
           metadata = state.metadata;
           updateState();
         }
         if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           privateMetadata = state.privateMetadata;
           updateState();
         }
 
         if (state.request == QrFeed.GET_QR_FEED_LIST &&
             state.status == BlocStatus.NONE) {
+          if (!mounted) return;
           list = [];
           metadata = state.metadata;
           updateState();
@@ -224,18 +227,21 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
         if (state.request == QrFeed.GET_MORE &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           list = [...list, ...state.listQrFeed!];
           metadata = state.metadata;
           updateState();
         }
         if (state.request == QrFeed.GET_MORE_QR &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           privateMetadata = state.privateMetadata;
           updateState();
         }
 
         if (state.request == QrFeed.INTERACT_WITH_QR &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           qrFeedAction = state.qrFeed;
           final indexOfQr = list.indexWhere((e) => e.id == state.qrFeed?.id);
           list[indexOfQr] = state.qrFeed!;
@@ -244,6 +250,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
         if (state.request == QrFeed.CREATE_QR &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           _bloc.add(GetQrFeedEvent(
             isLoading: true,
             type: tab == TabView.COMMUNITY ? 0 : 1,
@@ -252,6 +259,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
               arguments: {'id': selectedQrId});
         }
@@ -267,7 +275,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             body: CustomScrollView(
               shrinkWrap: true,
               controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 SliverAppBar(
                   backgroundColor: AppColor.WHITE,
