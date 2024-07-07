@@ -66,15 +66,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
   final globalKey = GlobalKey();
 
-  // void share() async {
-  //   await ShareUtils.instance
-  //       .shareImage(
-  //           key: globalKey,
-  //           textSharing: ShareUtils.instance.getTextSharing())
-  //       .then((value) {
-  //     Navigator.pop(context);
-  //   });
-  // }
+  void onShare() async {
+    await ShareUtils.instance
+        .shareImage(key: globalKey, textSharing: '')
+        .then((value) {
+      // Navigator.pop(context);
+    });
+  }
 
   void onSaveImage(BuildContext context) async {
     DialogWidget.instance.openLoadingDialog();
@@ -865,7 +863,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             ),
             const SizedBox(width: 10),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                onShare();
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,
