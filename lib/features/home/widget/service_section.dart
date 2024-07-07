@@ -131,6 +131,7 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
             title: 'Telegram',
             onTap: () async {
               Navigator.pushNamed(context, Routes.CONNECT_TELE_SCREEN);
+              // Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
             }),
         ItemService(
             pathIcon: ImageConstant.logoLarkDash,

@@ -27,7 +27,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
     try {
       if (event is UpdateUrlEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING_PAGE, request: ConnectMedia.UPDATE_URL));
+            status: BlocStatus.NONE, request: ConnectMedia.UPDATE_URL));
 
         final result = await _repository.updateUrl(
             url: event.url, type: event.type, id: event.id);
@@ -54,8 +54,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
     try {
       if (event is UpdateSharingEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING_PAGE,
-            request: ConnectMedia.UPDATE_SHARING));
+            status: BlocStatus.NONE, request: ConnectMedia.UPDATE_SHARING));
 
         final result = await _repository.updateSharingInfo(
             type: event.type,

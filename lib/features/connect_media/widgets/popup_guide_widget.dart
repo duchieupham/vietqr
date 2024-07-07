@@ -1,6 +1,9 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
@@ -29,6 +32,15 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
         });
       }
     });
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    )) {
+      throw Exception('Could not launch $url');
+    }
   }
 
   @override
@@ -81,7 +93,8 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                         guideStep2(),
                         guideStep3(),
                         guideStep4(),
-                      ]
+                      ] else
+                        guideTele(),
                     ],
                   ),
                 ),
@@ -107,6 +120,85 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget guideTele() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () async {
+            _launchUrl('https://t.me/vietqrbot');
+          },
+          child: _buildBgItem(
+            _buildLinkVietQrBot(),
+          ),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        _buildBgItem(
+            Text(
+              'Tạo nhóm mới Telegram, hoặc nhóm quản trị của bạn',
+              style: TextStyle(fontSize: 12),
+            ),
+            height: 60),
+        const SizedBox(
+          height: 12,
+        ),
+        _buildBgItem(
+          _buildAddBot(context),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        _buildBgItem(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: 'Sao chép thông tin ',
+                    style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+                    children: const <TextSpan>[
+                      TextSpan(
+                          text: 'chat id',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                      TextSpan(
+                        text: ' của bạn.',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: '(chat id ',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColor.BLACK,
+                        fontWeight: FontWeight.bold),
+                    children: const <TextSpan>[
+                      TextSpan(
+                          text: 'của nhóm Telegram sẽ có định dạng ',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.normal)),
+                      TextSpan(
+                        text: '-xxxxxxxxxx)',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            height: 62),
+      ],
     );
   }
 
@@ -531,6 +623,20 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       default:
     }
     if (_currentPage == 0) {
+      if (widget.type == TypeConnect.TELE) {
+        return MButtonWidget(
+          margin: EdgeInsets.zero,
+          height: 50,
+          width: double.infinity,
+          isEnable: true,
+          colorDisableBgr: AppColor.GREY_BUTTON,
+          colorDisableText: AppColor.BLACK,
+          title: 'Hoàn thành',
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+        );
+      }
       return MButtonWidget(
         // margin: EdgeInsets.symmetric(horizontal: 40),
         height: 50,
@@ -542,9 +648,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
         title: '',
         onTap: () {
           _pageController.nextPage(
-              duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut);
         },
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Icon(Icons.arrow_forward, color: AppColor.BLUE_TEXT, size: 20),
@@ -637,5 +744,168 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
         ],
       );
     }
+  }
+
+  Widget _buildLinkVietQrBot() {
+    return Row(
+      children: [
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              text: 'Chọn truy cập đường dẫn ',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: 't.me/vietqrbot',
+                    style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT)),
+                TextSpan(
+                  text:
+                      ' để kết nối với VIETQR Bot. Chọn "Start" để bắt đầu kết nối',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Container(
+          height: 25,
+          width: 25,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: AppColor.GREY_BUTTON),
+          child: Icon(
+            Icons.arrow_forward_ios,
+            size: 12,
+            color: AppColor.BLUE_TEXT,
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildAddBot(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Thêm 2 Bot dưới đây vào nhóm của bạn:',
+          style: TextStyle(fontSize: 12),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        InkWell(
+          onTap: () {
+            FlutterClipboard.copy('@vietqrbot').then(
+              (value) => Fluttertoast.showToast(
+                msg: 'Đã sao chép',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Theme.of(context).cardColor,
+                textColor: Theme.of(context).hintColor,
+                fontSize: 15,
+                webBgColor: 'rgba(255, 255, 255)',
+                webPosition: 'center',
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/avt-vietqr.png',
+                width: 25,
+                height: 25,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                '@vietqrbot',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              const Spacer(),
+              Image.asset(
+                'assets/images/ic-copy-blue.png',
+                width: 25,
+                height: 25,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        InkWell(
+          onTap: () {
+            FlutterClipboard.copy('@raw_data_bot').then(
+              (value) => Fluttertoast.showToast(
+                msg: 'Đã sao chép',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Theme.of(context).cardColor,
+                textColor: Theme.of(context).hintColor,
+                fontSize: 15,
+                webBgColor: 'rgba(255, 255, 255)',
+                webPosition: 'center',
+              ),
+            );
+          },
+          child: Row(
+            children: [
+              Image.asset(
+                'assets/images/avt-raw-data-bot.png',
+                width: 25,
+                height: 25,
+              ),
+              SizedBox(
+                width: 12,
+              ),
+              Text(
+                '@raw_data_bot',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              Image.asset(
+                'assets/images/ic-copy-blue.png',
+                width: 25,
+                height: 25,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        RichText(
+          text: TextSpan(
+            text:
+                'VietQR Bot sẽ gửi thông tin BĐSD về nhóm Telegram của bạn.\nRawDataBot sẽ giúp bạn lấy thông tin',
+            style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+            children: const <TextSpan>[
+              TextSpan(
+                  text: 'chat id',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBgItem(Widget child, {double? height}) {
+    return Container(
+      height: height,
+      alignment: Alignment.centerLeft,
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
+      child: child,
+    );
   }
 }

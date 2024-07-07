@@ -195,10 +195,14 @@ class __ScreenState extends State<_Screen> {
             _bloc.add(GetInfoEvent(type: typeConnect));
             break;
           case ConnectMedia.UPDATE_SHARING:
-            _bloc.add(GetInfoEvent(type: typeConnect));
+            if (state.status == BlocStatus.SUCCESS) {
+              _bloc.add(GetInfoEvent(type: typeConnect));
+            }
             break;
           case ConnectMedia.UPDATE_URL:
-            _bloc.add(GetInfoEvent(type: typeConnect));
+            if (state.status == BlocStatus.SUCCESS) {
+              _bloc.add(GetInfoEvent(type: typeConnect));
+            }
             break;
           default:
             break;

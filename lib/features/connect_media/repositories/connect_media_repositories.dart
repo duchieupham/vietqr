@@ -26,18 +26,18 @@ class ConnectGgChatRepository {
       switch (type) {
         case TypeConnect.GG_CHAT:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/update-webhook/$id';
+              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/update-webhook/$userId';
           param['googleChatId'] = url;
           break;
         case TypeConnect.TELE:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/update-chatId/$id';
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/update-chatId/$userId';
           param['telegramId'] = url;
 
           break;
         case TypeConnect.LARK:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/larks/update-webhook/$id';
+              '${getIt.get<AppConfig>().getBaseUrl}service/larks/update-webhook/$userId';
           param['larkId'] = url;
           break;
         default:

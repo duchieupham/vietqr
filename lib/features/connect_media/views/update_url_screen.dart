@@ -50,11 +50,11 @@ class _UpdateUrlScreenState extends State<UpdateUrlScreen> {
         break;
       case TypeConnect.TELE:
         text = 'Telegram';
-        webhook = 'Webhook Lark';
+        webhook = 'Chat Id';
         break;
       case TypeConnect.LARK:
         text = 'Lark';
-        webhook = 'Chat ID';
+        webhook = 'Webhook Lark';
         break;
       default:
     }
