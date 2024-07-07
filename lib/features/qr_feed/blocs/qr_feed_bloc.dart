@@ -21,6 +21,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<GetQrFeedDetailEvent>(_getDetailQrFeed);
     on<LoadConmmentEvent>(_loadCmt);
     on<AddCommendEvent>(_addCmt);
+    on<GetQrFeedPopupDetailEvent>(_getQrFeedPopupDetail);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
@@ -87,6 +88,38 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
         request: QrFeed.LOAD_CMT,
+        status: BlocStatus.ERROR,
+      ));
+    }
+  }
+
+  void _getQrFeedPopupDetail(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetQrFeedPopupDetailEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: QrFeed.GET_QR_FEED_POPUP_DETAIL));
+
+        final result = await _qrFeedRepository.getQrFeedPopupDetail(
+            qrWalletId: event.qrWalletId);
+        if (result != null) {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: QrFeed.GET_QR_FEED_POPUP_DETAIL,
+            qrFeedPopupDetail: result,
+          ));
+        } else {
+          emit(
+            state.copyWith(
+              request: QrFeed.GET_QR_FEED_POPUP_DETAIL,
+              status: BlocStatus.ERROR,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        request: QrFeed.GET_QR_FEED_POPUP_DETAIL,
         status: BlocStatus.ERROR,
       ));
     }

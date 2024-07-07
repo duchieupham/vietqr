@@ -53,6 +53,15 @@ class GetQrFeedDetailEvent extends QrFeedEvent {
   List<Object?> get props => [id, isLoading, size, page];
 }
 
+class GetQrFeedPopupDetailEvent extends QrFeedEvent {
+  final String qrWalletId;
+
+  const GetQrFeedPopupDetailEvent({required this.qrWalletId});
+
+  @override
+  List<Object?> get props => [qrWalletId];
+}
+
 class AddCommendEvent extends QrFeedEvent {
   final String qrWalletId;
   final String message;

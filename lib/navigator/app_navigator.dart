@@ -135,12 +135,13 @@ class NavigationService {
       //       builder: (context) => const QrCreateScreen(), settings: settings);
       case Routes.QR_DETAIL_SCREEN:
         Map map = settings.arguments as Map;
-
+        // String qrType = map['qrType'];
         String id = map['id'];
         return _buildRoute(
             settings,
             QrDetailScreen(
               id: id,
+              // qrType: qrType,
             ));
       case Routes.QR_STYLE:
         Map map = settings.arguments as Map;
