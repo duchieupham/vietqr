@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -423,7 +424,23 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                                   borderRadius: 50,
                                 ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              FlutterClipboard.copy('${e.title}\n${e.data}')
+                                  .then(
+                                (value) => Fluttertoast.showToast(
+                                  msg: 'Đã sao chép',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor:
+                                      Theme.of(context).primaryColor,
+                                  textColor: Theme.of(context).hintColor,
+                                  fontSize: 15,
+                                  webBgColor: 'rgba(255, 255, 255, 0.5)',
+                                  webPosition: 'center',
+                                ),
+                              );
+                            },
                             child: Container(
                               padding: const EdgeInsets.all(4),
                               height: 40,
