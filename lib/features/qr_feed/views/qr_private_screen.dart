@@ -59,6 +59,11 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
           listQrFolder = [...state.listQrFeedFolder!];
           updateState();
         }
+        if (state.request == QrFeed.GET_MORE_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          listQrPrivate = [...listQrPrivate, ...state.listQrFeedPrivate!];
+          updateState();
+        }
       },
       builder: (context, state) {
         Map<String, List<QrFeedPrivateDTO>> groupsAlphabet = {};
@@ -85,52 +90,64 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Thư mục QR',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
+                        state.status == BlocStatus.SUCCESS)
+                      const Text(
+                        'Thư mục QR',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    else
+                      const ShimmerBlock(
+                          height: 15, width: 120, borderRadius: 50),
                     Row(
                       children: [
-                        InkWell(
-                          onTap: () {},
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                gradient: LinearGradient(
-                                    colors: widget.listGradient[0],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight)),
-                            child: const XImage(
-                                imagePath: 'assets/images/ic-add-folder.png'),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context)
-                                .pushNamed(Routes.QR_FOLDER_SCREEN);
-                          },
-                          child: Container(
-                            height: 35,
-                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                gradient: LinearGradient(
-                                    colors: widget.listGradient[0],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight)),
-                            child: const Text(
-                              'Xem thêm',
-                              style: TextStyle(fontSize: 12),
+                        if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
+                            state.status == BlocStatus.SUCCESS)
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  gradient: LinearGradient(
+                                      colors: widget.listGradient[0],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight)),
+                              child: const XImage(
+                                  imagePath: 'assets/images/ic-add-folder.png'),
                             ),
                           ),
-                        ),
+                        if (listQrFolder.isNotEmpty &&
+                            (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
+                                state.status == BlocStatus.SUCCESS)) ...[
+                          const SizedBox(width: 10),
+                          InkWell(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .pushNamed(Routes.QR_FOLDER_SCREEN);
+                            },
+                            child: Container(
+                              height: 35,
+                              padding:
+                                  const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  gradient: LinearGradient(
+                                      colors: widget.listGradient[0],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight)),
+                              child: const Text(
+                                'Xem thêm',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        ]
                       ],
                     ),
                   ],
@@ -205,17 +222,20 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                         borderRadius: BorderRadius.circular(10)),
                   ),
                 const SizedBox(height: 30),
-                const Text(
-                  'Danh sách mã QR',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
+                    state.status == BlocStatus.SUCCESS)
+                  const Text(
+                    'Danh sách mã QR',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                else
+                  const ShimmerBlock(height: 15, width: 120, borderRadius: 50),
                 const SizedBox(height: 20),
                 if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
                     state.status == BlocStatus.LOADING)
-                  // ...listLoading
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: List.generate(
@@ -250,6 +270,18 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                         ],
                       );
                     },
+                  ),
+                if (state.request == QrFeed.GET_MORE_QR &&
+                    state.status == BlocStatus.LOAD_MORE)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: SizedBox(
+                      height: 25,
+                      width: 25,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
                   ),
                 const SizedBox(height: 80),
                 // ...listQrPrivate.map(
@@ -353,43 +385,44 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          gradient: LinearGradient(
-                              colors: widget.listGradient[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: const XImage(
-                          imagePath: 'assets/images/ic-dowload.png'),
+              if (!isLoading)
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        height: 32,
+                        width: 32,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            gradient: LinearGradient(
+                                colors: widget.listGradient[0],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight)),
+                        child: const XImage(
+                            imagePath: 'assets/images/ic-dowload.png'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  InkWell(
-                    onTap: () {},
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      height: 32,
-                      width: 32,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          gradient: LinearGradient(
-                              colors: widget.listGradient[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: const XImage(
-                          imagePath: 'assets/images/ic-share-black.png'),
+                    const SizedBox(width: 10),
+                    InkWell(
+                      onTap: () {},
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        height: 32,
+                        width: 32,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            gradient: LinearGradient(
+                                colors: widget.listGradient[0],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight)),
+                        child: const XImage(
+                            imagePath: 'assets/images/ic-share-black.png'),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           ),
         ),

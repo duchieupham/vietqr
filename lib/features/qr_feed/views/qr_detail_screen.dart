@@ -62,6 +62,8 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   Timer? _timer;
   double _inputHeight = 40;
   bool isExpand = false;
+  bool hasHeight = false;
+
   String qrType = '';
   QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
   final globalKey = GlobalKey();
@@ -618,8 +620,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         ] else if (list.isNotEmpty && isLoading == false)
           ...list.map(
             (e) => _buildCommend(e),
-          )
-        else
+          ),
+        if ((list.isNotEmpty ? list.length < 3 : list.isEmpty) &&
+            isLoading == false)
           const SizedBox(height: 300),
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.LOADING)
@@ -778,10 +781,10 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           Container(
             width: !isExpand
                 ? MediaQuery.of(context).size.width - 190
-                : MediaQuery.of(context).size.width - 140,
+                : MediaQuery.of(context).size.width - 100,
             height: _inputHeight,
             decoration: BoxDecoration(
-              borderRadius: _inputHeight != 40
+              borderRadius: hasHeight
                   ? BorderRadius.circular(5)
                   : BorderRadius.circular(50),
               color: AppColor.WHITE,
@@ -814,8 +817,11 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                           const BoxConstraints(maxWidth: 30, minWidth: 0),
                       suffixIcon: _cmtController.text.isNotEmpty
                           ? Container(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              alignment: Alignment.bottomCenter,
+                              padding:
+                                  EdgeInsets.only(bottom: hasHeight ? 8 : 2),
+                              alignment: !hasHeight
+                                  ? Alignment.center
+                                  : Alignment.bottomCenter,
                               child: InkWell(
                                 onTap: () {
                                   _bloc.add(AddCommendEvent(
@@ -828,7 +834,14 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                                   width: 30,
                                   height: 30,
                                   decoration: BoxDecoration(
-                                      color: AppColor.BLUE_TEXT,
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFF00C6FF),
+                                          Color(0xFF0072FF),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
                                       borderRadius: BorderRadius.circular(100)),
                                   child: const Center(
                                     child: Icon(
@@ -896,32 +909,33 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                     const XImage(imagePath: 'assets/images/ic-share-black.png'),
               ),
             ),
-          ] else ...[
-            const SizedBox(width: 10),
-            InkWell(
-              onTap: () {
-                isExpand = false;
-                updateState();
-              },
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: LinearGradient(
-                        colors: _gradients[0],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)),
-                child: const Icon(
-                  Icons.chevron_left_rounded,
-                  size: 25,
-                  weight: 1,
-                  color: AppColor.BLACK,
-                ),
-              ),
-            ),
           ]
+          // else ...[
+          //   const SizedBox(width: 10),
+          //   InkWell(
+          //     onTap: () {
+          //       isExpand = false;
+          //       updateState();
+          //     },
+          //     child: Container(
+          //       padding: const EdgeInsets.all(4),
+          //       height: 40,
+          //       width: 40,
+          //       decoration: BoxDecoration(
+          //           borderRadius: BorderRadius.circular(100),
+          //           gradient: LinearGradient(
+          //               colors: _gradients[0],
+          //               begin: Alignment.centerLeft,
+          //               end: Alignment.centerRight)),
+          //       child: const Icon(
+          //         Icons.chevron_left_rounded,
+          //         size: 25,
+          //         weight: 1,
+          //         color: AppColor.BLACK,
+          //       ),
+          //     ),
+          //   ),
+          // ]
         ],
       ),
     );
@@ -1099,13 +1113,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     if (count == 0 && _inputHeight == 40.0) {
       return;
     }
-    if (count > 1) {
+    hasHeight = count != 1;
+    if (count <= 6) {
       // use a maximum height of 6 rows
       // height values can be adapted based on the font size
-      var newHeight = count == 1 ? 40.0 : 28.0 + (count * 18.0);
+      var newHeight = count == 0 ? 40.0 : 28.0 + (count * 18.0);
       _inputHeight = newHeight;
-    } else {
-      _inputHeight = 40;
     }
     updateState();
   }

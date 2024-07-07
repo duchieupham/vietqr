@@ -14,6 +14,8 @@ class QrFeedState extends Equatable {
   final BlocStatus status;
   final QrFeed request;
   final MetaDataDTO? metadata;
+  final MetaDataDTO? privateMetadata;
+
   final List<QrFeedDTO>? listQrFeed;
   final List<QrFeedPrivateDTO>? listQrFeedPrivate;
   final List<QrFeedFolderDTO>? listQrFeedFolder;
@@ -33,6 +35,7 @@ class QrFeedState extends Equatable {
     this.status = BlocStatus.NONE,
     this.request = QrFeed.NONE,
     this.metadata,
+    this.privateMetadata,
     this.listQrFeed,
     this.listQrFeedPrivate,
     this.listQrFeedFolder,
@@ -51,6 +54,7 @@ class QrFeedState extends Equatable {
     String? msg,
     QrFeed? request,
     MetaDataDTO? metadata,
+    MetaDataDTO? privateMetadata,
     List<QrFeedDTO>? listQrFeed,
     List<QrFeedPrivateDTO>? listQrFeedPrivate,
     List<QrFeedFolderDTO>? listQrFeedFolder,
@@ -68,6 +72,7 @@ class QrFeedState extends Equatable {
       msg: msg ?? this.msg,
       request: request ?? this.request,
       metadata: metadata ?? this.metadata,
+      privateMetadata: privateMetadata ?? this.privateMetadata,
       listQrFeed: listQrFeed ?? this.listQrFeed,
       listQrFeedPrivate: listQrFeedPrivate ?? this.listQrFeedPrivate,
       listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,

@@ -16,6 +16,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
     on<GetQrFeedPrivateEvent>(_getQrFeedPrivate);
+    on<GetMoreQrPrivateEvent>(_getMoreQrPrivate);
     // on<GetQrFeedFolderEvent>(_getQrFeedFolder);
     on<GetMoreQrFeedEvent>(_getMoreQrFeed);
     on<CreateQrFeedLink>(_createQr);
@@ -321,6 +322,38 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     }
   }
 
+  void _getMoreQrPrivate(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetMoreQrPrivateEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.GET_MORE_QR));
+
+        final result = await _qrFeedRepository.getQrFeedPrivate(
+            type: event.type,
+            value: event.value,
+            page: event.page ?? 1,
+            size: event.size ?? 20);
+        if (result.isNotEmpty) {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: QrFeed.GET_MORE_QR,
+            privateMetadata: _qrFeedRepository.privateMetadata,
+            listQrFeedPrivate: [...result],
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: QrFeed.GET_MORE_QR,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_MORE_QR));
+    }
+  }
+
   void _getQrFeedPrivate(QrFeedEvent event, Emitter emit) async {
     List<QrFeedPrivateDTO> result1 = [];
     List<QrFeedFolderDTO> result2 = [];
@@ -332,9 +365,15 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
             isFolderLoading: event.isFolderLoading));
 
         result1 = await _qrFeedRepository.getQrFeedPrivate(
-            type: event.type, value: event.value);
+            type: event.type,
+            value: event.value,
+            page: event.page ?? 1,
+            size: event.size ?? 20);
         if (event.isGetFolder) {
-          result2 = await _qrFeedRepository.getQrFeedFolder();
+          result2 = await _qrFeedRepository.getQrFeedFolder(
+              value: '',
+              page: event.folderPage ?? 1,
+              size: event.folderSize ?? 20);
         } else {
           if (state.listQrFeedFolder != null) {
             result2 = [...state.listQrFeedFolder!];
@@ -344,6 +383,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
         emit(state.copyWith(
           status: BlocStatus.SUCCESS,
           request: QrFeed.GET_QR_FEED_PRIVATE,
+          privateMetadata: _qrFeedRepository.privateMetadata,
           listQrFeedPrivate: [...result1],
           listQrFeedFolder: [...result2],
           isFolderLoading:

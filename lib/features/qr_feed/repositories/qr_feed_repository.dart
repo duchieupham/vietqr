@@ -25,6 +25,10 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
+  MetaDataDTO? privateMetadata;
+
+  MetaDataDTO? folderMetadata;
+
   Future<QrFeedDetailDTO?> addCommend({
     required String qrWalletId,
     required String message,
@@ -142,18 +146,23 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
-  Future<List<QrFeedPrivateDTO>> getQrFeedPrivate(
-      {required int type, String value = ''}) async {
+  Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({
+    required int type,
+    String value = '',
+    required int page,
+    required int size,
+  }) async {
     List<QrFeedPrivateDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/private?userId=$userId&value=$value&type=$type';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/private?userId=$userId&value=$value&type=$type&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        // privateMetadata = MetaDataDTO.fromJson(data['metadata']);
         if (data != null) {
           result = data.map<QrFeedPrivateDTO>((json) {
             return QrFeedPrivateDTO.fromJson(json);
@@ -166,10 +175,15 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
-  Future<List<QrFeedFolderDTO>> getQrFeedFolder() async {
+  Future<List<QrFeedFolderDTO>> getQrFeedFolder({
+    required String value,
+    required int page,
+    required int size,
+  }) async {
     List<QrFeedFolderDTO> result = [];
     try {
-      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders&userId=$userId&page=$page&size=$size&type=&value=$value';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -179,6 +193,7 @@ class QrFeedRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        folderMetadata = MetaDataDTO.fromJson(data['metadata']);
         if (data != null) {
           result = data.map<QrFeedFolderDTO>((json) {
             return QrFeedFolderDTO.fromJson(json);

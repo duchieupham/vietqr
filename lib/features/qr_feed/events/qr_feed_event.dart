@@ -24,21 +24,61 @@ class GetQrFeedEvent extends QrFeedEvent {
   List<Object?> get props => [type, isLoading, size, page];
 }
 
+class GetMoreQrPrivateEvent extends QrFeedEvent {
+  final String value;
+  final int type;
+  final int? size;
+  final int? page;
+
+  const GetMoreQrPrivateEvent({
+    required this.value,
+    required this.type,
+    this.size,
+    this.page,
+  });
+
+  @override
+  List<Object?> get props => [
+        value,
+        type,
+        size,
+        page,
+      ];
+}
+
 class GetQrFeedPrivateEvent extends QrFeedEvent {
   final String value;
+
   final int type;
   final bool isGetFolder;
   final bool isFolderLoading;
+  final int? size;
+  final int? page;
+  final int? folderSize;
+  final int? folderPage;
 
   const GetQrFeedPrivateEvent({
     required this.value,
     required this.type,
     required this.isGetFolder,
+    this.size,
+    this.page,
+    this.folderSize,
+    this.folderPage,
     this.isFolderLoading = false,
   });
 
   @override
-  List<Object?> get props => [value, type, isGetFolder, isFolderLoading];
+  List<Object?> get props => [
+        value,
+        type,
+        isGetFolder,
+        isFolderLoading,
+        size,
+        page,
+        folderSize,
+        folderPage
+      ];
 }
 
 class GetQrFeedDetailEvent extends QrFeedEvent {
