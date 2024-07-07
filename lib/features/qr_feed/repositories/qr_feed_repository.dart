@@ -15,6 +15,7 @@ import 'package:vierqr/features/invoice/repositories/base_repository.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
+import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
@@ -188,6 +189,30 @@ class QrFeedRepository extends BaseRepo {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  Future<QrFeedPopupDetailDTO?> getQrFeedPopupDetail(
+      {required String qrWalletId}) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/$qrWalletId/data';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        // queryParameters: {
+        //   'qrWalletId': qrWalletId,
+        // },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          return QrFeedPopupDetailDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
   }
 
   Future<QrFeedDTO?> interactWithQr(

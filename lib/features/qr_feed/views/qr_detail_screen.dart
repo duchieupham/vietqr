@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -12,8 +13,10 @@ import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
@@ -25,11 +28,16 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
+import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrDetailScreen extends StatefulWidget {
   final String id;
-  const QrDetailScreen({super.key, required this.id});
+  const QrDetailScreen({
+    super.key,
+    required this.id,
+  });
 
   @override
   State<QrDetailScreen> createState() => _QrDetailScreenState();
@@ -54,6 +62,40 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   Timer? _timer;
   double _inputHeight = 40;
   bool isExpand = false;
+  String qrType = '';
+  QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
+  final globalKey = GlobalKey();
+
+  void onShare() async {
+    await ShareUtils.instance
+        .shareImage(key: globalKey, textSharing: '')
+        .then((value) {
+      // Navigator.pop(context);
+    });
+  }
+
+  void onSaveImage(BuildContext context) async {
+    DialogWidget.instance.openLoadingDialog();
+    await Future.delayed(
+      const Duration(milliseconds: 200),
+      () async {
+        await ShareUtils.instance.saveImageToGallery(globalKey).then(
+          (value) {
+            // Navigator.pop(context);
+            Navigator.pop(context);
+            Fluttertoast.showToast(
+              msg: 'Đã lưu ảnh',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -108,7 +150,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 size: list.isEmpty ? 10 : list.length));
           },
         );
-        // _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
+        _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
       },
     );
 
@@ -162,6 +204,11 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           }
           updateState();
           // onRefresh();
+        }
+        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
+            state.status == BlocStatus.SUCCESS) {
+          qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
+          updateState();
         }
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.SUCCESS) {
@@ -224,6 +271,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               timeCreate: detail.timeCreated,
             );
             list = [...detail.comments.data];
+            qrType = detail.qrType;
           }
         }
 
@@ -301,135 +349,140 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          height: 420,
-          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-                colors: _gradients[0],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight),
-          ),
-          child: Container(
-            // height: 450,
-            margin: const EdgeInsets.fromLTRB(30, 25, 30, 25),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColor.WHITE,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: AppColor.TRANSPARENT,
-                        ),
+        RepaintBoundaryWidget(
+          globalKey: globalKey,
+          builder: (key) {
+            return Container(
+              height: 420,
+              margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                    colors: _gradients[0],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight),
+              ),
+              child: Container(
+                // height: 450,
+                margin: const EdgeInsets.fromLTRB(30, 25, 30, 25),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColor.WHITE,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              color: AppColor.TRANSPARENT,
+                            ),
+                          ),
+                          isLoading == false
+                              ? Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        e.title,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        e.data,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const ShimmerBlock(
+                                  height: 20,
+                                  width: 150,
+                                  borderRadius: 50,
+                                ),
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: AppColor.GREY_F0F4FA,
+                              ),
+                              child: const XImage(
+                                imagePath: 'assets/images/ic-save-blue.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      isLoading == false
-                          ? SizedBox(
-                              width: 200,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    e.title,
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    e.data,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
+                    ),
+                    const SizedBox(height: 25),
+                    Expanded(
+                      child: isLoading == false
+                          ? Container(
+                              height: 250,
+                              width: 250,
+                              margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                              child: QrImageView(
+                                padding: EdgeInsets.zero,
+                                data: e.value,
+                                size: 80,
+                                backgroundColor: AppColor.WHITE,
+                                embeddedImage: ImageUtils.instance
+                                    .getImageNetworkCache(e.fileAttachmentId),
+                                embeddedImageStyle: const QrEmbeddedImageStyle(
+                                  size: Size(50, 50),
+                                ),
                               ),
                             )
-                          : const ShimmerBlock(
-                              height: 20,
-                              width: 150,
-                              borderRadius: 50,
+                          : Container(
+                              margin: const EdgeInsets.all(25),
+                              child: const ShimmerBlock(
+                                width: 250,
+                                height: 250,
+                              ),
                             ),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: AppColor.GREY_F0F4FA,
-                          ),
-                          child: const XImage(
-                            imagePath: 'assets/images/ic-save-blue.png',
-                            width: 30,
-                            height: 30,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Expanded(
-                  child: isLoading == false
-                      ? Container(
-                          height: 250,
-                          width: 250,
-                          margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                          child: QrImageView(
-                            padding: EdgeInsets.zero,
-                            data: e.value,
-                            size: 80,
-                            backgroundColor: AppColor.WHITE,
-                            embeddedImage: ImageUtils.instance
-                                .getImageNetworkCache(e.fileAttachmentId),
-                            embeddedImageStyle: const QrEmbeddedImageStyle(
-                              size: Size(50, 50),
+                    ),
+                    isLoading == false
+                        ? Center(
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              '$qrType   |   By VIETQR.VN',
+                              style: const TextStyle(
+                                  fontSize: 10, color: AppColor.GREY_TEXT),
                             ),
+                          )
+                        : const ShimmerBlock(
+                            height: 10,
+                            width: 100,
+                            borderRadius: 50,
                           ),
-                        )
-                      : Container(
-                          margin: const EdgeInsets.all(25),
-                          child: const ShimmerBlock(
-                            width: 250,
-                            height: 250,
-                          ),
-                        ),
+                    const SizedBox(height: 10),
+                  ],
                 ),
-                isLoading == false
-                    ? Center(
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          '$qrType   |   By VIETQR.VN',
-                          style: const TextStyle(
-                              fontSize: 10, color: AppColor.GREY_TEXT),
-                        ),
-                      )
-                    : const ShimmerBlock(
-                        height: 10,
-                        width: 100,
-                        borderRadius: 50,
-                      ),
-                const SizedBox(height: 10),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 25),
         if (isLoading == false)
@@ -808,7 +861,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           if (!isExpand) ...[
             const SizedBox(width: 10),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                onSaveImage(context);
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,
@@ -824,7 +879,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             ),
             const SizedBox(width: 10),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                onShare();
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,
@@ -1006,32 +1063,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 const SizedBox(width: 10),
                 InkWell(
                   onTap: () {
-                    QrCreateFeedDTO qrCreateFeedDTO = QrCreateFeedDTO(
-                        typeDto: e.qrType,
-                        userIdDTO: userId,
-                        qrNameDTO: '',
-                        qrDescriptionDTO: '',
-                        valueDTO: e.data,
-                        pinDTO: '',
-                        fullNameDTO: e.fullName,
-                        phoneNoDTO: '',
-                        emailDTO: '',
-                        companyNameDTO: '',
-                        websiteDTO: '',
-                        addressDTO: '',
-                        additionalDataDTO: '',
-                        bankAccountDTO: '',
-                        bankCodeDTO: '',
-                        userBankNameDTO: '',
-                        amountDTO: '',
-                        contentDTO: '',
-                        isPublicDTO: '',
-                        styleDTO: '',
-                        themeDTO: '');
+                    // _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
                     DialogWidget.instance.showModelBottomSheet(
                       borderRadius: BorderRadius.circular(16),
                       widget: PopUpQrDetail(
-                        dto: qrCreateFeedDTO,
+                        qrType: qrType,
+                        dto: qrFeedPopupDetailDTO!,
                       ),
                       // height: MediaQuery.of(context).size.height * 0.6,
                     );

@@ -6,6 +6,7 @@ import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
+import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 
 class QrFeedState extends Equatable {
@@ -19,6 +20,7 @@ class QrFeedState extends Equatable {
   final bool isFolderLoading;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
+  final QrFeedPopupDetailDTO? qrFeedPopupDetail;
   final QrFeedDTO? qrFeed;
   final QrFeedDetailDTO? detailQr;
   final QrFeedDetailDTO? loadCmt;
@@ -37,6 +39,7 @@ class QrFeedState extends Equatable {
     this.listBanks,
     this.bankDto,
     this.qrFeed,
+    this.qrFeedPopupDetail,
     this.detailQr,
     this.loadCmt,
     this.detailMetadata,
@@ -54,6 +57,7 @@ class QrFeedState extends Equatable {
     bool? isFolderLoading,
     List<BankTypeDTO>? listBanks,
     BankNameInformationDTO? bankDto,
+    QrFeedPopupDetailDTO? qrFeedPopupDetail,
     QrFeedDTO? qrFeed,
     QrFeedDetailDTO? detailQr,
     QrFeedDetailDTO? loadCmt,
@@ -69,6 +73,7 @@ class QrFeedState extends Equatable {
       listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,
       isFolderLoading: isFolderLoading ?? this.isFolderLoading,
       listBanks: listBanks ?? this.listBanks,
+      qrFeedPopupDetail: qrFeedPopupDetail ?? this.qrFeedPopupDetail,
       bankDto: bankDto ?? this.bankDto,
       qrFeed: qrFeed ?? this.qrFeed,
       detailQr: detailQr ?? this.detailQr,
@@ -88,6 +93,7 @@ class QrFeedState extends Equatable {
         listQrFeedFolder,
         listBanks,
         bankDto,
+        qrFeedPopupDetail,
         qrFeed,
         detailQr,
         loadCmt,
