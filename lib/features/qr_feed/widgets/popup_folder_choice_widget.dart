@@ -7,6 +7,7 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/delete_dialog_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
@@ -92,7 +93,20 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
           if (widget.dto.userId == userId) ...[
             const MySeparator(color: AppColor.GREY_DADADA),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                // NavigationService.push(Routes.QR_FOLDER_DETAIL_SCREEN,
+                //     arguments: {
+                //       'id': widget.dto.id,
+                //       'folderName': widget.dto.title,
+                //       'tab': FolderEnum.ACCESS
+                //     });
+                NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                    arguments: {
+                      'page': 2,
+                      'action': ActionType.UPDATE,
+                      'id': widget.dto.id,
+                    });
+              },
               child: const _buildItem(
                   img: 'assets/images/ic-add-person-black.png',
                   title: 'Thêm người truy cập'),
@@ -103,7 +117,11 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                 Navigator.of(context).pop();
 
                 NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
-                    arguments: {'page': 1, 'action': ActionType.UPDATE});
+                    arguments: {
+                      'page': 1,
+                      'action': ActionType.UPDATE,
+                      'id': widget.dto.id,
+                    });
               },
               child: const _buildItem(
                   img: 'assets/images/ic-add-qr-black.png',

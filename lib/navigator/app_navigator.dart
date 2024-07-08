@@ -157,10 +157,11 @@ class NavigationService {
       case Routes.CREATE_QR_FOLDER_SCREEN:
         Map map = settings.arguments as Map;
         ActionType action = map['action'];
-
+        String folderId = map['id'];
         int page = map['page'];
         return CupertinoPageRoute(
             builder: (context) => CreateFolderScreen(
+                  folderId: folderId,
                   action: action,
                   pageView: page,
                 ),
@@ -199,10 +200,11 @@ class NavigationService {
         Map map = settings.arguments as Map;
         String id = map['id'];
         String folderName = map['folderName'];
-
+        FolderEnum tab = map['tab'];
         return _buildRoute(
             settings,
             FolderDetailScreen(
+              tab: tab,
               folderId: id,
               folderName: folderName,
             ));

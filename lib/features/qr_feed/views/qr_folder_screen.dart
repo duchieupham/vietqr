@@ -12,6 +12,7 @@ import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/popup_folder_choice_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/metadata_dto.dart';
@@ -151,8 +152,11 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
   Widget _buildItem(QrFeedFolderDTO dto, int index) {
     return InkWell(
       onTap: () {
-        NavigationService.push(Routes.QR_FOLDER_DETAIL_SCREEN,
-            arguments: {'id': dto.id, 'folderName': dto.title}).then(
+        NavigationService.push(Routes.QR_FOLDER_DETAIL_SCREEN, arguments: {
+          'id': dto.id,
+          'folderName': dto.title,
+          'tab': FolderEnum.QR
+        }).then(
           (value) {
             _bloc.add(const GetQrFeedFolderEvent(value: '', type: 1));
           },
@@ -303,7 +307,7 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
         GestureDetector(
           onTap: () {
             NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
-                arguments: {'page': 0, 'action': ActionType.CREATE});
+                arguments: {'page': 0, 'action': ActionType.CREATE, 'id': ''});
           },
           onTapDown: (TapDownDetails details) {},
           child: Container(
