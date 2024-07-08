@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -474,7 +475,17 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                          'type': TypeImage.SAVE,
+                          'title': dto!.title,
+                          'data': dto.data,
+                          'value': dto.vlue,
+                          'fileAttachmentId': dto.fileAttachmentId,
+                          'qrType': dto.qrType,
+                        });
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         height: 32,
@@ -491,7 +502,17 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                     ),
                     const SizedBox(width: 10),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                          'type': TypeImage.SHARE,
+                          'title': dto!.title,
+                          'data': dto.data,
+                          'value': dto.vlue,
+                          'fileAttachmentId': dto.fileAttachmentId,
+                          'qrType': dto.qrType,
+                        });
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         height: 32,
