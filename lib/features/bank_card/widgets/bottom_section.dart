@@ -19,7 +19,7 @@ class _BottomSectionState extends State<BottomSection> {
           offset: const Offset(0, -2),
         )
       ]),
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 90),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 20),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,

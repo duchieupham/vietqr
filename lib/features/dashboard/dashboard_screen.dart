@@ -124,72 +124,72 @@ class _DashBoardScreen extends State<DashBoardScreen>
     },
   ];
 
-  // List<CurvedNavigationBarItem> _listNavigation = [
-  //   CurvedNavigationBarItem(
-  //     label: 'Tài khoản',
-  //     urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
-  //     urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
-  //     index: PageType.ACCOUNT.pageIndex,
-  //   ),
-  //   CurvedNavigationBarItem(
-  //     label: 'Trang chủ',
-  //     urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
-  //     urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
-  //     index: PageType.HOME.pageIndex,
-  //   ),
-  //   CurvedNavigationBarItem(
-  //     label: 'Quét QR',
-  //     urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
-  //     urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
-  //     index: PageType.SCAN_QR.pageIndex,
-  //   ),
-  //   CurvedNavigationBarItem(
-  //     label: 'Ví QR',
-  //     urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
-  //     urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
-  //     index: PageType.CARD_QR.pageIndex,
-  //   ),
-  //   CurvedNavigationBarItem(
-  //     label: 'Cửa hàng',
-  //     urlSelect: 'assets/images/ic-store-bottom-bar-blue.png',
-  //     urlUnselect: 'assets/images/ic-store-bottom-bar-grey.png',
-  //     index: PageType.STORE.pageIndex,
-  //   ),
-  //   // CurvedNavigationBarItem(
-  //   //   label: 'Cửa hàng',
-  //   //   urlSelect: '',
-  //   //   urlUnselect: '',
-  //   //   index: PageType.PERSON.pageIndex,
-  //   //   child: Consumer<AuthProvider>(builder: (context, provider, _) {
-  //   //     String imgId = SharePrefUtils.getProfile().imgId;
-  //   //     return Container(
-  //   //       width: 28,
-  //   //       height: 28,
-  //   //       padding: EdgeInsets.all(1),
-  //   //       decoration: provider.pageSelected == PageType.PERSON.pageIndex
-  //   //           ? BoxDecoration(
-  //   //               border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
-  //   //               borderRadius: BorderRadius.circular(28),
-  //   //               color: Colors.white,
-  //   //             )
-  //   //           : BoxDecoration(),
-  //   //       child: Container(
-  //   //         decoration: BoxDecoration(
-  //   //           shape: BoxShape.circle,
-  //   //           image: DecorationImage(
-  //   //             fit: BoxFit.cover,
-  //   //             image: provider.avatarUser.path.isEmpty
-  //   //                 ? (imgId.isNotEmpty
-  //   //                     ? ImageUtils.instance.getImageNetWork(imgId)
-  //   //                     : Image.asset('assets/images/ic-avatar.png').image)
-  //   //                 : Image.file(provider.avatarUser).image,
-  //   //           ),
-  //   //         ),
-  //   //       ),
-  //   //     );
-  //   //   }),
-  //   // ),
-  // ];
+  List<CurvedNavigationBarItem> _listNavigation = [
+    CurvedNavigationBarItem(
+      label: 'Tài khoản',
+      urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
+      urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
+      index: PageType.ACCOUNT.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Trang chủ',
+      urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
+      urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
+      index: PageType.HOME.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Quét QR',
+      urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
+      urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
+      index: PageType.SCAN_QR.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Ví QR',
+      urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
+      urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
+      index: PageType.CARD_QR.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Cửa hàng',
+      urlSelect: 'assets/images/ic-store-bottom-bar-blue.png',
+      urlUnselect: 'assets/images/ic-store-bottom-bar-grey.png',
+      index: PageType.STORE.pageIndex,
+    ),
+    // CurvedNavigationBarItem(
+    //   label: 'Cửa hàng',
+    //   urlSelect: '',
+    //   urlUnselect: '',
+    //   index: PageType.PERSON.pageIndex,
+    //   child: Consumer<AuthProvider>(builder: (context, provider, _) {
+    //     String imgId = SharePrefUtils.getProfile().imgId;
+    //     return Container(
+    //       width: 28,
+    //       height: 28,
+    //       padding: EdgeInsets.all(1),
+    //       decoration: provider.pageSelected == PageType.PERSON.pageIndex
+    //           ? BoxDecoration(
+    //               border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
+    //               borderRadius: BorderRadius.circular(28),
+    //               color: Colors.white,
+    //             )
+    //           : BoxDecoration(),
+    //       child: Container(
+    //         decoration: BoxDecoration(
+    //           shape: BoxShape.circle,
+    //           image: DecorationImage(
+    //             fit: BoxFit.cover,
+    //             image: provider.avatarUser.path.isEmpty
+    //                 ? (imgId.isNotEmpty
+    //                     ? ImageUtils.instance.getImageNetWork(imgId)
+    //                     : Image.asset('assets/images/ic-avatar.png').image)
+    //                 : Image.file(provider.avatarUser).image,
+    //           ),
+    //         ),
+    //       ),
+    //     );
+    //   }),
+    // ),
+  ];
 
   StreamSubscription? _subscription;
   StreamSubscription? _subReloadWallet;
@@ -286,10 +286,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
           resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
-              if (provider.pageSelected != 3) const BackgroundAppBarHome(),
+              if (provider.pageSelected != 2) const BackgroundAppBarHome(),
               Container(
                 padding: EdgeInsets.only(
-                    top: provider.pageSelected == 3 ? 0 : kToolbarHeight * 2),
+                    top: provider.pageSelected == 2 ? 0 : kToolbarHeight * 2),
                 child: PageView(
                   key: const PageStorageKey('PAGE_VIEW'),
                   physics: const AlwaysScrollableScrollPhysics(),
@@ -305,39 +305,39 @@ class _DashBoardScreen extends State<DashBoardScreen>
               ),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
-              Positioned(
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: Consumer<AuthProvider>(
-                    builder: (context, page, _) {
-                      return getBottomBar(
-                        page.pageSelected,
-                        onTap: (index) {
-                          onTapPage(index);
-                          page.updateIndex(index,
-                              isOnTap: true, isHome: index == 2 ? true : false);
-                        },
-                      );
-                    },
-                  ))
+              // Positioned(
+              //     bottom: 0,
+              //     right: 0,
+              //     left: 0,
+              //     child: Consumer<AuthProvider>(
+              //       builder: (context, page, _) {
+              //         return getBottomBar(
+              //           page.pageSelected,
+              //           onTap: (index) {
+              //             onTapPage(index);
+              //             page.updateIndex(index,
+              //                 isOnTap: true, isHome: index == 2 ? true : false);
+              //           },
+              //         );
+              //       },
+              //     ))
             ],
           ),
-          // bottomNavigationBar: Consumer<AuthProvider>(
-          //   builder: (context, page, _) {
-          //     return CurvedNavigationBar(
-          //       backgroundColor: AppColor.TRANSPARENT,
-          //       buttonBackgroundColor: AppColor.TRANSPARENT,
-          //       animationDuration: const Duration(milliseconds: 300),
-          //       indexPage: page.pageSelected,
-          //       indexPaint: 0,
-          //       iconPadding: 0.0,
-          //       onTap: onTapPage,
-          //       items: _listNavigation,
-          //       stream: bottomBarStream,
-          //     );
-          //   },
-          // ),
+          bottomNavigationBar: Consumer<AuthProvider>(
+            builder: (context, page, _) {
+              return CurvedNavigationBar(
+                backgroundColor: AppColor.TRANSPARENT,
+                buttonBackgroundColor: AppColor.TRANSPARENT,
+                animationDuration: const Duration(milliseconds: 300),
+                indexPage: page.pageSelected,
+                indexPaint: 0,
+                iconPadding: 0.0,
+                onTap: onTapPage,
+                items: _listNavigation,
+                stream: bottomBarStream,
+              );
+            },
+          ),
         );
       }),
     );
