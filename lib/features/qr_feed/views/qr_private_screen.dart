@@ -12,6 +12,7 @@ import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
@@ -122,7 +123,8 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                   Routes.CREATE_QR_FOLDER_SCREEN,
                                   arguments: {
                                     'page': 0,
-                                    'action': ActionType.CREATE
+                                    'action': ActionType.CREATE,
+                                    'id': '',
                                   });
                             },
                             child: Container(
@@ -199,9 +201,21 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                             children: List.generate(
                                 (listQrFolder.length / 2).ceil(), (index) {
                               if (index * 2 < listQrFolder.length) {
-                                return _buildItemWidget(
-                                    dto: listQrFolder[index * 2],
-                                    isLoading: false);
+                                return InkWell(
+                                  onTap: () {
+                                    NavigationService.push(
+                                        Routes.QR_FOLDER_DETAIL_SCREEN,
+                                        arguments: {
+                                          'id': listQrFolder[index].id,
+                                          'folderName':
+                                              listQrFolder[index].title,
+                                          'tab': FolderEnum.QR
+                                        });
+                                  },
+                                  child: _buildItemWidget(
+                                      dto: listQrFolder[index * 2],
+                                      isLoading: false),
+                                );
                               } else {
                                 return const SizedBox.shrink();
                               }
@@ -212,9 +226,21 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                             children: List.generate(
                                 (listQrFolder.length / 2).floor(), (index) {
                               if (index * 2 + 1 < listQrFolder.length) {
-                                return _buildItemWidget(
-                                    dto: listQrFolder[index * 2],
-                                    isLoading: false);
+                                return InkWell(
+                                  onTap: () {
+                                    NavigationService.push(
+                                        Routes.QR_FOLDER_DETAIL_SCREEN,
+                                        arguments: {
+                                          'id': listQrFolder[index].id,
+                                          'folderName':
+                                              listQrFolder[index].title,
+                                          'tab': FolderEnum.QR
+                                        });
+                                  },
+                                  child: _buildItemWidget(
+                                      dto: listQrFolder[index * 2],
+                                      isLoading: false),
+                                );
                               } else {
                                 return const SizedBox.shrink();
                               }

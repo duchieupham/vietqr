@@ -22,6 +22,7 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/search_user_dto.dart';
+import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -33,8 +34,12 @@ enum ActionType {
 class CreateFolderScreen extends StatefulWidget {
   final int pageView;
   final ActionType action;
+  final String folderId;
   const CreateFolderScreen(
-      {super.key, required this.pageView, required this.action});
+      {super.key,
+      required this.pageView,
+      required this.action,
+      required this.folderId});
 
   @override
   State<CreateFolderScreen> createState() => _CreateFolderScreenState();
@@ -67,6 +72,9 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   List<ListUserCheckBox> listUser = [];
   List<ListUserCheckBox> listSelectedUser = [];
 
+  List<UserFolder> listUserUpdate = [];
+  List<UserFolder> listUserUpdateSearch = [];
+
   List<ListUserCheckBox> mapUser(List<SearchUser> user) {
     return user
         .map((item) => ListUserCheckBox(
@@ -85,7 +93,14 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   void initData() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        _bloc.add(GetUserQREvent(value: '', type: _qrTypeDTO.type));
+        if (widget.action == ActionType.CREATE) {
+          _bloc.add(GetUserQREvent(value: '', type: _qrTypeDTO.type));
+        } else {
+          _bloc.add(GetFolderDetailEvent(
+              value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
+          _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
+        }
+
         setState(() {
           _currentPageIndex = widget.pageView;
           _pageController.jumpToPage(widget.pageView);
@@ -129,8 +144,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             state.status == BlocStatus.SUCCESS) {
           final list = state.listQrFeedPrivate;
           listQr = mapQr(list!);
-          if (listQr!.isNotEmpty) {
-            for (var item in listQr!) {
+          if (listQr.isNotEmpty) {
+            for (var item in listQr) {
               String firstChar = item.dto!.title[0].toUpperCase();
               if (!groupsAlphabet.containsKey(firstChar)) {
                 groupsAlphabet[firstChar] = [];
@@ -155,6 +170,11 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           isEnable = listQr.any((element) => element.isValid == true);
         } else if (_currentPageIndex == 2) {
           isEnable = true;
+        }
+
+        if (widget.action == ActionType.UPDATE) {
+          listUserUpdate = [...state.listUserFolder!];
+          // userMetadata = state.folderMetadata;
         }
 
         return GestureDetector(
@@ -184,7 +204,10 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                       children: [
                         _inputWidget(),
                         _selectQrWidget(groupsAlphabet),
-                        _addUser(),
+                        if (widget.action == ActionType.CREATE)
+                          _addUser()
+                        else
+                          _updateUser(),
                       ],
                     ),
                   ),
@@ -238,6 +261,234 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _updateUser() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+          if (listUserUpdate.isNotEmpty)
+            ...listUserUpdate.asMap().map(
+              (index, e) {
+                return MapEntry(
+                    index,
+                    Container(
+                      height: 60,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Row(
+                        children: [
+                          XImage(
+                            imagePath: e.imageId.isNotEmpty
+                                ? e.imageId
+                                : ImageConstant.icAvatar,
+                            width: 40,
+                            height: 40,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  e.fullName,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  e.phoneNo,
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          if (e.role.toLowerCase().contains('admin'))
+                            Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 8),
+                                height: 40,
+                                // width: 40,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                                    gradient: LinearGradient(
+                                        colors: _gradients[0],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight)),
+                                child: const Center(
+                                  child: Text(
+                                    'Admin',
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ))
+                          else
+                            GestureDetector(
+                              onTapDown: (details) {
+                                showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromLTRB(
+                                      details.globalPosition.dx,
+                                      details.globalPosition.dy + 20,
+                                      details.globalPosition.dx,
+                                      details.globalPosition.dy + 20,
+                                    ),
+                                    items: <PopupMenuEntry<int>>[
+                                      const PopupMenuItem<int>(
+                                        value: 0,
+                                        child: ListTile(
+                                          title: Text(
+                                            'Quản lý',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                      const PopupMenuItem<int>(
+                                        value: 1,
+                                        child: ListTile(
+                                          title: Text(
+                                            'Người xem',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ),
+                                    ]).then(
+                                  (value) {
+                                    if (value == 0) {
+                                      listUserUpdate[index].role = 'MANAGER';
+                                      setState(() {});
+                                    }
+                                    if (value == 1) {
+                                      listUserUpdate[index].role = 'VIEWER';
+                                      setState(() {});
+                                    }
+                                  },
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                                    gradient: LinearGradient(
+                                        colors: _gradients[0],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight)),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      listUserUpdate[index].role,
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.BLUE_TEXT),
+                                    ),
+                                    const Icon(
+                                      Icons.keyboard_arrow_down,
+                                      size: 22,
+                                      color: AppColor.BLUE_TEXT,
+                                    )
+                                  ],
+                                ),
+                                // width: 40,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ));
+              },
+            ).values,
+          if (listUserUpdateSearch.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            const MySeparator(color: AppColor.GREY_DADADA),
+            const SizedBox(height: 20),
+            ...listUserUpdateSearch.map(
+              (e) {
+                return Container(
+                  height: 60,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Row(
+                    children: [
+                      XImage(
+                        imagePath: e.imageId.isNotEmpty
+                            ? e.imageId
+                            : ImageConstant.icAvatar,
+                        width: 40,
+                        height: 40,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              e.fullName,
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              e.phoneNo,
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.normal),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          listUserUpdate.add(e);
+                          listUserUpdateSearch.remove(e);
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath:
+                                  'assets/images/ic-add-person-black.png'),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
+          ]
+        ],
       ),
     );
   }
@@ -751,21 +1002,23 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
       child: InkWell(
         onTap: isEnable
             ? () async {
-                await onUnFocus();
-                switch (_currentPageIndex) {
-                  case 0:
-                    _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
-                    break;
-                  case 1:
-                    _searchController.clear();
-                    _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
-                    break;
-                  default:
-                }
+                if (widget.action == ActionType.CREATE) {
+                  await onUnFocus();
+                  switch (_currentPageIndex) {
+                    case 0:
+                      _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                      break;
+                    case 1:
+                      _searchController.clear();
+                      _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                      break;
+                    default:
+                  }
+                } else {}
               }
             : null,
         child: Container(
@@ -788,18 +1041,21 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 16.0),
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 20,
-                  color: AppColor.TRANSPARENT,
+              if (widget.action == ActionType.CREATE)
+                const Padding(
+                  padding: EdgeInsets.only(left: 16.0),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 20,
+                    color: AppColor.TRANSPARENT,
+                  ),
                 ),
-              ),
               Expanded(
                 child: Center(
                   child: Text(
-                    'Tiếp tục',
+                    widget.action == ActionType.CREATE
+                        ? 'Tiếp tục'
+                        : 'Cập nhật',
                     style: TextStyle(
                       color: isEnable ? AppColor.WHITE : AppColor.BLACK,
                       fontSize: 16,
@@ -807,14 +1063,15 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 20,
-                  color: isEnable ? AppColor.WHITE : AppColor.BLACK,
+              if (widget.action == ActionType.CREATE)
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Icon(
+                    Icons.arrow_forward,
+                    size: 20,
+                    color: isEnable ? AppColor.WHITE : AppColor.BLACK,
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -894,7 +1151,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     const SizedBox(width: 5),
                     InkWell(
                       onTap: () {
-                        for (var element in listQr!) {
+                        for (var element in listQr) {
                           element.isValid = true;
                         }
                         setState(() {});
@@ -1051,9 +1308,11 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             ),
           ] else if (_currentPageIndex == 2) ...[
             const SizedBox(height: 20),
-            const Text(
-              'Tiếp theo, thêm thành viên\ntruy cập thư mục QR',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              widget.action == ActionType.CREATE
+                  ? 'Tiếp theo, thêm thành viên\ntruy cập thư mục QR'
+                  : 'Thêm thành viên\ntruy cập thư mục QR',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             SizedBox(
               width: double.infinity,
@@ -1115,10 +1374,24 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                       if (_searchController.text.isNotEmpty) {
                         await getUser(_searchController.text).then(
                           (value) {
-                            listUser = [...mapUser(value)];
+                            if (widget.action == ActionType.CREATE) {
+                              listUser = [...mapUser(value)];
+                            } else {
+                              for (var element in value) {
+                                UserFolder userFolder = UserFolder(
+                                  fullName: element.fullName,
+                                  role: 'VIEWER',
+                                  userId: element.userId,
+                                  phoneNo: element.phoneNo,
+                                  imageId: element.imageId,
+                                );
+                                listUserUpdateSearch.add(userFolder);
+                              }
+                            }
                           },
                         );
                       } else {
+                        listUserUpdateSearch = [];
                         listUser = [];
                       }
                       setState(() {});

@@ -26,9 +26,13 @@ enum FolderEnum { QR, ACCESS }
 class FolderDetailScreen extends StatefulWidget {
   final String folderId;
   final String folderName;
+  final FolderEnum tab;
 
   const FolderDetailScreen(
-      {super.key, required this.folderId, required this.folderName});
+      {super.key,
+      required this.folderId,
+      required this.folderName,
+      required this.tab});
 
   @override
   State<FolderDetailScreen> createState() => _FolderDetailScreenState();
@@ -56,10 +60,12 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
   @override
   void initState() {
     super.initState();
+
     initData();
   }
 
   void initData() {
+    tab = widget.tab;
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         _scrollController.addListener(
@@ -82,10 +88,15 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
             }
           },
         );
-        _bloc.add(GetFolderDetailEvent(
-            value: '', type: 9, folderId: widget.folderId));
+        if (tab == FolderEnum.QR) {
+          _bloc.add(GetFolderDetailEvent(
+              value: '', type: 9, folderId: widget.folderId));
+        } else {
+          _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
+        }
       },
     );
+    setState(() {});
   }
 
   Future<void> onRefresh() async {
