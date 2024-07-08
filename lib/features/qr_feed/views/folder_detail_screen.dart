@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -283,6 +284,22 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
   }
 
   Widget _userFolder({UserFolder? user, bool isLoading = false, int? index}) {
+    String role = '';
+    if (user != null) {
+      switch (user.role) {
+        case 'ADMIN':
+          role = 'Chủ sở hữu';
+          break;
+        case 'EDITOR':
+          role = 'Quản lý';
+          break;
+        case 'VIEWER':
+          role = 'Người xem';
+          break;
+        default:
+      }
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.only(top: 15),
@@ -328,9 +345,9 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 70,
+                                width: 80,
                                 child: Text(
-                                  user!.role,
+                                  role,
                                   style: const TextStyle(
                                       fontSize: 12, color: AppColor.GREY_TEXT),
                                 ),
@@ -343,7 +360,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                   )),
                               const SizedBox(width: 16),
                               Text(
-                                user.phoneNo,
+                                user!.phoneNo,
                                 style: const TextStyle(
                                     fontSize: 12, color: AppColor.GREY_TEXT),
                               )
@@ -388,134 +405,140 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
   }
 
   Widget _buildRowQrPrivate({QrData? dto, bool isLoading = false}) {
-    return Column(
-      children: [
-        Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Row(
-            children: [
-              if (!isLoading)
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: LinearGradient(
-                        colors: dto!.qrType == '0'
-                            ? _gradients[9]
+    return InkWell(
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(Routes.QR_DETAIL_SCREEN, arguments: {'id': dto!.id});
+      },
+      child: Column(
+        children: [
+          Container(
+            height: 60,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Row(
+              children: [
+                if (!isLoading)
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      gradient: LinearGradient(
+                          colors: dto!.qrType == '0'
+                              ? _gradients[9]
+                              : dto.qrType == '1'
+                                  ? _gradients[3]
+                                  : dto.qrType == '2'
+                                      ? _gradients[1]
+                                      : _gradients[10],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight),
+                    ),
+                    child: XImage(
+                        imagePath: dto.qrType == '0'
+                            ? 'assets/images/ic-linked-bank-blue.png'
                             : dto.qrType == '1'
-                                ? _gradients[3]
+                                ? 'assets/images/ic-file-violet.png'
                                 : dto.qrType == '2'
-                                    ? _gradients[1]
-                                    : _gradients[10],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight),
+                                    ? 'assets/images/ic-vcard1.png'
+                                    : 'assets/images/ic-vietqr-trans.png'),
+                  )
+                else
+                  const ShimmerBlock(
+                    height: 40,
+                    width: 40,
+                    borderRadius: 100,
                   ),
-                  child: XImage(
-                      imagePath: dto.qrType == '0'
-                          ? 'assets/images/ic-linked-bank-blue.png'
-                          : dto.qrType == '1'
-                              ? 'assets/images/ic-file-violet.png'
-                              : dto.qrType == '2'
-                                  ? 'assets/images/ic-vcard1.png'
-                                  : 'assets/images/ic-vietqr-trans.png'),
-                )
-              else
-                const ShimmerBlock(
-                  height: 40,
-                  width: 40,
-                  borderRadius: 100,
-                ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!isLoading) ...[
-                      Text(
-                        dto!.title,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.bold,
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!isLoading) ...[
+                        Text(
+                          dto!.title,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        dto.data,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.black54,
+                        const SizedBox(height: 4.0),
+                        Text(
+                          dto.data,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.black54,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ] else ...[
-                      const ShimmerBlock(
-                        height: 12,
-                        width: 300,
-                      ),
-                      const SizedBox(height: 4.0),
-                      const ShimmerBlock(
-                        height: 12,
-                        width: 200,
-                      ),
-                    ]
-                  ],
+                      ] else ...[
+                        const ShimmerBlock(
+                          height: 12,
+                          width: 300,
+                        ),
+                        const SizedBox(height: 4.0),
+                        const ShimmerBlock(
+                          height: 12,
+                          width: 200,
+                        ),
+                      ]
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              if (!isLoading)
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            gradient: LinearGradient(
-                                colors: _gradients[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath: 'assets/images/ic-dowload.png'),
+                const SizedBox(width: 8),
+                if (!isLoading)
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath: 'assets/images/ic-dowload.png'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    InkWell(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            gradient: LinearGradient(
-                                colors: _gradients[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath: 'assets/images/ic-share-black.png'),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {},
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath: 'assets/images/ic-share-black.png'),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-            ],
+                    ],
+                  ),
+              ],
+            ),
           ),
-        ),
-        const MySeparator(
-          color: AppColor.GREY_DADADA,
-        ),
-        const SizedBox(height: 15),
-      ],
+          const MySeparator(
+            color: AppColor.GREY_DADADA,
+          ),
+          const SizedBox(height: 15),
+        ],
+      ),
     );
   }
 

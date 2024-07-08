@@ -573,7 +573,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               if (interact.timeCreate != 0 && isLoading == false)
                 Row(
                   children: [
-                    const XImage(
+                    XImage(
                       imagePath: 'assets/images/ic-global.png',
                       width: 15,
                       height: 15,

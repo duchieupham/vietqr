@@ -588,7 +588,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   color: AppColor.BLUE_TEXT.withOpacity(0.2),
                 ),
                 child: const XImage(
-                    imagePath: 'assets/images/ic-scan-content.png'),
+                    imagePath: 'assets/images/ic-scan-content-black.png'),
               ),
             ),
             // InkWell(

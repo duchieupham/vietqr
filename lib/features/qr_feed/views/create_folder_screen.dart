@@ -514,7 +514,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           Container(
             height: 60,
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -730,7 +730,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     ));
               },
             ).values,
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const MySeparator(color: AppColor.GREY_DADADA),
           ],
           if (listUser.isNotEmpty) ...[
@@ -1167,31 +1167,32 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 Row(
                   children: [
                     const SizedBox(width: 5),
-                    InkWell(
-                      onTap: () {
-                        for (var element in listQr) {
-                          element.isValid = false;
-                        }
+                    if (listQr.any((element) => element.isValid == true))
+                      InkWell(
+                        onTap: () {
+                          for (var element in listQr) {
+                            element.isValid = false;
+                          }
 
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 8),
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                            gradient: LinearGradient(
-                                colors: _gradients[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath:
-                                'assets/images/ic-remove-checkbox-black.png'),
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath:
+                                  'assets/images/ic-remove-checkbox-black.png'),
+                        ),
                       ),
-                    ),
                     const SizedBox(width: 5),
                     InkWell(
                       onTap: () {
@@ -1395,7 +1396,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                           hintText: 'Tìm kiếm người dùng qua SĐT',
                           keyboardAction: TextInputAction.next,
                           onSubmitted: (value) async {
-                            if (_searchController.text.isNotEmpty) {
+                            if (_searchController.text.isNotEmpty &&
+                                _searchController.text.length >= 5) {
                               await getUser(_searchController.text).then(
                                 (value) {
                                   listUser = [...mapUser(value)];
@@ -1415,7 +1417,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   InkWell(
                     onTap: () async {
                       focusNodeSearch.unfocus();
-                      if (_searchController.text.isNotEmpty) {
+                      if (_searchController.text.isNotEmpty &&
+                          _searchController.text.length >= 5) {
                         await getUser(_searchController.text).then(
                           (value) {
                             if (widget.action == ActionType.CREATE) {
