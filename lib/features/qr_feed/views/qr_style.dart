@@ -101,9 +101,10 @@ class _QrStyleState extends State<QrStyle> {
 
           //   },
           // );
-          Navigator.pop(context);
-          Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+
           Fluttertoast.showToast(
             msg: 'Tạo mã QR thành công',
             toastLength: Toast.LENGTH_SHORT,

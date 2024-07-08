@@ -125,7 +125,9 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                     'page': 0,
                                     'action': ActionType.CREATE,
                                     'id': '',
-                                  });
+                                  }).then(
+                                (value) {},
+                              );
                             },
                             child: Container(
                               padding: const EdgeInsets.all(4),
