@@ -490,64 +490,66 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                       ]
                     ],
                   ),
-                ),],
-              ),
-              const SizedBox(width: 8),
-              if (!isLoading)
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                          'type': TypeImage.SAVE,
-                          'title': dto!.title,
-                          'data': dto.data,
-                          'value': dto.vlue,
-                          'fileAttachmentId': dto.fileAttachmentId,
-                          'qrType': dto.qrType,
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            gradient: LinearGradient(
-                                colors: _gradients[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath: 'assets/images/ic-dowload.png'),
+                ),
+                const SizedBox(width: 8),
+                if (!isLoading)
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              Routes.QR_SAVE_SHARE_SCREEN,
+                              arguments: {
+                                'type': TypeImage.SAVE,
+                                'title': dto!.title,
+                                'data': dto.data,
+                                'value': dto.vlue,
+                                'fileAttachmentId': dto.fileAttachmentId,
+                                'qrType': dto.qrType,
+                              });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath: 'assets/images/ic-dowload.png'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                          'type': TypeImage.SHARE,
-                          'title': dto!.title,
-                          'data': dto.data,
-                          'value': dto.vlue,
-                          'fileAttachmentId': dto.fileAttachmentId,
-                          'qrType': dto.qrType,
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            gradient: LinearGradient(
-                                colors: _gradients[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath: 'assets/images/ic-share-black.png'),
-                      ),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              Routes.QR_SAVE_SHARE_SCREEN,
+                              arguments: {
+                                'type': TypeImage.SHARE,
+                                'title': dto!.title,
+                                'data': dto.data,
+                                'value': dto.vlue,
+                                'fileAttachmentId': dto.fileAttachmentId,
+                                'qrType': dto.qrType,
+                              });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath: 'assets/images/ic-share-black.png'),
+                        ),
+                      )
                     ],
                   ),
               ],
