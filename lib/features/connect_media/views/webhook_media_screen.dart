@@ -358,13 +358,13 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // const SizedBox(height: 20),
+              // Container(
+              //   height: 50,
+              //   width: 50,
+              //   child: Image.asset(url),
+              // ),
               const SizedBox(height: 20),
-              Container(
-                height: 50,
-                width: 50,
-                child: Image.asset(url),
-              ),
-              const SizedBox(height: 30),
               Text(
                 'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua $title',
                 style:
