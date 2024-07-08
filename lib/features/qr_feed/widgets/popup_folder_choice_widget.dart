@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/delete_dialog_widget.dart';
+import 'package:vierqr/features/qr_feed/widgets/popup_folder_detail_folder.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
@@ -84,7 +86,15 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
           const SizedBox(height: 30),
           InkWell(
             onTap: () {
-              // Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              DialogWidget.instance.showModelBottomSheet(
+                borderRadius: BorderRadius.circular(20),
+                widget: PopupDetailFolder(
+                  dto: widget.dto,
+                ),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+              );
             },
             child: const _buildItem(
                 img: 'assets/images/ic-i-black.png', title: 'Chi tiết thư mục'),
@@ -124,7 +134,9 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                     heightPopup: MediaQuery.of(context).size.height * 0.5,
                     padding: const EdgeInsets.all(0),
                     radius: 10,
-                    child: const DeleteDialogWidget());
+                    child: DeleteDialogWidget(
+                      folderId: widget.dto.id,
+                    ));
               },
               child: const _buildItem(
                   img: 'assets/images/ic-remove-black.png',

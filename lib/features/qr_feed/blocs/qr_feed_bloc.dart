@@ -38,6 +38,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<AddCommendEvent>(_addCmt);
     on<GetQrFeedPopupDetailEvent>(_getQrFeedPopupDetail);
     on<DeleteQrCodesEvent>(_deleteQrCodes);
+    on<DeleteFolderEvent>(_deleteFolder);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
@@ -656,6 +657,25 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: QrFeed.DELETE_QR_FEED));
+    }
+  }
+
+  void _deleteFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is DeleteFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.DELETE_FOLDER));
+        await _qrFeedRepository.deleteFolder(
+            deleteItems: event.deleteItems, folderId: event.folderId);
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.DELETE_FOLDER,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.DELETE_FOLDER));
     }
   }
 }
