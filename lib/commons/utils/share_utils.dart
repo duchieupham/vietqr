@@ -20,13 +20,20 @@ class ShareUtils {
 
   static ShareUtils get instance => _instance;
 
-  Future<bool> shareImage(
-      {required GlobalKey key, required String textSharing}) async {
+  Future<bool> shareImage({
+    required GlobalKey key,
+    required String textSharing,
+  }) async {
     bool result = false;
     try {
       RenderRepaintBoundary boundary =
           key.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage();
+
+      // Tăng tỷ lệ pixel để có hình ảnh chất lượng cao hơn
+      double pixelRatio =
+          5.0; // Bạn có thể thay đổi giá trị này tùy theo nhu cầu
+
+      ui.Image image = await boundary.toImage(pixelRatio: pixelRatio);
       ByteData? byteData =
           await (image.toByteData(format: ui.ImageByteFormat.png));
       if (byteData != null) {
@@ -46,10 +53,42 @@ class ShareUtils {
       if (kDebugMode) {
         print('Error at saveWidgetToImage - ShareUtils: $e');
       }
+      // Đảm bảo bạn có hàm LOG.error được định nghĩa trong dự án của bạn
       LOG.error(e.toString());
     }
     return result;
   }
+
+  // Future<bool> shareImage(
+  //     {required GlobalKey key, required String textSharing}) async {
+  //   bool result = false;
+  //   try {
+  //     RenderRepaintBoundary boundary =
+  //         key.currentContext!.findRenderObject() as RenderRepaintBoundary;
+  //     ui.Image image = await boundary.toImage();
+  //     ByteData? byteData =
+  //         await (image.toByteData(format: ui.ImageByteFormat.png));
+  //     if (byteData != null) {
+  //       Directory tempDir = await getTemporaryDirectory();
+  //       String tempPath = tempDir.path;
+  //       final pngBytes = byteData.buffer.asUint8List();
+  //       File('$tempPath/imgshare.png').writeAsBytesSync(pngBytes);
+  //       XFile xFile = XFile('$tempPath/imgshare.png');
+  //       List<XFile> files = [xFile];
+  //       await Share.shareXFiles(files, text: textSharing).then((value) async {
+  //         File file = File('$tempPath/imgshare.png');
+  //         await file.delete();
+  //         result = true;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('Error at saveWidgetToImage - ShareUtils: $e');
+  //     }
+  //     LOG.error(e.toString());
+  //   }
+  //   return result;
+  // }
 
   Future<void> saveImageToGallery(GlobalKey globalKey) async {
     try {

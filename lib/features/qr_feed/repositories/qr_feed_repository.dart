@@ -324,6 +324,31 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
+  Future<ResponseMessageDTO> deleteQrCodes(List<String> qrIds) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/delete-qr';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: {'qrIds': qrIds},
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      }
+      //  else {
+      //    result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      // }
+    } catch (e) {
+      LOG.error(e.toString());
+      // result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
   Future<QrFeedPopupDetailDTO?> getQrFeedPopupDetail(
       {required String qrWalletId}) async {
     try {

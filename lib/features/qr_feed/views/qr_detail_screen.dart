@@ -69,37 +69,6 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
   final globalKey = GlobalKey();
 
-  void onShare() async {
-    await ShareUtils.instance
-        .shareImage(key: globalKey, textSharing: '')
-        .then((value) {
-      // Navigator.pop(context);
-    });
-  }
-
-  void onSaveImage(BuildContext context) async {
-    DialogWidget.instance.openLoadingDialog();
-    await Future.delayed(
-      const Duration(milliseconds: 200),
-      () async {
-        await ShareUtils.instance.saveImageToGallery(globalKey).then(
-          (value) {
-            // Navigator.pop(context);
-            Navigator.pop(context);
-            Fluttertoast.showToast(
-              msg: 'Đã lưu ảnh',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).hintColor,
-              fontSize: 15,
-            );
-          },
-        );
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
@@ -143,16 +112,16 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           },
         );
         _cmtController.addListener(_checkInputHeight);
-        _timer = Timer.periodic(
-          const Duration(seconds: 20),
-          (timer) {
-            _bloc.add(LoadConmmentEvent(
-                id: widget.id,
-                isLoadMore: false,
-                isLoading: false,
-                size: list.isEmpty ? 10 : list.length));
-          },
-        );
+        // _timer = Timer.periodic(
+        //   const Duration(seconds: 20),
+        //   (timer) {
+        //     _bloc.add(LoadConmmentEvent(
+        //         id: widget.id,
+        //         isLoadMore: false,
+        //         isLoading: false,
+        //         size: list.isEmpty ? 10 : list.length));
+        //   },
+        // );
         _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
       },
     );
@@ -208,6 +177,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           }
           updateState();
           // onRefresh();
+        }
+        if (state.request == QrFeed.DELETE_QR_FEED &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
+          _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
+          updateState();
         }
         if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
             state.status == BlocStatus.SUCCESS) {
@@ -357,156 +332,147 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        RepaintBoundaryWidget(
-          globalKey: globalKey,
-          builder: (key) {
-            return Container(
-              height: 420,
-              margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                    colors: _gradients[0],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight),
-              ),
-              child: Container(
-                // height: 450,
-                margin: const EdgeInsets.fromLTRB(30, 25, 30, 25),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: AppColor.WHITE,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(4),
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: AppColor.TRANSPARENT,
-                            ),
-                          ),
-                          isLoading == false
-                              ? Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        e.title,
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        e.data,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(fontSize: 12),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : const ShimmerBlock(
-                                  height: 20,
-                                  width: 150,
-                                  borderRadius: 50,
-                                ),
-                          InkWell(
-                            onTap: () {
-                              FlutterClipboard.copy('${e.title}\n${e.data}')
-                                  .then(
-                                (value) => Fluttertoast.showToast(
-                                  msg: 'Đã sao chép',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor:
-                                      Theme.of(context).primaryColor,
-                                  textColor: Theme.of(context).hintColor,
-                                  fontSize: 15,
-                                  webBgColor: 'rgba(255, 255, 255, 0.5)',
-                                  webPosition: 'center',
-                                ),
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(100),
-                                color: AppColor.GREY_F0F4FA,
-                              ),
-                              child: const XImage(
-                                imagePath: 'assets/images/ic-save-blue.png',
-                                width: 30,
-                                height: 30,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ],
+        Container(
+          height: 420,
+          margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+                colors: _gradients[0],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight),
+          ),
+          child: Container(
+            // height: 450,
+            margin: const EdgeInsets.fromLTRB(30, 25, 30, 25),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              color: AppColor.WHITE,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: AppColor.TRANSPARENT,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 25),
-                    Expanded(
-                      child: isLoading == false
-                          ? Container(
-                              height: 250,
-                              width: 250,
-                              margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                              child: QrImageView(
-                                padding: EdgeInsets.zero,
-                                data: e.value,
-                                size: 80,
-                                backgroundColor: AppColor.WHITE,
-                                embeddedImage: ImageUtils.instance
-                                    .getImageNetworkCache(e.fileAttachmentId),
-                                embeddedImageStyle: const QrEmbeddedImageStyle(
-                                  size: Size(50, 50),
-                                ),
+                      isLoading == false
+                          ? Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    e.title,
+                                    style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    e.data,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
                               ),
                             )
-                          : Container(
-                              margin: const EdgeInsets.all(25),
-                              child: const ShimmerBlock(
-                                width: 250,
-                                height: 250,
-                              ),
+                          : const ShimmerBlock(
+                              height: 20,
+                              width: 150,
+                              borderRadius: 50,
                             ),
-                    ),
-                    isLoading == false
-                        ? Center(
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              '$qrType   |   By VIETQR.VN',
-                              style: const TextStyle(
-                                  fontSize: 10, color: AppColor.GREY_TEXT),
+                      InkWell(
+                        onTap: () {
+                          FlutterClipboard.copy('${e.title}\n${e.data}').then(
+                            (value) => Fluttertoast.showToast(
+                              msg: 'Đã sao chép',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Theme.of(context).primaryColor,
+                              textColor: Theme.of(context).hintColor,
+                              fontSize: 15,
+                              webBgColor: 'rgba(255, 255, 255, 0.5)',
+                              webPosition: 'center',
                             ),
-                          )
-                        : const ShimmerBlock(
-                            height: 10,
-                            width: 100,
-                            borderRadius: 50,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            color: AppColor.GREY_F0F4FA,
                           ),
-                    const SizedBox(height: 10),
-                  ],
+                          child: const XImage(
+                            imagePath: 'assets/images/ic-save-blue.png',
+                            width: 30,
+                            height: 30,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
+                const SizedBox(height: 25),
+                isLoading == false
+                    ? Container(
+                        height: 250,
+                        width: 250,
+                        margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
+                        child: QrImageView(
+                          padding: EdgeInsets.zero,
+                          data: e.value,
+                          size: 80,
+                          backgroundColor: AppColor.WHITE,
+                          embeddedImage: ImageUtils.instance
+                              .getImageNetworkCache(e.fileAttachmentId),
+                          embeddedImageStyle: const QrEmbeddedImageStyle(
+                            size: Size(50, 50),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        margin: const EdgeInsets.all(25),
+                        child: const ShimmerBlock(
+                          width: 250,
+                          height: 250,
+                        ),
+                      ),
+                const Spacer(),
+                isLoading == false
+                    ? Center(
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          '$qrType   |   By VIETQR.VN',
+                          style: const TextStyle(
+                              fontSize: 10, color: AppColor.GREY_TEXT),
+                        ),
+                      )
+                    : const ShimmerBlock(
+                        height: 10,
+                        width: 100,
+                        borderRadius: 50,
+                      ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
         ),
         const SizedBox(height: 25),
         if (isLoading == false)
@@ -897,7 +863,15 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             const SizedBox(width: 10),
             InkWell(
               onTap: () {
-                onSaveImage(context);
+                Navigator.of(context)
+                    .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                  'type': TypeImage.SAVE,
+                  'title': e.title,
+                  'data': e.data,
+                  'value': e.value,
+                  'fileAttachmentId': e.fileAttachmentId,
+                  'qrType': e.qrType,
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(4),
@@ -915,7 +889,15 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             const SizedBox(width: 10),
             InkWell(
               onTap: () {
-                onShare();
+                Navigator.of(context)
+                    .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                  'type': TypeImage.SHARE,
+                  'title': e.title,
+                  'data': e.data,
+                  'value': e.value,
+                  'fileAttachmentId': e.fileAttachmentId,
+                  'qrType': e.qrType,
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(4),
@@ -1019,6 +1001,84 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             child: Row(
               children: [
                 if (e.userId == userId)
+                  // GestureDetector(
+                  //   onTapDown: (TapDownDetails details) {
+                  //     showMenu(
+                  //       context: context,
+                  //       position: RelativeRect.fromLTRB(
+                  //         details.globalPosition.dx,
+                  //         details.globalPosition.dy + 20,
+                  //         details.globalPosition.dx,
+                  //         details.globalPosition.dy + 20,
+                  //       ),
+                  //       items: <PopupMenuEntry<int>>[
+                  //         const PopupMenuItem<int>(
+                  //           value: 0,
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               'Cập nhật nội dung mã QR',
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.blue),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         const PopupMenuItem<int>(
+                  //           value: 1,
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               'Tuỳ chỉnh giao diện mã QR',
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.blue),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         const PopupMenuItem<int>(
+                  //           value: 2,
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               'Xoá QR',
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.red),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ).then((int? result) {
+                  //       if (result != null) {
+                  //         switch (result) {
+                  //           case 0:
+                  //             Navigator.of(context)
+                  //                 .pushNamed(Routes.QR_UPDATE_SCREEN);
+                  //             // Handle "Cập nhật nội dung mã QR"
+                  //             break;
+                  //           case 1:
+                  //             // Handle "Tuỳ chỉnh giao diện mã QR"
+                  //             break;
+                  //           case 2:
+                  //             // Handle "Xoá QR"
+                  //             _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
+                  //             break;
+                  //         }
+                  //       }
+                  //     });
+                  //   },
+                  //   child: Container(
+                  //     padding: const EdgeInsets.all(4),
+                  //     height: 40,
+                  //     width: 40,
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(100),
+                  //       gradient: LinearGradient(
+                  //         colors: _gradients[0],
+                  //         begin: Alignment.centerLeft,
+                  //         end: Alignment.centerRight,
+                  //       ),
+                  //     ),
+                  //     child: const Image(
+                  //       image: AssetImage('assets/images/ic-effect.png'),
+                  //     ),
+                  //   ),
+                  // ),
                   GestureDetector(
                     onTapDown: (TapDownDetails details) {
                       showMenu(
@@ -1067,13 +1127,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                             case 0:
                               Navigator.of(context)
                                   .pushNamed(Routes.QR_UPDATE_SCREEN);
-                              // Handle "Cập nhật nội dung mã QR"
                               break;
                             case 1:
                               // Handle "Tuỳ chỉnh giao diện mã QR"
                               break;
                             case 2:
-                              // Handle "Xoá QR"
+                              _showDeleteConfirmationDialog(context);
                               break;
                           }
                         }
@@ -1126,6 +1185,71 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               ],
             ))
       ],
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận xoá'),
+          content: const Text('Bạn có chắc chắn muốn xoá mã QR này không?'),
+          actions: <Widget>[
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40, // Set a fixed height for the containers
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10), // Padding on both sides
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.red.withOpacity(0.1),
+                    ),
+                    child: TextButton(
+                      child: const Text(
+                        'Huỷ',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10), // Add some space between the buttons
+                Expanded(
+                  child: Container(
+                    height: 40, // Set a fixed height for the containers
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10), // Padding on both sides
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.blue.withOpacity(0.1),
+                    ),
+                    child: TextButton(
+                      child: const Text(
+                        'Xác nhận',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                        _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Xoá thành công'),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 
