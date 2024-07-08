@@ -86,6 +86,13 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
           metadata = state.folderMetadata;
           updateState();
         }
+        if (state.request == QrFeed.DELETE_FOLDER &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
+          _bloc.add(const GetQrFeedFolderEvent(value: '', type: 1));
+          // _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
+          updateState();
+        }
       },
       builder: (context, state) {
         return Scaffold(

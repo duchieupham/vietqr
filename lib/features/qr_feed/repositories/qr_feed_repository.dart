@@ -151,20 +151,27 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
-  Future<bool> deleteFolder(
+  Future<ResponseMessageDTO> deleteFolder(
       {required String folderId, required int deleteItems}) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
     try {
       String url =
           '${getIt.get<AppConfig>().getBaseUrl}delete-folder?folderId=$folderId&deleteItems=$deleteItems';
-
-      //  final response = await BaseAPIClient.deleteAPI(
-      //       url: url,
-      //       type: AuthenticationType.SYSTEM,
-      //     );
+      final Map<String, dynamic> body = {};
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: jsonEncode(body),
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      }
     } catch (e) {
       LOG.error(e.toString());
     }
-    return false;
+    return result;
   }
 
   Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({
