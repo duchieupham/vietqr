@@ -283,6 +283,9 @@ enum BankType {
 
 enum ConnectMedia {
   NONE,
+  GET_LIST_CHAT,
+  GET_LIST_TELE,
+  GET_LIST_LARK,
   GET_INFO,
   CHECK_URL,
   DELETE_URL,
@@ -367,6 +370,7 @@ enum QrFeed {
   GET_DETAIL_QR,
   LOAD_CMT,
   ADD_CMT,
+  CREATE_FOLDER,
   CREATE_QR,
   GET_BANKS,
   SEARCH_BANK,

@@ -11,6 +11,10 @@ import '../states/connect_media_states.dart';
 
 class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
   ConnectMediaBloc() : super(ConnectMediaStates()) {
+    on<GetListGGChatEvent>(_getListChat);
+    on<GetListLarkEvent>(_getListLark);
+    on<GetListTeleEvent>(_getListTele);
+
     on<GetInfoEvent>(_getInfo);
     on<CheckWebhookUrlEvent>(_checkValidUrl);
     on<DeleteWebhookEvent>(_deleteWebhook);
@@ -22,6 +26,60 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
   }
 
   ConnectGgChatRepository _repository = ConnectGgChatRepository();
+
+  void _getListTele(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is GetListTeleEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: ConnectMedia.GET_LIST_TELE));
+        final result = await _repository.getTeleList();
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: ConnectMedia.GET_LIST_TELE,
+            listTele: [...result]));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.GET_LIST_TELE));
+    }
+  }
+
+  void _getListLark(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is GetListLarkEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: ConnectMedia.GET_LIST_LARK));
+        final result = await _repository.getLarkList();
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: ConnectMedia.GET_LIST_LARK,
+            listLark: [...result]));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.GET_LIST_LARK));
+    }
+  }
+
+  void _getListChat(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is GetListGGChatEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: ConnectMedia.GET_LIST_CHAT));
+        final result = await _repository.getChatList();
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: ConnectMedia.GET_LIST_CHAT,
+            listChat: [...result]));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.GET_LIST_CHAT));
+    }
+  }
 
   void _updateUrl(ConnectMediaEvent event, Emitter emit) async {
     try {
@@ -86,7 +144,8 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
         emit(state.copyWith(
             status: BlocStatus.LOADING_PAGE, request: ConnectMedia.NONE));
 
-        InfoMediaDTO? result = await _repository.getInfoMedia(event.type);
+        InfoMediaDTO? result =
+            await _repository.getInfoMedia(event.type, event.id);
         if (result != null) {
           emit(state.copyWith(
               status: BlocStatus.SUCCESS,

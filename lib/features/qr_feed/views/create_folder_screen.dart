@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -20,6 +21,7 @@ import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
+import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/search_user_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
@@ -154,6 +156,19 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             }
           }
           setState(() {});
+        }
+
+        if (state.request == QrFeed.CREATE_FOLDER &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(
+            msg: 'Tạo thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
         }
       },
       builder: (context, state) {
@@ -559,8 +574,9 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 10),
           const MySeparator(color: AppColor.GREY_DADADA),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           if (listSelectedUser.isNotEmpty) ...[
             ...listSelectedUser.asMap().map(
               (index, e) {
@@ -1016,7 +1032,33 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut);
                       break;
+                    case 2:
+                      List<UserRole> roles = [];
+
+                      roles = listSelectedUser
+                          .map(
+                            (e) =>
+                                UserRole(userId: e.dto!.userId, role: e.role!),
+                          )
+                          .toList();
+                      List<String> qrIds = [];
+                      qrIds = listQr
+                          .where((element) => element.isValid == true)
+                          .map(
+                            (e) => e.dto!.id,
+                          )
+                          .toList();
+
+                      CreateFolderDTO createDTO = CreateFolderDTO(
+                          title: _folderNameController.text,
+                          description: _descriptionController.text,
+                          userId: userProfile.userId,
+                          userRoles: roles,
+                          qrIds: qrIds);
+                      _bloc.add(CreateFolderEvent(dto: createDTO));
+                      break;
                     default:
+                      break;
                   }
                 } else {}
               }
@@ -1041,7 +1083,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (widget.action == ActionType.CREATE)
+              if (widget.action == ActionType.CREATE && _currentPageIndex != 2)
                 const Padding(
                   padding: EdgeInsets.only(left: 16.0),
                   child: Icon(
@@ -1054,7 +1096,9 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 child: Center(
                   child: Text(
                     widget.action == ActionType.CREATE
-                        ? 'Tiếp tục'
+                        ? _currentPageIndex == 2
+                            ? 'Hoàn thành'
+                            : 'Tiếp tục'
                         : 'Cập nhật',
                     style: TextStyle(
                       color: isEnable ? AppColor.WHITE : AppColor.BLACK,
@@ -1063,7 +1107,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   ),
                 ),
               ),
-              if (widget.action == ActionType.CREATE)
+              if (widget.action == ActionType.CREATE && _currentPageIndex != 2)
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
                   child: Icon(

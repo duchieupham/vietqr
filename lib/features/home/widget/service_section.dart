@@ -13,6 +13,7 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/home/widget/item_service.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -130,14 +131,16 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
             pathIcon: ImageConstant.logoTelegramDash,
             title: 'Telegram',
             onTap: () async {
-              Navigator.pushNamed(context, Routes.CONNECT_TELE_SCREEN);
+              Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+                  arguments: {'type': TypeConnect.TELE});
               // Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
             }),
         ItemService(
             pathIcon: ImageConstant.logoLarkDash,
             title: 'Lark',
             onTap: () async {
-              Navigator.pushNamed(context, Routes.CONNECT_LARK_SCREEN);
+              Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+                  arguments: {'type': TypeConnect.LARK});
             }),
         // ItemService(
         //     pathIcon: ImageConstant.logoTelegramDash,
@@ -155,7 +158,8 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
             pathIcon: ImageConstant.logoGGChatHome,
             title: 'Google Chat',
             onTap: () async {
-              Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
+              Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+                  arguments: {'type': TypeConnect.GG_CHAT});
               // Navigator.pushNamed(context, Routes.QR_BOX);
             }),
       ],

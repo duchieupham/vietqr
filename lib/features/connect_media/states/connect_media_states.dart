@@ -1,4 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/gg_chat_dto.dart';
+import 'package:vierqr/models/lart_dto.dart';
+import 'package:vierqr/models/tele_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
@@ -8,6 +11,10 @@ class ConnectMediaStates extends Equatable {
   final BlocStatus status;
   final ConnectMedia request;
   final InfoMediaDTO? dto;
+  final List<GoogleChatDTO>? listChat;
+  final List<LarkDTO>? listLark;
+  final List<TeleDTO>? listTele;
+
   final bool? hasInfo;
   final bool? isValidUrl;
   final bool? isConnectSuccess;
@@ -22,18 +29,23 @@ class ConnectMediaStates extends Equatable {
     this.isValidUrl,
     this.isConnectSuccess,
     this.isAddSuccess,
+    this.listChat,
+    this.listLark,
+    this.listTele,
   });
 
-  ConnectMediaStates copyWith({
-    BlocStatus? status,
-    ConnectMedia? request,
-    String? msg,
-    InfoMediaDTO? dto,
-    bool? hasInfo,
-    bool? isValidUrl,
-    bool? isConnectSuccess,
-    bool? isAddSuccess,
-  }) {
+  ConnectMediaStates copyWith(
+      {BlocStatus? status,
+      ConnectMedia? request,
+      String? msg,
+      InfoMediaDTO? dto,
+      bool? hasInfo,
+      bool? isValidUrl,
+      bool? isConnectSuccess,
+      bool? isAddSuccess,
+      List<GoogleChatDTO>? listChat,
+      List<LarkDTO>? listLark,
+      List<TeleDTO>? listTele}) {
     return ConnectMediaStates(
       status: status ?? this.status,
       request: request ?? this.request,
@@ -43,6 +55,9 @@ class ConnectMediaStates extends Equatable {
       isValidUrl: isValidUrl ?? this.isValidUrl,
       isConnectSuccess: isConnectSuccess ?? this.isConnectSuccess,
       isAddSuccess: isAddSuccess ?? this.isAddSuccess,
+      listChat: listChat ?? this.listChat,
+      listLark: listLark ?? this.listLark,
+      listTele: listTele ?? this.listTele,
     );
   }
 
@@ -55,6 +70,9 @@ class ConnectMediaStates extends Equatable {
         hasInfo,
         isValidUrl,
         isConnectSuccess,
-        isAddSuccess
+        isAddSuccess,
+        listChat,
+        listLark,
+        listTele,
       ];
 }

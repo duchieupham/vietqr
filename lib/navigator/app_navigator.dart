@@ -9,6 +9,7 @@ import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_lark_old/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_lark_old/widget/connect_screen.dart';
+import 'package:vierqr/features/connect_media/list_media_screen.dart';
 import 'package:vierqr/features/connect_media/views/update_sharing_info_screen.dart';
 import 'package:vierqr/features/connect_media/views/update_url_screen.dart';
 import 'package:vierqr/features/connect_telegram_old/connect_telegram_screen.dart';
@@ -243,18 +244,41 @@ class NavigationService {
           cert = param['cert'] as String;
         }
         return _buildRoute(settings, QRBoxScreen(cert: cert));
-      case Routes.CONNECT_GG_CHAT_SCREEN:
-        return _buildRoute(
-            settings, const ConnectMediaScreen(type: TypeConnect.GG_CHAT));
-      case Routes.CONNECT_LARK_SCREEN:
+      case Routes.MEDIAS_SCREEN:
+        Map map = settings.arguments as Map;
+        TypeConnect type = map['type'];
         return _buildRoute(
             settings,
-            const ConnectMediaScreen(
+            ListMediaScreen(
+              type: type,
+            ));
+      case Routes.CONNECT_GG_CHAT_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            ConnectMediaScreen(
+              type: TypeConnect.GG_CHAT,
+              id: id,
+            ));
+      case Routes.CONNECT_LARK_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            ConnectMediaScreen(
               type: TypeConnect.LARK,
+              id: id,
             ));
       case Routes.CONNECT_TELE_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
         return _buildRoute(
-            settings, const ConnectMediaScreen(type: TypeConnect.TELE));
+            settings,
+            ConnectMediaScreen(
+              type: TypeConnect.TELE,
+              id: id,
+            ));
       case Routes.SHOW_QR:
         Map map = settings.arguments as Map;
 

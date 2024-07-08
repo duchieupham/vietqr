@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
+import 'package:vierqr/models/gg_chat_dto.dart';
 import 'package:vierqr/models/info_tele_dto.dart';
+import 'package:vierqr/models/lart_dto.dart';
+import 'package:vierqr/models/tele_dto.dart';
 
 import '../../../commons/constants/env/env_config.dart';
 import '../../../commons/enums/authentication_type.dart';
@@ -102,22 +105,22 @@ class ConnectGgChatRepository {
     return false;
   }
 
-  Future<InfoMediaDTO?> getInfoMedia(TypeConnect type) async {
+  Future<InfoMediaDTO?> getInfoMedia(TypeConnect type, String id) async {
     try {
       String url = '';
 
       switch (type) {
         case TypeConnect.GG_CHAT:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/information-detail?userId=$userId';
+              '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/information-detail?id=$id';
           break;
         case TypeConnect.TELE:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/information-detail?userId=$userId';
+              '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/information-detail?id=$id';
           break;
         case TypeConnect.LARK:
           url =
-              '${getIt.get<AppConfig>().getBaseUrl}service/larks/information-detail?userId=$userId';
+              '${getIt.get<AppConfig>().getBaseUrl}service/larks/information-detail?id=$id';
           break;
         default:
       }
@@ -206,6 +209,72 @@ class ConnectGgChatRepository {
       LOG.error(e.toString());
     }
     return false;
+  }
+
+  Future<List<TeleDTO>> getTeleList() async {
+    List<TeleDTO> result = [];
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/list?userId=$userId&page=1&size=50';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data['data'].map<TeleDTO>((json) {
+          return TeleDTO.fromJson(json);
+        }).toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<LarkDTO>> getLarkList() async {
+    List<LarkDTO> result = [];
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/larks/list?userId=$userId&page=1&size=50';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data['data'].map<LarkDTO>((json) {
+          return LarkDTO.fromJson(json);
+        }).toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<GoogleChatDTO>> getChatList() async {
+    List<GoogleChatDTO> result = [];
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/list?userId=$userId&page=1&size=50';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data['data'].map<GoogleChatDTO>((json) {
+          return GoogleChatDTO.fromJson(json);
+        }).toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
   }
 
   Future<bool?> checkWebhookUrl(String? webhook, TypeConnect type) async {

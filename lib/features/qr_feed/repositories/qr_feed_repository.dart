@@ -12,6 +12,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/invoice/repositories/base_repository.dart';
+import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
@@ -255,6 +256,24 @@ class QrFeedRepository extends BaseRepo {
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> createFolder(CreateFolderDTO dto) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/generate-folder';
+
+      final response = await BaseAPIClient.postAPI(
+        body: dto.toJson(),
+        url: url,
         type: AuthenticationType.SYSTEM,
       );
 

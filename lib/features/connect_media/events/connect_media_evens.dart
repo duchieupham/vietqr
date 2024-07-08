@@ -8,15 +8,23 @@ class ConnectMediaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class GetListGGChatEvent extends ConnectMediaEvent {}
+
+class GetListTeleEvent extends ConnectMediaEvent {}
+
+class GetListLarkEvent extends ConnectMediaEvent {}
+
 class GetInfoEvent extends ConnectMediaEvent {
   final TypeConnect type;
+  final String id;
 
-  GetInfoEvent({
+  const GetInfoEvent({
     required this.type,
+    required this.id,
   });
 
   @override
-  List<Object?> get props => [type];
+  List<Object?> get props => [type, id];
 }
 
 class UpdateUrlEvent extends ConnectMediaEvent {

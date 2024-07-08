@@ -32,20 +32,24 @@ import 'events/connect_media_evens.dart';
 enum TypeConnect { GG_CHAT, TELE, LARK }
 
 class ConnectMediaScreen extends StatelessWidget {
+  final String id;
   final TypeConnect type;
-  const ConnectMediaScreen({super.key, required this.type});
+  const ConnectMediaScreen({super.key, required this.type, required this.id});
 
   @override
   Widget build(BuildContext context) {
     return _Screen(
       type: type,
+      id: id,
     );
   }
 }
 
 class _Screen extends StatefulWidget {
   final TypeConnect type;
-  const _Screen({super.key, required this.type});
+  final String id;
+
+  const _Screen({super.key, required this.type, required this.id});
 
   @override
   State<_Screen> createState() => __ScreenState();
@@ -99,7 +103,7 @@ class __ScreenState extends State<_Screen> {
     if (list.isNotEmpty) {
       _provider.init(list);
     }
-    _bloc.add(GetInfoEvent(type: typeConnect));
+    _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
   }
 
   void deleteWebhook(String id) {
@@ -176,32 +180,30 @@ class __ScreenState extends State<_Screen> {
             break;
           case ConnectMedia.MAKE_CONNECTION:
             if (state.isConnectSuccess == true) {
-              _pageController.nextPage(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut);
+              Navigator.of(context).pop();
             }
             break;
           case ConnectMedia.ADD_BANKS:
             if (state.isAddSuccess == true) {
-              _bloc.add(GetInfoEvent(type: typeConnect));
+              _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
             }
             // initData();
             break;
           case ConnectMedia.DELETE_URL:
             isFirst = true;
-            _bloc.add(GetInfoEvent(type: typeConnect));
+            _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
             break;
           case ConnectMedia.REMOVE_BANK:
-            _bloc.add(GetInfoEvent(type: typeConnect));
+            _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
             break;
           case ConnectMedia.UPDATE_SHARING:
             if (state.status == BlocStatus.SUCCESS) {
-              _bloc.add(GetInfoEvent(type: typeConnect));
+              _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
             }
             break;
           case ConnectMedia.UPDATE_URL:
             if (state.status == BlocStatus.SUCCESS) {
-              _bloc.add(GetInfoEvent(type: typeConnect));
+              _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
             }
             break;
           default:

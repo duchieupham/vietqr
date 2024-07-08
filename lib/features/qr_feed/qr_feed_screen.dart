@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -75,6 +76,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   QrFeedDTO? qrFeedAction;
   String selectedQrId = '';
 
+  final ValueNotifier<bool> _notifier = ValueNotifier<bool>(false);
+
   QRTypeDTO _qrTypeDTO = const QRTypeDTO(
     type: 9,
     name: 'Tất cả',
@@ -94,6 +97,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       (_) {
         _scrollController.addListener(
           () {
+            _notifier.value = _isShowScrollToTop;
             if (_scrollController.position.pixels ==
                 _scrollController.position.maxScrollExtent) {
               if (tab == TabView.COMMUNITY) {
@@ -120,7 +124,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
               }
             }
 
-            updateState();
+            // updateState();
           },
         );
         _scrollController.jumpTo(_scrollController.position.minScrollExtent);
@@ -269,9 +273,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       builder: (context, state) {
         return SafeArea(
           child: Scaffold(
-            floatingActionButton: _isShowScrollToTop
-                ? _scrollToTopWidget()
-                : const SizedBox.shrink(),
+            floatingActionButton: _scrollToTopWidget(),
             backgroundColor: AppColor.WHITE,
             body: CustomScrollView(
               shrinkWrap: true,
@@ -689,36 +691,44 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 
   Widget _scrollToTopWidget() {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      width: 50,
-      height: 50,
-      margin: const EdgeInsets.only(bottom: 80, right: 5),
-      child: FloatingActionButton(
-        backgroundColor: Colors.transparent,
-        elevation: 4,
-        onPressed: () {
-          _scrollToTop();
-        },
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-          // side: BorderSide(color: Colors.red),
-        ),
-        child: Container(
+    return ValueListenableBuilder<bool>(
+      valueListenable: _notifier,
+      builder: (context, value, child) {
+        if (value == false) {
+          return const SizedBox.shrink();
+        }
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
           width: 50,
           height: 50,
-          decoration: BoxDecoration(
-            color: AppColor.WHITE,
-            borderRadius: BorderRadius.circular(50),
+          margin: const EdgeInsets.only(bottom: 80, right: 5),
+          child: FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            elevation: 4,
+            onPressed: () {
+              _scrollToTop();
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+              // side: BorderSide(color: Colors.red),
+            ),
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Icon(
+                Icons.arrow_upward_outlined,
+                color: AppColor.BLACK,
+                size: 15,
+              ),
+            ),
           ),
-          child: const Icon(
-            Icons.arrow_upward_outlined,
-            color: AppColor.BLACK,
-            size: 15,
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 

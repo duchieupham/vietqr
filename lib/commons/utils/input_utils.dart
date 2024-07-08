@@ -7,7 +7,7 @@ class VietnameseNameInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final RegExp regExp = RegExp(
-      r'^[a-zA-ZÀ-ỹẠ-ỵ\s]*$',
+      r'^[a-zA-ZÀ-ỹẠ-ỵ0-9\s]*$',
     );
 
     if (regExp.hasMatch(newValue.text)) {

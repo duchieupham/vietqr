@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
+import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 
 class QrFeedEvent extends Equatable {
@@ -189,6 +190,15 @@ class GetUserFolderEvent extends QrFeedEvent {
 
   @override
   List<Object?> get props => [value, folderId, size, page];
+}
+
+class CreateFolderEvent extends QrFeedEvent {
+  final CreateFolderDTO dto;
+
+  const CreateFolderEvent({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
 }
 
 class GetFolderDetailEvent extends QrFeedEvent {
