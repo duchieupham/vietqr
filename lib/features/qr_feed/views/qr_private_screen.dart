@@ -449,7 +449,17 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                          'type': TypeImage.SAVE,
+                          'title': dto!.title,
+                          'data': dto.data,
+                          'value': dto.value,
+                          'fileAttachmentId': dto.fileAttachmentId,
+                          'qrType': dto.qrType,
+                        });
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         height: 32,
@@ -466,7 +476,17 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                     ),
                     const SizedBox(width: 10),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                          'type': TypeImage.SHARE,
+                          'title': dto!.title,
+                          'data': dto.data,
+                          'value': dto.value,
+                          'fileAttachmentId': dto.fileAttachmentId,
+                          'qrType': dto.qrType,
+                        });
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         height: 32,
