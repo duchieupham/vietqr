@@ -830,14 +830,32 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   }
 
 //navigate to page
+  // void _animatedToPage(int index) {
+  //   try {
+  //     if (index < 3) {
+  //       _pageController.jumpToPage(index);
+  //     } else {
+  //       _pageController.jumpToPage(index - 1);
+  //     }
+
+  //     if (index.pageType == PageType.CARD_QR) {
+  //       eventBus.fire(CheckSyncContact());
+  //     }
+  //   } catch (e) {
+  //     _pageController = PageController(
+  //       initialPage: _provider.pageSelected,
+  //       keepPage: true,
+  //     );
+  //     _animatedToPage(index);
+  //     if (index.pageType == PageType.CARD_QR) {
+  //       eventBus.fire(CheckSyncContact());
+  //     }
+  //   }
+  // }
+
   void _animatedToPage(int index) {
     try {
-      if (index < 3) {
-        _pageController.jumpToPage(index);
-      } else {
-        _pageController.jumpToPage(index - 1);
-      }
-
+      _pageController.jumpToPage(index);
       if (index.pageType == PageType.CARD_QR) {
         eventBus.fire(CheckSyncContact());
       }
