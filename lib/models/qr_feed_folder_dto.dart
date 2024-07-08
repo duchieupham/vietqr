@@ -5,6 +5,9 @@ class QrFeedFolderDTO {
   String description;
   String userId;
   String title;
+  int countQrs;
+
+  int countUsers;
   int timeCreated;
 
   QrFeedFolderDTO({
@@ -12,6 +15,8 @@ class QrFeedFolderDTO {
     required this.description,
     required this.userId,
     required this.title,
+    required this.countUsers,
+    required this.countQrs,
     required this.timeCreated,
   });
 
@@ -22,6 +27,8 @@ class QrFeedFolderDTO {
       description: json['description'],
       userId: json['userId'],
       title: json['title'],
+      countQrs: json['countQrs'],
+      countUsers: json['countUsers'],
       timeCreated: json['timeCreated'],
     );
   }
@@ -32,6 +39,8 @@ class QrFeedFolderDTO {
       'id': id,
       'description': description,
       'userId': userId,
+      'countQrs': countQrs,
+      'countUsers': countUsers,
       'title': title,
       'timeCreated': timeCreated,
     };

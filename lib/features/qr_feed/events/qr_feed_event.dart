@@ -46,6 +46,28 @@ class GetMoreQrPrivateEvent extends QrFeedEvent {
       ];
 }
 
+class GetUserQREvent extends QrFeedEvent {
+  final String value;
+  final int type;
+  final int? size;
+  final int? page;
+
+  const GetUserQREvent({
+    required this.value,
+    required this.type,
+    this.size,
+    this.page,
+  });
+
+  @override
+  List<Object?> get props => [
+        value,
+        type,
+        size,
+        page,
+      ];
+}
+
 class GetQrFeedPrivateEvent extends QrFeedEvent {
   final String value;
 
@@ -96,6 +118,81 @@ class GetMoreQrFeedFolderEvent extends QrFeedEvent {
 
   @override
   List<Object?> get props => [value, type, size, page];
+}
+
+class GetMoreUserFolderEvent extends QrFeedEvent {
+  final String value;
+  final String folderId;
+  final int? size;
+  final int? page;
+
+  const GetMoreUserFolderEvent({
+    required this.value,
+    required this.folderId,
+    this.size,
+    this.page,
+  });
+
+  @override
+  List<Object?> get props => [value, folderId, size, page];
+}
+
+class UpdateUserRoleFolderEvent extends QrFeedEvent {
+  final String folderId;
+  final String userFolderId;
+  final String role;
+
+  const UpdateUserRoleFolderEvent({
+    required this.folderId,
+    required this.userFolderId,
+    required this.role,
+  });
+  @override
+  List<Object?> get props => [folderId, userFolderId, role];
+}
+
+class RemoveUserFolderEvent extends QrFeedEvent {
+  final String folderId;
+  final String userFolderId;
+
+  const RemoveUserFolderEvent({
+    required this.folderId,
+    required this.userFolderId,
+  });
+  @override
+  List<Object?> get props => [folderId, userFolderId];
+}
+
+class GetUserFolderEvent extends QrFeedEvent {
+  final String value;
+  final String folderId;
+  final int? size;
+  final int? page;
+
+  const GetUserFolderEvent({
+    required this.value,
+    required this.folderId,
+    this.size,
+    this.page,
+  });
+
+  @override
+  List<Object?> get props => [value, folderId, size, page];
+}
+
+class GetFolderDetailEvent extends QrFeedEvent {
+  final String value;
+  final String folderId;
+  final int type;
+
+  const GetFolderDetailEvent({
+    required this.value,
+    required this.folderId,
+    required this.type,
+  });
+
+  @override
+  List<Object?> get props => [value, type, folderId];
 }
 
 class GetQrFeedFolderEvent extends QrFeedEvent {

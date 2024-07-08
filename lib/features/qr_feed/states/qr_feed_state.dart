@@ -8,6 +8,8 @@ import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
+import 'package:vierqr/models/qr_folder_detail_dto.dart';
+import 'package:vierqr/models/user_folder_dto.dart';
 
 class QrFeedState extends Equatable {
   final String? msg;
@@ -19,6 +21,7 @@ class QrFeedState extends Equatable {
   final List<QrFeedDTO>? listQrFeed;
   final List<QrFeedPrivateDTO>? listQrFeedPrivate;
   final List<QrFeedFolderDTO>? listQrFeedFolder;
+  final List<UserFolder>? listUserFolder;
   final bool isFolderLoading;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
@@ -26,6 +29,7 @@ class QrFeedState extends Equatable {
   final QrFeedDTO? qrFeed;
   final QrFeedDetailDTO? detailQr;
   final QrFeedDetailDTO? loadCmt;
+  final QrFolderDetailDTO? folderDetailDTO;
 
   final MetaDataDTO? detailMetadata;
   // final bool is
@@ -40,10 +44,12 @@ class QrFeedState extends Equatable {
     this.listQrFeed,
     this.listQrFeedPrivate,
     this.listQrFeedFolder,
+    this.listUserFolder,
     this.listBanks,
     this.bankDto,
     this.qrFeed,
     this.qrFeedPopupDetail,
+    this.folderDetailDTO,
     this.detailQr,
     this.loadCmt,
     this.detailMetadata,
@@ -68,6 +74,8 @@ class QrFeedState extends Equatable {
     QrFeedDetailDTO? detailQr,
     QrFeedDetailDTO? loadCmt,
     MetaDataDTO? detailMetadata,
+    QrFolderDetailDTO? folderDetailDTO,
+    List<UserFolder>? listUserFolder,
   }) {
     return QrFeedState(
       status: status ?? this.status,
@@ -87,6 +95,8 @@ class QrFeedState extends Equatable {
       detailQr: detailQr ?? this.detailQr,
       detailMetadata: detailMetadata ?? this.detailMetadata,
       loadCmt: loadCmt ?? this.loadCmt,
+      folderDetailDTO: folderDetailDTO ?? this.folderDetailDTO,
+      listUserFolder: listUserFolder ?? this.listUserFolder,
     );
   }
 
@@ -108,5 +118,7 @@ class QrFeedState extends Equatable {
         detailQr,
         loadCmt,
         detailMetadata,
+        folderDetailDTO,
+        listUserFolder,
       ];
 }

@@ -39,6 +39,8 @@ import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
+import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_folder_screen.dart';
@@ -132,6 +134,17 @@ class NavigationService {
       case Routes.QR_FOLDER_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrFolderScreen(), settings: settings);
+      case Routes.CREATE_QR_FOLDER_SCREEN:
+        Map map = settings.arguments as Map;
+        ActionType action = map['action'];
+
+        int page = map['page'];
+        return CupertinoPageRoute(
+            builder: (context) => CreateFolderScreen(
+                  action: action,
+                  pageView: page,
+                ),
+            settings: settings);
       // case Routes.QR_STYLE:
       //   return CupertinoPageRoute(
       //       builder: (context) => const QrStyle(), settings: settings);
@@ -161,6 +174,17 @@ class NavigationService {
               notificationTypes: notificationTypes,
               notificationContents: notificationContents,
               type: type,
+            ));
+      case Routes.QR_FOLDER_DETAIL_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
+        String folderName = map['folderName'];
+
+        return _buildRoute(
+            settings,
+            FolderDetailScreen(
+              folderId: id,
+              folderName: folderName,
             ));
       case Routes.QR_DETAIL_SCREEN:
         Map map = settings.arguments as Map;

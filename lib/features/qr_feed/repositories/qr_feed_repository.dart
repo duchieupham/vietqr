@@ -19,7 +19,9 @@ import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
+import 'package:vierqr/models/qr_folder_detail_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrFeedRepository extends BaseRepo {
@@ -28,6 +30,8 @@ class QrFeedRepository extends BaseRepo {
   MetaDataDTO? privateMetadata;
 
   MetaDataDTO? folderMetadata;
+
+  MetaDataDTO? userFolderMetadata;
 
   Future<QrFeedDetailDTO?> addCommend({
     required String qrWalletId,
@@ -146,6 +150,22 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
+  Future<bool> deleteFolder(
+      {required String folderId, required int deleteItems}) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}delete-folder?folderId=$folderId&deleteItems=$deleteItems';
+
+      //  final response = await BaseAPIClient.deleteAPI(
+      //       url: url,
+      //       type: AuthenticationType.SYSTEM,
+      //     );
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
   Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({
     required int type,
     String value = '',
@@ -166,6 +186,106 @@ class QrFeedRepository extends BaseRepo {
         if (data != null) {
           result = data['data'].map<QrFeedPrivateDTO>((json) {
             return QrFeedPrivateDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<QrFolderDetailDTO?> getQrFolderDetail({
+    required int type,
+    required String folderId,
+    required String value,
+  }) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folder-qrs?type=$type&folderId=$folderId&value=$value';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return QrFolderDetailDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
+  }
+
+  Future<bool> updateRoleUserFolder({
+    required String folderId,
+    required String userFolderId,
+    required String role,
+  }) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['folderId'] = folderId;
+      param['userId'] = userFolderId;
+      param['role'] = role;
+
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-folder/update-user-role';
+      final response = await BaseAPIClient.putAPI(
+        url: url,
+        body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> removeUserFolder({
+    required String folderId,
+    required String userFolderId,
+  }) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['folderId'] = folderId;
+      param['userId'] = userFolderId;
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-folder/remove-user';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<List<UserFolder>> getUserFolder({
+    required String folderId,
+    required String value,
+    required int page,
+    required int size,
+  }) async {
+    List<UserFolder> result = [];
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-folder/user-roles/$folderId?value=$value&page=$page&size=$size';
+
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        userFolderMetadata = MetaDataDTO.fromJson(data['metadata']);
+        if (data != null) {
+          result = data['data'].map<UserFolder>((json) {
+            return UserFolder.fromJson(json);
           }).toList();
         }
       }

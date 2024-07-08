@@ -172,6 +172,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
                     minHeight: 20,
                   )
                 : null,
+            suffixIconColor: AppColor.TRANSPARENT,
             suffixIcon: widget.suffixIcon,
             contentPadding: widget.contentPadding ??
                 const EdgeInsets.symmetric(horizontal: 16),

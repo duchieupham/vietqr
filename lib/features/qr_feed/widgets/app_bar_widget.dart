@@ -34,20 +34,9 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
             right: 0,
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-              decoration: BoxDecoration(color: AppColor.WHITE, boxShadow: [
-                BoxShadow(
-                  color: AppColor.BLACK.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: const Offset(0, 3),
-                ),
-                const BoxShadow(
-                  color: AppColor.WHITE,
-                  spreadRadius: 1,
-                  blurRadius: 4,
-                  offset: Offset(0, -1),
-                )
-              ]),
+              decoration: const BoxDecoration(
+                color: AppColor.WHITE,
+              ),
               child: widget,
             ),
           ),

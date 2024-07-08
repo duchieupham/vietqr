@@ -94,8 +94,10 @@ class InfoMediaDTO {
       id: json['id'],
       chatId: json[typeJson],
       userId: json['userId'],
-      banks: List<BankMedia>.from(
-          json['banks'].map((bank) => BankMedia.fromJson(bank, type))),
+      banks: json['banks'] != null
+          ? List<BankMedia>.from(
+              json['banks'].map((bank) => BankMedia.fromJson(bank, type)))
+          : [],
       notificationTypes: json['notificationTypes'] != null
           ? List<String>.from(json['notificationTypes'])
           : [],

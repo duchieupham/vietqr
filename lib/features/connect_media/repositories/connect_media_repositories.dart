@@ -188,10 +188,10 @@ class ConnectGgChatRepository {
           url = '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/bank';
           break;
         case TypeConnect.TELE:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
           break;
         case TypeConnect.LARK:
-          url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
+          url = '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
           break;
         default:
       }

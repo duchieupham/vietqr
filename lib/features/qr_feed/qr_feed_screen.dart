@@ -102,7 +102,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   if (total > metadata!.page!) {
                     // await getMoreOrders();
                     _bloc.add(GetMoreQrFeedEvent(
-                        type: tab == TabView.COMMUNITY ? 0 : 1));
+                      type: tab == TabView.COMMUNITY ? 0 : 1,
+                    ));
                   }
                 }
               } else {
@@ -112,13 +113,14 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     // await getMoreOrders();
                     _bloc.add(GetMoreQrPrivateEvent(
                         type: tab == TabView.COMMUNITY ? 0 : 1,
-                        value: _searchController.text));
+                        value: _searchController.text,
+                        page: privateMetadata!.page! + 1));
                   }
                 }
               }
             }
 
-            // updateState();
+            updateState();
           },
         );
         _scrollController.jumpTo(_scrollController.position.minScrollExtent);
@@ -270,8 +272,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             floatingActionButton: _isShowScrollToTop
                 ? _scrollToTopWidget()
                 : const SizedBox.shrink(),
-            backgroundColor:
-                tab == TabView.COMMUNITY ? AppColor.BLUE_BGR : AppColor.WHITE,
+            backgroundColor: AppColor.WHITE,
             body: CustomScrollView(
               shrinkWrap: true,
               controller: _scrollController,
@@ -329,11 +330,11 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 if (tab == TabView.COMMUNITY)
                   SliverToBoxAdapter(
                     child: Container(
-                      color: AppColor.BLUE_BGR,
+                      color: AppColor.WHITE,
                       width: MediaQuery.of(context).size.width,
-                      height: (list.isEmpty || list.length < 4)
-                          ? MediaQuery.of(context).size.height - 150
-                          : null,
+                      // height: (list.isEmpty || list.length < 4)
+                      //     ? MediaQuery.of(context).size.height - 150
+                      //     : null,
                       child: Column(
                         children: [
                           if (state.request == QrFeed.GET_QR_FEED_LIST &&
@@ -532,7 +533,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                           : const SizedBox.shrink(),
                       enable: true,
                       focusBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
+                          borderSide: BorderSide(color: AppColor.GREY_DADADA)),
                       contentPadding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                       hintText: 'Tìm kiếm mã QR theo tên',
                       keyboardAction: TextInputAction.next,
@@ -549,7 +550,11 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             const SizedBox(width: 10),
             if (tab == TabView.INDIVIDUAL)
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushNamed(Routes.QR_CREATE_SCREEN).then(
+                        (value) {},
+                      );
+                },
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   height: 42,

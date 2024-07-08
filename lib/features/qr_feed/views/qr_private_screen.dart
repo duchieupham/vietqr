@@ -11,9 +11,11 @@ import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 class QrPrivateScreen extends StatefulWidget {
   final List<List<Color>> listGradient;
@@ -115,7 +117,14 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                           const SizedBox.shrink()
                         else
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              NavigationService.push(
+                                  Routes.CREATE_QR_FOLDER_SCREEN,
+                                  arguments: {
+                                    'page': 0,
+                                    'action': ActionType.CREATE
+                                  });
+                            },
                             child: Container(
                               padding: const EdgeInsets.all(4),
                               height: 35,
@@ -184,32 +193,38 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                           }),
                         ),
                       ] else ...[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(
-                              (listQrFolder.length / 2).ceil(), (index) {
-                            if (index * 2 < listQrFolder.length) {
-                              return _buildItemWidget(
-                                  dto: listQrFolder[index * 2],
-                                  isLoading: false);
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          }),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(
-                              (listQrFolder.length / 2).floor(), (index) {
-                            if (index * 2 + 1 < listQrFolder.length) {
-                              return _buildItemWidget(
-                                  dto: listQrFolder[index * 2],
-                                  isLoading: false);
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          }),
-                        ),
+                        if (listQrFolder.isNotEmpty) ...[
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: List.generate(
+                                (listQrFolder.length / 2).ceil(), (index) {
+                              if (index * 2 < listQrFolder.length) {
+                                return _buildItemWidget(
+                                    dto: listQrFolder[index * 2],
+                                    isLoading: false);
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            }),
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: List.generate(
+                                (listQrFolder.length / 2).floor(), (index) {
+                              if (index * 2 + 1 < listQrFolder.length) {
+                                return _buildItemWidget(
+                                    dto: listQrFolder[index * 2],
+                                    isLoading: false);
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            }),
+                          ),
+                        ] else
+                          const Text(
+                            'Thư mục rỗng...',
+                            style: TextStyle(fontSize: 12),
+                          )
                       ]
                     ],
                   ),
@@ -270,7 +285,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                               style: const TextStyle(fontSize: 12),
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 15),
                           ...e.value.map(
                             (item) {
                               return _buildRowQrPrivate(dto: item);
@@ -279,6 +294,11 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                         ],
                       );
                     },
+                  )
+                else
+                  const Text(
+                    'Danh sách rỗng...',
+                    style: TextStyle(fontSize: 12),
                   ),
                 if (state.request == QrFeed.GET_MORE_QR &&
                     state.status == BlocStatus.LOAD_MORE)
@@ -317,7 +337,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
       children: [
         Container(
           height: 60,
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),

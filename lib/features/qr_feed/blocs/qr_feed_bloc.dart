@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
-import 'package:vierqr/features/detail_store/events/detail_store_event.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/repositories/qr_feed_repository.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
@@ -15,7 +14,15 @@ import 'package:vierqr/models/qr_feed_private_dto.dart';
 class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
+
+    on<UpdateUserRoleFolderEvent>(_updateUserRoleFolder);
+    on<RemoveUserFolderEvent>(_removeUserFolder);
+    on<GetUserFolderEvent>(_getUserFolder);
+    on<GetMoreUserFolderEvent>(_getMoreUserFolder);
+
+    on<GetUserQREvent>(_getUserQr);
     on<GetQrFeedFolderEvent>(_getQrFeedFolder);
+    on<GetFolderDetailEvent>(_getQrFolderDetail);
     on<GetMoreQrFeedFolderEvent>(_getMoreQrFeedFolder);
 
     on<GetQrFeedPrivateEvent>(_getQrFeedPrivate);
@@ -334,7 +341,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
         final result = await _qrFeedRepository.getQrFeedPrivate(
             type: event.type,
             value: event.value,
-            page: event.page ?? 1,
+            page: event.page! + 1,
             size: event.size ?? 20);
         if (result.isNotEmpty) {
           emit(state.copyWith(
@@ -366,7 +373,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
         final result = await _qrFeedRepository.getQrFeedFolder(
             type: event.type,
             value: event.value,
-            page: event.page ?? 1,
+            page: event.page! + 1,
             size: event.size ?? 20);
 
         await Future.delayed(const Duration(milliseconds: 500));
@@ -381,6 +388,128 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: QrFeed.GET_MORE_FOLDER));
+    }
+  }
+
+  void _getMoreUserFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetMoreUserFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOAD_MORE,
+            request: QrFeed.GET_MORE_USER_FOLDER));
+
+        final result = await _qrFeedRepository.getUserFolder(
+            folderId: event.folderId,
+            value: event.value,
+            page: event.page! + 1,
+            size: event.size ?? 10);
+
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_MORE_USER_FOLDER,
+          folderMetadata: _qrFeedRepository.userFolderMetadata,
+          listUserFolder: [...result],
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_MORE_USER_FOLDER));
+    }
+  }
+
+  void _updateUserRoleFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateUserRoleFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: QrFeed.UPDATE_USER_ROLE));
+        final result = await _qrFeedRepository.updateRoleUserFolder(
+            role: event.role,
+            folderId: event.folderId,
+            userFolderId: event.userFolderId);
+        if (result) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS, request: QrFeed.UPDATE_USER_ROLE));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, request: QrFeed.UPDATE_USER_ROLE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.UPDATE_USER_ROLE));
+    }
+  }
+
+  void _removeUserFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is RemoveUserFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.REMOVE_USER));
+        final result = await _qrFeedRepository.removeUserFolder(
+            folderId: event.folderId, userFolderId: event.userFolderId);
+        if (result) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS, request: QrFeed.REMOVE_USER));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, request: QrFeed.REMOVE_USER));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.REMOVE_USER));
+    }
+  }
+
+  void _getUserFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetUserFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.GET_USER_FOLDER));
+
+        final result = await _qrFeedRepository.getUserFolder(
+            folderId: event.folderId,
+            value: event.value,
+            page: event.page ?? 1,
+            size: event.size ?? 20);
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_USER_FOLDER,
+          folderMetadata: _qrFeedRepository.userFolderMetadata,
+          listUserFolder: [...result],
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_USER_FOLDER));
+    }
+  }
+
+  void _getQrFolderDetail(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetFolderDetailEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.GET_FOLDER_DETAIL));
+
+        final result = await _qrFeedRepository.getQrFolderDetail(
+            type: event.type, folderId: event.folderId, value: event.value);
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_FOLDER_DETAIL,
+          folderDetailDTO: result,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_FOLDER_DETAIL));
     }
   }
 
@@ -408,6 +537,30 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: QrFeed.GET_QR_FEED_FOLDER));
+    }
+  }
+
+  void _getUserQr(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetUserQREvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.GET_USER_QR));
+        final result = await _qrFeedRepository.getQrFeedPrivate(
+            type: event.type,
+            value: event.value,
+            page: event.page ?? 1,
+            size: event.size ?? 20);
+
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.GET_USER_QR,
+          listQrFeedPrivate: [...result],
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_USER_QR));
     }
   }
 

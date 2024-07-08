@@ -64,6 +64,8 @@ class Routes {
   static const String QR_STYLE = '/qr_style';
   static const String QR_SCREEN = '/qr_screen';
   static const String QR_FOLDER_SCREEN = '/qr_folder_screen';
+  static const String QR_FOLDER_DETAIL_SCREEN = '/qr_folder_detail_screen';
+  static const String CREATE_QR_FOLDER_SCREEN = '/create_qr_folder_screen';
 
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';
