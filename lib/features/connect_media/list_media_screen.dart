@@ -66,6 +66,20 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
             state.status == BlocStatus.SUCCESS) {
           listTele = state.listTele!;
         }
+
+        if (state.request == ConnectMedia.DELETE_URL &&
+            state.status == BlocStatus.SUCCESS) {
+          if (widget.type == TypeConnect.GG_CHAT) {
+            _bloc.add(GetListGGChatEvent());
+          }
+          if (widget.type == TypeConnect.TELE) {
+            _bloc.add(GetListTeleEvent());
+          }
+          if (widget.type == TypeConnect.LARK) {
+            _bloc.add(GetListLarkEvent());
+          }
+        }
+
         return Scaffold(
           backgroundColor: AppColor.WHITE,
           appBar: _appbar(),
@@ -136,7 +150,7 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
         bankAcc = chat.bankAccountCount;
         break;
       case TypeConnect.TELE:
-        id = tele!.chatId;
+        id = tele!.telegramId;
         url = tele.chatId;
         bankAcc = tele.bankAccountCount;
         break;

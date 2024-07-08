@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -11,6 +12,7 @@ import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/events/share_bdsd_event.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/create_store/create_store_screen.dart';
 import 'package:vierqr/features/detail_store/detail_store_screen.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
@@ -449,11 +451,18 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
         _buildItemService(
             context, 'assets/images/logo-telegram-dash.png', 'Telegram',
             () async {
-          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+          Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+              arguments: {'type': TypeConnect.TELE});
         }),
         _buildItemService(context, 'assets/images/logo-lark-dash.png', 'Lark',
             () async {
-          Navigator.pushNamed(context, Routes.CONNECT_LARK);
+          Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+              arguments: {'type': TypeConnect.LARK});
+        }),
+        _buildItemService(
+            context, ImageConstant.logoGGChatHome, 'Google Chat', () async {
+          Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+              arguments: {'type': TypeConnect.GG_CHAT});
         }),
       ],
     );

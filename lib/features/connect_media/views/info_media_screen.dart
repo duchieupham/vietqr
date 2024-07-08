@@ -162,7 +162,7 @@ class InfoMediaScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              type == TypeConnect.TELE ? 'ChatId' : 'Webhook:',
+              type == TypeConnect.TELE ? 'Chat ID' : 'Webhook:',
               style: TextStyle(fontSize: 15),
             ),
             Container(
