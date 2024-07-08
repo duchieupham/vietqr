@@ -27,7 +27,7 @@ class QrPrivateScreen extends StatefulWidget {
 }
 
 class _QrPrivateScreenState extends State<QrPrivateScreen> {
-  late ScrollController _scrollHorizontal;
+  final ScrollController _scrollHorizontal = ScrollController();
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
 
   List<QrFeedPrivateDTO> listQrPrivate = [];
@@ -36,7 +36,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
   @override
   void initState() {
     super.initState();
-    _scrollHorizontal = ScrollController();
+
     initData();
   }
 
@@ -49,18 +49,25 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
       listener: (context, state) {
         if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           listQrPrivate = [...state.listQrFeedPrivate!];
           listQrFolder = [...state.listQrFeedFolder!];
           updateState();
         }
         if (state.request == QrFeed.GET_MORE_QR &&
             state.status == BlocStatus.SUCCESS) {
+          if (!mounted) return;
           listQrPrivate = [...listQrPrivate, ...state.listQrFeedPrivate!];
           updateState();
         }
@@ -90,8 +97,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-                        state.status == BlocStatus.LOADING)
+                    if (state.isFolderLoading == true)
                       const ShimmerBlock(
                           height: 15, width: 120, borderRadius: 50)
                     else
@@ -104,7 +110,10 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                       ),
                     Row(
                       children: [
-                        if (state.status != BlocStatus.LOADING)
+                        if (state.status == BlocStatus.LOADING &&
+                            state.isFolderLoading)
+                          const SizedBox.shrink()
+                        else
                           InkWell(
                             onTap: () {},
                             child: Container(
@@ -121,8 +130,10 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                   imagePath: 'assets/images/ic-add-folder.png'),
                             ),
                           ),
-                        if (listQrFolder.isNotEmpty &&
-                            (state.status != BlocStatus.LOADING)) ...[
+                        if (state.status == BlocStatus.LOADING &&
+                            state.isFolderLoading)
+                          const SizedBox.shrink()
+                        else if (listQrFolder.isNotEmpty) ...[
                           const SizedBox(width: 10),
                           InkWell(
                             onTap: () {
@@ -155,7 +166,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   controller: _scrollHorizontal,
-                  physics: const ScrollPhysics(),
+                  // physics: const ScrollPhysics(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -204,8 +215,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                   ),
                 ),
                 // const SizedBox(height: 10),
-                if (listQrFolder.isNotEmpty &&
-                    state.status != BlocStatus.LOADING)
+                if (listQrFolder.isNotEmpty && !state.isFolderLoading)
                   ScrollIndicator(
                     alignment: Alignment.centerLeft,
                     scrollController: _scrollHorizontal,

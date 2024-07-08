@@ -30,7 +30,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
             status: BlocStatus.NONE, request: ConnectMedia.UPDATE_URL));
 
         final result = await _repository.updateUrl(
-            url: event.url, type: event.type, id: event.id);
+            webhook: event.url, type: event.type, id: event.id);
         if (result!) {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,

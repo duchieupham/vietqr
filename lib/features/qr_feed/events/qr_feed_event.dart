@@ -92,6 +92,23 @@ class DeleteQrCodesEvent extends QrFeedEvent {
   List<Object?> get props => [qrIds];
 }
 
+class GetMoreQrFeedFolderEvent extends QrFeedEvent {
+  final String value;
+  final int type;
+  final int? size;
+  final int? page;
+
+  const GetMoreQrFeedFolderEvent({
+    required this.value,
+    required this.type,
+    this.size,
+    this.page,
+  });
+
+  @override
+  List<Object?> get props => [value, type, size, page];
+}
+
 class GetQrFeedFolderEvent extends QrFeedEvent {
   final String value;
   final int type;
