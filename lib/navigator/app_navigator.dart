@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
@@ -44,6 +45,7 @@ import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_folder_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/views/qr_update_screen.dart';
+import 'package:vierqr/features/qr_feed/widgets/save_share_qr_widget.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
@@ -129,6 +131,24 @@ class NavigationService {
       case Routes.QR_CREATE_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.QR_SAVE_SHARE_SCREEN:
+        Map map = settings.arguments as Map;
+        String title = map['title'];
+        String data = map['data'];
+        String fileAttachmentId = map['fileAttachmentId'];
+        String qrType = map['qrType'];
+        String value = map['value'];
+        TypeImage type = map['type'];
+        return CupertinoPageRoute(
+            builder: (context) => SaveShareQrWidget(
+                  type: type,
+                  title: title,
+                  data: data,
+                  fileAttachmentId: fileAttachmentId,
+                  qrType: qrType,
+                  value: value,
+                ),
+            settings: settings);
       case Routes.QR_FOLDER_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrFolderScreen(), settings: settings);

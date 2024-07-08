@@ -1111,10 +1111,25 @@ class _buildQRFeed extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 20),
-                              const XImage(
-                                imagePath: 'assets/images/ic-share-black.png',
-                                width: 25,
-                                fit: BoxFit.fitWidth,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      Routes.QR_SAVE_SHARE_SCREEN,
+                                      arguments: {
+                                        'type': TypeImage.SHARE,
+                                        'title': dto.title,
+                                        'data': dto.data,
+                                        'value': dto.value,
+                                        'fileAttachmentId':
+                                            dto.fileAttachmentId,
+                                        'qrType': dto.qrType,
+                                      });
+                                },
+                                child: const XImage(
+                                  imagePath: 'assets/images/ic-share-black.png',
+                                  width: 25,
+                                  fit: BoxFit.fitWidth,
+                                ),
                               ),
                             ],
                           )
