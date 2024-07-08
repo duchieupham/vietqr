@@ -200,11 +200,14 @@ class NavigationService {
       case Routes.QR_FOLDER_DETAIL_SCREEN:
         Map map = settings.arguments as Map;
         String id = map['id'];
+        String userId = map['userId'];
+
         String folderName = map['folderName'];
         FolderEnum tab = map['tab'];
         return _buildRoute(
             settings,
             FolderDetailScreen(
+              userId: userId,
               tab: tab,
               folderId: id,
               folderName: folderName,

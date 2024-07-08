@@ -643,9 +643,9 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       String themeVerLocal = SharePrefUtils.getThemeVersion();
       String themeSystem = state.appInfoDTO.themeVersion;
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
-      if (!settingAccountDTO.notificationMobile) {
-        DialogWidget.instance.openNotificationMobile(context);
-      }
+      // if (!settingAccountDTO.notificationMobile) {
+      //   DialogWidget.instance.openNotificationMobile(context);
+      // }
       if (themeVerLocal != themeSystem || listLocal.isEmpty) {
         _bloc.add(GetListThemeEvent());
       } else {}

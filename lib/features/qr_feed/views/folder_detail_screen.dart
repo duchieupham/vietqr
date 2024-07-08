@@ -20,18 +20,22 @@ import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_folder_detail_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 // ignore: constant_identifier_names
 enum FolderEnum { QR, ACCESS }
 
 class FolderDetailScreen extends StatefulWidget {
   final String folderId;
+  final String userId;
+
   final String folderName;
   final FolderEnum tab;
 
   const FolderDetailScreen(
       {super.key,
       required this.folderId,
+      required this.userId,
       required this.folderName,
       required this.tab});
 
@@ -42,6 +46,8 @@ class FolderDetailScreen extends StatefulWidget {
 class _FolderDetailScreenState extends State<FolderDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
+
+  String get userId => SharePrefUtils.getProfile().userId;
 
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
 
@@ -376,7 +382,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               ),
               const SizedBox(width: 8),
               if (!isLoading)
-                if (!user!.role.toLowerCase().contains('admin'))
+                if (!user!.role.toLowerCase().contains('admin') &&
+                    widget.userId == userId)
                   GestureDetector(
                     onTapDown: (details) {
                       onTapDown(details, user);
@@ -407,8 +414,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
   Widget _buildRowQrPrivate({QrData? dto, bool isLoading = false}) {
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .pushNamed(Routes.QR_DETAIL_SCREEN, arguments: {'id': dto!.id});
+        Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
+            arguments: {'id': dto!.id}).then(
+          (value) {
+            _bloc.add(GetFolderDetailEvent(
+                value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
+          },
+        );
       },
       child: Column(
         children: [
@@ -791,25 +803,26 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                       inputType: TextInputType.text,
                       isObscureText: false)),
               const SizedBox(width: 10),
-              InkWell(
-                onTap: tab == FolderEnum.QR ? () {} : () {},
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  height: 42,
-                  width: 42,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                      gradient: LinearGradient(
-                          colors: _gradients[0],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight)),
-                  child: XImage(
-                      imagePath: tab == FolderEnum.QR
-                          ? 'assets/images/ic-scan-content-black.png'
-                          : 'assets/images/ic-add-person-black.png'),
+              if (widget.userId == userId)
+                InkWell(
+                  onTap: tab == FolderEnum.QR ? () {} : () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                        gradient: LinearGradient(
+                            colors: _gradients[0],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)),
+                    child: XImage(
+                        imagePath: tab == FolderEnum.QR
+                            ? 'assets/images/ic-scan-content-black.png'
+                            : 'assets/images/ic-add-person-black.png'),
+                  ),
                 ),
-              ),
             ],
           ),
         ),

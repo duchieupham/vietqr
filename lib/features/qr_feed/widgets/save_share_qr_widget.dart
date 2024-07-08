@@ -140,7 +140,7 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
                       children: [
                         const SizedBox(height: 10),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 30),
                           width: double.infinity,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,7 +156,11 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
                               DefaultTextStyle(
                                 style: const TextStyle(
                                     fontSize: 12, color: AppColor.BLACK),
-                                child: Text(widget.data),
+                                child: Text(
+                                  widget.data,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),

@@ -93,16 +93,16 @@ class DialogWidget {
   //       });
   // }
 
-  openNotificationMobile(
-    BuildContext? context,
-  ) {
-    context ??= NavigationService.context;
-    return showDialog(
-        context: context!,
-        builder: (context) {
-          return PopupNotiWidget();
-        });
-  }
+  // openNotificationMobile(
+  //   BuildContext? context,
+  // ) {
+  //   context ??= NavigationService.context;
+  //   return showDialog(
+  //       context: context!,
+  //       builder: (context) {
+  //         return PopupNotiWidget();
+  //       });
+  // }
 
   openDialogSuccess({required String title, required Function() onClose}) {
     return showCupertinoModalPopup(

@@ -160,6 +160,7 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
     return InkWell(
       onTap: () {
         NavigationService.push(Routes.QR_FOLDER_DETAIL_SCREEN, arguments: {
+          'userId': dto.userId,
           'id': dto.id,
           'folderName': dto.title,
           'tab': FolderEnum.QR

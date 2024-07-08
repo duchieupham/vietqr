@@ -110,12 +110,12 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                 //       'folderName': widget.dto.title,
                 //       'tab': FolderEnum.ACCESS
                 //     });
-                NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
-                    arguments: {
-                      'page': 2,
-                      'action': ActionType.UPDATE,
-                      'id': widget.dto.id,
-                    });
+                // NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                //     arguments: {
+                //       'page': 2,
+                //       'action': ActionType.UPDATE,
+                //       'id': widget.dto.id,
+                //     });
               },
               child: const _buildItem(
                   img: 'assets/images/ic-add-person-black.png',

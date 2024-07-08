@@ -209,6 +209,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                         Routes.QR_FOLDER_DETAIL_SCREEN,
                                         arguments: {
                                           'id': listQrFolder[index].id,
+                                          'userId': listQrFolder[index].userId,
                                           'folderName':
                                               listQrFolder[index].title,
                                           'tab': FolderEnum.QR
@@ -234,6 +235,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                         Routes.QR_FOLDER_DETAIL_SCREEN,
                                         arguments: {
                                           'id': listQrFolder[index].id,
+                                          'userId': listQrFolder[index].userId,
                                           'folderName':
                                               listQrFolder[index].title,
                                           'tab': FolderEnum.QR
@@ -300,9 +302,9 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            height: 35,
-                            width: 35,
-                            // padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            height: 30,
+                            width: 40,
+                            // padding: const EdgeInsets.fromLTRB(10, 10, 20, 10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(100),
                                 gradient: LinearGradient(
@@ -411,6 +413,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (!isLoading) ...[
                       Text(

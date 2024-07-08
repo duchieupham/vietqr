@@ -387,7 +387,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                                     ]).then(
                                   (value) {
                                     if (value == 0) {
-                                      listUserUpdate[index].role = 'MANAGER';
+                                      listUserUpdate[index].role = 'EDITOR';
                                       setState(() {});
                                     }
                                     if (value == 1) {
