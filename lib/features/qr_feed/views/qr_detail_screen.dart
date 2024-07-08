@@ -208,6 +208,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           updateState();
           // onRefresh();
         }
+        if (state.request == QrFeed.DELETE_QR_FEED &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
+          _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
+          updateState();
+        }
         if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
             state.status == BlocStatus.SUCCESS) {
           qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
@@ -1014,6 +1020,84 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             child: Row(
               children: [
                 if (e.userId == userId)
+                  // GestureDetector(
+                  //   onTapDown: (TapDownDetails details) {
+                  //     showMenu(
+                  //       context: context,
+                  //       position: RelativeRect.fromLTRB(
+                  //         details.globalPosition.dx,
+                  //         details.globalPosition.dy + 20,
+                  //         details.globalPosition.dx,
+                  //         details.globalPosition.dy + 20,
+                  //       ),
+                  //       items: <PopupMenuEntry<int>>[
+                  //         const PopupMenuItem<int>(
+                  //           value: 0,
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               'Cập nhật nội dung mã QR',
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.blue),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         const PopupMenuItem<int>(
+                  //           value: 1,
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               'Tuỳ chỉnh giao diện mã QR',
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.blue),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         const PopupMenuItem<int>(
+                  //           value: 2,
+                  //           child: ListTile(
+                  //             title: Text(
+                  //               'Xoá QR',
+                  //               style:
+                  //                   TextStyle(fontSize: 12, color: Colors.red),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ).then((int? result) {
+                  //       if (result != null) {
+                  //         switch (result) {
+                  //           case 0:
+                  //             Navigator.of(context)
+                  //                 .pushNamed(Routes.QR_UPDATE_SCREEN);
+                  //             // Handle "Cập nhật nội dung mã QR"
+                  //             break;
+                  //           case 1:
+                  //             // Handle "Tuỳ chỉnh giao diện mã QR"
+                  //             break;
+                  //           case 2:
+                  //             // Handle "Xoá QR"
+                  //             _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
+                  //             break;
+                  //         }
+                  //       }
+                  //     });
+                  //   },
+                  //   child: Container(
+                  //     padding: const EdgeInsets.all(4),
+                  //     height: 40,
+                  //     width: 40,
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(100),
+                  //       gradient: LinearGradient(
+                  //         colors: _gradients[0],
+                  //         begin: Alignment.centerLeft,
+                  //         end: Alignment.centerRight,
+                  //       ),
+                  //     ),
+                  //     child: const Image(
+                  //       image: AssetImage('assets/images/ic-effect.png'),
+                  //     ),
+                  //   ),
+                  // ),
                   GestureDetector(
                     onTapDown: (TapDownDetails details) {
                       showMenu(
@@ -1062,13 +1146,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                             case 0:
                               Navigator.of(context)
                                   .pushNamed(Routes.QR_UPDATE_SCREEN);
-                              // Handle "Cập nhật nội dung mã QR"
                               break;
                             case 1:
                               // Handle "Tuỳ chỉnh giao diện mã QR"
                               break;
                             case 2:
-                              // Handle "Xoá QR"
+                              _showDeleteConfirmationDialog(context);
                               break;
                           }
                         }
@@ -1121,6 +1204,71 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               ],
             ))
       ],
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận xoá'),
+          content: const Text('Bạn có chắc chắn muốn xoá mã QR này không?'),
+          actions: <Widget>[
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40, // Set a fixed height for the containers
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10), // Padding on both sides
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.red.withOpacity(0.1),
+                    ),
+                    child: TextButton(
+                      child: const Text(
+                        'Huỷ',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10), // Add some space between the buttons
+                Expanded(
+                  child: Container(
+                    height: 40, // Set a fixed height for the containers
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10), // Padding on both sides
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.blue.withOpacity(0.1),
+                    ),
+                    child: TextButton(
+                      child: const Text(
+                        'Xác nhận',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                        _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Xoá thành công'),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -28,6 +28,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<LoadConmmentEvent>(_loadCmt);
     on<AddCommendEvent>(_addCmt);
     on<GetQrFeedPopupDetailEvent>(_getQrFeedPopupDetail);
+    on<DeleteQrCodesEvent>(_deleteQrCodes);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
@@ -455,6 +456,24 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR, request: QrFeed.GET_MORE));
+    }
+  }
+
+  void _deleteQrCodes(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is DeleteQrCodesEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.DELETE_QR_FEED));
+        await _qrFeedRepository.deleteQrCodes(event.qrIds!);
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: QrFeed.DELETE_QR_FEED,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.DELETE_QR_FEED));
     }
   }
 }

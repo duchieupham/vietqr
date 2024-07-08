@@ -248,16 +248,19 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                         children: [
                           Container(
                             height: 35,
-                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            width: 35,
+                            // padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(100),
                                 gradient: LinearGradient(
                                     colors: widget.listGradient[0],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight)),
-                            child: Text(
-                              e.key,
-                              style: const TextStyle(fontSize: 12),
+                            child: Center(
+                              child: Text(
+                                e.key,
+                                style: const TextStyle(fontSize: 12),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 5),
