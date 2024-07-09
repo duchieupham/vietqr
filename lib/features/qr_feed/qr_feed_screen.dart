@@ -1,15 +1,10 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:readmore/readmore.dart';
+import 'package:rive/rive.dart' as rive;
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
@@ -20,10 +15,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
-import 'package:vierqr/commons/widgets/scroll_indicator.dart';
-import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -31,16 +23,12 @@ import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/qr_private_screen.dart';
-import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
-import 'package:vierqr/models/qr_feed_folder_dto.dart';
-import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:rive/rive.dart' as rive;
 
 // ignore: constant_identifier_names
 enum TabView { COMMUNITY, INDIVIDUAL }
@@ -52,6 +40,8 @@ class QrFeedScreen extends StatefulWidget {
   State<QrFeedScreen> createState() => _QrFeedScreenState();
 }
 
+
+///TODO: cả 1 app đang quá lạm dụng lấy width là double.ìninity
 class _QrFeedScreenState extends State<QrFeedScreen> {
   late TextEditingController _searchController;
   late ScrollController _scrollController;
@@ -59,6 +49,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   TabView tab = TabView.COMMUNITY;
 
   FocusNode focusNode = FocusNode();
+  ///TODO:
+  /// chuyển nó than ValueNotifier luôn để cái nút thay đổi chứ không thể nào để cả cái UI thay đổi
+  /// có thể chuyển cái thanh search than một widget riêng để tránh hảnh hưởng từ các widget lần nhau
   bool isClear = false;
 
   rive.StateMachineController? _riveController;
@@ -102,9 +95,12 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 _scrollController.position.maxScrollExtent) {
               if (tab == TabView.COMMUNITY) {
                 if (metadata != null) {
+                  ///TODO: các magic number 10, 20 là cái quái gì để 1 thời gian nuữa hiểu không
+                  ///TODO: các phương thức total > metadata!.page! hoàn toàn có thể viết trong DTO và trả bool
                   int total = (metadata!.total! / 10).ceil();
                   if (total > metadata!.page!) {
                     // await getMoreOrders();
+                    ///TODO: đã kiểm tra bên ngoài mà còn vào trong kiểm tra => thật vô nghĩa
                     _bloc.add(GetMoreQrFeedEvent(
                       type: tab == TabView.COMMUNITY ? 0 : 1,
                     ));
@@ -115,6 +111,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   int total = (privateMetadata!.total! / 20).ceil();
                   if (total > privateMetadata!.page!) {
                     // await getMoreOrders();
+                    ///TODO: đã kiểm tra bên ngoài mà còn vào trong kiểm tra => thật vô nghĩa
                     _bloc.add(GetMoreQrPrivateEvent(
                         type: tab == TabView.COMMUNITY ? 0 : 1,
                         value: _searchController.text,
@@ -170,6 +167,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 
   Future<void> onRefresh() async {
+    ///TODO: đã kiểm tra loại bên ngoài mà bên trong còn kiểm tra là dư thừa
     if (tab == TabView.COMMUNITY) {
       _bloc.add(GetQrFeedEvent(
           isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
@@ -185,6 +183,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
   void startBarcodeScanStream() async {
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    ///TODO: chỗ này hứng dữ liệu trả về để làm gì???
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
       // QRScannerUtils.instance.onScanNavi(data, context);
@@ -292,6 +291,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          ///TODO: chuyển thành XImage để gán const cho nó tránh chỗ này thay đổi đi thay đô lại
                           Image.asset(
                             AppImages.icLogoVietQr,
                             width: 95,
@@ -329,6 +329,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   },
                   onRefresh: () => onRefresh(),
                 ),
+                ///TODO: chỗ này anh nghĩ nên chia thành các pageview thay vì ẩn hiện kiểu này =>
+                /// if/else cho widget lớn này sẽ dễ dẫn đến widget tree sẽ phải tính toán quá nhiều khi chuyển qua chuyển lại
                 if (tab == TabView.COMMUNITY)
                   SliverToBoxAdapter(
                     child: Container(
@@ -381,6 +383,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     );
   }
 
+  ///TODO: đây là bảng màu của cả app do đó không khai báo tràn lan ở tất cả mọi nơi như vậy
   final List<List<Color>> _gradients = [
     [const Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
     [const Color(0xFFBAFFBF), const Color(0xFFCFF4D2)],
@@ -404,7 +407,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           children: [
             InkWell(
               onTap: () {
+                ///TODO: liệu đang đứng ở tab này nhấn tiếp vẫn phải gọi lại dữ liệu???
                 tab = TabView.COMMUNITY;
+                ///TODO: những chỗ get data khi thay đổi hoặc load more nên để thành 1 hàm riêng chỉ cần gọi tới là xong
                 _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
 
                 updateState();
@@ -515,6 +520,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       focusNode: focusNode,
                       controller: _searchController,
                       prefixIcon: const XImage(
+                        ///TODO: đồn về một file để quản lý
                         imagePath: 'assets/images/ic-search-grey.png',
                         width: 30,
                         height: 30,
@@ -552,7 +558,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             const SizedBox(width: 10),
             if (tab == TabView.INDIVIDUAL)
               InkWell(
-                onTap: () {
+                onTap: () {///TODO: nếu không cần xử lý gì thì bỏ phần .then đi
                   Navigator.of(context).pushNamed(Routes.QR_CREATE_SCREEN).then(
                         (value) {},
                       );
@@ -569,6 +575,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     fit: BoxFit.cover,
                     width: 42,
                     height: 42,
+                    ///TODO: bỏ vào một chỗ để quản lý đi
                     imagePath: 'assets/images/ic-plus-black.png',
                     // svgIconColor: ColorFilter.mode(
                     //     AppColor.RED_TEXT, BlendMode.),
@@ -588,6 +595,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   color: AppColor.BLUE_TEXT.withOpacity(0.2),
                 ),
                 child: const XImage(
+                  ///TODO: bỏ vào một chỗ để quản lý đi
                     imagePath: 'assets/images/ic-scan-content-black.png'),
               ),
             ),
@@ -624,6 +632,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   return InkWell(
                     onTap: () {
                       _qrTypeDTO = _qrTypeList[index];
+                      ///TODO: isGetFolder và isFolderLoading đã có 2 biến thế này thì nên tách thành nhiều event khác với nhiều state khác nhau
+                      ///có thể apply thêm build when => giảm việc ren đẻ lại toàn màn hình
                       _bloc.add(GetQrFeedPrivateEvent(
                           type: _qrTypeDTO.type,
                           isGetFolder: true,
@@ -740,12 +750,15 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     QRTypeDTO(type: 1, name: 'Khác'),
   ];
 
+  ///TODO: đã không dùng thì bỏ luôn
   bool get _isAppBarExpanded {
     return _scrollController.hasClients &&
         _scrollController.offset > (100 - kToolbarHeight);
   }
 
   bool get _isShowScrollToTop {
+    ///TODO: những thứ mang tính thay đổi dữ liệu liên tục mà trả về true/false nên check kỹ nếu đã hiện và giá trị vâ l hiện thì không cần set còn nếu
+    ///khác thì mới set tránh cái nút thay đổi liên lục lúc kéo
     return _scrollController.hasClients && _scrollController.offset > 200;
   }
 
@@ -773,6 +786,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 }
 
+///TODO: tên các class dù private thì không thể để kiểu dấu gạch phía trước như vậy nếu muốn thì viết function widget trong widget cha
 // ignore: camel_case_types
 class _buildLoading extends StatelessWidget {
   const _buildLoading({
@@ -855,10 +869,12 @@ class _buildLoading extends StatelessWidget {
   }
 }
 
+///TODO: tên các class dù private thì không thể để kiểu dấu gạch phía trước như vậy nếu muốn thì viết function widget trong widget cha
 // ignore: camel_case_types
 class _buildQRFeed extends StatelessWidget {
   final QrFeedDTO dto;
   final Function(String) onTap;
+
   const _buildQRFeed({
     required this.dto,
     required this.onTap,
@@ -866,6 +882,7 @@ class _buildQRFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ///TODO: đây là bảng màu của cả app do đó không khai báo tràn lan ở tất cả mọi nơi như vậy
     final List<List<Color>> _gradients = [
       [const Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
       [const Color(0xFFBAFFBF), const Color(0xFFCFF4D2)],
@@ -880,6 +897,8 @@ class _buildQRFeed extends StatelessWidget {
     ];
 
     String qrType = '';
+
+    ///TODO: phần type qr này có thể viết extension cho nó để sau này có thể sử dụng chỗ khác hoặc có thể viết trong dto để tái sử dụng
     switch (dto.qrType) {
       case '0':
         qrType = 'Mã QR link';
@@ -928,6 +947,7 @@ class _buildQRFeed extends StatelessWidget {
                   const SizedBox(width: 3),
                   Row(
                     children: [
+                      ///TODO: những cái assets path image này cần dô về file ImageConstant để quản lý tập chung và tái sử dụng lại
                       const XImage(
                         imagePath: 'assets/images/ic-global.png',
                         width: 12,
@@ -986,6 +1006,7 @@ class _buildQRFeed extends StatelessWidget {
           const SizedBox(height: 10),
           InkWell(
             onTap: () {
+              ///TODO: chỗ này nếu đã gọi dữ liệu và truyền về thì nên gọi lúc truyền về không nên để thế này
               getIt
                   .get<QrFeedBloc>()
                   .add(GetQrFeedDetailEvent(id: dto.id, isLoading: true));
@@ -998,6 +1019,7 @@ class _buildQRFeed extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 gradient: LinearGradient(
+                  ///TODO: bảng gradiant này có thể nhét vào dto trả về để thống nhất hơn
                   colors: _gradients[int.parse(dto.theme) - 1],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
@@ -1074,6 +1096,7 @@ class _buildQRFeed extends StatelessWidget {
                                 children: [
                                   GestureDetector(
                                     onTap: () {
+                                      ///TODO: truyền biến vào sẽ gọn code hơn là viết getit vậy
                                       getIt.get<QrFeedBloc>().add(
                                           InteractWithQrEvent(
                                               qrWalletId: dto.id,
@@ -1081,6 +1104,7 @@ class _buildQRFeed extends StatelessWidget {
                                                   dto.hasLiked ? '0' : '1'));
                                     },
                                     child: XImage(
+                                      ///TODO: đồn về một file để quản lý
                                       imagePath: dto.hasLiked
                                           ? 'assets/images/ic-heart-red.png'
                                           : 'assets/images/ic-heart-black.png',
@@ -1100,6 +1124,7 @@ class _buildQRFeed extends StatelessWidget {
                               const SizedBox(width: 20),
                               InkWell(
                                 onTap: () {
+                                  ///TODO: truyền biến vào đi
                                   getIt.get<QrFeedBloc>().add(
                                       GetQrFeedDetailEvent(
                                           id: dto.id, isLoading: true));
@@ -1111,6 +1136,7 @@ class _buildQRFeed extends StatelessWidget {
                                   // mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const XImage(
+                                      ///TODO: đồn về một file để quản lý
                                       imagePath: 'assets/images/ic-comment.png',
                                       height: 25,
                                       fit: BoxFit.fitHeight,
@@ -1141,6 +1167,7 @@ class _buildQRFeed extends StatelessWidget {
                                       });
                                 },
                                 child: const XImage(
+                                  ///TODO: đồn về một file để quản lý
                                   imagePath: 'assets/images/ic-share-black.png',
                                   width: 25,
                                   fit: BoxFit.fitWidth,
