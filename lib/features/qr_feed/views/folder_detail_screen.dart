@@ -487,6 +487,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                             fontSize: 12.0,
                             color: Colors.black54,
                           ),
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ] else ...[

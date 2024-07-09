@@ -190,7 +190,7 @@ class CardWidget extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        e.bankAccount,
+                                        e.transCount.toString(),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
@@ -255,10 +255,15 @@ class CardWidget extends StatelessWidget {
                       ? Container(
                           padding: const EdgeInsets.fromLTRB(20, 8, 10, 10),
                           width: double.infinity,
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
+                              Text(
+                                '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
+                                style: TextStyle(
+                                    fontSize: 12, color: AppColor.WHITE),
+                              ),
+                              const Row(
                                 children: [
                                   Icon(
                                     Icons.remove_circle_outline,
@@ -288,22 +293,28 @@ class CardWidget extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Container(
-                                            width: 80,
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                                color: AppColor.BLUE_TEXT,
-                                                borderRadius:
-                                                    BorderRadius.circular(30)),
-                                            child: const Center(
-                                              child: Text(
-                                                'Gia hạn',
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: AppColor.WHITE),
-                                              ),
-                                            ),
+                                          Text(
+                                            '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.WHITE),
                                           ),
+                                          // Container(
+                                          //   width: 80,
+                                          //   height: 30,
+                                          //   decoration: BoxDecoration(
+                                          //       color: AppColor.BLUE_TEXT,
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(30)),
+                                          //   child: const Center(
+                                          //     child: Text(
+                                          //       'Gia hạn',
+                                          //       style: TextStyle(
+                                          //           fontSize: 12,
+                                          //           color: AppColor.WHITE),
+                                          //     ),
+                                          //   ),
+                                          // ),
                                           // Row(
                                           //   children: [
                                           //     const SizedBox(width: 5),
@@ -315,51 +326,52 @@ class CardWidget extends StatelessWidget {
                                           //     )
                                           //   ],
                                           // ),
-                                          inclusiveDays <= 7
-                                              ? Container(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          10, 5, 10, 5),
-                                                  decoration: BoxDecoration(
-                                                      color:
-                                                          AppColor.RED_FFFF0000,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50)),
-                                                  child: Center(
-                                                    child: Text(
+
+                                          Row(
+                                            children: [
+                                              inclusiveDays <= 7
+                                                  ? Text(
                                                       "Còn $inclusiveDays ngày hết hạn",
                                                       style: const TextStyle(
                                                           fontSize: 12,
-                                                          color:
-                                                              AppColor.WHITE),
-                                                    ),
-                                                  ),
-                                                )
-                                              : Row(
-                                                  children: [
-                                                    const Icon(
-                                                      Icons
-                                                          .check_circle_outline_rounded,
-                                                      size: 15,
-                                                      color: AppColor.WHITE,
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Text(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Color(
+                                                              0xFFFF5353)),
+                                                    )
+                                                  : Text(
                                                       "Đến ${timestampToDate(e.validFeeTo!)}",
                                                       style: const TextStyle(
                                                           fontSize: 12,
                                                           color:
                                                               AppColor.WHITE),
                                                     ),
-                                                  ],
+                                              const SizedBox(width: 8),
+                                              Container(
+                                                width: 70,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                    color: AppColor.BLUE_TEXT,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30)),
+                                                child: const Center(
+                                                  child: Text(
+                                                    'Gia hạn',
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: AppColor.WHITE),
+                                                  ),
                                                 ),
+                                              ),
+                                            ],
+                                          ),
                                         ],
                                       )
                                     : Row(
                                         // crossAxisAlignment: CrossAxisAlignment.end,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                            MainAxisAlignment.end,
                                         children: [
                                           InkWell(
                                             onTap: onActive,
@@ -388,8 +400,15 @@ class CardWidget extends StatelessWidget {
                                       )
                                 : Row(
                                     // crossAxisAlignment: CrossAxisAlignment.end,
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
+                                      Text(
+                                        '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.WHITE),
+                                      ),
                                       InkWell(
                                         onTap: onActive,
                                         child: Container(

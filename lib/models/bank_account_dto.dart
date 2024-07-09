@@ -26,6 +26,7 @@ class BankAccountDTO {
   bool? isValidService;
   int? validFeeFrom;
   int? validFeeTo;
+  int? transCount;
 
   //thêm
   Color? bankColor;
@@ -62,6 +63,7 @@ class BankAccountDTO {
     this.isValidService,
     this.validFeeFrom,
     this.validFeeTo,
+    this.transCount,
   });
 
   setColor(value) {
@@ -92,6 +94,7 @@ class BankAccountDTO {
       isValidService: json['isValidService'],
       validFeeFrom: json['validFeeFrom'],
       validFeeTo: json['validFeeTo'],
+      transCount: json['transCount'],
     );
   }
 
@@ -109,21 +112,22 @@ class BankAccountDTO {
     data['authenticated'] = isAuthenticated;
     data['userId'] = userId;
     data['unlinkedType'] = unlinkedType;
+    data['transCount'] = transCount;
     return data;
   }
 
   String get getBankCodeAndName => '$bankCode - $bankAccount';
 
   BankTypeDTO get changeToBankTypeDTO => BankTypeDTO(
-    id: bankTypeId,
-    bankCode: bankCode,
-    bankName: bankName,
-    imageId: imgId,
-    bankShortName: bankCode,
-    status: bankTypeStatus,
-    caiValue: caiValue,
-    bankId: id,
-    bankAccount: bankAccount,
-    userBankName: userBankName,
-  );
+        id: bankTypeId,
+        bankCode: bankCode,
+        bankName: bankName,
+        imageId: imgId,
+        bankShortName: bankCode,
+        status: bankTypeStatus,
+        caiValue: caiValue,
+        bankId: id,
+        bankAccount: bankAccount,
+        userBankName: userBankName,
+      );
 }
