@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -21,6 +22,7 @@ import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 class QrStyle extends StatefulWidget {
   final int type;
@@ -101,10 +103,7 @@ class _QrStyleState extends State<QrStyle> {
 
           //   },
           // );
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-
+          NavigationService.popUntil(Routes.DASHBOARD);
           Fluttertoast.showToast(
             msg: 'Tạo mã QR thành công',
             toastLength: Toast.LENGTH_SHORT,

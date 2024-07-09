@@ -46,6 +46,7 @@ import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/views/qr_update_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/save_share_qr_widget.dart';
@@ -167,12 +168,25 @@ class NavigationService {
                   pageView: page,
                 ),
             settings: settings);
-      // case Routes.QR_STYLE:
-      //   return CupertinoPageRoute(
-      //       builder: (context) => const QrStyle(), settings: settings);
-      // case Routes.QR_SCREEN:
-      //   return CupertinoPageRoute(
-      //       builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.QR_STYLE:
+        Map map = settings.arguments as Map;
+        int type = map['type'];
+
+        QrCreateFeedDTO dto = map['dto'];
+        return CupertinoPageRoute(
+            builder: (context) => QrStyle(
+                  dto: dto,
+                  type: type,
+                ),
+            settings: settings);
+      case Routes.QR_SCREEN:
+        Map map = settings.arguments as Map;
+        TypeQr type = map['type'];
+        return CupertinoPageRoute(
+            builder: (context) => QrLinkScreen(
+                  type: type,
+                ),
+            settings: settings);
       case Routes.UPDATE_MEDIA_URL:
         Map map = settings.arguments as Map;
         TypeConnect type = map['type'];

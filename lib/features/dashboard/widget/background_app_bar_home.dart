@@ -93,13 +93,15 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                     const SizedBox(width: 12),
                     _getSearchPage(context, page.pageSelected),
                     const Spacer(),
-                    XImage(
-                      imagePath: page.logoApp.path.isEmpty
-                          ? page.settingDTO.logoUrl
-                          : page.logoApp.path,
+                    SizedBox(
                       width: 96,
                       height: 56,
-                      borderRadius: BorderRadius.circular(10),
+                      child: XImage(
+                        imagePath: page.logoApp.path.isEmpty
+                            ? page.settingDTO.logoUrl
+                            : page.logoApp.path,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ],
                 ),

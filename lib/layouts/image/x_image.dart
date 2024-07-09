@@ -12,19 +12,20 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'x_place_holder.dart';
 
 class XImage extends StatelessWidget {
-  const XImage({
-    super.key,
-    required this.imagePath,
-    this.borderRadius = BorderRadius.zero,
-    this.svgIconColor,
-    this.fit,
-    this.animationController,
-    this.width,
-    this.height,
-    this.color,
-    this.errorWidget,
-    // this.onLoaded,
-  });
+  const XImage(
+      {super.key,
+      required this.imagePath,
+      this.borderRadius = BorderRadius.zero,
+      this.svgIconColor,
+      this.fit,
+      this.animationController,
+      this.width,
+      this.height,
+      this.color,
+      this.errorWidget,
+      this.isImgId = false
+      // this.onLoaded,
+      });
 
   final String imagePath;
   final BorderRadius? borderRadius;
@@ -35,6 +36,7 @@ class XImage extends StatelessWidget {
   final double? height;
   final Color? color;
   final Widget? errorWidget;
+  final bool? isImgId;
 
   // final Function(LottieComposition)? onLoaded;
 
@@ -149,12 +151,30 @@ class XImage extends StatelessWidget {
   }
 
   Widget _buildEmptyImage(BuildContext context) {
-    return Image.asset(
-      ImageConstant.icAvatar,
-      fit: fit,
-      width: width,
-      height: height,
-      color: color,
+    return Container(
+      // color: Colors.grey[200],
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Center(
+          child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(
+          "VietQR",
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      )),
     );
+    // return Image.asset(
+    //   ImageConstant.icAvatar,
+    //   fit: fit,
+    //   width: width,
+    //   height: height,
+    //   color: color,
+    // );
   }
 }

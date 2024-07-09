@@ -212,7 +212,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       listener: (context, state) {
         if (state.request == QrFeed.CREATE_QR &&
             state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
           _bloc.add(GetQrFeedEvent(
             isLoading: true,
             type: tab == TabView.COMMUNITY ? 0 : 1,
@@ -221,7 +220,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
             state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
           Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
               arguments: {'id': selectedQrId});
         }
@@ -366,7 +364,16 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     ),
                   )
                 else
-                  QrPrivateScreen(listGradient: _gradients),
+                  QrPrivateScreen(
+                    listGradient: _gradients,
+                    onDetail: (qrId) {
+                      _bloc
+                          .add(GetQrFeedDetailEvent(id: qrId, isLoading: true));
+                      setState(() {
+                        selectedQrId = qrId;
+                      });
+                    },
+                  ),
               ],
             ),
           ),
@@ -811,7 +818,7 @@ class _buildLoading extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ShimmerBlock(height: 15, width: 150, borderRadius: 10),
-                  ShimmerBlock(height: 15, width: 20, borderRadius: 10),
+                  // ShimmerBlock(height: 15, width: 20, borderRadius: 10),
                 ],
               ),
               const SizedBox(height: 8),
@@ -1030,6 +1037,7 @@ class _buildQRFeed extends StatelessWidget {
                         backgroundColor: AppColor.WHITE,
                         embeddedImage: ImageUtils.instance
                             .getImageNetworkCache(dto.fileAttachmentId),
+
                         embeddedImageStyle: const QrEmbeddedImageStyle(
                           size: Size(20, 20),
                         ),

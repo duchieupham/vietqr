@@ -20,9 +20,11 @@ import 'package:vierqr/navigator/app_navigator.dart';
 
 class QrPrivateScreen extends StatefulWidget {
   final List<List<Color>> listGradient;
+  final Function(String) onDetail;
   const QrPrivateScreen({
     super.key,
     required this.listGradient,
+    required this.onDetail,
   });
 
   @override
@@ -30,7 +32,8 @@ class QrPrivateScreen extends StatefulWidget {
 }
 
 class _QrPrivateScreenState extends State<QrPrivateScreen> {
-  final ScrollController _scrollHorizontal = ScrollController();
+  final ScrollController _scrollHorizontal =
+      ScrollController(initialScrollOffset: 0.0);
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
 
   List<QrFeedPrivateDTO> listQrPrivate = [];
@@ -44,10 +47,9 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
   }
 
   void initData() {
+    // _scrollHorizontal.jumpTo(0.0);
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        _scrollHorizontal.jumpTo(0.0);
-      },
+      (_) {},
     );
   }
 
@@ -60,22 +62,19 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
-      listener: (context, state) {
+      listener: (context, state) {},
+      builder: (context, state) {
         if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
             state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
           listQrPrivate = [...state.listQrFeedPrivate!];
           listQrFolder = [...state.listQrFeedFolder!];
-          updateState();
+          // updateState();
         }
         if (state.request == QrFeed.GET_MORE_QR &&
             state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
           listQrPrivate = [...listQrPrivate, ...state.listQrFeedPrivate!];
-          updateState();
+          // updateState();
         }
-      },
-      builder: (context, state) {
         Map<String, List<QrFeedPrivateDTO>> groupsAlphabet = {};
         if (listQrPrivate.isNotEmpty) {
           for (var item in listQrPrivate) {
@@ -86,6 +85,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
             groupsAlphabet[firstChar]!.add(item);
           }
         }
+
         return SliverToBoxAdapter(
           child: Container(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -260,7 +260,9 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                   ),
                 ),
                 // const SizedBox(height: 10),
-                if (listQrFolder.isNotEmpty && !state.isFolderLoading)
+                if (listQrFolder.isNotEmpty &&
+                    listQrFolder.length > 4 &&
+                    !state.isFolderLoading)
                   ScrollIndicator(
                     alignment: Alignment.centerLeft,
                     scrollController: _scrollHorizontal,
@@ -375,138 +377,145 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
           ),
-          child: Row(
-            children: [
-              if (!isLoading)
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      gradient: LinearGradient(
-                          colors: dto!.qrType == '0'
-                              ? widget.listGradient[9]
-                              : dto.qrType == '1'
-                                  ? widget.listGradient[3]
-                                  : dto.qrType == '2'
-                                      ? widget.listGradient[1]
-                                      : widget.listGradient[10],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight)),
-                  child: XImage(
-                      imagePath: dto.qrType == '0'
-                          ? 'assets/images/ic-linked-bank-blue.png'
-                          : dto.qrType == '1'
-                              ? 'assets/images/ic-file-violet.png'
-                              : dto.qrType == '2'
-                                  ? 'assets/images/ic-vcard1.png'
-                                  : 'assets/images/ic-vietqr-trans.png'),
-                )
-              else
-                const ShimmerBlock(
-                  height: 40,
-                  width: 40,
-                  borderRadius: 100,
-                ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (!isLoading) ...[
-                      Text(
-                        dto!.title,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.bold,
+          child: InkWell(
+            onTap: () {
+              widget.onDetail(dto!.id);
+            },
+            child: Row(
+              children: [
+                if (!isLoading)
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        gradient: LinearGradient(
+                            colors: dto!.qrType == '0'
+                                ? widget.listGradient[9]
+                                : dto.qrType == '1'
+                                    ? widget.listGradient[3]
+                                    : dto.qrType == '2'
+                                        ? widget.listGradient[1]
+                                        : widget.listGradient[10],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)),
+                    child: XImage(
+                        imagePath: dto.qrType == '0'
+                            ? 'assets/images/ic-linked-bank-blue.png'
+                            : dto.qrType == '1'
+                                ? 'assets/images/ic-file-violet.png'
+                                : dto.qrType == '2'
+                                    ? 'assets/images/ic-vcard1.png'
+                                    : 'assets/images/ic-vietqr-trans.png'),
+                  )
+                else
+                  const ShimmerBlock(
+                    height: 40,
+                    width: 40,
+                    borderRadius: 100,
+                  ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (!isLoading) ...[
+                        Text(
+                          dto!.title,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
-                        dto.data,
-                        style: const TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.black54,
+                        const SizedBox(height: 4.0),
+                        Text(
+                          dto.data,
+                          style: const TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.black54,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ] else ...[
-                      const ShimmerBlock(
-                        height: 12,
-                        width: 300,
-                      ),
-                      const SizedBox(height: 4.0),
-                      const ShimmerBlock(
-                        height: 12,
-                        width: 200,
-                      ),
-                    ]
-                  ],
+                      ] else ...[
+                        const ShimmerBlock(
+                          height: 12,
+                          width: 300,
+                        ),
+                        const SizedBox(height: 4.0),
+                        const ShimmerBlock(
+                          height: 12,
+                          width: 200,
+                        ),
+                      ]
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              if (!isLoading)
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                          'type': TypeImage.SAVE,
-                          'title': dto!.title,
-                          'data': dto.data,
-                          'value': dto.value,
-                          'fileAttachmentId': dto.fileAttachmentId,
-                          'qrType': dto.qrType,
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            gradient: LinearGradient(
-                                colors: widget.listGradient[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath: 'assets/images/ic-dowload.png'),
+                const SizedBox(width: 8),
+                if (!isLoading)
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              Routes.QR_SAVE_SHARE_SCREEN,
+                              arguments: {
+                                'type': TypeImage.SAVE,
+                                'title': dto!.title,
+                                'data': dto.data,
+                                'value': dto.value,
+                                'fileAttachmentId': dto.fileAttachmentId,
+                                'qrType': dto.qrType,
+                              });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              gradient: LinearGradient(
+                                  colors: widget.listGradient[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath: 'assets/images/ic-dowload.png'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                          'type': TypeImage.SHARE,
-                          'title': dto!.title,
-                          'data': dto.data,
-                          'value': dto.value,
-                          'fileAttachmentId': dto.fileAttachmentId,
-                          'qrType': dto.qrType,
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        height: 32,
-                        width: 32,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            gradient: LinearGradient(
-                                colors: widget.listGradient[0],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight)),
-                        child: const XImage(
-                            imagePath: 'assets/images/ic-share-black.png'),
+                      const SizedBox(width: 10),
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(
+                              Routes.QR_SAVE_SHARE_SCREEN,
+                              arguments: {
+                                'type': TypeImage.SHARE,
+                                'title': dto!.title,
+                                'data': dto.data,
+                                'value': dto.value,
+                                'fileAttachmentId': dto.fileAttachmentId,
+                                'qrType': dto.qrType,
+                              });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          height: 32,
+                          width: 32,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              gradient: LinearGradient(
+                                  colors: widget.listGradient[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath: 'assets/images/ic-share-black.png'),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-            ],
+                    ],
+                  ),
+              ],
+            ),
           ),
         ),
         const MySeparator(

@@ -146,6 +146,7 @@ class CardWidget extends StatelessWidget {
                                             .getImageNetWork(e.imgId),
                                       ),
                                     ),
+                                    // child: XImage(imagePath: e.imgId),
                                   ),
                                 ),
                                 if (e.isAuthenticated &&

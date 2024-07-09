@@ -61,9 +61,15 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   bool isLoading = true;
 
   Timer? _timer;
-  double _inputHeight = 40;
-  bool isExpand = false;
-  bool hasHeight = false;
+  // double _inputHeight = 40;
+  // bool isExpand = false;
+  // bool hasHeight = false;
+
+  final ValueNotifier<bool> _hasHeightNotifier = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _isExpandNotifier = ValueNotifier<bool>(false);
+
+  final ValueNotifier<double> _inputHeightNotifier =
+      ValueNotifier<double>(40.0);
 
   String qrType = '';
   QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
@@ -80,14 +86,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       (_) {
         focusNode.addListener(
           () {
+            _isExpandNotifier.value = focusNode.hasFocus;
             if (focusNode.hasFocus) {
               scrollController.animateTo(
                   scrollController.position.maxScrollExtent,
                   duration: const Duration(milliseconds: 150),
                   curve: Curves.easeInOut);
-              isExpand = true;
-            } else {
-              isExpand = false;
             }
             // updateState();
           },
@@ -112,16 +116,16 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           },
         );
         _cmtController.addListener(_checkInputHeight);
-        // _timer = Timer.periodic(
-        //   const Duration(seconds: 20),
-        //   (timer) {
-        //     _bloc.add(LoadConmmentEvent(
-        //         id: widget.id,
-        //         isLoadMore: false,
-        //         isLoading: false,
-        //         size: list.isEmpty ? 10 : list.length));
-        //   },
-        // );
+        _timer = Timer.periodic(
+          const Duration(seconds: 20),
+          (timer) {
+            _bloc.add(LoadConmmentEvent(
+                id: widget.id,
+                isLoadMore: false,
+                isLoading: false,
+                size: list.isEmpty ? 10 : list.length));
+          },
+        );
         _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
       },
     );
@@ -150,6 +154,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     _timer?.cancel();
     focusNode.dispose();
     _cmtController.dispose();
+    _hasHeightNotifier.dispose();
+    _isExpandNotifier.dispose();
+    _inputHeightNotifier.dispose();
     super.dispose();
   }
 
@@ -158,86 +165,11 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
       listener: (context, state) {
-        if (state.request == QrFeed.ADD_CMT &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          focusNode.unfocus();
-          _cmtController.clear();
-          metadata = state.detailMetadata;
-          final detail = state.loadCmt;
-
-          if (detail != null) {
-            qrInteract = QrInteract(
-              likes: detail.likeCount,
-              cmt: detail.commentCount,
-              hasLike: detail.hasLiked == 1 ? true : false,
-              timeCreate: detail.timeCreated,
-            );
-            list = [...detail.comments.data];
-          }
-          updateState();
-          // onRefresh();
-        }
         if (state.request == QrFeed.DELETE_QR_FEED &&
             state.status == BlocStatus.SUCCESS) {
           Navigator.of(context).pop();
           _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
-          updateState();
-        }
-        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
-          updateState();
-        }
-        if (state.request == QrFeed.LOAD_CMT &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          metadata = state.detailMetadata;
-          final detail = state.loadCmt;
-
-          if (detail != null) {
-            qrInteract = QrInteract(
-              likes: detail.likeCount,
-              cmt: detail.commentCount,
-              hasLike: detail.hasLiked == 1 ? true : false,
-              timeCreate: detail.timeCreated,
-            );
-            list = [...detail.comments.data];
-          }
-          updateState();
-        }
-        if (state.request == QrFeed.LOAD_CMT &&
-            state.status == BlocStatus.LOAD_MORE) {
-          if (!mounted) return;
-          metadata = state.detailMetadata;
-          final detail = state.loadCmt;
-
-          if (detail != null) {
-            qrInteract = QrInteract(
-              likes: detail.likeCount,
-              cmt: detail.commentCount,
-              hasLike: detail.hasLiked == 1 ? true : false,
-              timeCreate: detail.timeCreated,
-            );
-            list = [...list, ...detail.comments.data];
-          }
-          updateState();
-        }
-
-        if (state.request == QrFeed.INTERACT_WITH_QR &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          final result = state.qrFeed;
-          if (result != null) {
-            qrInteract = QrInteract(
-              likes: result.likeCount,
-              cmt: result.commentCount,
-              timeCreate: result.timeCreated,
-              hasLike: result.hasLiked,
-            );
-          }
-          updateState();
+          // updateState();
         }
       },
       builder: (context, state) {
@@ -257,6 +189,74 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             qrType = detail.qrType;
           }
         }
+        if (state.request == QrFeed.ADD_CMT &&
+            state.status == BlocStatus.SUCCESS) {
+          metadata = state.detailMetadata;
+          final detail = state.loadCmt;
+
+          if (detail != null) {
+            qrInteract = QrInteract(
+              likes: detail.likeCount,
+              cmt: detail.commentCount,
+              hasLike: detail.hasLiked == 1 ? true : false,
+              timeCreate: detail.timeCreated,
+            );
+            list = [...detail.comments.data];
+          }
+          // updateState();
+          // onRefresh();
+        }
+        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
+            state.status == BlocStatus.SUCCESS) {
+          qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
+          // updateState();
+        }
+        if (state.request == QrFeed.LOAD_CMT &&
+            state.status == BlocStatus.SUCCESS) {
+          metadata = state.detailMetadata;
+          final detail = state.loadCmt;
+
+          if (detail != null) {
+            qrInteract = QrInteract(
+              likes: detail.likeCount,
+              cmt: detail.commentCount,
+              hasLike: detail.hasLiked == 1 ? true : false,
+              timeCreate: detail.timeCreated,
+            );
+            list = [...detail.comments.data];
+          }
+          // updateState();
+        }
+        if (state.request == QrFeed.LOAD_CMT &&
+            state.status == BlocStatus.LOAD_MORE) {
+          metadata = state.detailMetadata;
+          final detail = state.loadCmt;
+
+          if (detail != null) {
+            qrInteract = QrInteract(
+              likes: detail.likeCount,
+              cmt: detail.commentCount,
+              hasLike: detail.hasLiked == 1 ? true : false,
+              timeCreate: detail.timeCreated,
+            );
+            list = [...list, ...detail.comments.data];
+          }
+          // updateState();
+        }
+
+        if (state.request == QrFeed.INTERACT_WITH_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          final result = state.qrFeed;
+          if (result != null) {
+            qrInteract = QrInteract(
+              likes: result.likeCount,
+              cmt: result.commentCount,
+              timeCreate: result.timeCreated,
+              hasLike: result.hasLiked,
+            );
+          }
+          // updateState();
+        }
 
         return Scaffold(
           backgroundColor: Colors.white,
@@ -268,7 +268,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             edgeOffset: 0,
             onRefresh: () => onRefresh(),
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               controller: scrollController,
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
@@ -338,7 +338,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             gradient: LinearGradient(
-                colors: _gradients[0],
+                colors: _gradients[int.parse(e.theme) - 1],
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight),
           ),
@@ -448,10 +448,11 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         ),
                       )
                     : Container(
-                        margin: const EdgeInsets.all(25),
+                        margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                         child: const ShimmerBlock(
                           width: 250,
                           height: 250,
+                          borderRadius: 10,
                         ),
                       ),
                 const Spacer(),
@@ -609,9 +610,6 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           ...list.map(
             (e) => _buildCommend(e),
           ),
-        if ((list.isNotEmpty ? list.length < 3 : list.isEmpty) &&
-            isLoading == false)
-          const SizedBox(height: 300),
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.LOADING)
           const Padding(
@@ -766,154 +764,189 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Container(
-            width: !isExpand
-                ? MediaQuery.of(context).size.width - 190
-                : MediaQuery.of(context).size.width - 100,
-            height: _inputHeight,
-            decoration: BoxDecoration(
-              borderRadius: hasHeight
-                  ? BorderRadius.circular(5)
-                  : BorderRadius.circular(50),
-              color: AppColor.WHITE,
-              border: Border.all(color: AppColor.GREY_DADADA),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(width: 15),
-                if (!focusNode.hasFocus && _inputHeight == 40) ...[
-                  const XImage(
-                    imagePath: 'assets/images/ic-comment-grey.png',
-                    width: 25,
-                    height: 25,
-                    fit: BoxFit.cover,
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: TextField(
-                    expands: true,
-                    maxLines: null,
-                    controller: _cmtController,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction: TextInputAction.newline,
-                    focusNode: focusNode,
-                    decoration: InputDecoration(
-                      suffixIconConstraints:
-                          const BoxConstraints(maxWidth: 30, minWidth: 0),
-                      suffixIcon: _cmtController.text.isNotEmpty
-                          ? Container(
-                              padding:
-                                  EdgeInsets.only(bottom: hasHeight ? 8 : 2),
-                              alignment: !hasHeight
-                                  ? Alignment.center
-                                  : Alignment.bottomCenter,
-                              child: InkWell(
-                                onTap: () {
-                                  _bloc.add(AddCommendEvent(
-                                      qrWalletId: e.id,
-                                      message: _cmtController.text,
-                                      size:
-                                          list.isEmpty ? 10 : list.length + 1));
-                                },
-                                child: Container(
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [
-                                          Color(0xFF00C6FF),
-                                          Color(0xFF0072FF),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(100)),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.arrow_upward_outlined,
-                                      size: 15,
-                                      color: AppColor.WHITE,
-                                    ),
-                                  ),
-                                ),
+          ValueListenableBuilder<bool>(
+            valueListenable: _isExpandNotifier,
+            builder: (context, isExpand, child) {
+              return ValueListenableBuilder<bool>(
+                valueListenable: _hasHeightNotifier,
+                builder: (context, hasHeight, child) {
+                  return ValueListenableBuilder<double>(
+                    valueListenable: _inputHeightNotifier,
+                    builder: (context, inputHeight, child) {
+                      return Container(
+                        width: !isExpand
+                            ? MediaQuery.of(context).size.width - 190
+                            : MediaQuery.of(context).size.width - 100,
+                        height: inputHeight,
+                        decoration: BoxDecoration(
+                          borderRadius: hasHeight
+                              ? BorderRadius.circular(5)
+                              : BorderRadius.circular(50),
+                          color: AppColor.WHITE,
+                          border: Border.all(color: AppColor.GREY_DADADA),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 15),
+                            if (!focusNode.hasFocus && inputHeight == 40) ...[
+                              const XImage(
+                                imagePath: 'assets/images/ic-comment-grey.png',
+                                width: 25,
+                                height: 25,
+                                fit: BoxFit.cover,
                               ),
-                            )
-                          : const SizedBox.shrink(),
-                      enabledBorder: InputBorder.none,
-                      contentPadding: EdgeInsets.fromLTRB(
-                          0, 12, 10, focusNode.hasFocus ? 8 : 10),
-                      hintText: 'Bình luận',
-                      hintStyle:
-                          const TextStyle(fontSize: 12, color: Colors.grey),
-                      border: InputBorder.none,
-                    ),
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                ),
-                const SizedBox(
-                  width: 4,
-                ),
-              ],
-            ),
+                              const SizedBox(width: 8),
+                            ],
+                            Expanded(
+                              child: TextField(
+                                expands: true,
+                                maxLines: null,
+                                controller: _cmtController,
+                                keyboardType: TextInputType.multiline,
+                                textInputAction: TextInputAction.newline,
+                                focusNode: focusNode,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
+                                decoration: InputDecoration(
+                                  suffixIconConstraints: const BoxConstraints(
+                                      maxWidth: 30, minWidth: 0),
+                                  suffixIcon: _cmtController.text.isNotEmpty
+                                      ? Container(
+                                          padding: EdgeInsets.only(
+                                              bottom: hasHeight ? 8 : 2),
+                                          alignment: !hasHeight
+                                              ? Alignment.center
+                                              : Alignment.bottomCenter,
+                                          child: InkWell(
+                                            onTap: () {
+                                              focusNode.unfocus();
+                                              _cmtController.clear();
+                                              _bloc.add(AddCommendEvent(
+                                                  qrWalletId: e.id,
+                                                  message: _cmtController.text,
+                                                  size: list.isEmpty
+                                                      ? 10
+                                                      : list.length + 1));
+                                            },
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                  gradient:
+                                                      const LinearGradient(
+                                                    colors: [
+                                                      Color(0xFF00C6FF),
+                                                      Color(0xFF0072FF),
+                                                    ],
+                                                    begin: Alignment.centerLeft,
+                                                    end: Alignment.centerRight,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100)),
+                                              child: const Center(
+                                                child: Icon(
+                                                  Icons.arrow_upward_outlined,
+                                                  size: 15,
+                                                  color: AppColor.WHITE,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink(),
+                                  enabledBorder: InputBorder.none,
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      0, 12, 10, focusNode.hasFocus ? 8 : 10),
+                                  hintText: 'Bình luận',
+                                  hintStyle: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                  border: InputBorder.none,
+                                ),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            },
           ),
-          if (!isExpand) ...[
-            const SizedBox(width: 10),
-            InkWell(
-              onTap: () {
-                Navigator.of(context)
-                    .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                  'type': TypeImage.SAVE,
-                  'title': e.title,
-                  'data': e.data,
-                  'value': e.value,
-                  'fileAttachmentId': e.fileAttachmentId,
-                  'qrType': e.qrType,
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: LinearGradient(
-                        colors: _gradients[0],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)),
-                child: const XImage(imagePath: 'assets/images/ic-dowload.png'),
-              ),
-            ),
-            const SizedBox(width: 10),
-            InkWell(
-              onTap: () {
-                Navigator.of(context)
-                    .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                  'type': TypeImage.SHARE,
-                  'title': e.title,
-                  'data': e.data,
-                  'value': e.value,
-                  'fileAttachmentId': e.fileAttachmentId,
-                  'qrType': e.qrType,
-                });
-              },
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: LinearGradient(
-                        colors: _gradients[0],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)),
-                child:
-                    const XImage(imagePath: 'assets/images/ic-share-black.png'),
-              ),
-            ),
-          ]
+          ValueListenableBuilder<bool>(
+            valueListenable: _isExpandNotifier,
+            builder: (context, isExpand, child) {
+              if (isExpand) {
+                return const SizedBox.shrink();
+              }
+              return Row(
+                children: [
+                  const SizedBox(width: 10),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                        'type': TypeImage.SAVE,
+                        'title': e.title,
+                        'data': e.data,
+                        'value': e.value,
+                        'fileAttachmentId': e.fileAttachmentId,
+                        'qrType': e.qrType,
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          gradient: LinearGradient(
+                              colors: _gradients[0],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight)),
+                      child: const XImage(
+                          imagePath: 'assets/images/ic-dowload.png'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context)
+                          .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
+                        'type': TypeImage.SHARE,
+                        'title': e.title,
+                        'data': e.data,
+                        'value': e.value,
+                        'fileAttachmentId': e.fileAttachmentId,
+                        'qrType': e.qrType,
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          gradient: LinearGradient(
+                              colors: _gradients[0],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight)),
+                      child: const XImage(
+                          imagePath: 'assets/images/ic-share-black.png'),
+                    ),
+                  ),
+                ],
+              );
+            },
+          )
           // else ...[
           //   const SizedBox(width: 10),
           //   InkWell(
@@ -1255,18 +1288,18 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
 
   void _checkInputHeight() async {
     int count = _cmtController.text.split('\n').length;
-    isExpand = true;
-    if (count == 0 && _inputHeight == 40.0) {
+    _isExpandNotifier.value = true;
+    if (count == 0 && _inputHeightNotifier.value == 40.0) {
       return;
     }
-    hasHeight = count != 1;
+    _hasHeightNotifier.value = count != 1;
     if (count <= 6) {
       // use a maximum height of 6 rows
       // height values can be adapted based on the font size
       var newHeight = count == 0 ? 40.0 : 28.0 + (count * 18.0);
-      _inputHeight = newHeight;
+      _inputHeightNotifier.value = newHeight;
     }
-    updateState();
+    // updateState();
   }
 
   void updateState() {
