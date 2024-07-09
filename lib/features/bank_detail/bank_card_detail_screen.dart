@@ -270,7 +270,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                           children: [
                             Padding(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: width < 400 ? 4 : 10.0),
+                                  horizontal: width < 400 ? 4 : 8),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -285,7 +285,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 6, horizontal: 10),
+                                            vertical: 6, horizontal: 8),
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                           borderRadius:
@@ -403,10 +403,10 @@ class _BankCardDetailState extends State<BankCardDetailState> {
           onTap: () {
             if (dto!.bankCode.contains('BIDV')) {
               ConfirmOTPUnlinkTypeBankDTO confirmDTO =
-              ConfirmOTPUnlinkTypeBankDTO(
-                  ewalletToken: '',
-                  bankAccount: bankAccount,
-                  bankCode: dto.bankCode);
+                  ConfirmOTPUnlinkTypeBankDTO(
+                      ewalletToken: '',
+                      bankAccount: bankAccount,
+                      bankCode: dto.bankCode);
               bankCardBloc.add(BankCardEventUnConfirmOTP(
                   dto: confirmDTO, unlinkType: dto.unlinkedType));
             } else {

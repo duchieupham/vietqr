@@ -105,6 +105,24 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: small ? 8 : 12),
+                    Center(
+                      child: Container(
+                        height: 30,
+                        width: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${5 - (widget.dto.transCount ?? 0)}/5 GD miễn phí',
+                            style: TextStyle(
+                                fontSize: 12, color: AppColor.BLUE_TEXT),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: small ? 8 : 12),
                     Align(
                       alignment: Alignment.center,
                       child: Text(

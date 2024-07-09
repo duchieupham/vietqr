@@ -20,27 +20,30 @@ class AccountBankDetailDTO {
   final bool authenticated;
   final String bankShortName;
   final List<Transactions>? transactions;
+  final int transCount;
 
-  AccountBankDetailDTO(
-      {this.id = '',
-      this.bankAccount = '',
-      this.userBankName = '',
-      this.bankCode = '',
-      this.bankName = '',
-      this.imgId = '',
-      this.type = 0,
-      this.caiValue = '',
-      this.userId = '',
-      this.bankTypeId = '',
-      this.bankTypeStatus = 0,
-      this.nationalId = '',
-      this.qrCode = '',
-      this.phoneAuthenticated = '',
-      this.ewalletToken = null,
-      this.unlinkedType = 0,
-      this.authenticated = false,
-      this.transactions,
-      this.bankShortName = ''});
+  AccountBankDetailDTO({
+    this.id = '',
+    this.bankAccount = '',
+    this.userBankName = '',
+    this.bankCode = '',
+    this.bankName = '',
+    this.imgId = '',
+    this.type = 0,
+    this.caiValue = '',
+    this.userId = '',
+    this.bankTypeId = '',
+    this.bankTypeStatus = 0,
+    this.nationalId = '',
+    this.qrCode = '',
+    this.phoneAuthenticated = '',
+    this.ewalletToken = null,
+    this.unlinkedType = 0,
+    this.authenticated = false,
+    this.transactions,
+    this.bankShortName = '',
+    this.transCount = 0,
+  });
 
   bool get isHideBDSD => (!authenticated || bankTypeStatus == 0);
 
@@ -79,6 +82,7 @@ class AccountBankDetailDTO {
       unlinkedType: json['unlinkedType'] ?? '',
       transactions: transactions,
       authenticated: json['authenticated'] ?? false,
+      transCount: json['transCount'] ?? 0,
     );
   }
 
@@ -97,8 +101,8 @@ class AccountBankDetailDTO {
     data['ewalletToken'] = ewalletToken;
     data['unlinkedType'] = unlinkedType;
     data['phoneAuthenticated'] = phoneAuthenticated;
-
     data['authenticated'] = authenticated;
+    data['transCount'] = transCount;
     return data;
   }
 }
