@@ -59,7 +59,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   TabView tab = TabView.COMMUNITY;
 
   FocusNode focusNode = FocusNode();
-  bool isClear = false;
+  // bool isClear = false;
 
   rive.StateMachineController? _riveController;
   late rive.SMITrigger _action;
@@ -77,6 +77,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   String selectedQrId = '';
 
   final ValueNotifier<bool> _notifier = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _isClearNotifier = ValueNotifier<bool>(false);
 
   QRTypeDTO _qrTypeDTO = const QRTypeDTO(
     type: 9,
@@ -140,16 +141,16 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           // _bloc.add(GetQrFeedFolderEvent());
         }
 
-        _searchController.addListener(
-          () {
-            if (_searchController.text.isNotEmpty) {
-              isClear = true;
-            } else {
-              isClear = false;
-            }
-            // updateState();
-          },
-        );
+        // _searchController.addListener(
+        //   () {
+        //     if (_searchController.text.isNotEmpty) {
+        //       isClear = true;
+        //     } else {
+        //       isClear = false;
+        //     }
+        //     // updateState();
+        //   },
+        // );
       },
     );
   }
@@ -209,51 +210,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
       listener: (context, state) {
-        if (state.request == QrFeed.GET_QR_FEED_LIST &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          list = [...state.listQrFeed!];
-          metadata = state.metadata;
-          updateState();
-        }
-        if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          privateMetadata = state.privateMetadata;
-          updateState();
-        }
-
-        if (state.request == QrFeed.GET_QR_FEED_LIST &&
-            state.status == BlocStatus.NONE) {
-          if (!mounted) return;
-          list = [];
-          metadata = state.metadata;
-          updateState();
-        }
-
-        if (state.request == QrFeed.GET_MORE &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          list = [...list, ...state.listQrFeed!];
-          metadata = state.metadata;
-          updateState();
-        }
-        if (state.request == QrFeed.GET_MORE_QR &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          privateMetadata = state.privateMetadata;
-          updateState();
-        }
-
-        if (state.request == QrFeed.INTERACT_WITH_QR &&
-            state.status == BlocStatus.SUCCESS) {
-          if (!mounted) return;
-          qrFeedAction = state.qrFeed;
-          final indexOfQr = list.indexWhere((e) => e.id == state.qrFeed?.id);
-          list[indexOfQr] = state.qrFeed!;
-          updateState();
-        }
-
         if (state.request == QrFeed.CREATE_QR &&
             state.status == BlocStatus.SUCCESS) {
           if (!mounted) return;
@@ -271,6 +227,44 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         }
       },
       builder: (context, state) {
+        if (state.request == QrFeed.GET_QR_FEED_LIST &&
+            state.status == BlocStatus.SUCCESS) {
+          list = [...state.listQrFeed!];
+          metadata = state.metadata;
+          // updateState();
+        }
+        if (state.request == QrFeed.GET_QR_FEED_PRIVATE &&
+            state.status == BlocStatus.SUCCESS) {
+          privateMetadata = state.privateMetadata;
+          // updateState();
+        }
+
+        if (state.request == QrFeed.GET_QR_FEED_LIST &&
+            state.status == BlocStatus.NONE) {
+          list = [];
+          metadata = state.metadata;
+          // updateState();
+        }
+
+        if (state.request == QrFeed.GET_MORE &&
+            state.status == BlocStatus.SUCCESS) {
+          list = [...list, ...state.listQrFeed!];
+          metadata = state.metadata;
+          // updateState();
+        }
+        if (state.request == QrFeed.GET_MORE_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          privateMetadata = state.privateMetadata;
+          // updateState();
+        }
+
+        if (state.request == QrFeed.INTERACT_WITH_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          qrFeedAction = state.qrFeed;
+          final indexOfQr = list.indexWhere((e) => e.id == state.qrFeed?.id);
+          list[indexOfQr] = state.qrFeed!;
+          // updateState();
+        }
         return SafeArea(
           child: Scaffold(
             floatingActionButton: _scrollToTopWidget(),
@@ -510,45 +504,58 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 ),
               ),
             if (tab == TabView.INDIVIDUAL)
-              Expanded(
-                  child: MTextFieldCustom(
-                      focusNode: focusNode,
-                      controller: _searchController,
-                      prefixIcon: const XImage(
-                        imagePath: 'assets/images/ic-search-grey.png',
-                        width: 30,
-                        height: 30,
-                        fit: BoxFit.cover,
-                      ),
-                      suffixIcon: isClear
-                          ? InkWell(
-                              onTap: () {
-                                _searchController.clear();
-                                updateState();
-                              },
-                              child: const Icon(
-                                Icons.clear,
-                                size: 20,
-                                color: AppColor.GREY_DADADA,
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                      enable: true,
-                      focusBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColor.GREY_DADADA)),
-                      contentPadding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      hintText: 'Tìm kiếm mã QR theo tên',
-                      keyboardAction: TextInputAction.next,
-                      onSubmitted: (value) {
-                        _bloc.add(GetQrFeedPrivateEvent(
-                            type: _qrTypeDTO.type,
-                            isGetFolder: false,
-                            isFolderLoading: false,
-                            value: _searchController.text));
-                      },
-                      onChange: (value) {},
-                      inputType: TextInputType.text,
-                      isObscureText: false)),
+              ValueListenableBuilder<bool>(
+                valueListenable: _isClearNotifier,
+                builder: (context, isClear, child) {
+                  return Expanded(
+                    child: MTextFieldCustom(
+                        focusNode: focusNode,
+                        controller: _searchController,
+                        prefixIcon: const XImage(
+                          imagePath: 'assets/images/ic-search-grey.png',
+                          width: 30,
+                          height: 30,
+                          fit: BoxFit.cover,
+                        ),
+                        suffixIcon: isClear
+                            ? InkWell(
+                                onTap: () {
+                                  _searchController.clear();
+                                  updateState();
+                                },
+                                child: const Icon(
+                                  Icons.clear,
+                                  size: 20,
+                                  color: AppColor.GREY_DADADA,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        enable: true,
+                        focusBorder: const UnderlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColor.GREY_DADADA)),
+                        contentPadding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        hintText: 'Tìm kiếm mã QR theo tên',
+                        keyboardAction: TextInputAction.next,
+                        onSubmitted: (t) {
+                          _bloc.add(GetQrFeedPrivateEvent(
+                              type: _qrTypeDTO.type,
+                              isGetFolder: false,
+                              isFolderLoading: false,
+                              value: _searchController.text));
+                        },
+                        onChange: (value) {
+                          if (value.isNotEmpty) {
+                            isClear = true;
+                          } else {
+                            isClear = false;
+                          }
+                        },
+                        inputType: TextInputType.text,
+                        isObscureText: false),
+                  );
+                },
+              ),
             const SizedBox(width: 10),
             if (tab == TabView.INDIVIDUAL)
               InkWell(
