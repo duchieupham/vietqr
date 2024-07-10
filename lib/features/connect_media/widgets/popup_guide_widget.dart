@@ -67,14 +67,18 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const DefaultTextStyle(
-                  style: TextStyle(
+                DefaultTextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                   child: Text(
-                    'Hướng dẫn lấy thông tin \nWebhook trên Google Chat',
+                    widget.type == TypeConnect.GG_CHAT
+                        ? 'Hướng dẫn lấy thông tin \nWebhook trên Google Chat'
+                        : widget.type == TypeConnect.LARK
+                            ? 'Hướng dẫn lấy thông tin \nWebhook trên Lark'
+                            : 'Hướng dẫn lấy thông tin \nIdChat trên Telegram',
                   ),
                 ),
                 Expanded(
@@ -143,7 +147,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
               'Tạo nhóm mới Telegram, hoặc nhóm quản trị của bạn',
               style: TextStyle(fontSize: 12),
             ),
-            height: 60),
+            height: 80),
         const SizedBox(
           height: 12,
         ),
@@ -197,7 +201,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                 )
               ],
             ),
-            height: 62),
+            height: 80),
       ],
     );
   }
