@@ -191,7 +191,7 @@ class CardWidget extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        e.transCount.toString(),
+                                        e.bankAccount,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
