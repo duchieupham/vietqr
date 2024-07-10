@@ -161,7 +161,7 @@ class XImage extends StatelessWidget {
           child: FittedBox(
         fit: BoxFit.fitWidth,
         child: Text(
-          "VietQR",
+          "VQR",
           style: TextStyle(
             color: Colors.grey,
           ),

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
-import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/connect_media/states/connect_media_states.dart';
 import 'package:vierqr/features/connect_media/views/info_media_screen.dart';
 import 'package:vierqr/features/connect_media/views/webhook_media_screen.dart';
@@ -13,12 +12,9 @@ import 'package:vierqr/features/connect_media/widgets/popup_add_bank_widget.dart
 import 'package:vierqr/features/connect_media/widgets/popup_delete_webhook_widget.dart';
 import 'package:vierqr/features/connect_media/widgets/popup_guide_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/models/trans/trans_request_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
-
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/enums/enum_type.dart';
-import '../../commons/utils/custom_button_switch.dart';
 import '../../commons/widgets/dialog_widget.dart';
 import '../../layouts/m_button_widget.dart';
 import '../../models/bank_account_dto.dart';
@@ -29,7 +25,7 @@ import 'blocs/connect_media_bloc.dart';
 import 'events/connect_media_evens.dart';
 
 // ignore: constant_identifier_names
-enum TypeConnect { GG_CHAT, TELE, LARK }
+enum TypeConnect { GG_SHEET, GG_CHAT, TELE, LARK, DISCORD }
 
 class ConnectMediaScreen extends StatelessWidget {
   final String id;

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/cache_image_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 
 class AmbientAvatarWidget extends StatelessWidget {
@@ -24,14 +25,19 @@ class AmbientAvatarWidget extends StatelessWidget {
       return Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: (imageFile != null)
-                ? Image.file(imageFile!).image
-                : ImageUtils.instance.getImageNetWork(imgId),
-          ),
+        // decoration: BoxDecoration(
+        //   shape: BoxShape.circle,
+        //   image: DecorationImage(
+        //     fit: BoxFit.cover,
+        //     image: (imageFile != null)
+        //         ? Image.file(imageFile!).image
+        //         : ImageUtils.instance.getImageNetWork(imgId),
+        //   ),
+        // ),
+        child: CacheImage(
+          imageUrl: imgId,
+          boxShape: BoxShape.circle,
+          radius: 100,
         ),
       );
     }

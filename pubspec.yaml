@@ -78,7 +78,7 @@ dependencies:
   esc_pos_bluetooth: ^0.4.1
   esc_pos_utils: ^1.1.0
   sqflite: ^2.2.6
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.1
 
   dudv_base: ^1.2.1+1
   pull_to_refresh:
