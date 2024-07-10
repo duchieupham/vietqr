@@ -1,3 +1,5 @@
+import 'package:vierqr/models/metadata_dto.dart';
+
 class UserFolder {
   String fullName;
   String role;
@@ -31,5 +33,26 @@ class UserFolder {
       'phoneNo': phoneNo,
       'imageId': imageId,
     };
+  }
+
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      'userId': userId,
+      'role': role,
+    };
+  }
+}
+
+class AllUserFolder {
+  final MetaDataDTO metadata;
+  final List<UserFolder> data;
+
+  AllUserFolder({required this.metadata, required this.data});
+
+  factory AllUserFolder.fromJson(Map<String, dynamic> json) {
+    return AllUserFolder(
+      metadata: MetaDataDTO.fromJson(json['metadata']),
+      data: (json['data'] as List).map((i) => UserFolder.fromJson(i)).toList(),
+    );
   }
 }

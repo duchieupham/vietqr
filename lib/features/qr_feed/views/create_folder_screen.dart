@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
+import 'package:vierqr/models/qr_folder_detail_dto.dart';
 import 'package:vierqr/models/search_user_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
@@ -30,18 +33,24 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 enum ActionType {
   CREATE,
-  UPDATE,
+  UPDATE_QR,
+  UPDATE_USER,
 }
 
 class CreateFolderScreen extends StatefulWidget {
   final int pageView;
   final ActionType action;
   final String folderId;
-  const CreateFolderScreen(
-      {super.key,
-      required this.pageView,
-      required this.action,
-      required this.folderId});
+  final List<QrData>? listQrPrivate;
+  final List<UserFolder>? listUserFolder;
+  const CreateFolderScreen({
+    super.key,
+    required this.pageView,
+    required this.action,
+    required this.folderId,
+    this.listQrPrivate,
+    this.listUserFolder,
+  });
 
   @override
   State<CreateFolderScreen> createState() => _CreateFolderScreenState();
@@ -70,11 +79,15 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   );
 
   List<ListQrCheckBox> listQr = [];
+  List<ListQrCheckBox> listAddedQr = [];
+
+  List<ListQrUpdateCheckBox> listQrUpdate = [];
 
   List<ListUserCheckBox> listUser = [];
   List<ListUserCheckBox> listSelectedUser = [];
 
   List<UserFolder> listUserUpdate = [];
+  List<UserFolder> listAddedUSerUpdate = [];
   List<UserFolder> listUserUpdateSearch = [];
 
   List<ListUserCheckBox> mapUser(List<SearchUser> user) {
@@ -98,9 +111,21 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         if (widget.action == ActionType.CREATE) {
           _bloc.add(GetUserQREvent(value: '', type: _qrTypeDTO.type));
         } else {
-          _bloc.add(GetFolderDetailEvent(
-              value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
-          _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
+          // _bloc.add(GetFolderDetailEvent(
+          //     value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
+          // _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
+          // final list = widget.listQrPrivate;
+          // listQr = mapQr(list!);
+          // if (listQr.isNotEmpty) {
+          //   for (var item in listQr) {
+          //     String firstChar = item.dto!.title[0].toUpperCase();
+          //     if (!groupsAlphabet.containsKey(firstChar)) {
+          //       groupsAlphabet[firstChar] = [];
+          //     }
+          //     groupsAlphabet[firstChar]!.add(item);
+          //   }
+          // }
+          listUserUpdate = [...widget.listUserFolder!];
         }
 
         setState(() {
@@ -157,12 +182,24 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           }
           setState(() {});
         }
-
         if (state.request == QrFeed.CREATE_FOLDER &&
             state.status == BlocStatus.SUCCESS) {
           Navigator.of(context).pop();
           Fluttertoast.showToast(
             msg: 'Tạo thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
+        }
+
+        if (state.request == QrFeed.ADD_USER &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(
+            msg: 'Thêm thành công',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             backgroundColor: Theme.of(context).cardColor,
@@ -185,11 +222,6 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           isEnable = listQr.any((element) => element.isValid == true);
         } else if (_currentPageIndex == 2) {
           isEnable = true;
-        }
-
-        if (widget.action == ActionType.UPDATE) {
-          listUserUpdate = [...state.listUserFolder!];
-          // userMetadata = state.folderMetadata;
         }
 
         return GestureDetector(
@@ -218,7 +250,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
                         _inputWidget(),
-                        _selectQrWidget(groupsAlphabet),
+                        _selectQrWidget(),
                         if (widget.action == ActionType.CREATE)
                           _addUser()
                         else
@@ -235,7 +267,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     );
   }
 
-  Widget _selectQrWidget(Map<String, List<ListQrCheckBox>> groupsAlphabet) {
+  Widget _selectQrWidget() {
     return Container(
       padding: const EdgeInsets.only(top: 0),
       child: SingleChildScrollView(
@@ -249,6 +281,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 10),
                     Container(
                       height: 35,
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -264,16 +297,27 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                       ),
                     ),
                     const SizedBox(height: 5),
-                    ...listQr.asMap().map(
+                    ...e.value.asMap().map(
                       (index, item) {
                         return MapEntry(
-                            index, _buildRowQrPrivate(e: item, index: index));
+                            index,
+                            _buildRowQrPrivate(
+                              e: item,
+                              index: index,
+                              onChangeValue: (p0) {
+                                final checked = item;
+                                checked.isValid = p0;
+                                // listQr[index].isValid = p0;
+                                groupsAlphabet[e.key]![index] = checked;
+                                setState(() {});
+                              },
+                            ));
                       },
                     ).values
                   ],
                 );
               },
-            )
+            ),
           ],
         ),
       ),
@@ -288,219 +332,20 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         children: [
           const SizedBox(height: 20),
           if (listUserUpdate.isNotEmpty)
-            ...listUserUpdate.asMap().map(
-              (index, e) {
-                return MapEntry(
-                    index,
-                    Container(
-                      height: 60,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Row(
-                        children: [
-                          XImage(
-                            imagePath: e.imageId.isNotEmpty
-                                ? e.imageId
-                                : ImageConstant.icAvatar,
-                            width: 40,
-                            height: 40,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  e.fullName,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  e.phoneNo,
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          if (e.role.toLowerCase().contains('admin'))
-                            Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 8),
-                                height: 40,
-                                // width: 40,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                                    gradient: LinearGradient(
-                                        colors: _gradients[0],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight)),
-                                child: const Center(
-                                  child: Text(
-                                    'Admin',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                ))
-                          else
-                            GestureDetector(
-                              onTapDown: (details) {
-                                showMenu(
-                                    context: context,
-                                    position: RelativeRect.fromLTRB(
-                                      details.globalPosition.dx,
-                                      details.globalPosition.dy + 20,
-                                      details.globalPosition.dx,
-                                      details.globalPosition.dy + 20,
-                                    ),
-                                    items: <PopupMenuEntry<int>>[
-                                      const PopupMenuItem<int>(
-                                        value: 0,
-                                        child: ListTile(
-                                          title: Text(
-                                            'Quản lý',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ),
-                                      const PopupMenuItem<int>(
-                                        value: 1,
-                                        child: ListTile(
-                                          title: Text(
-                                            'Người xem',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ),
-                                    ]).then(
-                                  (value) {
-                                    if (value == 0) {
-                                      listUserUpdate[index].role = 'EDITOR';
-                                      setState(() {});
-                                    }
-                                    if (value == 1) {
-                                      listUserUpdate[index].role = 'VIEWER';
-                                      setState(() {});
-                                    }
-                                  },
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                height: 40,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                                    gradient: LinearGradient(
-                                        colors: _gradients[0],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight)),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      listUserUpdate[index].role,
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          color: AppColor.BLUE_TEXT),
-                                    ),
-                                    const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      size: 22,
-                                      color: AppColor.BLUE_TEXT,
-                                    )
-                                  ],
-                                ),
-                                // width: 40,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ));
-              },
-            ).values,
+            ...listUserUpdate.map(
+              (e) => _itemUser(e, isAdded: false),
+            ),
+          if (listAddedUSerUpdate.isNotEmpty) ...[
+            ...listAddedUSerUpdate.map(
+              (e) => _itemUser(e, isAdded: false, isRemove: true),
+            )
+          ],
           if (listUserUpdateSearch.isNotEmpty) ...[
             const SizedBox(height: 20),
             const MySeparator(color: AppColor.GREY_DADADA),
             const SizedBox(height: 20),
             ...listUserUpdateSearch.map(
-              (e) {
-                return Container(
-                  height: 60,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  child: Row(
-                    children: [
-                      XImage(
-                        imagePath: e.imageId.isNotEmpty
-                            ? e.imageId
-                            : ImageConstant.icAvatar,
-                        width: 40,
-                        height: 40,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              e.fullName,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              e.phoneNo,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      InkWell(
-                        onTap: () {
-                          listUserUpdate.add(e);
-                          listUserUpdateSearch.remove(e);
-                          setState(() {});
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 8),
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                              gradient: LinearGradient(
-                                  colors: _gradients[0],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight)),
-                          child: const XImage(
-                              imagePath:
-                                  'assets/images/ic-add-person-black.png'),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+              (e) => _itemUser(e, isAdded: true),
             )
           ]
         ],
@@ -802,7 +647,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                                       colors: _gradients[0],
                                       begin: Alignment.centerLeft,
                                       end: Alignment.centerRight)),
-                              child: XImage(
+                              child: const XImage(
                                   imagePath:
                                       'assets/images/ic-add-person-black.png'),
                             ),
@@ -819,12 +664,15 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   }
 
   Widget _buildRowQrPrivate(
-      {required ListQrCheckBox e, bool isLoading = false, required int index}) {
+      {required ListQrCheckBox e,
+      bool isLoading = false,
+      required int index,
+      required Function(bool) onChangeValue}) {
     return Column(
       children: [
         Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          height: 70,
+          padding: const EdgeInsets.symmetric(vertical: 15),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10.0),
@@ -916,9 +764,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 ),
                 value: e.isValid,
                 onChanged: (value) {
-                  setState(() {
-                    listQr[index].isValid = value!;
-                  });
+                  onChangeValue(value!);
                 },
               )
             ],
@@ -927,7 +773,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         const MySeparator(
           color: AppColor.GREY_DADADA,
         ),
-        const SizedBox(height: 15),
+        // const SizedBox(height: 15),
       ],
     );
   }
@@ -1060,7 +906,11 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     default:
                       break;
                   }
-                } else {}
+                } else if (widget.action == ActionType.UPDATE_USER) {
+                  _bloc.add(AddUserToFolderEvent(
+                      folderId: widget.folderId,
+                      userRoles: listAddedUSerUpdate));
+                }
               }
             : null,
         child: Container(
@@ -1123,7 +973,227 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     );
   }
 
+  Widget _itemUser(UserFolder e,
+      {required bool isAdded, bool isRemove = false}) {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(100)),
+            child: XImage(
+              imagePath:
+                  e.imageId.isNotEmpty ? e.imageId : ImageConstant.icAvatar,
+              width: 40,
+              height: 40,
+              borderRadius: BorderRadius.circular(100),
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  e.fullName,
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  e.phoneNo,
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          if (isAdded)
+            !listUserUpdate.any((element) => element.userId == e.userId)
+                ? InkWell(
+                    onTap: () {
+                      setState(() {
+                        // listUserUpdate.add(e);
+                        listAddedUSerUpdate.add(e);
+                        listUserUpdateSearch.remove(e);
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                          gradient: LinearGradient(
+                              colors: _gradients[0],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight)),
+                      child: const XImage(
+                          imagePath: 'assets/images/ic-add-person-black.png'),
+                    ),
+                  )
+                : Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    height: 40,
+                    // width: 40,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                        gradient: LinearGradient(
+                            colors: _gradients[0],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)),
+                    child: const Center(
+                      child: Text(
+                        'Đã thêm',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ))
+          else ...[
+            if (e.role.toLowerCase().contains('admin'))
+              Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  height: 40,
+                  // width: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                      gradient: LinearGradient(
+                          colors: _gradients[0],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight)),
+                  child: const Center(
+                    child: Text(
+                      'Admin',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ))
+            else ...[
+              isRemove
+                  ? InkWell(
+                      onTap: () {
+                        listAddedUSerUpdate.remove(e);
+                        listUserUpdateSearch.add(e);
+                        setState(() {});
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 8),
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                            gradient: LinearGradient(
+                                colors: _gradients[0],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight)),
+                        child: const XImage(
+                            imagePath: 'assets/images/ic-delete-black.png'),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              const SizedBox(width: 10),
+              InkWell(
+                onTapDown: isRemove
+                    ? (details) {
+                        showMenu(
+                            context: context,
+                            position: RelativeRect.fromLTRB(
+                              details.globalPosition.dx,
+                              details.globalPosition.dy + 20,
+                              details.globalPosition.dx,
+                              details.globalPosition.dy + 20,
+                            ),
+                            items: <PopupMenuEntry<int>>[
+                              const PopupMenuItem<int>(
+                                value: 0,
+                                child: ListTile(
+                                  title: Text(
+                                    'Quản lý',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                              const PopupMenuItem<int>(
+                                value: 1,
+                                child: ListTile(
+                                  title: Text(
+                                    'Người xem',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ]).then(
+                          (value) {
+                            if (value == 0) {
+                              e.role = 'EDITOR';
+                              setState(() {});
+                            }
+                            if (value == 1) {
+                              e.role = 'VIEWER';
+                              setState(() {});
+                            }
+                          },
+                        );
+                      }
+                    : null,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  height: 40,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                      gradient: LinearGradient(
+                          colors: _gradients[0],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight)),
+                  child: Row(
+                    children: [
+                      Text(
+                        e.role == 'EDITOR' ? 'Quản lý' : 'Người xem',
+                        style: const TextStyle(
+                            fontSize: 12, color: AppColor.BLUE_TEXT),
+                      ),
+                      isRemove
+                          ? const Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 22,
+                              color: AppColor.BLUE_TEXT,
+                            )
+                          : const SizedBox.shrink()
+                    ],
+                  ),
+                  // width: 40,
+                ),
+              ),
+            ]
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _appbar() {
+    int checkedCount = listQr.where((item) => item.isValid == true).length;
+    int userCount =
+        listSelectedUser.where((item) => item.isValid == true).length + 1;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       padding: EdgeInsets.fromLTRB(0, _currentPageIndex == 0 ? 40 : 60, 0, 8),
@@ -1166,8 +1236,27 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
               else if (_currentPageIndex == 1) ...[
                 Row(
                   children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                          gradient: LinearGradient(
+                              colors: _gradients[0],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight)),
+                      child: Center(
+                        child: Text(
+                          checkedCount.toString(),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
                     const SizedBox(width: 5),
-                    if (listQr.any((element) => element.isValid == true))
+                    if (listQr.any((element) => element.isValid == true)) ...[
                       InkWell(
                         onTap: () {
                           for (var element in listQr) {
@@ -1193,7 +1282,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                                   'assets/images/ic-remove-checkbox-black.png'),
                         ),
                       ),
-                    const SizedBox(width: 5),
+                      const SizedBox(width: 5),
+                    ],
                     InkWell(
                       onTap: () {
                         for (var element in listQr) {
@@ -1223,7 +1313,57 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     )
                   ],
                 )
-              ],
+              ] else if (_currentPageIndex == 2) ...[
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 8),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                          gradient: LinearGradient(
+                              colors: _gradients[0],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight)),
+                      child: Center(
+                        child: Text(
+                          userCount.toString(),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
+                    if (listSelectedUser
+                        .any((element) => element.isValid == true)) ...[
+                      const SizedBox(width: 5),
+                      InkWell(
+                        onTap: () {
+                          listSelectedUser = [];
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath:
+                                  'assets/images/ic-remove-checkbox-black.png'),
+                        ),
+                      )
+                    ]
+                  ],
+                ),
+              ]
             ],
           ),
           if (_currentPageIndex == 1) ...[
@@ -1400,12 +1540,28 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                                 _searchController.text.length >= 5) {
                               await getUser(_searchController.text).then(
                                 (value) {
-                                  listUser = [...mapUser(value)];
+                                  if (widget.action == ActionType.CREATE) {
+                                    listUser = [...mapUser(value)];
+                                  } else {
+                                    listUserUpdateSearch = [];
+                                    for (var element in value) {
+                                      UserFolder userFolder = UserFolder(
+                                        fullName: element.fullName,
+                                        role: 'VIEWER',
+                                        userId: element.userId,
+                                        phoneNo: element.phoneNo,
+                                        imageId: element.imageId,
+                                      );
+                                      listUserUpdateSearch.add(userFolder);
+                                    }
+                                  }
                                 },
                               );
                             } else {
+                              listUserUpdateSearch = [];
                               listUser = [];
                             }
+                            _searchController.clear();
                             setState(() {});
                           },
                           onChange: (value) {
@@ -1424,6 +1580,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                             if (widget.action == ActionType.CREATE) {
                               listUser = [...mapUser(value)];
                             } else {
+                              listUserUpdateSearch = [];
                               for (var element in value) {
                                 UserFolder userFolder = UserFolder(
                                   fullName: element.fullName,
@@ -1441,6 +1598,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                         listUserUpdateSearch = [];
                         listUser = [];
                       }
+                      _searchController.clear();
                       setState(() {});
                     },
                     child: Container(
@@ -1500,6 +1658,13 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   ];
 }
 
+class ListQrUpdateCheckBox {
+  bool? isValid;
+  QrData? dto;
+
+  ListQrUpdateCheckBox({required this.isValid, required this.dto});
+}
+
 class ListQrCheckBox {
   bool? isValid;
   QrFeedPrivateDTO? dto;
@@ -1510,7 +1675,6 @@ class ListQrCheckBox {
 class ListUserCheckBox {
   String? role;
   String? title;
-
   bool? isValid;
   SearchUser? dto;
 

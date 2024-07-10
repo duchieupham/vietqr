@@ -30,6 +30,8 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
+import 'package:vierqr/models/qr_feed_detail_dto.dart';
+import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 enum TypeQr {
@@ -41,6 +43,7 @@ enum TypeQr {
 
 class QrLinkScreen extends StatefulWidget {
   final TypeQr type;
+
   const QrLinkScreen({super.key, required this.type});
 
   @override
@@ -816,8 +819,11 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
   }
 
   Widget _bottomButton(bool isEnable) {
-    return Container(
-      padding: const EdgeInsets.all(20),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeInOut,
+      padding: EdgeInsets.fromLTRB(
+          20, 10, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
       child: InkWell(
         onTap: isEnable ? onQrStyle : null,
         child: Container(

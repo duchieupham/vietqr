@@ -47,9 +47,10 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
   }
 
   void initData() {
-    // _scrollHorizontal.jumpTo(0.0);
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) {},
+      (_) {
+        _scrollHorizontal.jumpTo(0.0);
+      },
     );
   }
 
@@ -176,88 +177,48 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 ),
                 const SizedBox(height: 10),
 
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  controller: _scrollHorizontal,
-                  // physics: const ScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (state.isFolderLoading) ...[
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(2, (index) {
-                            return _buildItemWidget(isLoading: true);
-                          }),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(2, (index) {
-                            return _buildItemWidget(isLoading: true);
-                          }),
-                        ),
-                      ] else ...[
-                        if (listQrFolder.isNotEmpty) ...[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(
-                                (listQrFolder.length / 2).ceil(), (index) {
-                              if (index * 2 < listQrFolder.length) {
-                                return InkWell(
-                                  onTap: () {
-                                    NavigationService.push(
-                                        Routes.QR_FOLDER_DETAIL_SCREEN,
-                                        arguments: {
-                                          'id': listQrFolder[index].id,
-                                          'userId': listQrFolder[index].userId,
-                                          'folderName':
-                                              listQrFolder[index].title,
-                                          'tab': FolderEnum.QR
-                                        });
-                                  },
-                                  child: _buildItemWidget(
-                                      dto: listQrFolder[index * 2],
-                                      isLoading: false),
-                                );
-                              } else {
-                                return const SizedBox.shrink();
-                              }
-                            }),
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(
-                                (listQrFolder.length / 2).floor(), (index) {
-                              if (index * 2 + 1 < listQrFolder.length) {
-                                return InkWell(
-                                  onTap: () {
-                                    NavigationService.push(
-                                        Routes.QR_FOLDER_DETAIL_SCREEN,
-                                        arguments: {
-                                          'id': listQrFolder[index].id,
-                                          'userId': listQrFolder[index].userId,
-                                          'folderName':
-                                              listQrFolder[index].title,
-                                          'tab': FolderEnum.QR
-                                        });
-                                  },
-                                  child: _buildItemWidget(
-                                      dto: listQrFolder[index * 2],
-                                      isLoading: false),
-                                );
-                              } else {
-                                return const SizedBox.shrink();
-                              }
-                            }),
-                          ),
-                        ] else
-                          const Text(
-                            'Thư mục rỗng...',
-                            style: TextStyle(fontSize: 12),
-                          )
-                      ]
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 170,
+                      child: GridView.count(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        // padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        primary: false,
+
+                        childAspectRatio: 0.5,
+                        shrinkWrap: true,
+                        crossAxisSpacing: 0,
+                        mainAxisSpacing: 15,
+                        crossAxisCount: 2,
+                        controller: _scrollHorizontal,
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          if (state.isFolderLoading) ...[
+                            ...List.generate(
+                              4,
+                              (index) {
+                                return _buildItemWidget(isLoading: true);
+                              },
+                            )
+                          ] else if (listQrFolder.isNotEmpty)
+                            ...List.generate(
+                              listQrFolder.length,
+                              (index) {
+                                return _buildItemWidget(
+                                    dto: listQrFolder[index], isLoading: false);
+                              },
+                            )
+                          else
+                            const Text(
+                              'Thư mục rỗng...',
+                              style: TextStyle(fontSize: 12),
+                            )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
                 // const SizedBox(height: 10),
                 if (listQrFolder.isNotEmpty &&
@@ -443,11 +404,13 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                         const ShimmerBlock(
                           height: 12,
                           width: 300,
+                          borderRadius: 10,
                         ),
                         const SizedBox(height: 4.0),
                         const ShimmerBlock(
                           height: 12,
                           width: 200,
+                          borderRadius: 10,
                         ),
                       ]
                     ],
@@ -528,70 +491,83 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
 
   Widget _buildItemWidget({QrFeedFolderDTO? dto, bool isLoading = false}) {
     return Container(
-      width: 200,
-      height: 40,
-      margin: const EdgeInsets.fromLTRB(0, 8, 20, 20),
-      child: Row(
-        children: [
-          if (!isLoading)
-            Container(
-              padding: const EdgeInsets.all(4),
-              height: 40,
-              width: 40,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: const LinearGradient(
-                      colors: [Color(0xFFF5CEC7), Color(0xFFFFD7BF)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight)),
-              child: const XImage(imagePath: 'assets/images/ic-folder.png'),
-            )
-          else
-            const ShimmerBlock(
-              height: 40,
-              width: 40,
-              borderRadius: 10,
-            ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (!isLoading) ...[
-                  Text(
-                    dto!.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      overflow: TextOverflow.ellipsis,
+      // width: 200,
+      // height: 40,
+      margin: const EdgeInsets.fromLTRB(0, 0, 20, 20),
+      child: InkWell(
+        onTap: () {
+          NavigationService.push(Routes.QR_FOLDER_DETAIL_SCREEN, arguments: {
+            'id': dto!.id,
+            'userId': dto.userId,
+            'folderName': dto.title,
+            'countUsers': dto.countUsers,
+            'countQrs': dto.countQrs,
+            'tab': FolderEnum.QR
+          });
+        },
+        child: Row(
+          children: [
+            if (!isLoading)
+              Container(
+                padding: const EdgeInsets.all(4),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFF5CEC7), Color(0xFFFFD7BF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)),
+                child: const XImage(imagePath: 'assets/images/ic-folder.png'),
+              )
+            else
+              const ShimmerBlock(
+                height: 40,
+                width: 40,
+                borderRadius: 10,
+              ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isLoading) ...[
+                    Text(
+                      dto!.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      maxLines: 1,
+                      // softWrap: false,
                     ),
-                    maxLines: 1,
-                    softWrap: false,
-                  ),
-                  Text(
-                    dto.description,
-                    style: const TextStyle(
-                      overflow: TextOverflow.ellipsis,
+                    Text(
+                      dto.description,
+                      style: const TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      maxLines: 1,
+                      // softWrap: false,
                     ),
-                    maxLines: 1,
-                    softWrap: false,
-                  ),
-                ] else ...[
-                  const ShimmerBlock(
-                    height: 15,
-                    width: double.infinity,
-                    borderRadius: 10,
-                  ),
-                  const ShimmerBlock(
-                    height: 15,
-                    width: 100,
-                    borderRadius: 10,
-                  ),
-                ]
-              ],
+                  ] else ...[
+                    const ShimmerBlock(
+                      height: 15,
+                      width: double.infinity,
+                      borderRadius: 10,
+                    ),
+                    const SizedBox(height: 3),
+                    const ShimmerBlock(
+                      height: 15,
+                      width: 100,
+                      borderRadius: 10,
+                    ),
+                  ]
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

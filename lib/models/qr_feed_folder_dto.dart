@@ -6,7 +6,6 @@ class QrFeedFolderDTO {
   String userId;
   String title;
   int countQrs;
-
   int countUsers;
   int timeCreated;
 

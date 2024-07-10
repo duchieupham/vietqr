@@ -22,6 +22,8 @@ class QrFeedState extends Equatable {
   final List<QrFeedPrivateDTO>? listQrFeedPrivate;
   final List<QrFeedFolderDTO>? listQrFeedFolder;
   final List<UserFolder>? listUserFolder;
+  final List<UserFolder>? listAllUserFolder;
+
   final bool isFolderLoading;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
@@ -54,50 +56,51 @@ class QrFeedState extends Equatable {
     this.loadCmt,
     this.detailMetadata,
     this.isFolderLoading = false,
+    this.listAllUserFolder,
   });
 
-  QrFeedState copyWith({
-    BlocStatus? status,
-    String? msg,
-    QrFeed? request,
-    MetaDataDTO? metadata,
-    MetaDataDTO? privateMetadata,
-    MetaDataDTO? folderMetadata,
-    List<QrFeedDTO>? listQrFeed,
-    List<QrFeedPrivateDTO>? listQrFeedPrivate,
-    List<QrFeedFolderDTO>? listQrFeedFolder,
-    bool? isFolderLoading,
-    List<BankTypeDTO>? listBanks,
-    BankNameInformationDTO? bankDto,
-    QrFeedPopupDetailDTO? qrFeedPopupDetail,
-    QrFeedDTO? qrFeed,
-    QrFeedDetailDTO? detailQr,
-    QrFeedDetailDTO? loadCmt,
-    MetaDataDTO? detailMetadata,
-    QrFolderDetailDTO? folderDetailDTO,
-    List<UserFolder>? listUserFolder,
-  }) {
+  QrFeedState copyWith(
+      {BlocStatus? status,
+      String? msg,
+      QrFeed? request,
+      MetaDataDTO? metadata,
+      MetaDataDTO? privateMetadata,
+      MetaDataDTO? folderMetadata,
+      List<QrFeedDTO>? listQrFeed,
+      List<QrFeedPrivateDTO>? listQrFeedPrivate,
+      List<QrFeedFolderDTO>? listQrFeedFolder,
+      bool? isFolderLoading,
+      List<BankTypeDTO>? listBanks,
+      BankNameInformationDTO? bankDto,
+      QrFeedPopupDetailDTO? qrFeedPopupDetail,
+      QrFeedDTO? qrFeed,
+      QrFeedDetailDTO? detailQr,
+      QrFeedDetailDTO? loadCmt,
+      MetaDataDTO? detailMetadata,
+      QrFolderDetailDTO? folderDetailDTO,
+      List<UserFolder>? listUserFolder,
+      List<UserFolder>? listAllUserFolder}) {
     return QrFeedState(
-      status: status ?? this.status,
-      msg: msg ?? this.msg,
-      request: request ?? this.request,
-      metadata: metadata ?? this.metadata,
-      privateMetadata: privateMetadata ?? this.privateMetadata,
-      folderMetadata: folderMetadata ?? this.folderMetadata,
-      listQrFeed: listQrFeed ?? this.listQrFeed,
-      listQrFeedPrivate: listQrFeedPrivate ?? this.listQrFeedPrivate,
-      listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,
-      isFolderLoading: isFolderLoading ?? this.isFolderLoading,
-      listBanks: listBanks ?? this.listBanks,
-      qrFeedPopupDetail: qrFeedPopupDetail ?? this.qrFeedPopupDetail,
-      bankDto: bankDto ?? this.bankDto,
-      qrFeed: qrFeed ?? this.qrFeed,
-      detailQr: detailQr ?? this.detailQr,
-      detailMetadata: detailMetadata ?? this.detailMetadata,
-      loadCmt: loadCmt ?? this.loadCmt,
-      folderDetailDTO: folderDetailDTO ?? this.folderDetailDTO,
-      listUserFolder: listUserFolder ?? this.listUserFolder,
-    );
+        status: status ?? this.status,
+        msg: msg ?? this.msg,
+        request: request ?? this.request,
+        metadata: metadata ?? this.metadata,
+        privateMetadata: privateMetadata ?? this.privateMetadata,
+        folderMetadata: folderMetadata ?? this.folderMetadata,
+        listQrFeed: listQrFeed ?? this.listQrFeed,
+        listQrFeedPrivate: listQrFeedPrivate ?? this.listQrFeedPrivate,
+        listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,
+        isFolderLoading: isFolderLoading ?? this.isFolderLoading,
+        listBanks: listBanks ?? this.listBanks,
+        qrFeedPopupDetail: qrFeedPopupDetail ?? this.qrFeedPopupDetail,
+        bankDto: bankDto ?? this.bankDto,
+        qrFeed: qrFeed ?? this.qrFeed,
+        detailQr: detailQr ?? this.detailQr,
+        detailMetadata: detailMetadata ?? this.detailMetadata,
+        loadCmt: loadCmt ?? this.loadCmt,
+        folderDetailDTO: folderDetailDTO ?? this.folderDetailDTO,
+        listUserFolder: listUserFolder ?? this.listUserFolder,
+        listAllUserFolder: listAllUserFolder ?? this.listAllUserFolder);
   }
 
   @override
@@ -120,5 +123,6 @@ class QrFeedState extends Equatable {
         detailMetadata,
         folderDetailDTO,
         listUserFolder,
+        listAllUserFolder,
       ];
 }

@@ -1,18 +1,32 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/add_bank/views/bank_input_widget.dart';
+import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
+import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
+import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
+import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/qr_feed_detail_dto.dart';
+import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 
 class QrUpdateScreen extends StatefulWidget {
-  const QrUpdateScreen({super.key});
+  final QrFeedDetailDTO detail;
+  final QrFeedPopupDetailDTO moreDetail;
+  const QrUpdateScreen(
+      {super.key, required this.detail, required this.moreDetail});
 
   @override
   State<QrUpdateScreen> createState() => _QrUpdateScreenState();
@@ -35,6 +49,102 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
   BankTypeDTO? selectedBank;
   int _charCount = 0;
 
+  TypeQr type = TypeQr.OTHER;
+  String _clipboardContent = '';
+
+  QrFeedDetailDTO? dto;
+  QrFeedPopupDetailDTO? moreDetail;
+
+  final focusAccount = FocusNode();
+  Timer? _timer;
+
+  final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
+
+  void initData() {
+    dto = widget.detail;
+    moreDetail = widget.moreDetail;
+    // selectedBank = BankTypeDTO(
+    //   bankAccount: widget.moreDetail.bankAccount!,
+    //   bankCode: widget.moreDetail.
+    // );
+    if (widget.detail.qrType == '3') {
+      _bloc.add(LoadBanksEvent());
+      focusAccount.addListener(() {
+        if (!focusAccount.hasFocus) {
+          _onSearch();
+        }
+      });
+    }
+    if (widget.detail.qrType == '0' || widget.detail.qrType == '1') {
+      _timer = Timer.periodic(
+        const Duration(milliseconds: 500),
+        (timer) {
+          _getClipboardContent();
+        },
+      );
+    }
+  }
+
+  void _getClipboardContent() async {
+    // final clipboardContent = await FlutterClipboard.paste();
+    ClipboardData? clipboardContent =
+        await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboardContent != null &&
+        (clipboardContent.text!.contains('http') ||
+            clipboardContent.text!.contains('https'))) {
+      _clipboardContent = clipboardContent.text!;
+    } else {
+      final regex = RegExp(r'[ ()_\-=\[\];:"{}<>?,./!@#$%^&*\\]');
+
+      if (clipboardContent != null) {
+        if (!regex.hasMatch(clipboardContent.text!)) {
+          _clipboardContent = clipboardContent.text!;
+        }
+      }
+    }
+    // if(clipboardContent)
+
+    updateState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
+  }
+
+  void _onSearch() {
+    if (stk.text.isNotEmpty && stk.text.length > 5) {
+      String transferType = '';
+      String caiValue = '';
+      String bankCode = '';
+      // BankTypeDTO? bankTypeDTO = _addBankProvider.bankTypeDTO;
+      if (selectedBank != null) {
+        caiValue = selectedBank!.caiValue;
+        bankCode = selectedBank!.bankCode;
+      }
+
+      if (bankCode == 'MB') {
+        transferType = 'INHOUSE';
+      } else {
+        transferType = 'NAPAS';
+      }
+      BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+        accountNumber: stk.text,
+        accountType: 'ACCOUNT',
+        transferType: transferType,
+        bankCode: caiValue,
+      );
+      _bloc.add(SearchBankEvent(dto: bankNameSearchDTO));
+    }
+  }
+
   void _updateCharCount(String text) {
     setState(() {
       _charCount = text.length;
@@ -55,6 +165,24 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget typeWidget;
+    switch (widget.detail.qrType) {
+      case '0':
+        type = TypeQr.QR_LINK;
+        break;
+      case '1':
+        type = TypeQr.OTHER;
+        break;
+      case '2':
+        type = TypeQr.VCARD;
+        typeWidget = _buildVCard();
+        break;
+      case '3':
+        type = TypeQr.VIETQR;
+        typeWidget = _buildBankQr();
+        break;
+      default:
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
@@ -77,281 +205,287 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
   }
 
   Widget _buildBankQr() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Cập nhật thông tin\nmã VietQR',
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 30),
-        const Text(
-          'Ngân hàng*',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-        InkWell(
-          onTap: () {
-            // if (state.listBanks != null) {
-            //   onSelectBankType(state.listBanks!);
-            // }
-          },
-          child: Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: AppColor.GREY_DADADA,
-                  width: 1.0,
-                ),
-              ),
+    return BlocConsumer<QrFeedBloc, QrFeedState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Cập nhật thông tin\nmã VietQR',
+              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+            const SizedBox(height: 30),
+            const Text(
+              'Ngân hàng*',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+            InkWell(
+              onTap: () {
+                if (state.listBanks != null) {
+                  onSelectBankType(state.listBanks!);
+                }
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: AppColor.GREY_DADADA,
+                      width: 1.0,
+                    ),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (selectedBank != null) ...[
-                        Container(
-                          width: 60,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: AppColor.GREY_DADADA),
-                            image: DecorationImage(
-                              image: ImageUtils.instance
-                                  .getImageNetWork(selectedBank!.imageId),
+                      Row(
+                        children: [
+                          if (selectedBank != null) ...[
+                            Container(
+                              width: 60,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(color: AppColor.GREY_DADADA),
+                                image: DecorationImage(
+                                  image: ImageUtils.instance
+                                      .getImageNetWork(selectedBank!.imageId),
+                                ),
+                              ),
                             ),
+                            const SizedBox(width: 10),
+                          ],
+                          Text(
+                            selectedBank != null
+                                ? selectedBank!.bankShortName!
+                                : 'Chọn ngân hàng thụ hưởng',
+                            style: const TextStyle(
+                                fontSize: 15, color: AppColor.BLACK),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                      ],
-                      Text(
-                        selectedBank != null
-                            ? selectedBank!.bankShortName!
-                            : 'Chọn ngân hàng thụ hưởng',
-                        style: const TextStyle(
-                            fontSize: 15, color: AppColor.BLACK),
+                        ],
+                      ),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: AppColor.GREY_TEXT,
                       ),
                     ],
                   ),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: AppColor.GREY_TEXT,
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            CustomTextField(
+              // focusNode: focusAccount,
+              textInputType: TextInputType.number,
+              inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+              isActive: selectedBank != null,
+              controller: stk,
+              hintText: selectedBank != null
+                  ? 'Nhập số tài khoản ngân hàng'
+                  : 'Vui lòng chọn ngân hàng',
+              labelText: 'Số tài khoản*',
+              onClear: () {
+                stk.clear();
+                updateState();
+                // _updateButtonState();
+              },
+              onChanged: (text) {
+                updateState();
+                // _updateButtonState();
+              },
+            ),
+            const SizedBox(height: 30),
+            CustomTextField(
+              textInputType: TextInputType.name,
+              inputFormatter: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                UpperCaseTextFormatter()
+              ],
+              isActive: selectedBank != null,
+              controller: userBankName,
+              hintText: selectedBank != null
+                  ? 'Nhập tên chủ tài khoản ngân hàng'
+                  : 'Vui lòng chọn ngân hàng',
+              labelText: 'Chủ tài khoản*',
+              onClear: () {
+                userBankName.clear();
+                updateState();
+              },
+              onChanged: (text) {
+                updateState();
+                // _updateButtonState();
+              },
+            ),
+            const SizedBox(height: 30),
+            // if (selectedBank != null)
+
+            GestureDetector(
+              onTap: _toggleAdditional,
+              child: Container(
+                width: 150,
+                height: 30,
+                decoration: BoxDecoration(
+                    gradient: VietQRTheme.gradientColor.scan_qr,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      _showAdditional
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: AppColor.BLUE_TEXT,
+                      size: 15,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      _showAdditional ? 'Đóng tuỳ chọn' : 'Tuỳ chọn thêm',
+                      style: const TextStyle(
+                        color: AppColor.BLUE_TEXT,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Visibility(
+              visible: _showAdditional,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 30),
+                  const Text(
+                    'Số tiền',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: AppColor.GREY_DADADA,
+                          width: 1.0,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: amount,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TextInputFormatter.withFunction(
+                                (oldValue, newValue) {
+                                  final formattedText =
+                                      StringUtils.formatCurrency(newValue.text);
+                                  return newValue.copyWith(
+                                    text: formattedText,
+                                    selection: TextSelection.collapsed(
+                                        offset: formattedText.length),
+                                  );
+                                },
+                              ),
+                            ],
+                            decoration: InputDecoration(
+                              hintText: 'Nhập số tiền chuyển khoản',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              contentPadding: EdgeInsets.zero,
+                              border: InputBorder.none,
+                              suffixIcon: _controller.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(
+                                        Icons.clear,
+                                      ),
+                                      onPressed: () {
+                                        amount.clear();
+                                        // _updateButtonState();
+                                      },
+                                    )
+                                  : null,
+                            ),
+                            onChanged: (text) {
+                              updateState();
+
+                              // _updateButtonState();
+                            },
+                          ),
+                        ),
+                        const Text(
+                          'VND',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    'Nội dung chuyển khoản ($_charCount/50)',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: AppColor.GREY_DADADA,
+                          width: 1.0,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            keyboardType: TextInputType.text,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z\s]')),
+                            ],
+                            controller: contentController,
+                            maxLength: 50,
+                            decoration: InputDecoration(
+                              hintText: 'Nhập nội dung chuyển khoản',
+                              hintStyle: const TextStyle(color: Colors.grey),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 10),
+                              suffixIcon: contentController.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(
+                                        Icons.clear,
+                                      ),
+                                      onPressed: () {
+                                        contentController.clear();
+                                        updateState();
+                                        _updateCharCount(
+                                            contentController.text);
+                                      },
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              counterText: '',
+                            ),
+                            onChanged: _updateCharCount,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Text(
+                    'Nội dung không chứa dấu Tiếng Việt, không ký tự đặc biệt.',
+                    style: TextStyle(fontSize: 12),
+                  )
                 ],
               ),
             ),
-          ),
-        ),
-        const SizedBox(height: 30),
-        CustomTextField(
-          // focusNode: focusAccount,
-          textInputType: TextInputType.number,
-          inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-          isActive: selectedBank != null,
-          controller: stk,
-          hintText: selectedBank != null
-              ? 'Nhập số tài khoản ngân hàng'
-              : 'Vui lòng chọn ngân hàng',
-          labelText: 'Số tài khoản*',
-          onClear: () {
-            stk.clear();
-            updateState();
-            // _updateButtonState();
-          },
-          onChanged: (text) {
-            updateState();
-            // _updateButtonState();
-          },
-        ),
-        const SizedBox(height: 30),
-        CustomTextField(
-          textInputType: TextInputType.name,
-          inputFormatter: [
-            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
-            UpperCaseTextFormatter()
           ],
-          isActive: selectedBank != null,
-          controller: userBankName,
-          hintText: selectedBank != null
-              ? 'Nhập tên chủ tài khoản ngân hàng'
-              : 'Vui lòng chọn ngân hàng',
-          labelText: 'Chủ tài khoản*',
-          onClear: () {
-            userBankName.clear();
-            updateState();
-          },
-          onChanged: (text) {
-            updateState();
-            // _updateButtonState();
-          },
-        ),
-        const SizedBox(height: 30),
-        // if (selectedBank != null)
-
-        GestureDetector(
-          onTap: _toggleAdditional,
-          child: Container(
-            width: 150,
-            height: 30,
-            decoration: BoxDecoration(
-                gradient: VietQRTheme.gradientColor.scan_qr,
-                borderRadius: BorderRadius.circular(20)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  _showAdditional
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: AppColor.BLUE_TEXT,
-                  size: 15,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  _showAdditional ? 'Đóng tuỳ chọn' : 'Tuỳ chọn thêm',
-                  style: const TextStyle(
-                    color: AppColor.BLUE_TEXT,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Visibility(
-          visible: _showAdditional,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 30),
-              const Text(
-                'Số tiền',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: AppColor.GREY_DADADA,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: amount,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          TextInputFormatter.withFunction(
-                            (oldValue, newValue) {
-                              final formattedText =
-                                  StringUtils.formatCurrency(newValue.text);
-                              return newValue.copyWith(
-                                text: formattedText,
-                                selection: TextSelection.collapsed(
-                                    offset: formattedText.length),
-                              );
-                            },
-                          ),
-                        ],
-                        decoration: InputDecoration(
-                          hintText: 'Nhập số tiền chuyển khoản',
-                          hintStyle: const TextStyle(color: Colors.grey),
-                          contentPadding: EdgeInsets.zero,
-                          border: InputBorder.none,
-                          suffixIcon: _controller.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(
-                                    Icons.clear,
-                                  ),
-                                  onPressed: () {
-                                    amount.clear();
-                                    // _updateButtonState();
-                                  },
-                                )
-                              : null,
-                        ),
-                        onChanged: (text) {
-                          updateState();
-
-                          // _updateButtonState();
-                        },
-                      ),
-                    ),
-                    const Text(
-                      'VND',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                'Nội dung chuyển khoản ($_charCount/50)',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: AppColor.GREY_DADADA,
-                      width: 1.0,
-                    ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        keyboardType: TextInputType.text,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                              RegExp(r'[a-zA-Z\s]')),
-                        ],
-                        controller: contentController,
-                        maxLength: 50,
-                        decoration: InputDecoration(
-                          hintText: 'Nhập nội dung chuyển khoản',
-                          hintStyle: const TextStyle(color: Colors.grey),
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 10),
-                          suffixIcon: contentController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(
-                                    Icons.clear,
-                                  ),
-                                  onPressed: () {
-                                    contentController.clear();
-                                    updateState();
-                                    _updateCharCount(contentController.text);
-                                  },
-                                )
-                              : null,
-                          border: InputBorder.none,
-                          counterText: '',
-                        ),
-                        onChanged: _updateCharCount,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Text(
-                'Nội dung không chứa dấu Tiếng Việt, không ký tự đặc biệt.',
-                style: TextStyle(fontSize: 12),
-              )
-            ],
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 

@@ -34,6 +34,7 @@ class XImage extends StatelessWidget {
   final AnimationController? animationController;
   final double? width;
   final double? height;
+
   final Color? color;
   final Widget? errorWidget;
   final bool? isImgId;
@@ -155,7 +156,7 @@ class XImage extends StatelessWidget {
       // color: Colors.grey[200],
       decoration: BoxDecoration(
         color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: borderRadius,
       ),
       child: const Center(
           child: FittedBox(

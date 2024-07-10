@@ -61,8 +61,13 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/maintain_charge_create.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
+import 'package:vierqr/models/qr_feed_detail_dto.dart';
+import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
+import 'package:vierqr/models/qr_feed_private_dto.dart';
+import 'package:vierqr/models/qr_folder_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
+import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/splash_screen.dart';
 
 class NavigationService {
@@ -131,12 +136,21 @@ class NavigationService {
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
       case Routes.QR_UPDATE_SCREEN:
-        return _buildRoute(settings, const QrUpdateScreen());
+        Map map = settings.arguments as Map;
+        QrFeedDetailDTO detail = map['detail'];
+        QrFeedPopupDetailDTO moreDetail = map['moreDetail'];
+        return _buildRoute(
+            settings,
+            QrUpdateScreen(
+              moreDetail: moreDetail,
+              detail: detail,
+            ));
       case Routes.QR_CREATE_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrCreateScreen(), settings: settings);
       case Routes.QR_SAVE_SHARE_SCREEN:
         Map map = settings.arguments as Map;
+        int theme = map['theme'];
         String title = map['title'];
         String data = map['data'];
         String fileAttachmentId = map['fileAttachmentId'];
@@ -145,6 +159,7 @@ class NavigationService {
         TypeImage type = map['type'];
         return CupertinoPageRoute(
             builder: (context) => SaveShareQrWidget(
+                  theme: theme,
                   type: type,
                   title: title,
                   data: data,
@@ -158,6 +173,9 @@ class NavigationService {
             builder: (context) => const QrFolderScreen(), settings: settings);
       case Routes.CREATE_QR_FOLDER_SCREEN:
         Map map = settings.arguments as Map;
+        List<QrData> listQrPrivate = map['listQrPrivate'] ?? [];
+        List<UserFolder> listUserFolder = map['listUserFolder'] ?? [];
+
         ActionType action = map['action'];
         String folderId = map['id'];
         int page = map['page'];
@@ -166,6 +184,8 @@ class NavigationService {
                   folderId: folderId,
                   action: action,
                   pageView: page,
+                  listQrPrivate: listQrPrivate,
+                  listUserFolder: listUserFolder,
                 ),
             settings: settings);
       case Routes.QR_STYLE:
@@ -181,6 +201,7 @@ class NavigationService {
             settings: settings);
       case Routes.QR_SCREEN:
         Map map = settings.arguments as Map;
+
         TypeQr type = map['type'];
         return CupertinoPageRoute(
             builder: (context) => QrLinkScreen(
@@ -215,12 +236,16 @@ class NavigationService {
         Map map = settings.arguments as Map;
         String id = map['id'];
         String userId = map['userId'];
+        int countQrs = map['countQrs'];
+        int countUsers = map['countUsers'];
 
         String folderName = map['folderName'];
         FolderEnum tab = map['tab'];
         return _buildRoute(
             settings,
             FolderDetailScreen(
+              countQrs: countQrs,
+              countUsers: countUsers,
               userId: userId,
               tab: tab,
               folderId: id,
@@ -235,18 +260,6 @@ class NavigationService {
             QrDetailScreen(
               id: id,
               // qrType: qrType,
-            ));
-      case Routes.QR_STYLE:
-        Map map = settings.arguments as Map;
-
-        QrCreateFeedDTO dto = map['dto'];
-        int type = map['type'];
-
-        return _buildRoute(
-            settings,
-            QrStyle(
-              type: type,
-              dto: dto,
             ));
       case Routes.DYNAMIC_ACTIVE_KEY_SCREEN:
         Map<String, dynamic> param = settings.arguments as Map<String, dynamic>;

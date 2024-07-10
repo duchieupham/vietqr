@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
+import 'package:vierqr/models/user_folder_dto.dart';
 
 class QrFeedEvent extends Equatable {
   const QrFeedEvent();
@@ -304,6 +306,30 @@ class GetMoreQrFeedEvent extends QrFeedEvent {
 
   @override
   List<Object?> get props => [type];
+}
+
+class AddUserToFolderEvent extends QrFeedEvent {
+  final String folderId;
+  final List<UserFolder> userRoles;
+
+  const AddUserToFolderEvent({
+    required this.folderId,
+    required this.userRoles,
+  });
+
+  @override
+  List<Object?> get props => [folderId, userRoles];
+}
+
+class GetUpdateFolderDetailEvent extends QrFeedEvent {
+  final ActionType type;
+  final String folderId;
+
+  const GetUpdateFolderDetailEvent(
+      {required this.type, required this.folderId});
+
+  @override
+  List<Object?> get props => [type, folderId];
 }
 
 class LoadBanksEvent extends QrFeedEvent {}

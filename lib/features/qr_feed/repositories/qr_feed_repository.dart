@@ -126,6 +126,38 @@ class QrFeedRepository extends BaseRepo {
     return null;
   }
 
+  Future<bool> addUserFolder({
+    required String folderId,
+    required List<UserFolder> userRoles,
+  }) async {
+    try {
+      List<Map<String, dynamic>> userRolesToJson(List<UserFolder> userRoles) {
+        return userRoles
+            .map((userFolder) => userFolder.toUpdateJson())
+            .toList();
+      }
+
+      Map<String, dynamic> param = {};
+      param['folderId'] = folderId;
+      param['userId'] = userId;
+      param['userRoles'] = userRolesToJson(userRoles);
+
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/add-user-folder';
+
+      final response = await BaseAPIClient.postAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+
+    return false;
+  }
+
   Future<List<QrFeedDTO>> getQrFeed(
       {required int page, required int size, required int type}) async {
     List<QrFeedDTO> result = [];
@@ -289,6 +321,29 @@ class QrFeedRepository extends BaseRepo {
       LOG.error(e.toString());
     }
     return false;
+  }
+
+  Future<AllUserFolder?> getAllUserFolder({
+    required String folderId,
+    required int page,
+    required int size,
+  }) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-folder/user-roles/$folderId?value=&page=$page&size=$size';
+
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return AllUserFolder.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
   }
 
   Future<List<UserFolder>> getUserFolder({

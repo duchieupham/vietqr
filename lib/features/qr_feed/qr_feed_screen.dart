@@ -39,6 +39,7 @@ import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:rive/rive.dart' as rive;
 
@@ -484,11 +485,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
               Expanded(
                 child: InkWell(
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed(Routes.QR_CREATE_SCREEN)
-                        .then(
-                          (value) {},
-                        );
+                    NavigationService.push(Routes.QR_CREATE_SCREEN);
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 12),
@@ -567,9 +564,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             if (tab == TabView.INDIVIDUAL)
               InkWell(
                 onTap: () {
-                  Navigator.of(context).pushNamed(Routes.QR_CREATE_SCREEN).then(
-                        (value) {},
-                      );
+                  NavigationService.push(Routes.QR_CREATE_SCREEN).then(
+                    (value) {},
+                  );
                 },
                 child: Container(
                   padding: const EdgeInsets.all(8),
@@ -1153,6 +1150,7 @@ class _buildQRFeed extends StatelessWidget {
                                         'fileAttachmentId':
                                             dto.fileAttachmentId,
                                         'qrType': dto.qrType,
+                                        'theme': dto.theme,
                                       });
                                 },
                                 child: const XImage(

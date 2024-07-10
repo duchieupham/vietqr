@@ -10,6 +10,7 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 // ignore: constant_identifier_names
 enum ViewType { GRID, LIST }
@@ -338,24 +339,26 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
   void onNavi(QrType e) {
     switch (e.type) {
       case 1:
-        NavigatorUtils.navigatePage(
-            context, const QrLinkScreen(type: TypeQr.VIETQR),
-            routeName: Routes.QR_SCREEN);
+        NavigationService.push(Routes.QR_SCREEN,
+            arguments: {'type': TypeQr.VIETQR, 'isUpdate': false});
+        // NavigatorUtils.(
+        //     context, const QrLinkScreen(type: TypeQr.VIETQR),
+        //     routeName: Routes.QR_SCREEN);
         break;
       case 2:
-        NavigatorUtils.navigatePage(
-            context, const QrLinkScreen(type: TypeQr.QR_LINK),
-            routeName: Routes.QR_SCREEN);
+        NavigationService.push(Routes.QR_SCREEN,
+            arguments: {'type': TypeQr.QR_LINK, 'isUpdate': false});
+
         break;
       case 3:
-        NavigatorUtils.navigatePage(
-            context, const QrLinkScreen(type: TypeQr.VCARD),
-            routeName: Routes.QR_SCREEN);
+        NavigationService.push(Routes.QR_SCREEN,
+            arguments: {'type': TypeQr.VCARD, 'isUpdate': false});
+
         break;
       case 4:
-        NavigatorUtils.navigatePage(
-            context, const QrLinkScreen(type: TypeQr.OTHER),
-            routeName: Routes.QR_SCREEN);
+        NavigationService.push(Routes.QR_SCREEN,
+            arguments: {'type': TypeQr.OTHER, 'isUpdate': false});
+
         break;
       case 5:
         startBarcodeScanStream();

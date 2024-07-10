@@ -15,6 +15,7 @@ class SaveShareQrWidget extends StatefulWidget {
   final String fileAttachmentId;
   final String value;
   final String qrType;
+  final int theme;
   final TypeImage type;
   const SaveShareQrWidget({
     super.key,
@@ -24,6 +25,7 @@ class SaveShareQrWidget extends StatefulWidget {
     required this.value,
     required this.qrType,
     required this.type,
+    required this.theme,
   });
 
   @override
@@ -123,7 +125,7 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      colors: _gradients[0],
+                      colors: _gradients[widget.theme - 1],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight),
                 ),

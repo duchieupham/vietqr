@@ -12,7 +12,6 @@ import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
-import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/features/qr_feed/widgets/popup_folder_choice_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -28,12 +27,16 @@ enum FolderEnum { QR, ACCESS }
 class FolderDetailScreen extends StatefulWidget {
   final String folderId;
   final String userId;
+  final int countQrs;
+  final int countUsers;
 
   final String folderName;
   final FolderEnum tab;
 
   const FolderDetailScreen(
       {super.key,
+      required this.countQrs,
+      required this.countUsers,
       required this.folderId,
       required this.userId,
       required this.folderName,
@@ -118,15 +121,6 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _loadingUser = [
-      _userFolder(isLoading: true),
-      _userFolder(isLoading: true),
-      _userFolder(isLoading: true),
-      _userFolder(isLoading: true),
-      _userFolder(isLoading: true),
-      _userFolder(isLoading: true),
-    ];
-
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
       listener: (context, state) {
@@ -209,7 +203,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                               ),
                             ),
                             const SizedBox(height: 25),
-                            if (dto != null && dto!.qrData.isNotEmpty)
+                            if (state.request == QrFeed.GET_FOLDER_DETAIL &&
+                                state.status == BlocStatus.LOADING)
+                              ...List.generate(
+                                4,
+                                (index) => _buildRowQrPrivate(isLoading: true),
+                              )
+                            else if (dto != null && dto!.qrData.isNotEmpty)
                               ...groupsAlphabet.entries.map(
                                 (e) {
                                   return Column(
@@ -254,7 +254,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                             const SizedBox(height: 30),
                             if (state.request == QrFeed.GET_USER_FOLDER &&
                                 state.status == BlocStatus.LOADING)
-                              ..._loadingUser
+                              ...List.generate(
+                                  4, (index) => _userFolder(isLoading: true))
                             else if (listUser.isNotEmpty)
                               ...listUser.asMap().map(
                                 (index, e) {
@@ -316,13 +317,19 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               !isLoading
-                  ? XImage(
-                      borderRadius: BorderRadius.circular(100),
-                      imagePath: user!.imageId.isNotEmpty
-                          ? user.imageId
-                          : ImageConstant.icAvatar,
+                  ? Container(
                       width: 40,
                       height: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100)),
+                      child: XImage(
+                        borderRadius: BorderRadius.circular(100),
+                        imagePath: user!.imageId.isNotEmpty
+                            ? user.imageId
+                            : ImageConstant.icAvatar,
+                        width: 40,
+                        height: 40,
+                      ),
                     )
                   : const ShimmerBlock(
                       width: 40,
@@ -487,7 +494,6 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                             fontSize: 12.0,
                             color: Colors.black54,
                           ),
-                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ] else ...[
@@ -519,6 +525,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                 'value': dto.vlue,
                                 'fileAttachmentId': dto.fileAttachmentId,
                                 'qrType': dto.qrType,
+                                'theme': 0,
                               });
                         },
                         child: Container(
@@ -637,8 +644,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                         description: dto!.descriptionFolder,
                         userId: dto!.userId,
                         title: dto!.titleFolder,
-                        countUsers: 0,
-                        countQrs: 0,
+                        countUsers: widget.countUsers,
+                        countQrs: widget.countQrs,
                         timeCreated: 0);
                     DialogWidget.instance.showModelBottomSheet(
                       borderRadius: BorderRadius.circular(20),

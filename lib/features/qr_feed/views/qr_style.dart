@@ -103,7 +103,16 @@ class _QrStyleState extends State<QrStyle> {
 
           //   },
           // );
-          NavigationService.popUntil(Routes.DASHBOARD);
+          // NavigationService.popUntil(Routes.DASHBOARD);
+          Navigator.of(context).popUntil((route) {
+            return route.isFirst;
+            // if (route.settings.name == '/dashboard') {
+            //   (route.settings.arguments as Map)['result'] = '';
+            //   return true;
+            // } else {
+            //   return false;
+            // }
+          });
           Fluttertoast.showToast(
             msg: 'Tạo mã QR thành công',
             toastLength: Toast.LENGTH_SHORT,

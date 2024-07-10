@@ -163,6 +163,8 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
           'userId': dto.userId,
           'id': dto.id,
           'folderName': dto.title,
+          'countUsers': dto.countUsers,
+          'countQrs': dto.countQrs,
           'tab': FolderEnum.QR
         }).then(
           (value) {
@@ -175,7 +177,7 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
         child: Column(
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(4),
@@ -288,7 +290,7 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
     return AppBar(
       forceMaterialTransparency: true,
       backgroundColor: AppColor.WHITE,
-      leadingWidth: double.infinity,
+      leadingWidth: 90,
       leading: InkWell(
         onTap: () {
           Navigator.of(context).pop();
@@ -352,7 +354,7 @@ class BuidlLoading extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 20, top: 20),
       width: double.infinity,
       child: const Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ShimmerBlock(
             height: 40,

@@ -7,6 +7,7 @@ import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.da
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/repositories/qr_feed_repository.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
@@ -15,6 +16,8 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
 
+    on<AddUserToFolderEvent>(_addUserToFolder);
+    on<GetUpdateFolderDetailEvent>(_getUpdateFolderDetail);
     on<UpdateUserRoleFolderEvent>(_updateUserRoleFolder);
     on<RemoveUserFolderEvent>(_removeUserFolder);
     on<GetUserFolderEvent>(_getUserFolder);
@@ -513,6 +516,76 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: QrFeed.CREATE_FOLDER));
+    }
+  }
+
+  void _addUserToFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is AddUserToFolderEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.ADD_USER));
+        final result = await _qrFeedRepository.addUserFolder(
+            folderId: event.folderId, userRoles: event.userRoles);
+        if (result) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS, request: QrFeed.ADD_USER));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, request: QrFeed.ADD_USER));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, request: QrFeed.ADD_USER));
+    }
+  }
+
+  void _getUpdateFolderDetail(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetUpdateFolderDetailEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING,
+            request: QrFeed.GET_UPDATE_FOLDER_DETAIL));
+
+        if (event.type == ActionType.UPDATE_QR) {
+          final result = await _qrFeedRepository.getQrFolderDetail(
+              type: 9, folderId: event.folderId, value: event.folderId);
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS,
+              request: QrFeed.GET_UPDATE_FOLDER_DETAIL,
+              folderDetailDTO: result));
+        } else {
+          final result = await _qrFeedRepository.getAllUserFolder(
+              folderId: event.folderId, page: 1, size: 50);
+          if (result != null) {
+            final paging = result.metadata;
+            if (paging.size! < paging.total!) {
+              final resultTotal = await _qrFeedRepository.getAllUserFolder(
+                  folderId: event.folderId, page: 1, size: paging.total!);
+              if (resultTotal != null) {
+                emit(state.copyWith(
+                    status: BlocStatus.SUCCESS,
+                    request: QrFeed.GET_UPDATE_FOLDER_DETAIL,
+                    listAllUserFolder: resultTotal.data));
+              }
+            } else {
+              emit(state.copyWith(
+                  status: BlocStatus.SUCCESS,
+                  request: QrFeed.GET_UPDATE_FOLDER_DETAIL,
+                  listAllUserFolder: result.data));
+            }
+          } else {
+            emit(state.copyWith(
+                status: BlocStatus.ERROR,
+                request: QrFeed.GET_UPDATE_FOLDER_DETAIL,
+                listAllUserFolder: []));
+          }
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: QrFeed.GET_UPDATE_FOLDER_DETAIL));
     }
   }
 
