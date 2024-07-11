@@ -104,6 +104,12 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     initData();
   }
 
+  void _updateGroupsAlphabet() {
+    setState(() {
+      groupsAlphabet.clear();
+    });
+  }
+
   void initData() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
@@ -191,6 +197,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
 
         if (state.request == QrFeed.GET_USER_QR &&
             state.status == BlocStatus.SUCCESS) {
+          _updateGroupsAlphabet();
           final list = state.listQrFeedPrivate;
           listQr = mapQr(list!);
           if (listQr.isNotEmpty) {

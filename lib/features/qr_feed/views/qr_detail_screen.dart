@@ -1271,9 +1271,8 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 const SizedBox(width: 10), // Add some space between the buttons
                 Expanded(
                   child: Container(
-                    height: 40, // Set a fixed height for the containers
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10), // Padding on both sides
+                    height: 40,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       color: Colors.blue.withOpacity(0.1),
@@ -1284,7 +1283,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         style: TextStyle(color: Colors.blue),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
+                        Navigator.of(context).pop();
                         _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

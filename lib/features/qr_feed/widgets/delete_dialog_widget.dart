@@ -134,6 +134,70 @@ class _DeleteDialogWidgetState extends State<DeleteDialogWidget> {
     );
   }
 
+  // void _showDeleteConfirmationDialog(BuildContext context, int deleteItems) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Xác nhận xoá'),
+  //         content: const Text('Bạn có chắc chắn muốn xoá mã QR này không?'),
+  //         actions: <Widget>[
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 40,
+  //                   padding: const EdgeInsets.symmetric(horizontal: 10),
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(8),
+  //                     color: Colors.red.withOpacity(0.1),
+  //                   ),
+  //                   child: TextButton(
+  //                     child: const Text(
+  //                       'Huỷ',
+  //                       style: TextStyle(color: Colors.red),
+  //                     ),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                     },
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 10),
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 40,
+  //                   padding: const EdgeInsets.symmetric(horizontal: 10),
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(8),
+  //                     color: Colors.blue.withOpacity(0.1),
+  //                   ),
+  //                   child: TextButton(
+  //                     child: const Text(
+  //                       'Xác nhận',
+  //                       style: TextStyle(color: Colors.blue),
+  //                     ),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop();
+  //                       getIt.get<QrFeedBloc>().add(DeleteFolderEvent(
+  //                           deleteItems: deleteItems,
+  //                           folderId: widget.folderId));
+  //                       ScaffoldMessenger.of(context).showSnackBar(
+  //                         const SnackBar(
+  //                           content: Text('Xoá thành công'),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
   void _showDeleteConfirmationDialog(BuildContext context, int deleteItems) {
     showDialog(
       context: context,

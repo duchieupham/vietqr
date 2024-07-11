@@ -48,7 +48,7 @@ class QrFeedDTO {
       description: json['description'],
       style: json['style'] ?? '',
       theme: json['theme'] ?? '',
-      data: json['data'],
+      data: json['data'] ?? '',
       userId: json['userId'],
       title: json['title'],
       timeCreated: json['timeCreated'],

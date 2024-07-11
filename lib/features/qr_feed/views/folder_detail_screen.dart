@@ -326,6 +326,9 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
         case 'EDITOR':
           role = 'Quản lý';
           break;
+        case 'MANAGER':
+          role = 'Quản lý';
+          break;
         case 'VIEWER':
           role = 'Người xem';
           break;
