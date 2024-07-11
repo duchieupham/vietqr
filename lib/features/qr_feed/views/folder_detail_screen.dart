@@ -420,8 +420,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               ),
               const SizedBox(width: 8),
               if (!isLoading)
-                if (!user!.role.toLowerCase().contains('admin') &&
-                    widget.userId == userId)
+                if (widget.isEdit != 3 && user!.userId != widget.userId)
                   GestureDetector(
                     onTapDown: (details) {
                       onTapDown(details, user);
@@ -869,6 +868,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                 'page': 2,
                                 'action': ActionType.UPDATE_USER,
                                 'id': widget.folderId,
+                                'title': '',
+                                'description': '',
                               }).then(
                             (value) {
                               if (tab == FolderEnum.QR) {
@@ -973,15 +974,16 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
             ),
           ),
         ),
-        const PopupMenuItem<int>(
-          value: 1,
-          child: ListTile(
-            title: Text(
-              'Xoá quyền truy cập',
-              style: TextStyle(fontSize: 12, color: Colors.red),
+        if (widget.isEdit != 2 && widget.isEdit != 3)
+          const PopupMenuItem<int>(
+            value: 1,
+            child: ListTile(
+              title: Text(
+                'Xoá quyền truy cập',
+                style: TextStyle(fontSize: 12, color: Colors.red),
+              ),
             ),
           ),
-        ),
       ],
     ).then(
       (value) {
