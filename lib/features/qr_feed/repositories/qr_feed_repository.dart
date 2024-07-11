@@ -12,6 +12,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/invoice/repositories/base_repository.dart';
+import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
@@ -21,6 +22,7 @@ import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/qr_folder_detail_dto.dart';
+import 'package:vierqr/models/qr_folder_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -62,6 +64,65 @@ class QrFeedRepository extends BaseRepo {
       LOG.error(e.toString());
     }
     return null;
+  }
+
+  Future<QRFolderDTO?> getQRFolder({
+    required String folderId,
+    required int page,
+    required int size,
+    required int addedToFolder,
+  }) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folder-wallets?$folderId&userId=$userId&addedToFolder=$addedToFolder&page=$page&size=$size';
+
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return QRFolderDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
+  }
+
+  Future<bool> updateQr(dynamic data, TypeQr type) async {
+    try {
+      String url = '';
+      switch (type) {
+        case TypeQr.OTHER:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/update-qr-link?type=1';
+          break;
+        case TypeQr.QR_LINK:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/update-qr-link?type=0';
+          break;
+        case TypeQr.VCARD:
+          url = '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/update-qr-vcard';
+          break;
+        case TypeQr.VIETQR:
+          url =
+              '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/update-qr-vietqr';
+          break;
+        default:
+      }
+      final response = await BaseAPIClient.putAPI(
+        body: data,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
   }
 
   Future<ResponseMessageDTO> createQrLink(

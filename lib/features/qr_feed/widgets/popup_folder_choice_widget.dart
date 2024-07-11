@@ -39,22 +39,22 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
       listener: (context, state) {
-        if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
-            state.status == BlocStatus.SUCCESS) {
-          List<QrData> qrList = [];
-          if (state.folderDetailDTO != null) {
-            qrList = state.folderDetailDTO!.qrData;
-          }
+        // if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
+        //     state.status == BlocStatus.SUCCESS) {
+        //   // List<QrData> qrList = [];
+        //   // if (state.folderDetailDTO != null) {
+        //   //   qrList = state.folderDetailDTO!.qrData;
+        //   // }
 
-          final listUser = state.listAllUserFolder;
-          NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN, arguments: {
-            'page': 2,
-            'action': ActionType.UPDATE_USER,
-            'id': widget.dto.id,
-            'listQrPrivate': qrList,
-            'listUserFolder': listUser,
-          });
-        }
+        //   final listUser = state.listAllUserFolder;
+        //   NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN, arguments: {
+        //     'page': 2,
+        //     'action': ActionType.UPDATE_USER,
+        //     'id': widget.dto.id,
+        //     'qrFolder': state.qrFolderUpdate,
+        //     'listUserFolder': listUser,
+        //   });
+        // }
       },
       builder: (context, state) {
         return Container(
@@ -129,8 +129,12 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                 const MySeparator(color: AppColor.GREY_DADADA),
                 InkWell(
                   onTap: () {
-                    _bloc.add(GetUpdateFolderDetailEvent(
-                        type: ActionType.UPDATE_USER, folderId: widget.dto.id));
+                    NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                        arguments: {
+                          'page': 2,
+                          'action': ActionType.UPDATE_USER,
+                          'id': widget.dto.id,
+                        });
                   },
                   child: const _buildItem(
                       img: 'assets/images/ic-add-person-black.png',

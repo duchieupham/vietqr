@@ -65,6 +65,7 @@ import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/qr_folder_detail_dto.dart';
+import 'package:vierqr/models/qr_folder_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
@@ -137,11 +138,13 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaListView());
       case Routes.QR_UPDATE_SCREEN:
         Map map = settings.arguments as Map;
+        bool isPublic = map['isPublic'];
         QrFeedDetailDTO detail = map['detail'];
         QrFeedPopupDetailDTO moreDetail = map['moreDetail'];
         return _buildRoute(
             settings,
             QrUpdateScreen(
+              isPublic: isPublic,
               moreDetail: moreDetail,
               detail: detail,
             ));
@@ -173,8 +176,11 @@ class NavigationService {
             builder: (context) => const QrFolderScreen(), settings: settings);
       case Routes.CREATE_QR_FOLDER_SCREEN:
         Map map = settings.arguments as Map;
-        List<QrData> listQrPrivate = map['listQrPrivate'] ?? [];
-        List<UserFolder> listUserFolder = map['listUserFolder'] ?? [];
+        // QRFolderDTO? qrFolderDTO;
+        // if (map['qrFolder'] != null) {
+        //   qrFolderDTO = map['qrFolder'];
+        // }
+        // List<UserFolder> listUserFolder = map['listUserFolder'] ?? [];
 
         ActionType action = map['action'];
         String folderId = map['id'];
@@ -184,8 +190,6 @@ class NavigationService {
                   folderId: folderId,
                   action: action,
                   pageView: page,
-                  listQrPrivate: listQrPrivate,
-                  listUserFolder: listUserFolder,
                 ),
             settings: settings);
       case Routes.QR_STYLE:
@@ -253,11 +257,16 @@ class NavigationService {
             ));
       case Routes.QR_DETAIL_SCREEN:
         Map map = settings.arguments as Map;
+        bool isPublic = map['isPublic'];
+        String folderId = map['folderId'] ?? '';
+
         // String qrType = map['qrType'];
         String id = map['id'];
         return _buildRoute(
             settings,
             QrDetailScreen(
+              folderId: folderId,
+              isPublic: isPublic,
               id: id,
               // qrType: qrType,
             ));

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
@@ -204,6 +205,16 @@ class GetUserFolderEvent extends QrFeedEvent {
   List<Object?> get props => [value, folderId, size, page];
 }
 
+class UpdateQREvent extends QrFeedEvent {
+  final TypeQr type;
+  final dynamic data;
+
+  const UpdateQREvent({required this.type, required this.data});
+
+  @override
+  List<Object?> get props => [type, data];
+}
+
 class CreateFolderEvent extends QrFeedEvent {
   final CreateFolderDTO dto;
 
@@ -246,16 +257,39 @@ class GetQrFeedFolderEvent extends QrFeedEvent {
 }
 
 class GetQrFeedDetailEvent extends QrFeedEvent {
+  final String folderId;
+
   final String id;
   final bool isLoading;
   final int? size;
   final int? page;
 
   const GetQrFeedDetailEvent(
-      {required this.id, required this.isLoading, this.size, this.page});
+      {required this.id,
+      required this.isLoading,
+      this.folderId = '',
+      this.size,
+      this.page});
 
   @override
-  List<Object?> get props => [id, isLoading, size, page];
+  List<Object?> get props => [id, folderId, isLoading, size, page];
+}
+
+class GetQRFolderEvent extends QrFeedEvent {
+  final String folderId;
+  final int? page;
+  final int? size;
+  final int addedToFolder;
+
+  const GetQRFolderEvent({
+    required this.folderId,
+    this.page,
+    this.size,
+    required this.addedToFolder,
+  });
+
+  @override
+  List<Object?> get props => [folderId, addedToFolder, size, page];
 }
 
 class GetQrFeedPopupDetailEvent extends QrFeedEvent {
