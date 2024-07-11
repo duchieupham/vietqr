@@ -9,6 +9,7 @@ class QrData {
   String data;
   String vlue;
   String fileAttachmentId;
+  String theme;
 
   QrData({
     required this.id,
@@ -21,6 +22,7 @@ class QrData {
     required this.data,
     required this.vlue,
     required this.fileAttachmentId,
+    required this.theme,
   });
 
   factory QrData.fromJson(Map<String, dynamic> json) {
@@ -35,6 +37,7 @@ class QrData {
       data: json['data'],
       vlue: json['vlue'],
       fileAttachmentId: json['fileAttachmentId'],
+      theme: json['theme'],
     );
   }
 
@@ -50,6 +53,7 @@ class QrData {
       'data': data,
       'vlue': vlue,
       'fileAttachmentId': fileAttachmentId,
+      'theme': theme,
     };
   }
 }

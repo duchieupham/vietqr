@@ -914,6 +914,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         'value': e.value,
                         'fileAttachmentId': e.fileAttachmentId,
                         'qrType': e.qrType,
+                        'theme': e.theme,
                       });
                     },
                     child: Container(
@@ -941,6 +942,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         'value': e.value,
                         'fileAttachmentId': e.fileAttachmentId,
                         'qrType': e.qrType,
+                        'theme': e.theme,
                       });
                     },
                     child: Container(

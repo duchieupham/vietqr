@@ -435,6 +435,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                 'value': dto.value,
                                 'fileAttachmentId': dto.fileAttachmentId,
                                 'qrType': dto.qrType,
+                                'theme': dto.theme,
                               });
                         },
                         child: Container(
@@ -463,6 +464,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                 'value': dto.value,
                                 'fileAttachmentId': dto.fileAttachmentId,
                                 'qrType': dto.qrType,
+                                'theme': dto.theme,
                               });
                         },
                         child: Container(
