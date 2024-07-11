@@ -256,6 +256,15 @@ class GetQrFeedFolderEvent extends QrFeedEvent {
   List<Object?> get props => [value, type, size, page];
 }
 
+class RemoveQRFolderEvent extends QrFeedEvent {
+  final dynamic data;
+
+  const RemoveQRFolderEvent({required this.data});
+
+  @override
+  List<Object?> get props => [data];
+}
+
 class UpdateQRFolderEvent extends QrFeedEvent {
   final dynamic data;
 
@@ -367,12 +376,13 @@ class AddUserToFolderEvent extends QrFeedEvent {
 class GetUpdateFolderDetailEvent extends QrFeedEvent {
   final ActionType type;
   final String folderId;
+  final int? addedFolder;
 
   const GetUpdateFolderDetailEvent(
-      {required this.type, required this.folderId});
+      {required this.type, required this.folderId, this.addedFolder});
 
   @override
-  List<Object?> get props => [type, folderId];
+  List<Object?> get props => [type, folderId, addedFolder];
 }
 
 class LoadBanksEvent extends QrFeedEvent {}

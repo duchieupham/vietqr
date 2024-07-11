@@ -195,10 +195,17 @@ class NavigationService {
       case Routes.QR_STYLE:
         Map map = settings.arguments as Map;
         int type = map['type'];
+        bool isUpdate = map['isUpdate'] ?? false;
+        String imgId = map['imgId'] ?? '';
+
+        String qrId = map['qrId'] ?? '';
 
         QrCreateFeedDTO dto = map['dto'];
         return CupertinoPageRoute(
             builder: (context) => QrStyle(
+                  qrId: qrId,
+                  imgId: imgId,
+                  isUpdate: isUpdate,
                   dto: dto,
                   type: type,
                 ),
@@ -242,12 +249,14 @@ class NavigationService {
         String userId = map['userId'];
         int countQrs = map['countQrs'];
         int countUsers = map['countUsers'];
+        int isEdit = map['isEdit'];
 
         String folderName = map['folderName'];
         FolderEnum tab = map['tab'];
         return _buildRoute(
             settings,
             FolderDetailScreen(
+              isEdit: isEdit,
               countQrs: countQrs,
               countUsers: countUsers,
               userId: userId,

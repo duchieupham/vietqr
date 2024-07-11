@@ -12,22 +12,36 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrStyle extends StatefulWidget {
   final int type;
   final QrCreateFeedDTO dto;
-  const QrStyle({super.key, required this.type, required this.dto});
+  final bool isUpdate;
+  final String imgId;
+  final String qrId;
+
+  const QrStyle({
+    super.key,
+    required this.type,
+    required this.dto,
+    this.isUpdate = false,
+    this.imgId = '',
+    this.qrId = '',
+  });
 
   @override
   State<QrStyle> createState() => _QrStyleState();
@@ -40,7 +54,8 @@ class _QrStyleState extends State<QrStyle> {
   int _charCount = 0;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  int _selectedValue = 1;
+  // int  = 1;
+  ValueNotifier<int> _selectedValue = ValueNotifier<int>(1);
 
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
   final imagePicker = ImagePicker();
@@ -52,10 +67,21 @@ class _QrStyleState extends State<QrStyle> {
   @override
   void initState() {
     super.initState();
+    initData();
     _descriptionController.addListener(_checkInputHeight);
+  }
 
+  void initData() {
     WidgetsBinding.instance.addPostFrameCallback(
-      (_) {},
+      (_) {
+        if (widget.isUpdate) {
+          _selectedValue.value = int.parse(widget.dto.themeDTO);
+          _isPersonalSelected = widget.dto.isPublicDTO == '0';
+          _titleController.text = widget.dto.qrNameDTO;
+          _descriptionController.text = widget.dto.qrDescriptionDTO;
+          setState(() {});
+        }
+      },
     );
   }
 
@@ -179,141 +205,169 @@ class _QrStyleState extends State<QrStyle> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 150,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: _gradients[_selectedValue - 1],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.all(25),
-                color: AppColor.WHITE,
-                child: QrImageView(
-                  data: '',
-                  size: 100,
-                  version: QrVersions.auto,
-                  embeddedImage: filePicker != null
-                      ? Image.file(filePicker!).image
-                      : const AssetImage('assets/images/ic-viet-qr-small.png'),
-                  embeddedImageStyle: const QrEmbeddedImageStyle(
-                    size: Size(20, 20),
-                  ),
+        ValueListenableBuilder<int>(
+          valueListenable: _selectedValue,
+          builder: (context, value, child) {
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: 150,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: _gradients[value - 1],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
                 ),
               ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 25),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.all(25),
+                    color: AppColor.WHITE,
+                    child: !widget.isUpdate
+                        ? QrImageView(
+                            data: '',
+                            size: 100,
+                            version: QrVersions.auto,
+                            embeddedImage: filePicker != null
+                                ? Image.file(filePicker!).image
+                                : const AssetImage(
+                                    'assets/images/ic-viet-qr-small.png'),
+                            embeddedImageStyle: const QrEmbeddedImageStyle(
+                              size: Size(20, 20),
+                            ),
+                          )
+                        : filePicker == null
+                            ? QrImageView(
+                                data: '',
+                                size: 100,
+                                version: QrVersions.auto,
+                                embeddedImage: ImageUtils.instance
+                                    .getImageNetworkCache(widget.imgId),
+                                embeddedImageStyle: const QrEmbeddedImageStyle(
+                                  size: Size(20, 20),
+                                ),
+                              )
+                            : QrImageView(
+                                data: '',
+                                size: 100,
+                                version: QrVersions.auto,
+                                embeddedImage: Image.file(filePicker!).image,
+                                embeddedImageStyle: const QrEmbeddedImageStyle(
+                                  size: Size(20, 20),
+                                ),
+                              ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 25),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Quyền riêng tư',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        const SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: _selectPersonal,
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: _isPersonalSelected
-                                  ? Colors.blue.withOpacity(0.3)
-                                  : Colors.white,
+                        Row(
+                          children: [
+                            const Text(
+                              'Quyền riêng tư',
+                              style: TextStyle(fontSize: 12),
                             ),
-                            child: Center(
-                              child: Icon(
-                                Icons.person,
-                                color: _isPersonalSelected
-                                    ? Colors.blue
-                                    : AppColor.GREY_TEXT,
-                                size: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: _selectPublic,
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: !_isPersonalSelected
-                                  ? Colors.blue.withOpacity(0.3)
-                                  : Colors.white,
-                            ),
-                            child: Center(
-                              child: Icon(
-                                Icons.public,
-                                color: !_isPersonalSelected
-                                    ? Colors.blue
-                                    : AppColor.GREY_TEXT,
-                                size: 15,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: _toggleLogo,
-                          child: Container(
-                            width: 120,
-                            height: 30,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-                              color: AppColor.WHITE,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const XImage(
-                                    imagePath: 'assets/images/ic-img-blue.png'),
-                                Text(
-                                  _isLogoAdded ? 'Đổi Logo' : 'Thêm Logo',
-                                  style: const TextStyle(
-                                    color: AppColor.BLUE_TEXT,
-                                    fontSize: 10,
+                            const SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: _selectPersonal,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _isPersonalSelected
+                                      ? Colors.blue.withOpacity(0.3)
+                                      : Colors.white,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.person,
+                                    color: _isPersonalSelected
+                                        ? Colors.blue
+                                        : AppColor.GREY_TEXT,
+                                    size: 15,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+                            const SizedBox(width: 10),
+                            GestureDetector(
+                              onTap: _selectPublic,
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: !_isPersonalSelected
+                                      ? Colors.blue.withOpacity(0.3)
+                                      : Colors.white,
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.public,
+                                    color: !_isPersonalSelected
+                                        ? Colors.blue
+                                        : AppColor.GREY_TEXT,
+                                    size: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        // const SizedBox(width: 10),
-                        // if (filePicker != null)
-                        //   XImage(
-                        //     borderRadius: BorderRadius.circular(30),
-                        //     imagePath: filePicker!.path,
-                        //     height: 30,
-                        //     width: 50,
-                        //     fit: BoxFit.cover,
-                        //   )
+                        const SizedBox(height: 30),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: _toggleLogo,
+                              child: Container(
+                                width: 120,
+                                height: 30,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  color: AppColor.WHITE,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const XImage(
+                                        imagePath:
+                                            'assets/images/ic-img-blue.png'),
+                                    Text(
+                                      _isLogoAdded ? 'Đổi Logo' : 'Thêm Logo',
+                                      style: const TextStyle(
+                                        color: AppColor.BLUE_TEXT,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // const SizedBox(width: 10),
+                            // if (filePicker != null)
+                            //   XImage(
+                            //     borderRadius: BorderRadius.circular(30),
+                            //     imagePath: filePicker!.path,
+                            //     height: 30,
+                            //     width: 50,
+                            //     fit: BoxFit.cover,
+                            //   )
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -473,7 +527,7 @@ class _QrStyleState extends State<QrStyle> {
                           end: Alignment.centerRight,
                         ),
                       ),
-                      child: _selectedValue == index + 1
+                      child: _selectedValue.value == index + 1
                           ? const Icon(Icons.check, color: Colors.blue)
                           : null,
                     ),
@@ -505,30 +559,95 @@ class _QrStyleState extends State<QrStyle> {
       child: InkWell(
         onTap: isEnable
             ? () {
-                QrCreateFeedDTO dto = QrCreateFeedDTO(
-                  typeDto: widget.type.toString(),
-                  userIdDTO: widget.dto.userIdDTO,
-                  qrNameDTO: _titleController.text,
-                  qrDescriptionDTO: _descriptionController.text,
-                  valueDTO: widget.dto.valueDTO,
-                  pinDTO: '',
-                  fullNameDTO: widget.dto.fullNameDTO,
-                  phoneNoDTO: widget.dto.phoneNoDTO,
-                  emailDTO: widget.dto.emailDTO,
-                  companyNameDTO: widget.dto.companyNameDTO,
-                  websiteDTO: widget.dto.websiteDTO,
-                  addressDTO: widget.dto.addressDTO,
-                  additionalDataDTO: '',
-                  bankAccountDTO: widget.dto.bankAccountDTO,
-                  bankCodeDTO: widget.dto.bankCodeDTO,
-                  userBankNameDTO: widget.dto.userBankNameDTO,
-                  amountDTO: widget.dto.amountDTO,
-                  contentDTO: widget.dto.contentDTO,
-                  isPublicDTO: _isPersonalSelected ? '0' : '1',
-                  styleDTO: '0',
-                  themeDTO: _selectedValue.toString(),
-                );
-                _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+                if (!widget.isUpdate) {
+                  QrCreateFeedDTO dto = QrCreateFeedDTO(
+                    typeDto: widget.type.toString(),
+                    userIdDTO: widget.dto.userIdDTO,
+                    qrNameDTO: _titleController.text,
+                    qrDescriptionDTO: _descriptionController.text,
+                    valueDTO: widget.dto.valueDTO,
+                    pinDTO: '',
+                    fullNameDTO: widget.dto.fullNameDTO,
+                    phoneNoDTO: widget.dto.phoneNoDTO,
+                    emailDTO: widget.dto.emailDTO,
+                    companyNameDTO: widget.dto.companyNameDTO,
+                    websiteDTO: widget.dto.websiteDTO,
+                    addressDTO: widget.dto.addressDTO,
+                    additionalDataDTO: '',
+                    bankAccountDTO: widget.dto.bankAccountDTO,
+                    bankCodeDTO: widget.dto.bankCodeDTO,
+                    userBankNameDTO: widget.dto.userBankNameDTO,
+                    amountDTO: widget.dto.amountDTO,
+                    contentDTO: widget.dto.contentDTO,
+                    isPublicDTO: _isPersonalSelected ? '0' : '1',
+                    styleDTO: '0',
+                    themeDTO: _selectedValue.value.toString(),
+                  );
+                  _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+                } else {
+                  Map<String, dynamic> data = {};
+                  TypeQr typeQr = TypeQr.OTHER;
+                  switch (widget.type) {
+                    case 1:
+                      typeQr = TypeQr.OTHER;
+                      data['userId'] = SharePrefUtils.getProfile().userId;
+                      data['qrId'] = widget.qrId;
+                      data['title'] = _titleController.text;
+                      data['qrDescription'] = _descriptionController.text;
+                      data['value'] = widget.dto.valueDTO;
+                      data['pin'] = '';
+                      data['isPublic'] = _isPersonalSelected ? '0' : '1';
+                      data['style'] = '0';
+                      data['theme'] = _selectedValue.value.toString();
+                      break;
+                    case 0:
+                      typeQr = TypeQr.QR_LINK;
+                      data['userId'] = SharePrefUtils.getProfile().userId;
+                      data['qrId'] = widget.qrId;
+                      data['title'] = _titleController.text;
+                      data['qrDescription'] = _descriptionController.text;
+                      data['value'] = widget.dto.valueDTO;
+                      data['pin'] = '';
+                      data['isPublic'] = _isPersonalSelected ? '0' : '1';
+                      data['style'] = '0';
+                      data['theme'] = _selectedValue.value.toString();
+                      break;
+                    case 2:
+                      typeQr = TypeQr.VCARD;
+                      data['id'] = widget.qrId;
+                      data['qrTitle'] = _titleController.text;
+                      data['qrDescription'] = _descriptionController.text;
+                      data['userId'] = SharePrefUtils.getProfile().userId;
+                      data['fullname'] = widget.dto.fullNameDTO;
+                      data['phoneNo'] = widget.dto.phoneNoDTO;
+                      data['email'] = widget.dto.emailDTO;
+                      data['companyName'] = widget.dto.companyNameDTO;
+                      data['website'] = widget.dto.websiteDTO;
+                      data['address'] = widget.dto.addressDTO;
+                      data['additionalData'] = '';
+                      data['isPublic'] = _isPersonalSelected ? '0' : '1';
+                      data['style'] = '0';
+                      data['theme'] = _selectedValue.value.toString();
+                      break;
+                    case 3:
+                      typeQr = TypeQr.VIETQR;
+                      data['id'] = widget.qrId;
+                      data['qrName'] = _titleController.text;
+                      data['qrDescription'] = _descriptionController.text;
+                      data['userId'] = SharePrefUtils.getProfile().userId;
+                      data['bankAccount'] = widget.dto.bankAccountDTO;
+                      data['bankCode'] = widget.dto.bankCodeDTO;
+                      data['userBankName'] = widget.dto.userBankNameDTO;
+                      data['amount'] = widget.dto.amountDTO;
+                      data['content'] = widget.dto.contentDTO;
+                      data['isPublic'] = _isPersonalSelected ? '0' : '1';
+                      data['style'] = '0';
+                      data['theme'] = _selectedValue.value.toString();
+                      break;
+                    default:
+                  }
+                  _bloc.add(UpdateQREvent(type: typeQr, data: data));
+                }
               }
             : null,
         child: Container(
@@ -551,17 +670,19 @@ class _QrStyleState extends State<QrStyle> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 16.0),
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: AppColor.TRANSPARENT,
-                ),
-              ),
+              widget.isUpdate
+                  ? const Padding(
+                      padding: EdgeInsets.only(left: 16.0),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: AppColor.TRANSPARENT,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
               Expanded(
                 child: Center(
                   child: Text(
-                    'Thêm mới',
+                    widget.isUpdate ? 'Cập nhật' : 'Thêm mới',
                     style: TextStyle(
                       color: isEnable ? AppColor.WHITE : AppColor.BLACK,
                       fontSize: 16,
@@ -569,13 +690,15 @@ class _QrStyleState extends State<QrStyle> {
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(right: 16.0),
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: AppColor.TRANSPARENT,
-                ),
-              ),
+              widget.isUpdate
+                  ? const Padding(
+                      padding: EdgeInsets.only(right: 16.0),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        color: AppColor.TRANSPARENT,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
@@ -598,7 +721,7 @@ class _QrStyleState extends State<QrStyle> {
 
   void _selectValue(int value) {
     setState(() {
-      _selectedValue = value;
+      _selectedValue.value = value;
     });
   }
 

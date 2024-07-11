@@ -14,6 +14,7 @@ import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -23,6 +24,7 @@ import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/features/qr_feed/widgets/pop_up_qr_detail_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -181,7 +183,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           Navigator.of(context).popUntil(
             (route) => route.isFirst,
           );
-          _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
+          _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
         }
       },
       builder: (context, state) {
@@ -1179,7 +1181,42 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                                   });
                               break;
                             case 1:
-                              // Handle "Tuỳ chỉnh giao diện mã QR"
+                              QrCreateFeedDTO dto = QrCreateFeedDTO(
+                                typeDto: e.qrType,
+                                userIdDTO: userId,
+                                qrNameDTO: e.title,
+                                qrDescriptionDTO: e.description,
+                                valueDTO: e.value,
+                                pinDTO: '',
+                                fullNameDTO: e.fullName,
+                                phoneNoDTO: qrFeedPopupDetailDTO?.phoneNo,
+                                emailDTO: qrFeedPopupDetailDTO?.email,
+                                companyNameDTO:
+                                    qrFeedPopupDetailDTO?.companyName,
+                                websiteDTO: qrFeedPopupDetailDTO?.website,
+                                addressDTO: qrFeedPopupDetailDTO?.address,
+                                additionalDataDTO: '',
+                                bankAccountDTO:
+                                    qrFeedPopupDetailDTO?.bankAccount,
+                                bankCodeDTO: qrFeedPopupDetailDTO?.bankCode,
+                                userBankNameDTO:
+                                    qrFeedPopupDetailDTO?.userBankName,
+                                amountDTO: qrFeedPopupDetailDTO?.amount,
+                                contentDTO: qrFeedPopupDetailDTO?.content,
+                                isPublicDTO: widget.isPublic ? '1' : '0',
+                                styleDTO: e.style,
+                                themeDTO: e.theme,
+                              );
+                              NavigatorUtils.navigatePage(
+                                  context,
+                                  QrStyle(
+                                    imgId: e.fileAttachmentId,
+                                    isUpdate: true,
+                                    type: int.parse(e.qrType),
+                                    dto: dto,
+                                    qrId: widget.id,
+                                  ),
+                                  routeName: Routes.QR_STYLE);
                               break;
                             case 2:
                               _showDeleteConfirmationDialog(context);

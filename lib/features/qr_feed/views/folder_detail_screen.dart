@@ -32,6 +32,7 @@ class FolderDetailScreen extends StatefulWidget {
   final String userId;
   final int countQrs;
   final int countUsers;
+  final int isEdit;
 
   final String folderName;
   final FolderEnum tab;
@@ -41,6 +42,7 @@ class FolderDetailScreen extends StatefulWidget {
       required this.countQrs,
       required this.countUsers,
       required this.folderId,
+      required this.isEdit,
       required this.userId,
       required this.folderName,
       required this.tab});
@@ -670,6 +672,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                 onTap: () {
                   if (dto != null) {
                     QrFeedFolderDTO folderDTO = QrFeedFolderDTO(
+                        isEdit: widget.isEdit,
                         id: dto!.folderId,
                         description: dto!.descriptionFolder,
                         userId: dto!.userId,
@@ -677,13 +680,27 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                         countUsers: widget.countUsers,
                         countQrs: widget.countQrs,
                         timeCreated: 0);
-                    DialogWidget.instance.showModelBottomSheet(
+                    DialogWidget.instance
+                        .showModelBottomSheet(
                       borderRadius: BorderRadius.circular(20),
                       widget: PopupFolderChoiceWidget(
                         dto: folderDTO,
                       ),
                       margin: const EdgeInsets.symmetric(
                           vertical: 20, horizontal: 10),
+                    )
+                        .then(
+                      (value) {
+                        if (tab == FolderEnum.QR) {
+                          _bloc.add(GetFolderDetailEvent(
+                              value: '',
+                              type: _qrTypeDTO.type,
+                              folderId: widget.folderId));
+                        } else {
+                          _bloc.add(GetUserFolderEvent(
+                              value: '', folderId: widget.folderId));
+                        }
+                      },
                     );
                   }
                 },

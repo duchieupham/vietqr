@@ -66,6 +66,22 @@ class QrFeedRepository extends BaseRepo {
     return null;
   }
 
+  Future<bool> removeQRFolder(dynamic data) async {
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/delete-qr';
+
+      final response = await BaseAPIClient.postAPI(
+        body: data,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
   Future<bool> updateQRFolder(dynamic data) async {
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/add-qr-folder';
@@ -86,11 +102,11 @@ class QrFeedRepository extends BaseRepo {
     required String folderId,
     required int page,
     required int size,
-    required int addedToFolder,
+    int? addedToFolder,
   }) async {
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folder-wallets?folderId=$folderId&userId=$userId&addedToFolder=&page=$page&size=$size';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folder-wallets?folderId=$folderId&userId=$userId&addedToFolder=${addedToFolder ?? ''}&page=$page&size=$size';
 
       final response = await BaseAPIClient.getAPI(
         url: url,

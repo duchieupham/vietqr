@@ -237,11 +237,11 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
             updateState();
           },
           onChange: (value) {
-            addressController;
-            webController;
-            contactController;
-            ctyController;
-            emailController;
+            // addressController.text;
+            // webController.text;
+            // contactController.text;
+            // ctyController.text;
+            // emailController.text;
 
             updateState();
           },
@@ -907,10 +907,10 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       pinDTO: '',
       fullNameDTO: contactController.text,
       phoneNoDTO: sdtController.text,
-      emailDTO: _showAdditionalOptional ? emailController.text : '',
-      companyNameDTO: _showAdditionalOptional ? ctyController.text : '',
-      websiteDTO: _showAdditionalOptional ? webController.text : '',
-      addressDTO: _showAdditionalOptional ? addressController.text : '',
+      emailDTO: !_showAdditionalOptional ? emailController.text : '',
+      companyNameDTO: !_showAdditionalOptional ? ctyController.text : '',
+      websiteDTO: !_showAdditionalOptional ? webController.text : '',
+      addressDTO: !_showAdditionalOptional ? addressController.text : '',
       additionalDataDTO: '',
       bankAccountDTO: selectedBank != null ? stk.text : '',
       bankCodeDTO: selectedBank != null ? selectedBank?.bankCode : '',

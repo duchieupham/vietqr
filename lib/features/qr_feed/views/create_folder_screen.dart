@@ -34,6 +34,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 enum ActionType {
   CREATE,
+  REMOVE_QR,
   UPDATE_QR,
   UPDATE_USER,
 }
@@ -117,11 +118,6 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         if (widget.action == ActionType.CREATE) {
           _bloc.add(GetUserQREvent(value: '', type: _qrTypeDTO.type));
         } else {
-          // _bloc.add(GetFolderDetailEvent(
-          //     value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
-          // _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
-          // final list = widget.listQrPrivate;
-
           if (widget.action == ActionType.UPDATE_USER) {
             _bloc.add(GetUpdateFolderDetailEvent(
                 type: ActionType.UPDATE_USER, folderId: widget.folderId));
@@ -130,6 +126,13 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           if (widget.action == ActionType.UPDATE_QR) {
             _bloc.add(GetUpdateFolderDetailEvent(
                 type: ActionType.UPDATE_QR, folderId: widget.folderId));
+            // listUserUpdate = [...widget.listUserFolder!];
+          }
+          if (widget.action == ActionType.REMOVE_QR) {
+            _bloc.add(GetUpdateFolderDetailEvent(
+                type: ActionType.UPDATE_QR,
+                folderId: widget.folderId,
+                addedFolder: 1));
             // listUserUpdate = [...widget.listUserFolder!];
           }
         }
@@ -168,6 +171,16 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     return qr.map((item) => ListQrCheckBox(isValid: false, dto: item)).toList();
   }
 
+  List<String> getQrIds(List<ListQRFolder> list) {
+    List<String> listString = [];
+    listString = list
+        .expand((folder) => folder.listQr!)
+        .where((item) => item.hasChecked)
+        .map((item) => item.id)
+        .toList() as List<String>;
+    return listString;
+  }
+
   List<ListQRFolder> mapQRFolderDTOToListQRFolder(QRFolderDTO qrFolderDTO) {
     // Create a map to group QRFolderData by the first character of fullName
     Map<String, List<QRFolderData>> groupedData = {};
@@ -199,10 +212,11 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
               state.status == BlocStatus.SUCCESS) {
             listUserUpdate = state.listAllUserFolder ?? [];
           }
-        } else if (widget.action == ActionType.UPDATE_QR) {
+        } else if (widget.action == ActionType.UPDATE_QR ||
+            widget.action == ActionType.REMOVE_QR) {
           if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
               state.status == BlocStatus.SUCCESS) {
-            final qrsFolder = state.qrFolderUpdate?.data;
+            // final qrsFolder = state.qrFolderUpdate?.data;
             listQRUpdateNotifier.value =
                 mapQRFolderDTOToListQRFolder(state.qrFolderUpdate!);
             // if (qrsFolder != null) {
@@ -213,6 +227,18 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             //   }
             // }
             // listUserUpdate = state.listAllUserFolder ?? [];
+          }
+          if (state.request == QrFeed.UPDATE_QR_FOLDER &&
+              state.status == BlocStatus.SUCCESS) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+              msg: 'Cập nhật thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
           }
           // listQr = mapQr(state);
           // if (listQr.isNotEmpty) {
@@ -276,16 +302,20 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
       builder: (context, state) {
         bool isEnable = false;
 
-        if (_currentPageIndex == 0) {
-          if (_folderNameController.text.isNotEmpty &&
-              _descriptionController.text.isNotEmpty) {
+        if (widget.action == ActionType.CREATE) {
+          if (_currentPageIndex == 0) {
+            if (_folderNameController.text.isNotEmpty &&
+                _descriptionController.text.isNotEmpty) {
+              isEnable = true;
+            } else {
+              isEnable = false;
+            }
+          } else if (_currentPageIndex == 1) {
+            isEnable = listQr.any((element) => element.isValid == true);
+          } else if (_currentPageIndex == 2) {
             isEnable = true;
-          } else {
-            isEnable = false;
           }
-        } else if (_currentPageIndex == 1) {
-          isEnable = listQr.any((element) => element.isValid == true);
-        } else if (_currentPageIndex == 2) {
+        } else {
           isEnable = true;
         }
 
@@ -384,7 +414,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   );
                 },
               ),
-            if (widget.action == ActionType.UPDATE_QR)
+            if (widget.action == ActionType.UPDATE_QR ||
+                widget.action == ActionType.REMOVE_QR)
               ValueListenableBuilder<List<ListQRFolder>>(
                 valueListenable: listQRUpdateNotifier,
                 builder: (context, listQRUpdate, child) {
@@ -418,9 +449,19 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                                 return _buildQRUpdate(
                                     e: item,
                                     onChangeValue: (p0) {
-                                      item.addedToFolder = p0 == true ? 1 : 0;
-                                      listQRUpdateNotifier.value =
-                                          List.from(listQRUpdateNotifier.value);
+                                      if (widget.action ==
+                                          ActionType.UPDATE_QR) {
+                                        if (item.addedToFolder == 0) {
+                                          item.hasChecked = p0;
+                                          listQRUpdateNotifier.value =
+                                              List.from(
+                                                  listQRUpdateNotifier.value);
+                                        }
+                                      } else {
+                                        item.hasChecked = p0;
+                                        listQRUpdateNotifier.value = List.from(
+                                            listQRUpdateNotifier.value);
+                                      }
                                     },
                                     index: index);
                               },
@@ -876,7 +917,9 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     color: AppColor.GREY_DADADA,
                   ),
                 ),
-                value: e.addedToFolder == 0 ? false : true,
+                value: widget.action == ActionType.UPDATE_QR
+                    ? (e.addedToFolder == 1 ? true : e.hasChecked)
+                    : e.hasChecked,
                 onChanged: (value) {
                   onChangeValue(value!);
                 },
@@ -1151,6 +1194,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   Map<String, dynamic> data = {};
                   data['folderId'] = widget.folderId;
                   data['userId'] = userProfile.userId;
+                  data['qrIds'] = getQrIds(listQRUpdateNotifier.value);
 
                   _bloc.add(UpdateQRFolderEvent(data: data));
                 }

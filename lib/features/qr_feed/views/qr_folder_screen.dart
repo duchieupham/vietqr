@@ -165,7 +165,8 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
           'folderName': dto.title,
           'countUsers': dto.countUsers,
           'countQrs': dto.countQrs,
-          'tab': FolderEnum.QR
+          'tab': FolderEnum.QR,
+          'isEdit': dto.isEdit,
         }).then(
           (value) {
             _bloc.add(const GetQrFeedFolderEvent(value: '', type: 1));
@@ -250,13 +251,20 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: () {
-                    DialogWidget.instance.showModelBottomSheet(
+                    DialogWidget.instance
+                        .showModelBottomSheet(
                       borderRadius: BorderRadius.circular(20),
                       widget: PopupFolderChoiceWidget(
                         dto: dto,
                       ),
                       margin: const EdgeInsets.symmetric(
                           vertical: 20, horizontal: 10),
+                    )
+                        .then(
+                      (value) {
+                        _bloc.add(
+                            const GetQrFeedFolderEvent(value: '', type: 1));
+                      },
                     );
                   },
                   child: Container(

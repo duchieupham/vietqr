@@ -49,7 +49,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
   void initData() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        _scrollHorizontal.jumpTo(0.0);
+        // _scrollHorizontal.jumpTo(0.0);
       },
     );
   }
@@ -180,44 +180,48 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 170,
-                      child: GridView.count(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        // padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        primary: false,
+                    listQrFolder.isNotEmpty
+                        ? SizedBox(
+                            height: 170,
+                            width: double.infinity,
+                            child: GridView.count(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              // padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              primary: false,
 
-                        childAspectRatio: 0.5,
-                        shrinkWrap: true,
-                        crossAxisSpacing: 0,
-                        mainAxisSpacing: 15,
-                        crossAxisCount: 2,
-                        controller: _scrollHorizontal,
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          if (state.isFolderLoading) ...[
-                            ...List.generate(
-                              4,
-                              (index) {
-                                return _buildItemWidget(isLoading: true);
-                              },
-                            )
-                          ] else if (listQrFolder.isNotEmpty)
-                            ...List.generate(
-                              listQrFolder.length,
-                              (index) {
-                                return _buildItemWidget(
-                                    dto: listQrFolder[index], isLoading: false);
-                              },
-                            )
-                          else
-                            const Text(
-                              'Thư mục rỗng...',
-                              style: TextStyle(fontSize: 12),
-                            )
-                        ],
-                      ),
-                    )
+                              childAspectRatio: 0.5,
+                              shrinkWrap: true,
+                              crossAxisSpacing: 0,
+                              mainAxisSpacing: 15,
+                              crossAxisCount: 2,
+                              controller: _scrollHorizontal,
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                if (state.isFolderLoading) ...[
+                                  ...List.generate(
+                                    4,
+                                    (index) {
+                                      return _buildItemWidget(isLoading: true);
+                                    },
+                                  )
+                                ] else if (listQrFolder.isNotEmpty)
+                                  ...List.generate(
+                                    listQrFolder.length,
+                                    (index) {
+                                      return _buildItemWidget(
+                                          dto: listQrFolder[index],
+                                          isLoading: false);
+                                    },
+                                  )
+                              ],
+                            ),
+                          )
+                        : !state.isFolderLoading
+                            ? const Text(
+                                'Thư mục rỗng...',
+                                style: TextStyle(fontSize: 12),
+                              )
+                            : const SizedBox.shrink()
                   ],
                 ),
                 // const SizedBox(height: 10),
@@ -502,7 +506,8 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
             'folderName': dto.title,
             'countUsers': dto.countUsers,
             'countQrs': dto.countQrs,
-            'tab': FolderEnum.QR
+            'tab': FolderEnum.QR,
+            'isEdit': dto.isEdit,
           });
         },
         child: Row(

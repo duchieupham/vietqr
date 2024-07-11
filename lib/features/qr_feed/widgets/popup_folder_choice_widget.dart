@@ -58,7 +58,7 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
       },
       builder: (context, state) {
         return Container(
-          height: widget.dto.userId != userId ? 160 : 360,
+          height: widget.dto.isEdit == 3 ? 160 : 360,
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -125,7 +125,7 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                     img: 'assets/images/ic-i-black.png',
                     title: 'Chi tiết thư mục'),
               ),
-              if (widget.dto.userId == userId) ...[
+              if (widget.dto.isEdit != 3) ...[
                 const MySeparator(color: AppColor.GREY_DADADA),
                 InkWell(
                   onTap: () {
@@ -143,7 +143,7 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                 const MySeparator(color: AppColor.GREY_DADADA),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
 
                     NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
                         arguments: {
@@ -158,12 +158,19 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                 ),
                 const MySeparator(color: AppColor.GREY_DADADA),
                 // InkWell(
-                //   onTap: () {},
+                //   onTap: () {
+                //     NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                //         arguments: {
+                //           'page': 1,
+                //           'action': ActionType.REMOVE_QR,
+                //           'id': widget.dto.id,
+                //         });
+                //   },
                 //   child: const _buildItem(
                 //       img: 'assets/images/ic-delete-black.png',
-                //       title: 'Xóa mã QR vào thư mục'),
+                //       title: 'Xóa mã QR khỏi thư mục'),
                 // ),
-                // const MySeparator(color: AppColor.GREY_DADADA),
+                const MySeparator(color: AppColor.GREY_DADADA),
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();

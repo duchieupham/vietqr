@@ -8,6 +8,7 @@ class QRFolderData {
   String style;
   String title;
   int timeCreated;
+  bool hasChecked;
   String fileAttachmentId;
   String qrType;
   String imageId;
@@ -15,10 +16,13 @@ class QRFolderData {
   String value;
   String id;
 
+  bool get isAdded => addedToFolder == 1;
+
   QRFolderData({
     required this.data,
     required this.fullName,
     required this.addedToFolder,
+    required this.hasChecked,
     required this.theme,
     required this.style,
     required this.title,
@@ -36,6 +40,7 @@ class QRFolderData {
       data: json['data'],
       fullName: json['fullName'],
       addedToFolder: json['addedToFolder'],
+      hasChecked: json['addedToFolder'] == 1,
       theme: json['theme'],
       style: json['style'],
       title: json['title'],
