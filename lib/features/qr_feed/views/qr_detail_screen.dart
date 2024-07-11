@@ -1014,18 +1014,17 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               ),
               const SizedBox(width: 2),
               if (isLoading == false) ...[
-                Container(
-                  width: 30,
-                  height: 30,
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(100)),
-                  child: XImage(
-                    borderRadius: BorderRadius.circular(100),
-                    imagePath: e.imageId.isNotEmpty
-                        ? e.imageId
-                        : ImageConstant.icAvatar,
+                ClipOval(
+                  child: Container(
                     width: 30,
                     height: 30,
+                    decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: ImageUtils.instance.getImageNetWork(e.imageId),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),

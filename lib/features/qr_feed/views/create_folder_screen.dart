@@ -362,7 +362,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           },
           child: Scaffold(
             backgroundColor: AppColor.WHITE,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: _currentPageIndex == 0 ? true : false,
             bottomNavigationBar: _bottomButton(isEnable),
             body: Container(
               // padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1173,7 +1173,13 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
 
   Widget _bottomButton(bool isEnable) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      padding: EdgeInsets.fromLTRB(
+          20,
+          20,
+          20,
+          _currentPageIndex == 0
+              ? 20 + MediaQuery.of(context).viewInsets.bottom
+              : 20),
       child: InkWell(
         onTap: isEnable
             ? () async {

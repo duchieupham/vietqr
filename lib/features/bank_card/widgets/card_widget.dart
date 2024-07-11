@@ -292,14 +292,14 @@ class CardWidget extends StatelessWidget {
                                 ? (inclusiveDays != 0)
                                     ? Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.end,
                                         children: [
-                                          Text(
-                                            '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: AppColor.WHITE),
-                                          ),
+                                          // Text(
+                                          //   '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
+                                          //   style: TextStyle(
+                                          //       fontSize: 12,
+                                          //       color: AppColor.WHITE),
+                                          // ),
                                           // Container(
                                           //   width: 80,
                                           //   height: 30,

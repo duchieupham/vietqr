@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -152,7 +153,7 @@ class _QrStyleState extends State<QrStyle> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.white,
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           bottomNavigationBar: _bottomButton(isEnable),
           body: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -549,7 +550,8 @@ class _QrStyleState extends State<QrStyle> {
 
   Widget _bottomButton(bool isEnable) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(
+          20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
       // decoration: BoxDecoration(
       //   color: Colors.white,
       //   border: Border(
