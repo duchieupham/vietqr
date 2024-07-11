@@ -233,27 +233,27 @@ class QRScannerUtils {
                     code: value ?? '',
                     isShowIconFirst: isShowIconFirst,
                     onTapSave: () async {
-                      final data = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SaveContactScreen(
-                            code: value,
-                            typeQR: type,
-                          ),
-                          // settings: RouteSettings(name: ContactEditView.routeName),
-                        ),
-                      );
-                      if (data is bool) {
-                        Navigator.of(context).pop();
-                        Fluttertoast.showToast(
-                          msg: 'Lưu thành công',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          backgroundColor: Theme.of(context).cardColor,
-                          textColor: Theme.of(context).hintColor,
-                          fontSize: 15,
-                        );
-                      }
+                      // final data = await Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => SaveContactScreen(
+                      //       code: value,
+                      //       typeQR: type,
+                      //     ),
+                      //     // settings: RouteSettings(name: ContactEditView.routeName),
+                      //   ),
+                      // );
+                      // if (data is bool) {
+                      //   Navigator.of(context).pop();
+                      //   Fluttertoast.showToast(
+                      //     msg: 'Lưu thành công',
+                      //     toastLength: Toast.LENGTH_SHORT,
+                      //     gravity: ToastGravity.CENTER,
+                      //     backgroundColor: Theme.of(context).cardColor,
+                      //     textColor: Theme.of(context).hintColor,
+                      //     fontSize: 15,
+                      //   );
+                      // }
                     },
                   ),
                 );
@@ -273,27 +273,27 @@ class QRScannerUtils {
                 code: value ?? '',
                 isShowIconFirst: isShowIconFirst,
                 onTapSave: () async {
-                  final data = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SaveContactScreen(
-                        code: value,
-                        typeQR: type,
-                      ),
-                      // settings: RouteSettings(name: ContactEditView.routeName),
-                    ),
-                  );
-                  if (data is bool) {
-                    Navigator.of(context).pop();
-                    Fluttertoast.showToast(
-                      msg: 'Lưu thành công',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      backgroundColor: Theme.of(context).cardColor,
-                      textColor: Theme.of(context).hintColor,
-                      fontSize: 15,
-                    );
-                  }
+                  // final data = await Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => SaveContactScreen(
+                  //       code: value,
+                  //       typeQR: type,
+                  //     ),
+                  //     // settings: RouteSettings(name: ContactEditView.routeName),
+                  //   ),
+                  // );
+                  // if (data is bool) {
+                  //   Navigator.of(context).pop();
+                  //   Fluttertoast.showToast(
+                  //     msg: 'Lưu thành công',
+                  //     toastLength: Toast.LENGTH_SHORT,
+                  //     gravity: ToastGravity.CENTER,
+                  //     backgroundColor: Theme.of(context).cardColor,
+                  //     textColor: Theme.of(context).hintColor,
+                  //     fontSize: 15,
+                  //   );
+                  // }
                 },
               ),
             );

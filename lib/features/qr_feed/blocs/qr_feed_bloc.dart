@@ -609,7 +609,8 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     try {
       if (event is GetUserFolderEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING, request: QrFeed.GET_USER_FOLDER));
+            status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE,
+            request: QrFeed.GET_USER_FOLDER));
 
         final result = await _qrFeedRepository.getUserFolder(
             folderId: event.folderId,
@@ -730,7 +731,8 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     try {
       if (event is GetFolderDetailEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING, request: QrFeed.GET_FOLDER_DETAIL));
+            status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE,
+            request: QrFeed.GET_FOLDER_DETAIL));
 
         final result = await _qrFeedRepository.getQrFolderDetail(
             type: event.type, folderId: event.folderId, value: event.value);

@@ -294,7 +294,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: _bottomButton(_isButtonEnabled),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
         slivers: [
           const DefaultAppbarWidget(),

@@ -57,7 +57,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
             ],
           ),
           Positioned(
-            bottom: 90,
+            bottom: 20,
             right: 16,
             child: GestureDetector(
               onTap: _onCreateStore,

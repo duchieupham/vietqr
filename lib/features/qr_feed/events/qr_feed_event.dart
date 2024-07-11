@@ -193,16 +193,18 @@ class GetUserFolderEvent extends QrFeedEvent {
   final String folderId;
   final int? size;
   final int? page;
+  final bool isLoading;
 
   const GetUserFolderEvent({
     required this.value,
     required this.folderId,
+    required this.isLoading,
     this.size,
     this.page,
   });
 
   @override
-  List<Object?> get props => [value, folderId, size, page];
+  List<Object?> get props => [value, folderId, size, page, isLoading];
 }
 
 class UpdateQREvent extends QrFeedEvent {
@@ -228,15 +230,17 @@ class GetFolderDetailEvent extends QrFeedEvent {
   final String value;
   final String folderId;
   final int type;
+  final bool isLoading;
 
   const GetFolderDetailEvent({
     required this.value,
     required this.folderId,
     required this.type,
+    required this.isLoading,
   });
 
   @override
-  List<Object?> get props => [value, type, folderId];
+  List<Object?> get props => [value, type, folderId, isLoading];
 }
 
 class GetQrFeedFolderEvent extends QrFeedEvent {

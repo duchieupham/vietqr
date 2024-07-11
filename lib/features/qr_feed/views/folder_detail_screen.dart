@@ -105,9 +105,10 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
         );
         if (tab == FolderEnum.QR) {
           _bloc.add(GetFolderDetailEvent(
-              value: '', type: 9, folderId: widget.folderId));
+              isLoading: true, value: '', type: 9, folderId: widget.folderId));
         } else {
-          _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
+          _bloc.add(GetUserFolderEvent(
+              isLoading: true, value: '', folderId: widget.folderId));
         }
       },
     );
@@ -117,10 +118,16 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
   Future<void> onRefresh() async {
     if (tab == FolderEnum.QR) {
       _bloc.add(GetFolderDetailEvent(
-          value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
+          isLoading: true,
+          value: '',
+          type: _qrTypeDTO.type,
+          folderId: widget.folderId));
     } else {
       _bloc.add(GetUserFolderEvent(
-          value: '', folderId: widget.folderId, size: userMetadata?.size));
+          isLoading: true,
+          value: '',
+          folderId: widget.folderId,
+          size: userMetadata?.size));
     }
   }
 
@@ -132,6 +139,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
         if (state.request == QrFeed.REMOVE_USER &&
             state.status == BlocStatus.SUCCESS) {
           _bloc.add(GetUserFolderEvent(
+              isLoading: false,
               value: '',
               folderId: widget.folderId,
               page: 1,
@@ -140,6 +148,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
         if (state.request == QrFeed.UPDATE_USER_ROLE &&
             state.status == BlocStatus.SUCCESS) {
           _bloc.add(GetUserFolderEvent(
+              isLoading: false,
               value: '',
               folderId: widget.folderId,
               page: 1,
@@ -213,99 +222,106 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                 _pinnedAppbar(),
                 const SizedBox(height: 4),
                 Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (tab == FolderEnum.QR) ...[
-                            const SizedBox(height: 30),
-                            const Text(
-                              'Danh sách mã QR',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 25),
-                            if (state.request == QrFeed.GET_FOLDER_DETAIL &&
-                                state.status == BlocStatus.LOADING)
-                              ...List.generate(
-                                4,
-                                (index) => _buildRowQrPrivate(isLoading: true),
-                              )
-                            else if (dto != null && dto!.qrData.isNotEmpty)
-                              ...groupsAlphabet.entries.map(
-                                (e) {
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 35,
-                                        padding: const EdgeInsets.fromLTRB(
-                                            20, 10, 20, 10),
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                            gradient: LinearGradient(
-                                                colors: _gradients[0],
-                                                begin: Alignment.centerLeft,
-                                                end: Alignment.centerRight)),
-                                        child: Text(
-                                          e.key,
-                                          style: const TextStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      ...e.value.map(
-                                        (item) {
-                                          return _buildRowQrPrivate(dto: item);
-                                        },
-                                      )
-                                    ],
-                                  );
-                                },
-                              )
-                            else
-                              const Center(
-                                child: Text(
-                                  'Danh mục trống',
-                                  style: TextStyle(
-                                      fontSize: 15, color: AppColor.GREY_TEXT),
+                  child: RefreshIndicator(
+                    onRefresh: onRefresh,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (tab == FolderEnum.QR) ...[
+                              const SizedBox(height: 30),
+                              const Text(
+                                'Danh sách mã QR',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                          ] else ...[
-                            const SizedBox(height: 30),
-                            if (state.request == QrFeed.GET_USER_FOLDER &&
-                                state.status == BlocStatus.LOADING)
-                              ...List.generate(
-                                  4, (index) => _userFolder(isLoading: true))
-                            else if (listUser.isNotEmpty)
-                              ...listUser.asMap().map(
-                                (index, e) {
-                                  return MapEntry(index,
-                                      _userFolder(user: e, index: index));
-                                },
-                              ).values
+                              const SizedBox(height: 25),
+                              if (state.request == QrFeed.GET_FOLDER_DETAIL &&
+                                  state.status == BlocStatus.LOADING)
+                                ...List.generate(
+                                  4,
+                                  (index) =>
+                                      _buildRowQrPrivate(isLoading: true),
+                                )
+                              else if (dto != null && dto!.qrData.isNotEmpty)
+                                ...groupsAlphabet.entries.map(
+                                  (e) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 35,
+                                          padding: const EdgeInsets.fromLTRB(
+                                              20, 10, 20, 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              gradient: LinearGradient(
+                                                  colors: _gradients[0],
+                                                  begin: Alignment.centerLeft,
+                                                  end: Alignment.centerRight)),
+                                          child: Text(
+                                            e.key,
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 5),
+                                        ...e.value.map(
+                                          (item) {
+                                            return _buildRowQrPrivate(
+                                                dto: item);
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  },
+                                )
+                              else
+                                const Center(
+                                  child: Text(
+                                    'Danh mục trống',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: AppColor.GREY_TEXT),
+                                  ),
+                                ),
+                            ] else ...[
+                              const SizedBox(height: 30),
+                              if (state.request == QrFeed.GET_USER_FOLDER &&
+                                  state.status == BlocStatus.LOADING)
+                                ...List.generate(
+                                    4, (index) => _userFolder(isLoading: true))
+                              else if (listUser.isNotEmpty)
+                                ...listUser.asMap().map(
+                                  (index, e) {
+                                    return MapEntry(index,
+                                        _userFolder(user: e, index: index));
+                                  },
+                                ).values
 
-                            // ListView.separated(
-                            //     physics: const NeverScrollableScrollPhysics(),
-                            //     itemBuilder: (context, index) {
-                            //       final user = listUser[index];
-                            //       return _userFolder(user);
-                            //     },
-                            //     separatorBuilder: (context, index) =>
-                            //         const MySeparator(
-                            //           color: AppColor.GREY_DADADA,
-                            //         ),
-                            //     itemCount: listUser.length)
+                              // ListView.separated(
+                              //     physics: const NeverScrollableScrollPhysics(),
+                              //     itemBuilder: (context, index) {
+                              //       final user = listUser[index];
+                              //       return _userFolder(user);
+                              //     },
+                              //     separatorBuilder: (context, index) =>
+                              //         const MySeparator(
+                              //           color: AppColor.GREY_DADADA,
+                              //         ),
+                              //     itemCount: listUser.length)
+                            ],
+                            const SizedBox(height: 50)
                           ],
-                          const SizedBox(height: 50)
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -693,12 +709,15 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                       (value) {
                         if (tab == FolderEnum.QR) {
                           _bloc.add(GetFolderDetailEvent(
+                              isLoading: false,
                               value: '',
                               type: _qrTypeDTO.type,
                               folderId: widget.folderId));
                         } else {
                           _bloc.add(GetUserFolderEvent(
-                              value: '', folderId: widget.folderId));
+                              isLoading: false,
+                              value: '',
+                              folderId: widget.folderId));
                         }
                       },
                     );
@@ -728,6 +747,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               onTap: () {
                 tab = FolderEnum.QR;
                 _bloc.add(GetFolderDetailEvent(
+                    isLoading: true,
                     value: _searchController.text,
                     type: _qrTypeDTO.type,
                     folderId: widget.folderId));
@@ -764,8 +784,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               onTap: () {
                 tab = FolderEnum.ACCESS;
                 _searchController.clear();
-                _bloc.add(
-                    GetUserFolderEvent(value: '', folderId: widget.folderId));
+                _bloc.add(GetUserFolderEvent(
+                    isLoading: true, value: '', folderId: widget.folderId));
 
                 updateState();
               },
@@ -818,12 +838,15 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                           _searchController.clear();
                           if (tab == FolderEnum.QR) {
                             _bloc.add(GetFolderDetailEvent(
+                                isLoading: true,
                                 value: '',
                                 type: _qrTypeDTO.type,
                                 folderId: widget.folderId));
                           } else {
                             _bloc.add(GetUserFolderEvent(
-                                value: '', folderId: widget.folderId));
+                                isLoading: true,
+                                value: '',
+                                folderId: widget.folderId));
                           }
 
                           updateState();
@@ -845,11 +868,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                       onSubmitted: (value) {
                         if (tab == FolderEnum.QR) {
                           _bloc.add(GetFolderDetailEvent(
+                              isLoading: true,
                               value: _searchController.text,
                               type: _qrTypeDTO.type,
                               folderId: widget.folderId));
                         } else {
                           _bloc.add(GetUserFolderEvent(
+                              isLoading: true,
                               value: _searchController.text,
                               folderId: widget.folderId));
                         }
@@ -874,12 +899,15 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                             (value) {
                               if (tab == FolderEnum.QR) {
                                 _bloc.add(GetFolderDetailEvent(
+                                    isLoading: false,
                                     value: '',
                                     type: _qrTypeDTO.type,
                                     folderId: widget.folderId));
                               } else {
                                 _bloc.add(GetUserFolderEvent(
-                                    value: '', folderId: widget.folderId));
+                                    isLoading: false,
+                                    value: '',
+                                    folderId: widget.folderId));
                               }
                             },
                           );
@@ -916,6 +944,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                     onTap: () {
                       _qrTypeDTO = _qrTypeList[index];
                       _bloc.add(GetFolderDetailEvent(
+                          isLoading: true,
                           value: '',
                           type: _qrTypeDTO.type,
                           folderId: widget.folderId));

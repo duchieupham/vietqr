@@ -190,7 +190,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
-      // QRScannerUtils.instance.onScanNavi(data, context);
+      QRScannerUtils.instance.onScanNavi(data, context);
       final type = data['type'];
       final typeQR = data['typeQR'] as TypeQR;
       final value = data['data'];
@@ -214,10 +214,18 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       listener: (context, state) {
         if (state.request == QrFeed.CREATE_QR &&
             state.status == BlocStatus.SUCCESS) {
-          _bloc.add(GetQrFeedEvent(
-            isLoading: true,
-            type: tab == TabView.COMMUNITY ? 0 : 1,
-          ));
+          if (tab == TabView.COMMUNITY) {
+            _bloc.add(GetQrFeedEvent(
+              isLoading: true,
+              type: tab == TabView.COMMUNITY ? 0 : 1,
+            ));
+          } else {
+            _bloc.add(GetQrFeedPrivateEvent(
+                type: _qrTypeDTO.type,
+                isGetFolder: true,
+                isFolderLoading: true,
+                value: ''));
+          }
         }
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
@@ -231,7 +239,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
               final folderId = value as String;
               if (folderId.isNotEmpty) {
                 _bloc.add(GetFolderDetailEvent(
-                    value: '', type: 9, folderId: folderId));
+                    isLoading: false, value: '', type: 9, folderId: folderId));
               }
             },
           );
@@ -931,13 +939,19 @@ class _buildQRFeed extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              XImage(
-                borderRadius: BorderRadius.circular(100),
-                imagePath: dto.imageId.isNotEmpty
-                    ? dto.imageId
-                    : ImageConstant.icAvatar,
+              Container(
                 width: 30,
                 height: 30,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(100)),
+                child: XImage(
+                  borderRadius: BorderRadius.circular(100),
+                  imagePath: dto.imageId.isNotEmpty
+                      ? dto.imageId
+                      : ImageConstant.icAvatar,
+                  width: 30,
+                  height: 30,
+                ),
               ),
               const SizedBox(width: 7),
               Column(

@@ -177,20 +177,18 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     listQrFolder.isNotEmpty
                         ? SizedBox(
-                            height: 170,
+                            height: 150,
                             width: double.infinity,
                             child: GridView.count(
                               physics: const AlwaysScrollableScrollPhysics(),
-                              // padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                               primary: false,
-
                               childAspectRatio: 0.5,
                               shrinkWrap: true,
                               crossAxisSpacing: 0,
@@ -501,7 +499,7 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
     return Container(
       // width: 200,
       // height: 40,
-      margin: const EdgeInsets.fromLTRB(0, 0, 20, 20),
+      margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: InkWell(
         onTap: () {
           NavigationService.push(Routes.QR_FOLDER_DETAIL_SCREEN, arguments: {

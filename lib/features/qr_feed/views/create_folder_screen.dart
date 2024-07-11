@@ -358,34 +358,39 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           onTap: () {
             focusNode.unfocus();
             focusNodeDes.unfocus();
+            focusNodeSearch.unfocus();
           },
           child: Scaffold(
             backgroundColor: AppColor.WHITE,
+            resizeToAvoidBottomInset: false,
             bottomNavigationBar: _bottomButton(isEnable),
             body: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              // padding: const EdgeInsets.symmetric(horizontal: 20),
               width: MediaQuery.of(context).size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   _appbar(),
                   Expanded(
-                    child: PageView(
-                      onPageChanged: (value) {
-                        setState(() {
-                          _currentPageIndex = value;
-                        });
-                      },
-                      controller: _pageController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _inputWidget(),
-                        _selectQrWidget(),
-                        if (widget.action == ActionType.CREATE)
-                          _addUser()
-                        else
-                          _updateUser(),
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: PageView(
+                        onPageChanged: (value) {
+                          setState(() {
+                            _currentPageIndex = value;
+                          });
+                        },
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          _inputWidget(),
+                          _selectQrWidget(),
+                          if (widget.action == ActionType.CREATE)
+                            _addUser()
+                          else
+                            _updateUser(),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1086,88 +1091,89 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   }
 
   Widget _inputWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Đầu tiên, nhập thông tin\nthư mục QR của bạn',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 30),
-        const Text(
-          'Tên thư mục*',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 15),
-        MTextFieldCustom(
-            focusNode: focusNode,
-            controller: _folderNameController,
-            contentPadding: const EdgeInsets.only(left: 0),
-            focusBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: AppColor.GREY_DADADA)),
-            inputFormatter: [VietnameseNameInputFormatter()],
-            suffixIcon: InkWell(
-              onTap: () {
-                _folderNameController.clear();
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Đầu tiên, nhập thông tin\nthư mục QR của bạn',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 30),
+          const Text(
+            'Tên thư mục*',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 15),
+          MTextFieldCustom(
+              focusNode: focusNode,
+              controller: _folderNameController,
+              contentPadding: const EdgeInsets.only(left: 0),
+              focusBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.GREY_DADADA)),
+              inputFormatter: [VietnameseNameInputFormatter()],
+              suffixIcon: InkWell(
+                onTap: () {
+                  _folderNameController.clear();
+                  setState(() {});
+                },
+                child: _folderNameController.text.isNotEmpty
+                    ? const Icon(
+                        Icons.clear,
+                        size: 20,
+                        color: AppColor.GREY_DADADA,
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              enable: true,
+              hintText: 'Nhập tên thư mục tại đây',
+              keyboardAction: TextInputAction.next,
+              onChange: (value) {
                 setState(() {});
               },
-              child: _folderNameController.text.isNotEmpty
-                  ? const Icon(
-                      Icons.clear,
-                      size: 20,
-                      color: AppColor.GREY_DADADA,
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            enable: true,
-            hintText: 'Nhập tên thư mục tại đây',
-            keyboardAction: TextInputAction.next,
-            onChange: (value) {
-              setState(() {});
-            },
-            inputType: TextInputType.text,
-            isObscureText: false),
-        const SizedBox(height: 30),
-        const Text(
-          'Mô tả cho thư mục',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 15),
-        MTextFieldCustom(
-            focusNode: focusNodeDes,
-            controller: _descriptionController,
-            contentPadding: const EdgeInsets.only(left: 0),
-            focusBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: AppColor.GREY_DADADA)),
-            suffixIcon: InkWell(
-              onTap: () {
-                _descriptionController.clear();
+              inputType: TextInputType.text,
+              isObscureText: false),
+          const SizedBox(height: 30),
+          const Text(
+            'Mô tả cho thư mục',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 15),
+          MTextFieldCustom(
+              focusNode: focusNodeDes,
+              controller: _descriptionController,
+              contentPadding: const EdgeInsets.only(left: 0),
+              focusBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.GREY_DADADA)),
+              suffixIcon: InkWell(
+                onTap: () {
+                  _descriptionController.clear();
+                  setState(() {});
+                },
+                child: _descriptionController.text.isNotEmpty
+                    ? const Icon(
+                        Icons.clear,
+                        size: 20,
+                        color: AppColor.GREY_DADADA,
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              enable: true,
+              hintText: 'Nhập mô tả cho thư mục tại đây',
+              keyboardAction: TextInputAction.next,
+              onChange: (value) {
                 setState(() {});
               },
-              child: _descriptionController.text.isNotEmpty
-                  ? const Icon(
-                      Icons.clear,
-                      size: 20,
-                      color: AppColor.GREY_DADADA,
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            enable: true,
-            hintText: 'Nhập mô tả cho thư mục tại đây',
-            keyboardAction: TextInputAction.next,
-            onChange: (value) {
-              setState(() {});
-            },
-            inputType: TextInputType.text,
-            isObscureText: false),
-      ],
+              inputType: TextInputType.text,
+              isObscureText: false),
+        ],
+      ),
     );
   }
 
   Widget _bottomButton(bool isEnable) {
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
       child: InkWell(
         onTap: isEnable
             ? () async {
@@ -1536,7 +1542,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      padding: EdgeInsets.fromLTRB(0, _currentPageIndex == 0 ? 40 : 60, 0, 8),
+      padding: EdgeInsets.fromLTRB(8, _currentPageIndex == 0 ? 10 : 60, 8, 0),
       width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1757,139 +1763,148 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             ],
           ),
           if (_currentPageIndex == 1) ...[
-            const SizedBox(height: 20),
-            if (widget.action != ActionType.CREATE)
-              Text(
-                widget.action == ActionType.UPDATE_QR
-                    ? 'Thêm mã QR vào\nthư mục của bạn'
-                    : 'Thêm mã QR vào\nthư mục của bạn',
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              )
-            else
-              const Text(
-                'Thêm mã QR vào\nthư mục của bạn',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: Row(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                      child: MTextFieldCustom(
-                          // focusNode: focusNode,
-                          controller: _searchController,
-                          prefixIcon: const XImage(
-                            imagePath: 'assets/images/ic-search-grey.png',
-                            width: 30,
-                            height: 30,
-                            fit: BoxFit.cover,
-                          ),
-                          fillColor: AppColor.WHITE,
-                          suffixIcon: _searchController.text.isNotEmpty
-                              ? InkWell(
-                                  onTap: () {
-                                    _searchController.clear();
-                                    setState(() {});
-                                  },
-                                  child: const Icon(
-                                    Icons.clear,
-                                    size: 20,
-                                    color: AppColor.GREY_DADADA,
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                          enable: true,
-                          focusBorder: const UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: AppColor.GREY_DADADA)),
-                          contentPadding:
-                              const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          hintText: 'Tìm kiếm mã QR theo tên',
-                          keyboardAction: TextInputAction.next,
-                          onSubmitted: (value) {
+                  const SizedBox(height: 8),
+                  if (widget.action != ActionType.CREATE)
+                    Text(
+                      widget.action == ActionType.UPDATE_QR
+                          ? 'Thêm mã QR vào\nthư mục của bạn'
+                          : 'Thêm mã QR vào\nthư mục của bạn',
+                      style: const TextStyle(
+                          fontSize: 22, fontWeight: FontWeight.bold),
+                    )
+                  else
+                    const Text(
+                      'Thêm mã QR vào\nthư mục của bạn',
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: MTextFieldCustom(
+                                focusNode: focusNodeSearch,
+                                controller: _searchController,
+                                prefixIcon: const XImage(
+                                  imagePath: 'assets/images/ic-search-grey.png',
+                                  width: 30,
+                                  height: 30,
+                                  fit: BoxFit.cover,
+                                ),
+                                fillColor: AppColor.WHITE,
+                                suffixIcon: _searchController.text.isNotEmpty
+                                    ? InkWell(
+                                        onTap: () {
+                                          _searchController.clear();
+                                          setState(() {});
+                                        },
+                                        child: const Icon(
+                                          Icons.clear,
+                                          size: 20,
+                                          color: AppColor.GREY_DADADA,
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                                enable: true,
+                                focusBorder: const UnderlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: AppColor.GREY_DADADA)),
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                hintText: 'Tìm kiếm mã QR theo tên',
+                                keyboardAction: TextInputAction.next,
+                                onSubmitted: (value) {
+                                  _bloc.add(GetUserQREvent(
+                                      value: _searchController.text,
+                                      type: _qrTypeDTO.type));
+                                },
+                                onChange: (value) {
+                                  setState(() {});
+                                },
+                                inputType: TextInputType.text,
+                                isObscureText: false)),
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () {
                             _bloc.add(GetUserQREvent(
                                 value: _searchController.text,
                                 type: _qrTypeDTO.type));
                           },
-                          onChange: (value) {
-                            setState(() {});
-                          },
-                          inputType: TextInputType.text,
-                          isObscureText: false)),
-                  const SizedBox(width: 10),
-                  InkWell(
-                    onTap: () {
-                      _bloc.add(GetUserQREvent(
-                          value: _searchController.text,
-                          type: _qrTypeDTO.type));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      height: 40,
-                      // width: 40,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                          gradient: LinearGradient(
-                              colors: _gradients[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: const Center(
-                        child: Text(
-                          'Tìm kiếm',
-                          style: TextStyle(fontSize: 12),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            height: 40,
+                            // width: 40,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                                gradient: LinearGradient(
+                                    colors: _gradients[0],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight)),
+                            child: const Center(
+                              child: Text(
+                                'Tìm kiếm',
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 4, top: 15),
+                    width: double.infinity,
+                    height: 54,
+                    child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              setState(() {
+                                _qrTypeDTO = _qrTypeList[index];
+                              });
+                              _bloc.add(GetUserQREvent(
+                                  value: _searchController.text,
+                                  type: _qrTypeDTO.type));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                color: _qrTypeDTO == _qrTypeList[index]
+                                    ? AppColor.BLUE_TEXT.withOpacity(0.2)
+                                    : AppColor.WHITE,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  _qrTypeList[index].name,
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: _qrTypeDTO == _qrTypeList[index]
+                                          ? AppColor.BLACK
+                                          : AppColor.GREY_TEXT),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 10),
+                        itemCount: _qrTypeList.length),
                   ),
                 ],
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(bottom: 0, top: 15),
-              width: double.infinity,
-              height: 50,
-              child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _qrTypeDTO = _qrTypeList[index];
-                        });
-                        _bloc.add(GetUserQREvent(
-                            value: _searchController.text,
-                            type: _qrTypeDTO.type));
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          color: _qrTypeDTO == _qrTypeList[index]
-                              ? AppColor.BLUE_TEXT.withOpacity(0.2)
-                              : AppColor.WHITE,
-                        ),
-                        child: Center(
-                          child: Text(
-                            _qrTypeList[index].name,
-                            style: TextStyle(
-                                fontSize: 10,
-                                color: _qrTypeDTO == _qrTypeList[index]
-                                    ? AppColor.BLACK
-                                    : AppColor.GREY_TEXT),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 10),
-                  itemCount: _qrTypeList.length),
-            ),
+            )
           ] else if (_currentPageIndex == 2) ...[
             const SizedBox(height: 20),
             Text(

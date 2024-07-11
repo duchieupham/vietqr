@@ -155,7 +155,7 @@ class _QrStyleState extends State<QrStyle> {
           resizeToAvoidBottomInset: false,
           bottomNavigationBar: _bottomButton(isEnable),
           body: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               const DefaultAppbarWidget(),
               SliverToBoxAdapter(
