@@ -26,6 +26,7 @@ import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/create_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/qr_folder_detail_dto.dart';
+import 'package:vierqr/models/qr_folder_dto.dart';
 import 'package:vierqr/models/search_user_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
@@ -41,15 +42,11 @@ class CreateFolderScreen extends StatefulWidget {
   final int pageView;
   final ActionType action;
   final String folderId;
-  final List<QrData>? listQrPrivate;
-  final List<UserFolder>? listUserFolder;
   const CreateFolderScreen({
     super.key,
     required this.pageView,
     required this.action,
     required this.folderId,
-    this.listQrPrivate,
-    this.listUserFolder,
   });
 
   @override
@@ -81,7 +78,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   List<ListQrCheckBox> listQr = [];
   List<ListQrCheckBox> listAddedQr = [];
 
-  List<ListQrUpdateCheckBox> listQrUpdate = [];
+  // List<ListQrUpdateCheckBox> listQrUpdate = [];
 
   List<ListUserCheckBox> listUser = [];
   List<ListUserCheckBox> listSelectedUser = [];
@@ -89,6 +86,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   List<UserFolder> listUserUpdate = [];
   List<UserFolder> listAddedUSerUpdate = [];
   List<UserFolder> listUserUpdateSearch = [];
+
+  List<ListQRFolder>? listQRUpdate = [];
 
   List<ListUserCheckBox> mapUser(List<SearchUser> user) {
     return user
@@ -115,17 +114,17 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           //     value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
           // _bloc.add(GetUserFolderEvent(value: '', folderId: widget.folderId));
           // final list = widget.listQrPrivate;
-          // listQr = mapQr(list!);
-          // if (listQr.isNotEmpty) {
-          //   for (var item in listQr) {
-          //     String firstChar = item.dto!.title[0].toUpperCase();
-          //     if (!groupsAlphabet.containsKey(firstChar)) {
-          //       groupsAlphabet[firstChar] = [];
-          //     }
-          //     groupsAlphabet[firstChar]!.add(item);
-          //   }
-          // }
-          listUserUpdate = [...widget.listUserFolder!];
+
+          if (widget.action == ActionType.UPDATE_USER) {
+            _bloc.add(GetUpdateFolderDetailEvent(
+                type: ActionType.UPDATE_USER, folderId: widget.folderId));
+            // listUserUpdate = [...widget.listUserFolder!];
+          }
+          if (widget.action == ActionType.UPDATE_QR) {
+            _bloc.add(GetUpdateFolderDetailEvent(
+                type: ActionType.UPDATE_QR, folderId: widget.folderId));
+            // listUserUpdate = [...widget.listUserFolder!];
+          }
         }
 
         setState(() {
@@ -167,6 +166,29 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
       listener: (context, state) {
+        if (widget.action == ActionType.UPDATE_USER) {
+          if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
+              state.status == BlocStatus.SUCCESS) {
+            listUserUpdate = state.listAllUserFolder ?? [];
+          }
+        } else if (widget.action == ActionType.UPDATE_QR) {
+          if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
+              state.status == BlocStatus.SUCCESS) {
+            final qrFolder = state.qrFolderUpdate;
+            // listUserUpdate = state.listAllUserFolder ?? [];
+          }
+          // listQr = mapQr(state);
+          // if (listQr.isNotEmpty) {
+          //   for (var item in listQr) {
+          //     String firstChar = item.dto!.title[0].toUpperCase();
+          //     if (!groupsAlphabet.containsKey(firstChar)) {
+          //       groupsAlphabet[firstChar] = [];
+          //     }
+          //     groupsAlphabet[firstChar]!.add(item);
+          //   }
+          // }
+        }
+
         if (state.request == QrFeed.GET_USER_QR &&
             state.status == BlocStatus.SUCCESS) {
           final list = state.listQrFeedPrivate;
@@ -1670,6 +1692,17 @@ class ListQrCheckBox {
   QrFeedPrivateDTO? dto;
 
   ListQrCheckBox({required this.isValid, required this.dto});
+}
+
+class ListQRFolder {
+  String? firstCha;
+
+  List<QRFolderDTO>? dto;
+
+  ListQRFolder({
+    required firstCha,
+    required dto,
+  });
 }
 
 class ListUserCheckBox {

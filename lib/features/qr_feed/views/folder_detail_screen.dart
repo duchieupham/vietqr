@@ -12,6 +12,8 @@ import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/popup_folder_choice_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -19,6 +21,7 @@ import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_folder_detail_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 // ignore: constant_identifier_names
@@ -140,6 +143,29 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               page: 1,
               size: userMetadata?.size));
         }
+        // if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
+        //     state.status == BlocStatus.SUCCESS) {
+        //   List<QrData> qrList = [];
+        //   if (state.folderDetailDTO != null) {
+        //     qrList = state.folderDetailDTO!.qrData;
+        //   }
+
+        //   final listUser = state.listAllUserFolder;
+        //   NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN, arguments: {
+        //     'page': 2,
+        //     'action': ActionType.UPDATE_USER,
+        //     'id': widget.folderId,
+        //     'listQrPrivate': qrList,
+        //     'listUserFolder': listUser,
+        //   }).then(
+        //     (value) {
+        //       _bloc.add(GetUserFolderEvent(
+        //           value: '',
+        //           folderId: widget.folderId,
+        //           size: userMetadata?.size));
+        //     },
+        //   );
+        // }
       },
       // buildWhen: (previous, current) =>
       //     (previous.request == QrFeed.GET_QR_FEED_FOLDER) !=
@@ -421,13 +447,14 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
   Widget _buildRowQrPrivate({QrData? dto, bool isLoading = false}) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
-            arguments: {'id': dto!.id}).then(
-          (value) {
-            _bloc.add(GetFolderDetailEvent(
-                value: '', type: _qrTypeDTO.type, folderId: widget.folderId));
-          },
-        );
+        setState(() {
+          _qrTypeDTO = const QRTypeDTO(
+            type: 9,
+            name: 'Tất cả',
+          );
+        });
+        getIt.get<QrFeedBloc>().add(GetQrFeedDetailEvent(
+            id: dto!.id, isLoading: true, folderId: widget.folderId));
       },
       child: Column(
         children: [
@@ -813,7 +840,16 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               const SizedBox(width: 10),
               if (widget.userId == userId)
                 InkWell(
-                  onTap: tab == FolderEnum.QR ? () {} : () {},
+                  onTap: tab == FolderEnum.QR
+                      ? () {}
+                      : () {
+                          NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                              arguments: {
+                                'page': 2,
+                                'action': ActionType.UPDATE_USER,
+                                'id': widget.folderId,
+                              });
+                        },
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     height: 42,

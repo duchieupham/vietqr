@@ -35,9 +35,13 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 class QrDetailScreen extends StatefulWidget {
   final String id;
+  final bool isPublic;
+  final String? folderId;
   const QrDetailScreen({
     super.key,
     required this.id,
+    required this.isPublic,
+    this.folderId = '',
   });
 
   @override
@@ -116,16 +120,16 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           },
         );
         _cmtController.addListener(_checkInputHeight);
-        _timer = Timer.periodic(
-          const Duration(seconds: 20),
-          (timer) {
-            _bloc.add(LoadConmmentEvent(
-                id: widget.id,
-                isLoadMore: false,
-                isLoading: false,
-                size: list.isEmpty ? 10 : list.length));
-          },
-        );
+        // _timer = Timer.periodic(
+        //   const Duration(seconds: 20),
+        //   (timer) {
+        //     _bloc.add(LoadConmmentEvent(
+        //         id: widget.id,
+        //         isLoadMore: false,
+        //         isLoading: false,
+        //         size: list.isEmpty ? 10 : list.length));
+        //   },
+        // );
         _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
       },
     );
@@ -170,6 +174,14 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           Navigator.of(context).pop();
           _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
           // updateState();
+        }
+
+        if (state.request == QrFeed.UPDATE_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).popUntil(
+            (route) => route.isFirst,
+          );
+          _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
         }
       },
       builder: (context, state) {
@@ -985,7 +997,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       leadingWidth: double.infinity,
       leading: InkWell(
         onTap: () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(widget.folderId);
         },
         child: Container(
           padding: const EdgeInsets.only(left: 8),
@@ -1158,8 +1170,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         if (result != null) {
                           switch (result) {
                             case 0:
-                              Navigator.of(context)
-                                  .pushNamed(Routes.QR_UPDATE_SCREEN);
+                              Navigator.of(context).pushNamed(
+                                  Routes.QR_UPDATE_SCREEN,
+                                  arguments: {
+                                    'isPublic': widget.isPublic,
+                                    'detail': e,
+                                    'moreDetail': qrFeedPopupDetailDTO
+                                  });
                               break;
                             case 1:
                               // Handle "Tuỳ chỉnh giao diện mã QR"

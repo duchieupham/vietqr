@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -17,22 +18,32 @@ import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrUpdateScreen extends StatefulWidget {
+  final bool isPublic;
+
   final QrFeedDetailDTO detail;
   final QrFeedPopupDetailDTO moreDetail;
-  const QrUpdateScreen(
-      {super.key, required this.detail, required this.moreDetail});
+  const QrUpdateScreen({
+    super.key,
+    required this.detail,
+    required this.moreDetail,
+    required this.isPublic,
+  });
 
   @override
   State<QrUpdateScreen> createState() => _QrUpdateScreenState();
 }
 
 class _QrUpdateScreenState extends State<QrUpdateScreen> {
+  String get userId => SharePrefUtils.getProfile().userId.trim();
+
   final TextEditingController phoneNum = TextEditingController();
   final TextEditingController contactName = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -69,11 +80,11 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
   void initData() {
     dto = widget.detail;
     moreDetail = widget.moreDetail;
-    // selectedBank = BankTypeDTO(
-    //   bankAccount: widget.moreDetail.bankAccount!,
-    //   bankCode: widget.moreDetail.
-    // );
     if (widget.detail.qrType == '3') {
+      stk.text = widget.moreDetail.bankAccount!;
+      userBankName.text = widget.moreDetail.userBankName!;
+      amount.text = StringUtils.formatCurrency(widget.moreDetail.amount!);
+      contentController.text = widget.moreDetail.content!;
       _bloc.add(LoadBanksEvent());
       focusAccount.addListener(() {
         if (!focusAccount.hasFocus) {
@@ -81,7 +92,16 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
         }
       });
     }
+
+    if (widget.detail.qrType == '2') {
+      phoneNum.text = widget.moreDetail.phoneNo!;
+      contactName.text = widget.moreDetail.fullName!;
+      webController.text = widget.moreDetail.website!;
+      ctyController.text = widget.moreDetail.companyName!;
+      addressController.text = widget.moreDetail.address!;
+    }
     if (widget.detail.qrType == '0' || widget.detail.qrType == '1') {
+      _controller.text = widget.moreDetail.value!;
       _timer = Timer.periodic(
         const Duration(milliseconds: 500),
         (timer) {
@@ -165,13 +185,15 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget typeWidget;
+    Widget? typeWidget;
     switch (widget.detail.qrType) {
       case '0':
         type = TypeQr.QR_LINK;
+        typeWidget = _buildQr();
         break;
       case '1':
         type = TypeQr.OTHER;
+        typeWidget = _buildQr();
         break;
       case '2':
         type = TypeQr.VCARD;
@@ -196,7 +218,7 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               width: MediaQuery.of(context).size.width,
               // height: MediaQuery.of(context).size.height,
-              child: _buildBankQr(),
+              child: typeWidget,
             ),
           )
         ],
@@ -206,7 +228,14 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
 
   Widget _buildBankQr() {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
-      listener: (context, state) {},
+      bloc: _bloc,
+      listener: (context, state) {
+        if (state.request == QrFeed.GET_BANKS &&
+            state.status == BlocStatus.UNLOADING) {
+          selectedBank = state.listBanks?.firstWhere(
+              (element) => element.bankShortName == moreDetail?.bankShortName);
+        }
+      },
       builder: (context, state) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -281,7 +310,7 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
               // focusNode: focusAccount,
               textInputType: TextInputType.number,
               inputFormatter: [FilteringTextInputFormatter.digitsOnly],
-              isActive: selectedBank != null,
+              isActive: true,
               controller: stk,
               hintText: selectedBank != null
                   ? 'Nhập số tài khoản ngân hàng'
@@ -304,7 +333,7 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
                 FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
                 UpperCaseTextFormatter()
               ],
-              isActive: selectedBank != null,
+              isActive: true,
               controller: userBankName,
               hintText: selectedBank != null
                   ? 'Nhập tên chủ tài khoản ngân hàng'
@@ -642,154 +671,196 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
     );
   }
 
-  // Widget _buildQr() {
-  //   return Column(
-  //     mainAxisAlignment: MainAxisAlignment.start,
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(
-  //             _qrType == TypeQr.QR_LINK
-  //                 ? 'Nhập thông tin\ntạo mã QR Đường dẫn'
-  //                 : 'Nhập thông tin\ntạo mã QR để lưu trữ',
-  //             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-  //           ),
-  //           Row(
-  //             children: [
-  //               InkWell(
-  //                 onTap: () {},
-  //                 child: Container(
-  //                   padding: const EdgeInsets.all(4),
-  //                   height: 42,
-  //                   width: 42,
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(100),
-  //                     color: AppColor.BLUE_TEXT.withOpacity(0.2),
-  //                   ),
-  //                   child: const XImage(
-  //                       imagePath: 'assets/images/ic-scan-content.png'),
-  //                 ),
-  //               ),
-  //               const SizedBox(width: 4),
-  //               InkWell(
-  //                 onTap: () {},
-  //                 child: Container(
-  //                   padding: const EdgeInsets.all(13),
-  //                   height: 42,
-  //                   width: 42,
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(100),
-  //                     color: AppColor.GREEN.withOpacity(0.2),
-  //                   ),
-  //                   child: const XImage(
-  //                     fit: BoxFit.fitWidth,
-  //                     width: 42,
-  //                     height: 42,
-  //                     imagePath: 'assets/images/ic-img-picker.png',
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ],
-  //       ),
-  //       const SizedBox(height: 30),
-  //       CustomTextField(
-  //         isActive: true,
-  //         textInputType: _qrType == TypeQr.QR_LINK
-  //             ? TextInputType.url
-  //             : TextInputType.text,
-  //         inputFormatter: [
-  //           if (_qrType == TypeQr.QR_LINK)
-  //             FilteringTextInputFormatter.allow(
-  //                 RegExp(r'[a-zA-Z\s0-9:/?&.=_-]'))
-  //           else
-  //             FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s0-9]')),
-  //         ],
-  //         onChanged: (value) {
-  //           if (value.contains('http') || value.contains('https')) {
-  //             _qrType = TypeQr.QR_LINK;
-  //           } else {
-  //             _qrType = TypeQr.OTHER;
-  //           }
-  //           updateState();
-  //         },
-  //         onClear: () {
-  //           _controller.clear();
-  //           updateState();
-  //         },
-  //         labelText: _qrType == TypeQr.QR_LINK ? 'URL*' : 'Thông tin mã QR*',
-  //         controller: _controller,
-  //         hintText: _qrType == TypeQr.QR_LINK
-  //             ? 'Nhập thông tin đường dẫn tại đây'
-  //             : 'Nhập thông tin mã QR tại đây',
-  //       ),
-  //       _clipboardContent.isNotEmpty
-  //           ? InkWell(
-  //               onTap: () {
-  //                 // final RegExp regExp =
-  //                 //     RegExp(r'[ ()_\-=\[\];’:"{}<>?,./!@#$%^&*\\]');
-  //                 // String replaceText = _clipboardContent.replaceAll(regExp, '');
+  Widget _buildQr() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              type == TypeQr.QR_LINK
+                  ? 'Nhập thông tin\ntạo mã QR Đường dẫn'
+                  : 'Nhập thông tin\ntạo mã QR để lưu trữ',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                    ),
+                    child: const XImage(
+                        imagePath: 'assets/images/ic-scan-content.png'),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                // InkWell(
+                //   onTap: () {},
+                //   child: Container(
+                //     padding: const EdgeInsets.all(13),
+                //     height: 42,
+                //     width: 42,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(100),
+                //       color: AppColor.GREEN.withOpacity(0.2),
+                //     ),
+                //     child: const XImage(
+                //       fit: BoxFit.fitWidth,
+                //       width: 42,
+                //       height: 42,
+                //       imagePath: 'assets/images/ic-img-picker.png',
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 30),
+        CustomTextField(
+          isActive: true,
+          textInputType:
+              type == TypeQr.QR_LINK ? TextInputType.url : TextInputType.text,
+          inputFormatter: [
+            if (type == TypeQr.QR_LINK)
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[a-zA-Z\s0-9:/?&.=_-]'))
+            else
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s0-9]')),
+          ],
+          onChanged: (value) {
+            updateState();
+          },
+          onClear: () {
+            _controller.clear();
+            updateState();
+          },
+          labelText: type == TypeQr.QR_LINK ? 'URL*' : 'Thông tin mã QR*',
+          controller: _controller,
+          hintText: type == TypeQr.QR_LINK
+              ? 'Nhập thông tin đường dẫn tại đây'
+              : 'Nhập thông tin mã QR tại đây',
+        ),
+        _clipboardContent.isNotEmpty
+            ? InkWell(
+                onTap: () {
+                  _controller.text = _clipboardContent;
 
-  //                 _controller.text = _clipboardContent;
-  //                 // const urlPattern = r'^(https?|ftp)://[^\s/$.?#].[^\s]*S';
-  //                 // final regex = RegExp(urlPattern);
-  //                 if (_clipboardContent.contains('http') ||
-  //                     _clipboardContent.contains('https')) {
-  //                   _qrType = TypeQr.QR_LINK;
-  //                 } else {
-  //                   _qrType = TypeQr.OTHER;
-  //                 }
-  //                 updateState();
-  //               },
-  //               child: Container(
-  //                 width: 250,
-  //                 margin: const EdgeInsets.only(top: 10),
-  //                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-  //                 decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(20),
-  //                     gradient: const LinearGradient(colors: [
-  //                       AppColor.D8ECF8,
-  //                       AppColor.FFEAD9,
-  //                       AppColor.F5C9D1,
-  //                     ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
-  //                 child: Row(
-  //                   children: [
-  //                     const Padding(
-  //                       padding: EdgeInsets.symmetric(horizontal: 8),
-  //                       child: XImage(
-  //                         imagePath: 'assets/images/ic-suggest.png',
-  //                         width: 30,
-  //                       ),
-  //                     ),
-  //                     Expanded(
-  //                       child: Text(
-  //                         _clipboardContent,
-  //                         maxLines: 1,
-  //                         overflow: TextOverflow.ellipsis,
-  //                         style: const TextStyle(
-  //                           color: AppColor.BLACK,
-  //                           fontSize: 12,
-  //                           overflow: TextOverflow.ellipsis,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             )
-  //           : const SizedBox.shrink(),
-  //     ],
-  //   );
-  // }
+                  updateState();
+                },
+                child: Container(
+                  width: 250,
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: const LinearGradient(colors: [
+                        AppColor.D8ECF8,
+                        AppColor.FFEAD9,
+                        AppColor.F5C9D1,
+                      ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          _clipboardContent,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColor.BLACK,
+                            fontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
+      ],
+    );
+  }
 
   Widget _bottomButton(bool isEnable) {
     return Container(
       padding: const EdgeInsets.all(20),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          Map<String, dynamic> data = {};
+          switch (type) {
+            case TypeQr.OTHER:
+              data['userId'] = userId;
+              data['qrId'] = widget.detail.id;
+              data['title'] = widget.detail.title;
+              data['qrDescription'] = widget.detail.description;
+              data['value'] = _controller.text;
+              data['pin'] = '';
+              data['isPublic'] = widget.isPublic == true ? '1' : '0';
+              data['style'] = widget.detail.style;
+              data['theme'] = widget.detail.theme;
+              break;
+            case TypeQr.QR_LINK:
+              data['userId'] = userId;
+              data['qrId'] = widget.detail.id;
+              data['title'] = widget.detail.title;
+              data['qrDescription'] = widget.detail.description;
+              data['value'] = _controller.text;
+              data['pin'] = '';
+              data['isPublic'] = widget.isPublic == true ? '1' : '0';
+              data['style'] = widget.detail.style;
+              data['theme'] = widget.detail.theme;
+              break;
+            case TypeQr.VCARD:
+              data['id'] = widget.detail.id;
+              data['qrTitle'] = widget.detail.title;
+              data['qrDescription'] = widget.detail.description;
+              data['userId'] = userId;
+              data['fullname'] = contactName.text;
+              data['phoneNo'] = phoneNum.text;
+              data['email'] = _showAdditional ? emailController.text : '';
+              data['companyName'] = _showAdditional ? ctyController.text : '';
+              data['website'] = _showAdditional ? webController.text : '';
+              data['address'] = _showAdditional ? addressController.text : '';
+              data['additionalData'] = '';
+              data['isPublic'] = widget.isPublic == true ? '1' : '0';
+              data['style'] = widget.detail.style;
+              data['theme'] = widget.detail.theme;
+              break;
+            case TypeQr.VIETQR:
+              data['id'] = widget.detail.id;
+              data['qrName'] = widget.detail.title;
+              data['qrDescription'] = widget.detail.description;
+              data['userId'] = userId;
+              data['bankAccount'] = stk.text;
+              data['bankCode'] = selectedBank?.bankCode;
+              data['userBankName'] = userBankName.text;
+              data['amount'] =
+                  _showAdditional ? amount.text.replaceAll(',', '') : '';
+              data['content'] = _showAdditional ? contentController.text : '';
+              data['isPublic'] = widget.isPublic == true ? '1' : '0';
+              data['style'] = widget.detail.style;
+              data['theme'] = widget.detail.theme;
+              break;
+            default:
+          }
+          _bloc.add(UpdateQREvent(type: type, data: data));
+        },
         child: Container(
           width: double.infinity,
           height: 50,

@@ -2,6 +2,7 @@ class QrFeedPopupDetailDTO {
   // final String? title;
   // final String? description;
   final String? bankAccount;
+  final String? bankCode;
   final String? userBankName;
   final String? bankShortName;
   final String? amount;
@@ -18,6 +19,7 @@ class QrFeedPopupDetailDTO {
     // this.title,
     // this.description,
     this.bankAccount,
+    this.bankCode,
     this.userBankName,
     this.bankShortName,
     this.amount,
@@ -36,6 +38,7 @@ class QrFeedPopupDetailDTO {
       // title: json['title'],
       // description: json['description'],
       bankAccount: json['bankAccount'] ?? '',
+      bankCode: json['bankCode'] ?? '',
       userBankName: json['userBankName'] ?? '',
       bankShortName: json['bankShortName'] ?? '',
       amount: json['amount'] ?? '',

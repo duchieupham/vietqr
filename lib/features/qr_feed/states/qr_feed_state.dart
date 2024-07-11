@@ -9,6 +9,7 @@ import 'package:vierqr/models/qr_feed_folder_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/qr_folder_detail_dto.dart';
+import 'package:vierqr/models/qr_folder_dto.dart';
 import 'package:vierqr/models/user_folder_dto.dart';
 
 class QrFeedState extends Equatable {
@@ -30,6 +31,9 @@ class QrFeedState extends Equatable {
   final QrFeedPopupDetailDTO? qrFeedPopupDetail;
   final QrFeedDTO? qrFeed;
   final QrFeedDetailDTO? detailQr;
+  final String? qrId;
+  final String? folderId;
+  final QRFolderDTO? qrFolderUpdate;
   final QrFeedDetailDTO? loadCmt;
   final QrFolderDetailDTO? folderDetailDTO;
 
@@ -53,6 +57,9 @@ class QrFeedState extends Equatable {
     this.qrFeedPopupDetail,
     this.folderDetailDTO,
     this.detailQr,
+    this.qrId,
+    this.folderId,
+    this.qrFolderUpdate,
     this.loadCmt,
     this.detailMetadata,
     this.isFolderLoading = false,
@@ -75,6 +82,9 @@ class QrFeedState extends Equatable {
       QrFeedPopupDetailDTO? qrFeedPopupDetail,
       QrFeedDTO? qrFeed,
       QrFeedDetailDTO? detailQr,
+      String? qrId,
+      String? folderId,
+      QRFolderDTO? qrFolderUpdate,
       QrFeedDetailDTO? loadCmt,
       MetaDataDTO? detailMetadata,
       QrFolderDetailDTO? folderDetailDTO,
@@ -96,6 +106,9 @@ class QrFeedState extends Equatable {
         bankDto: bankDto ?? this.bankDto,
         qrFeed: qrFeed ?? this.qrFeed,
         detailQr: detailQr ?? this.detailQr,
+        qrId: qrId ?? this.qrId,
+        folderId: folderId ?? this.folderId,
+        qrFolderUpdate: qrFolderUpdate ?? this.qrFolderUpdate,
         detailMetadata: detailMetadata ?? this.detailMetadata,
         loadCmt: loadCmt ?? this.loadCmt,
         folderDetailDTO: folderDetailDTO ?? this.folderDetailDTO,
@@ -119,6 +132,9 @@ class QrFeedState extends Equatable {
         qrFeedPopupDetail,
         qrFeed,
         detailQr,
+        qrId,
+        qrFolderUpdate,
+        folderId,
         loadCmt,
         detailMetadata,
         folderDetailDTO,

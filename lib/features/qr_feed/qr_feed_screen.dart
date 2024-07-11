@@ -30,6 +30,7 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_private_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
@@ -221,8 +222,19 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
             state.status == BlocStatus.SUCCESS) {
-          Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
-              arguments: {'id': selectedQrId});
+          Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN, arguments: {
+            'id': state.qrId,
+            'isPublic': true,
+            'folderId': state.folderId
+          }).then(
+            (value) {
+              final folderId = value as String;
+              if (folderId.isNotEmpty) {
+                _bloc.add(GetFolderDetailEvent(
+                    value: '', type: 9, folderId: folderId));
+              }
+            },
+          );
         }
       },
       builder: (context, state) {
