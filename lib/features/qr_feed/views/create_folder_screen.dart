@@ -200,6 +200,11 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             textColor: Theme.of(context).hintColor,
             fontSize: 15,
           );
+          _bloc.add(GetQrFeedPrivateEvent(
+              type: _qrTypeDTO.type,
+              isGetFolder: true,
+              isFolderLoading: true,
+              value: ''));
         }
 
         if (state.request == QrFeed.ADD_USER &&
