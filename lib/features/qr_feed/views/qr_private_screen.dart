@@ -126,6 +126,8 @@ class _QrPrivateScreenState extends State<QrPrivateScreen> {
                                     'page': 0,
                                     'action': ActionType.CREATE,
                                     'id': '',
+                                    'title': '',
+                                    'description': '',
                                   }).then(
                                 (value) {},
                               );

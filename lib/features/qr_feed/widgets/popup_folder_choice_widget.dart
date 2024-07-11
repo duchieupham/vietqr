@@ -58,7 +58,7 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
       },
       builder: (context, state) {
         return Container(
-          height: widget.dto.isEdit == 3 ? 160 : 360,
+          height: widget.dto.isEdit == 3 ? 160 : 400,
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -126,6 +126,21 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                     title: 'Chi tiết thư mục'),
               ),
               if (widget.dto.isEdit != 3) ...[
+                InkWell(
+                  onTap: () {
+                    NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                        arguments: {
+                          'page': 0,
+                          'action': ActionType.UPDATE_TITLE,
+                          'id': widget.dto.id,
+                          'title': widget.dto.title,
+                          'description': widget.dto.description,
+                        });
+                  },
+                  child: const _buildItem(
+                      img: 'assets/images/ic-folder.png',
+                      title: 'Cập nhật tên thư mục'),
+                ),
                 const MySeparator(color: AppColor.GREY_DADADA),
                 InkWell(
                   onTap: () {
@@ -134,6 +149,8 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                           'page': 2,
                           'action': ActionType.UPDATE_USER,
                           'id': widget.dto.id,
+                          'title': '',
+                          'description': '',
                         });
                   },
                   child: const _buildItem(
@@ -150,6 +167,8 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                           'page': 1,
                           'action': ActionType.UPDATE_QR,
                           'id': widget.dto.id,
+                          'title': '',
+                          'description': '',
                         });
                   },
                   child: const _buildItem(
@@ -157,35 +176,39 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                       title: 'Tùy chỉnh mã QR vào thư mục'),
                 ),
                 const MySeparator(color: AppColor.GREY_DADADA),
-                // InkWell(
-                //   onTap: () {
-                //     NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
-                //         arguments: {
-                //           'page': 1,
-                //           'action': ActionType.REMOVE_QR,
-                //           'id': widget.dto.id,
-                //         });
-                //   },
-                //   child: const _buildItem(
-                //       img: 'assets/images/ic-delete-black.png',
-                //       title: 'Xóa mã QR khỏi thư mục'),
-                // ),
+                if (widget.dto.isEdit == 1)
+                  InkWell(
+                    onTap: () {
+                      NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
+                          arguments: {
+                            'page': 1,
+                            'action': ActionType.REMOVE_QR,
+                            'id': widget.dto.id,
+                            'title': '',
+                            'description': '',
+                          });
+                    },
+                    child: const _buildItem(
+                        img: 'assets/images/ic-delete-black.png',
+                        title: 'Xóa mã QR khỏi thư mục'),
+                  ),
                 const MySeparator(color: AppColor.GREY_DADADA),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    DialogWidget.instance.openWidgetDialog(
-                        heightPopup: MediaQuery.of(context).size.height * 0.5,
-                        padding: const EdgeInsets.all(0),
-                        radius: 10,
-                        child: DeleteDialogWidget(
-                          folderId: widget.dto.id,
-                        ));
-                  },
-                  child: const _buildItem(
-                      img: 'assets/images/ic-remove-black.png',
-                      title: 'Xoá thư mục'),
-                ),
+                if (widget.dto.isEdit == 1)
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      DialogWidget.instance.openWidgetDialog(
+                          heightPopup: MediaQuery.of(context).size.height * 0.5,
+                          padding: const EdgeInsets.all(0),
+                          radius: 10,
+                          child: DeleteDialogWidget(
+                            folderId: widget.dto.id,
+                          ));
+                    },
+                    child: const _buildItem(
+                        img: 'assets/images/ic-remove-black.png',
+                        title: 'Xoá thư mục'),
+                  ),
               ],
             ],
           ),

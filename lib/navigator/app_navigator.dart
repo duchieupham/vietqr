@@ -176,17 +176,16 @@ class NavigationService {
             builder: (context) => const QrFolderScreen(), settings: settings);
       case Routes.CREATE_QR_FOLDER_SCREEN:
         Map map = settings.arguments as Map;
-        // QRFolderDTO? qrFolderDTO;
-        // if (map['qrFolder'] != null) {
-        //   qrFolderDTO = map['qrFolder'];
-        // }
-        // List<UserFolder> listUserFolder = map['listUserFolder'] ?? [];
+        String title = map['title'];
+        String description = map['description'];
 
         ActionType action = map['action'];
         String folderId = map['id'];
         int page = map['page'];
         return CupertinoPageRoute(
             builder: (context) => CreateFolderScreen(
+                  title: title,
+                  description: description,
                   folderId: folderId,
                   action: action,
                   pageView: page,

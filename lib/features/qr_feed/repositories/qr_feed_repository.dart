@@ -66,11 +66,34 @@ class QrFeedRepository extends BaseRepo {
     return null;
   }
 
+  Future<bool> updateFolderTitle(
+      {required String id,
+      required String title,
+      required String description}) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/update-folder?id=$id';
+      Map<String, dynamic> param = {};
+      param['title'] = title;
+      param['description'] = description;
+      final response = await BaseAPIClient.putAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
   Future<bool> removeQRFolder(dynamic data) async {
     try {
-      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/delete-qr';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-feed/delete-qrs-folder';
 
-      final response = await BaseAPIClient.postAPI(
+      final response = await BaseAPIClient.deleteAPI(
         body: data,
         url: url,
         type: AuthenticationType.SYSTEM,

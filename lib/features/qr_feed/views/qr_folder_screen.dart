@@ -324,8 +324,13 @@ class _QrFolderScreenState extends State<QrFolderScreen> {
       actions: [
         GestureDetector(
           onTap: () {
-            NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN,
-                arguments: {'page': 0, 'action': ActionType.CREATE, 'id': ''});
+            NavigationService.push(Routes.CREATE_QR_FOLDER_SCREEN, arguments: {
+              'page': 0,
+              'action': ActionType.CREATE,
+              'id': '',
+              'title': '',
+              'description': '',
+            });
           },
           onTapDown: (TapDownDetails details) {},
           child: Container(

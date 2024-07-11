@@ -34,6 +34,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 enum ActionType {
   CREATE,
+  UPDATE_TITLE,
   REMOVE_QR,
   UPDATE_QR,
   UPDATE_USER,
@@ -43,11 +44,16 @@ class CreateFolderScreen extends StatefulWidget {
   final int pageView;
   final ActionType action;
   final String folderId;
+  final String title;
+  final String description;
+
   const CreateFolderScreen({
     super.key,
     required this.pageView,
     required this.action,
     required this.folderId,
+    this.title = '',
+    this.description = '',
   });
 
   @override
@@ -118,6 +124,10 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         if (widget.action == ActionType.CREATE) {
           _bloc.add(GetUserQREvent(value: '', type: _qrTypeDTO.type));
         } else {
+          if (widget.action == ActionType.UPDATE_TITLE) {
+            _folderNameController.text = widget.title;
+            _descriptionController.text = widget.description;
+          }
           if (widget.action == ActionType.UPDATE_USER) {
             _bloc.add(GetUpdateFolderDetailEvent(
                 type: ActionType.UPDATE_USER, folderId: widget.folderId));
@@ -228,6 +238,18 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             // }
             // listUserUpdate = state.listAllUserFolder ?? [];
           }
+          if (state.request == QrFeed.REMOVE_QR_FOLDER &&
+              state.status == BlocStatus.SUCCESS) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+              msg: 'Xóa thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          }
           if (state.request == QrFeed.UPDATE_QR_FOLDER &&
               state.status == BlocStatus.SUCCESS) {
             Navigator.of(context).pop();
@@ -250,6 +272,19 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           //     groupsAlphabet[firstChar]!.add(item);
           //   }
           // }
+        } else if (widget.action == ActionType.UPDATE_TITLE) {
+          if (state.request == QrFeed.UPDATE_FOLDER_TITLE &&
+              state.status == BlocStatus.SUCCESS) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+              msg: 'Cập nhật thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          }
         }
 
         if (state.request == QrFeed.GET_USER_QR &&
@@ -1197,6 +1232,17 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   data['qrIds'] = getQrIds(listQRUpdateNotifier.value);
 
                   _bloc.add(UpdateQRFolderEvent(data: data));
+                } else if (widget.action == ActionType.UPDATE_TITLE) {
+                  _bloc.add(UpdateFolderTitleEvent(
+                      title: _folderNameController.text,
+                      description: _descriptionController.text,
+                      folderId: widget.folderId));
+                } else if (widget.action == ActionType.REMOVE_QR) {
+                  Map<String, dynamic> data = {};
+                  data['folderId'] = widget.folderId;
+                  data['userId'] = userProfile.userId;
+                  data['qrIds'] = getQrIds(listQRUpdateNotifier.value);
+                  _bloc.add(RemoveQRFolderEvent(data: data));
                 }
               }
             : null,
@@ -1477,6 +1523,13 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   }
 
   Widget _appbar() {
+    int countItemsAddedToFolder(List<ListQRFolder> listQRFolders) {
+      return listQRFolders
+          .expand((folder) => folder.listQr!)
+          .where((item) => item.hasChecked)
+          .length;
+    }
+
     int checkedCount = listQr.where((item) => item.isValid == true).length;
     int userCount =
         listSelectedUser.where((item) => item.isValid == true).length + 1;
@@ -1523,26 +1576,65 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
               else if (_currentPageIndex == 1) ...[
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 8),
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          // color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                          gradient: LinearGradient(
-                              colors: _gradients[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: Center(
-                        child: Text(
-                          checkedCount.toString(),
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ),
+                    ValueListenableBuilder<List<ListQRFolder>>(
+                      valueListenable: listQRUpdateNotifier,
+                      builder: (context, value, child) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: Center(
+                            child: Text(
+                              widget.action == ActionType.UPDATE_QR ||
+                                      widget.action == ActionType.REMOVE_QR
+                                  ? countItemsAddedToFolder(value).toString()
+                                  : checkedCount.toString(),
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(width: 5),
+                    if (widget.action == ActionType.UPDATE_QR ||
+                        widget.action == ActionType.REMOVE_QR) ...[
+                      InkWell(
+                        onTap: () {
+                          for (var folder in listQRUpdateNotifier.value) {
+                            for (var item in folder.listQr!) {
+                              item.hasChecked = false;
+                            }
+                          }
+
+                          setState(() {});
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 8),
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                              gradient: LinearGradient(
+                                  colors: _gradients[0],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight)),
+                          child: const XImage(
+                              imagePath:
+                                  'assets/images/ic-remove-checkbox-black.png'),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                    ],
                     if (listQr.any((element) => element.isValid == true)) ...[
                       InkWell(
                         onTap: () {
@@ -1573,9 +1665,20 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     ],
                     InkWell(
                       onTap: () {
-                        for (var element in listQr) {
-                          element.isValid = true;
+                        if (widget.action == ActionType.UPDATE_QR ||
+                            widget.action == ActionType.REMOVE_QR) {
+                          for (var folder in listQRUpdateNotifier.value) {
+                            for (var item in folder.listQr!) {
+                              item.hasChecked = true;
+                            }
+                          }
                         }
+                        if (widget.action == ActionType.CREATE) {
+                          for (var element in listQr) {
+                            element.isValid = true;
+                          }
+                        }
+
                         setState(() {});
                       },
                       child: Container(
@@ -1655,10 +1758,19 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           ),
           if (_currentPageIndex == 1) ...[
             const SizedBox(height: 20),
-            const Text(
-              'Thêm mã QR vào\nthư mục của bạn',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+            if (widget.action != ActionType.CREATE)
+              Text(
+                widget.action == ActionType.UPDATE_QR
+                    ? 'Thêm mã QR vào\nthư mục của bạn'
+                    : 'Thêm mã QR vào\nthư mục của bạn',
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              )
+            else
+              const Text(
+                'Thêm mã QR vào\nthư mục của bạn',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
             const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
