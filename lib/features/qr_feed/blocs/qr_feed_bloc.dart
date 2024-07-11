@@ -23,6 +23,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<GetUserFolderEvent>(_getUserFolder);
     on<GetMoreUserFolderEvent>(_getMoreUserFolder);
 
+    on<UpdateQRFolderEvent>(_updateQRFolder);
     on<GetQRFolderEvent>(_getQRFolderUpdate);
     on<UpdateQREvent>(_updateQr);
     on<GetUserQREvent>(_getUserQr);
@@ -123,6 +124,29 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
         request: QrFeed.LOAD_CMT,
+        status: BlocStatus.ERROR,
+      ));
+    }
+  }
+
+  void _updateQRFolder(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateQRFolderEvent) {
+        emit(state.copyWith(
+            request: QrFeed.UPDATE_QR_FOLDER, status: BlocStatus.LOADING));
+        final result = await _qrFeedRepository.updateQRFolder(event.data);
+        if (result) {
+          emit(state.copyWith(
+              request: QrFeed.UPDATE_QR_FOLDER, status: BlocStatus.SUCCESS));
+        } else {
+          emit(state.copyWith(
+              request: QrFeed.UPDATE_QR_FOLDER, status: BlocStatus.ERROR));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        request: QrFeed.UPDATE_QR_FOLDER,
         status: BlocStatus.ERROR,
       ));
     }

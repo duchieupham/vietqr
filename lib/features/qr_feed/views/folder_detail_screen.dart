@@ -851,7 +851,19 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                 'page': 2,
                                 'action': ActionType.UPDATE_USER,
                                 'id': widget.folderId,
-                              });
+                              }).then(
+                            (value) {
+                              if (tab == FolderEnum.QR) {
+                                _bloc.add(GetFolderDetailEvent(
+                                    value: '',
+                                    type: _qrTypeDTO.type,
+                                    folderId: widget.folderId));
+                              } else {
+                                _bloc.add(GetUserFolderEvent(
+                                    value: '', folderId: widget.folderId));
+                              }
+                            },
+                          );
                         },
                   child: Container(
                     padding: const EdgeInsets.all(4),
