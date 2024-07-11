@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -15,6 +16,7 @@ import 'package:vierqr/layouts/dashedline/horizontal_dashed_line.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/countdown_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 
@@ -28,6 +30,35 @@ class NotifyTransWidget extends StatefulWidget {
 }
 
 class _TransactionSuccessWidget extends State<NotifyTransWidget> {
+  // final settingAccountDTO = SharePrefUtils.getAccountSetting();
+  final FlutterTts flutterTts = FlutterTts();
+  late String text;
+  // bool isSpeakingEnabled =
+  //     true; // Biến trạng thái để bật/tắt tính năng đọc văn bản
+  late bool isSpeakingEnabled;
+  late bool voiceMobile;
+  late bool isValidAmount;
+
+  Future<void> _speak() async {
+    await flutterTts.stop(); // Dừng phát âm thanh trước đó
+    if (voiceMobile && isValidAmount) {
+      // Kiểm tra trạng thái trước khi đọc văn bản
+      await flutterTts.setLanguage("vi-VN");
+      await flutterTts.setPitch(1.0);
+      await flutterTts.speak(text);
+    }
+  }
+
+  void _toggleSpeaking() {
+    setState(() {
+      isSpeakingEnabled = !isSpeakingEnabled;
+    });
+  }
+
+  Future<void> _stop() async {
+    await flutterTts.stop();
+  }
+
   late CountdownProvider countdownProvider;
   late AuthProvider authProvider;
 
@@ -37,9 +68,20 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
   @override
   void initState() {
     super.initState();
+    // text = '${widget.dto.amount} đồng';
+    voiceMobile = SharePrefUtils.getAccountSetting().voiceMobile;
+
+    if (widget.dto.amount == "*****") {
+      isValidAmount = false;
+      text = ""; // Nếu không muốn đọc gì khi widget.dto.getAmount là "*****"
+    } else {
+      isValidAmount = true;
+      text = '${widget.dto.amount} đồng'; // Thiết lập text để đọc
+    }
     SocketService.instance.updateConnect(true);
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     countdownProvider = CountdownProvider(30);
+    _speak();
     countdownProvider.countDown(callback: () {
       if (!mounted) return;
       Navigator.pop(context);
