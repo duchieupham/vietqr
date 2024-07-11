@@ -256,6 +256,15 @@ class GetQrFeedFolderEvent extends QrFeedEvent {
   List<Object?> get props => [value, type, size, page];
 }
 
+class UpdateQRFolderEvent extends QrFeedEvent {
+  final dynamic data;
+
+  const UpdateQRFolderEvent({required this.data});
+
+  @override
+  List<Object?> get props => [data];
+}
+
 class GetQrFeedDetailEvent extends QrFeedEvent {
   final String folderId;
 

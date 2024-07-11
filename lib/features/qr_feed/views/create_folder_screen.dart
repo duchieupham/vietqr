@@ -87,7 +87,8 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   List<UserFolder> listAddedUSerUpdate = [];
   List<UserFolder> listUserUpdateSearch = [];
 
-  List<ListQRFolder>? listQRUpdate = [];
+  ValueNotifier<List<ListQRFolder>> listQRUpdateNotifier =
+      ValueNotifier<List<ListQRFolder>>([]);
 
   List<ListUserCheckBox> mapUser(List<SearchUser> user) {
     return user
@@ -167,6 +168,27 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     return qr.map((item) => ListQrCheckBox(isValid: false, dto: item)).toList();
   }
 
+  List<ListQRFolder> mapQRFolderDTOToListQRFolder(QRFolderDTO qrFolderDTO) {
+    // Create a map to group QRFolderData by the first character of fullName
+    Map<String, List<QRFolderData>> groupedData = {};
+
+    for (var item in qrFolderDTO.data) {
+      String firstChar =
+          item.fullName.isNotEmpty ? item.title[0].toUpperCase() : '#';
+      if (!groupedData.containsKey(firstChar)) {
+        groupedData[firstChar] = [];
+      }
+      groupedData[firstChar]!.add(item);
+    }
+
+    // Convert the map to a list of ListQRFolder
+    List<ListQRFolder> listQRFolders = groupedData.entries.map((entry) {
+      return ListQRFolder(firstCha: entry.key, listQr: entry.value);
+    }).toList();
+
+    return listQRFolders;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
@@ -180,7 +202,16 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         } else if (widget.action == ActionType.UPDATE_QR) {
           if (state.request == QrFeed.GET_UPDATE_FOLDER_DETAIL &&
               state.status == BlocStatus.SUCCESS) {
-            final qrFolder = state.qrFolderUpdate;
+            final qrsFolder = state.qrFolderUpdate?.data;
+            listQRUpdateNotifier.value =
+                mapQRFolderDTOToListQRFolder(state.qrFolderUpdate!);
+            // if (qrsFolder != null) {
+            //   for (var item in qrsFolder) {
+            //     String firstChar = item.title[0].toUpperCase();
+            //     listQRUpdate
+            //         ?.add(ListQRFolder(firstCha: firstChar, listQr: qrsFolder));
+            //   }
+            // }
             // listUserUpdate = state.listAllUserFolder ?? [];
           }
           // listQr = mapQr(state);
@@ -310,48 +341,97 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
-            ...groupsAlphabet.entries.map(
-              (e) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    Container(
-                      height: 35,
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          gradient: LinearGradient(
-                              colors: _gradients[0],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: Text(
-                        e.key,
-                        style: const TextStyle(fontSize: 12),
+            if (widget.action == ActionType.CREATE)
+              ...groupsAlphabet.entries.map(
+                (e) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 10),
+                      Container(
+                        height: 35,
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            gradient: LinearGradient(
+                                colors: _gradients[0],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight)),
+                        child: Text(
+                          e.key,
+                          style: const TextStyle(fontSize: 12),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    ...e.value.asMap().map(
-                      (index, item) {
-                        return MapEntry(
-                            index,
-                            _buildRowQrPrivate(
-                              e: item,
-                              index: index,
-                              onChangeValue: (p0) {
-                                final checked = item;
-                                checked.isValid = p0;
-                                // listQr[index].isValid = p0;
-                                groupsAlphabet[e.key]![index] = checked;
-                                setState(() {});
+                      const SizedBox(height: 5),
+                      ...e.value.asMap().map(
+                        (index, item) {
+                          return MapEntry(
+                              index,
+                              _buildRowQrPrivate(
+                                e: item,
+                                index: index,
+                                onChangeValue: (p0) {
+                                  final checked = item;
+                                  checked.isValid = p0;
+                                  // listQr[index].isValid = p0;
+                                  groupsAlphabet[e.key]![index] = checked;
+                                  setState(() {});
+                                },
+                              ));
+                        },
+                      ).values
+                    ],
+                  );
+                },
+              ),
+            if (widget.action == ActionType.UPDATE_QR)
+              ValueListenableBuilder<List<ListQRFolder>>(
+                valueListenable: listQRUpdateNotifier,
+                builder: (context, listQRUpdate, child) {
+                  return Column(
+                    children: listQRUpdate.map(
+                      (e) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            Container(
+                              height: 35,
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  gradient: LinearGradient(
+                                      colors: _gradients[0],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight)),
+                              child: Text(
+                                e.firstCha!,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            ...e.listQr!.asMap().entries.map(
+                              (entry) {
+                                int index = entry.key;
+                                QRFolderData item = entry.value;
+                                return _buildQRUpdate(
+                                    e: item,
+                                    onChangeValue: (p0) {
+                                      item.addedToFolder = p0 == true ? 1 : 0;
+                                      listQRUpdateNotifier.value =
+                                          List.from(listQRUpdateNotifier.value);
+                                    },
+                                    index: index);
                               },
-                            ));
+                            )
+                          ],
+                        );
                       },
-                    ).values
-                  ],
-                );
-              },
-            ),
+                    ).toList(),
+                  );
+                },
+              )
           ],
         ),
       ),
@@ -697,6 +777,121 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
     );
   }
 
+  Widget _buildQRUpdate(
+      {required QRFolderData e,
+      bool isLoading = false,
+      required int index,
+      required Function(bool) onChangeValue}) {
+    return Column(
+      children: [
+        Container(
+          height: 70,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Row(
+            children: [
+              if (!isLoading)
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    gradient: LinearGradient(
+                        colors: e.qrType == '0'
+                            ? _gradients[9]
+                            : e.qrType == '1'
+                                ? _gradients[3]
+                                : e.qrType == '2'
+                                    ? _gradients[1]
+                                    : _gradients[10],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight),
+                  ),
+                  child: XImage(
+                      imagePath: e.qrType == '0'
+                          ? 'assets/images/ic-linked-bank-blue.png'
+                          : e.qrType == '1'
+                              ? 'assets/images/ic-file-violet.png'
+                              : e.qrType == '2'
+                                  ? 'assets/images/ic-vcard1.png'
+                                  : 'assets/images/ic-vietqr-trans.png'),
+                )
+              else
+                const ShimmerBlock(
+                  height: 40,
+                  width: 40,
+                  borderRadius: 100,
+                ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!isLoading) ...[
+                      Text(
+                        e.title,
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4.0),
+                      Text(
+                        e.data,
+                        style: const TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.black54,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ] else ...[
+                      const ShimmerBlock(
+                        height: 12,
+                        width: 300,
+                      ),
+                      const SizedBox(height: 4.0),
+                      const ShimmerBlock(
+                        height: 12,
+                        width: 200,
+                      ),
+                    ]
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Checkbox(
+                checkColor: AppColor.BLUE_TEXT,
+                activeColor: AppColor.BLUE_TEXT.withOpacity(0.3),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(2.0),
+                ),
+                side: MaterialStateBorderSide.resolveWith(
+                  (states) => const BorderSide(
+                    width: 1.0,
+                    color: AppColor.GREY_DADADA,
+                  ),
+                ),
+                value: e.addedToFolder == 0 ? false : true,
+                onChanged: (value) {
+                  onChangeValue(value!);
+                },
+              )
+            ],
+          ),
+        ),
+        const MySeparator(
+          color: AppColor.GREY_DADADA,
+        ),
+        // const SizedBox(height: 15),
+      ],
+    );
+  }
+
   Widget _buildRowQrPrivate(
       {required ListQrCheckBox e,
       bool isLoading = false,
@@ -944,6 +1139,20 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                   _bloc.add(AddUserToFolderEvent(
                       folderId: widget.folderId,
                       userRoles: listAddedUSerUpdate));
+                } else if (widget.action == ActionType.UPDATE_QR) {
+                  // List<String> getQrIds(List<ListQRFolder> listQRFolders) {
+                  //   return listQRFolders
+                  //       .expand((i) => i.listQr)
+                  //       .where((x) => x.addedToFolder == 1)
+                  //       .map((item) => item.id)
+                  //       .toList();
+                  // }
+
+                  Map<String, dynamic> data = {};
+                  data['folderId'] = widget.folderId;
+                  data['userId'] = userProfile.userId;
+
+                  _bloc.add(UpdateQRFolderEvent(data: data));
                 }
               }
             : null,
@@ -1709,11 +1918,11 @@ class ListQrCheckBox {
 class ListQRFolder {
   String? firstCha;
 
-  List<QRFolderDTO>? dto;
+  List<QRFolderData>? listQr;
 
   ListQRFolder({
-    required firstCha,
-    required dto,
+    required this.firstCha,
+    required this.listQr,
   });
 }
 
