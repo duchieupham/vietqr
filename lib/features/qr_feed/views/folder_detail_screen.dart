@@ -555,7 +555,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                 'value': dto.vlue,
                                 'fileAttachmentId': dto.fileAttachmentId,
                                 'qrType': dto.qrType,
-                                'theme': 0,
+                                'theme': dto.theme,
                               });
                         },
                         child: Container(
@@ -584,6 +584,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                 'value': dto.vlue,
                                 'fileAttachmentId': dto.fileAttachmentId,
                                 'qrType': dto.qrType,
+                                'theme': dto.theme,
                               });
                         },
                         child: Container(

@@ -15,7 +15,7 @@ class SaveShareQrWidget extends StatefulWidget {
   final String fileAttachmentId;
   final String value;
   final String qrType;
-  final int theme;
+  final String theme;
   final TypeImage type;
   const SaveShareQrWidget({
     super.key,
@@ -36,6 +36,7 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
   @override
   void initState() {
     super.initState();
+
     Future.delayed(
       const Duration(milliseconds: 2000),
       () async {
@@ -95,6 +96,7 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
 
   @override
   Widget build(BuildContext context) {
+    int themeIndex = (int.tryParse(widget.theme) ?? 1) - 1;
     String qrType1 = '';
     switch (widget.qrType) {
       case '0':
@@ -112,6 +114,18 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
         break;
       default:
     }
+
+    // int? themeIndex = _themeToIndex[widget.theme];
+    // List<Color>? colors;
+    // if (themeIndex != null) {
+    //   colors = _gradients[themeIndex];
+    // } else {
+    //   colors = [
+    //     Colors.white,
+    //     Colors.white
+    //   ]; // Giá trị mặc định nếu theme không hợp lệ
+    // }
+
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
@@ -125,7 +139,7 @@ class _SaveShareQrWidgetState extends State<SaveShareQrWidget> {
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                      colors: _gradients[widget.theme - 1],
+                      colors: _gradients[themeIndex],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight),
                 ),

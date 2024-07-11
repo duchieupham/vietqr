@@ -153,7 +153,7 @@ class NavigationService {
             builder: (context) => const QrCreateScreen(), settings: settings);
       case Routes.QR_SAVE_SHARE_SCREEN:
         Map map = settings.arguments as Map;
-        int theme = map['theme'];
+        String theme = map['theme'];
         String title = map['title'];
         String data = map['data'];
         String fileAttachmentId = map['fileAttachmentId'];
