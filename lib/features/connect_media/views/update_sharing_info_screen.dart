@@ -117,6 +117,7 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
       listener: (context, state) {
         if (state.request == ConnectMedia.UPDATE_SHARING &&
             state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pop();
           Fluttertoast.showToast(
             msg: 'Cập nhật thành công',
             toastLength: Toast.LENGTH_SHORT,

@@ -91,7 +91,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: BlocConsumer<ShareBDSDBloc, ShareBDSDState>(
         listener: (context, state) {
           if (state.status == BlocStatus.LOADING) {
@@ -459,10 +459,25 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
           Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
               arguments: {'type': TypeConnect.LARK});
         }),
-        _buildItemService(
-            context, ImageConstant.logoGGChatHome, 'Google Chat', () async {
+        _buildItemService(context, ImageConstant.logoGGChatHome, 'Google Chat',
+            () async {
           Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
               arguments: {'type': TypeConnect.GG_CHAT});
+        }),
+        _buildItemService(context, ImageConstant.logoSlackHome, 'Slack',
+            () async {
+          Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+              arguments: {'type': TypeConnect.LARK});
+        }),
+        _buildItemService(context, ImageConstant.logoDiscordHome, 'Discord',
+            () async {
+          Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+              arguments: {'type': TypeConnect.DISCORD});
+        }),
+        _buildItemService(
+            context, ImageConstant.logoGGSheetHome, 'Google Sheet', () async {
+          Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+              arguments: {'type': TypeConnect.GG_SHEET});
         }),
       ],
     );
