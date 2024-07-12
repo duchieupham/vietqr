@@ -12,7 +12,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 
-class FCMService{
+class FCMService {
   static void onFcmMessage() async {
     await NotificationService().initialNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
@@ -44,7 +44,7 @@ class FCMService{
           if (message.data['paymentMethod'] == "1") {
             DialogWidget.instance.showModelBottomSheet(
               padding:
-              EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+                  EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
               height: 500,
               widget: PopupTopUpSuccess(
                 dto: TopUpSuccessDTO.fromJson(message.data),
@@ -95,7 +95,7 @@ class FCMService{
 
   static void handleMessageOnBackground(BuildContext context) {
     FirebaseMessaging.instance.getInitialMessage().then(
-          (remoteMessage) {
+      (remoteMessage) {
         if (remoteMessage != null) {
           if (remoteMessage.data['transactionReceiveId'] != null) {
             NavigatorUtils.navigatePage(

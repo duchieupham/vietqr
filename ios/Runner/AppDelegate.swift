@@ -1,5 +1,7 @@
 import UIKit
 import Flutter
+import AVFoundation // Thêm import AVFoundation
+
 // This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
 import flutter_local_notifications
 
@@ -44,6 +46,13 @@ import flutter_local_notifications
             }
         }
         
+        // Thiết lập AVAudioSession để phát âm thanh ngay cả khi ở chế độ im lặng
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set audio session category: \(error)")
+        }
         
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -105,8 +114,7 @@ class ViewController: UIViewController {
         }
         return "-1"
     }
-    
-    
+
     //    public func decodeQRImage(imageBytes: Data) -> String {
     //        guard let ciImage = CIImage(data: imageBytes) else {
     //            return "-1"
@@ -124,4 +132,3 @@ class ViewController: UIViewController {
     //        }
     //    }
 }
-
