@@ -33,7 +33,7 @@ class EnvConfig {
 }
 
 class AppConfig {
-  EnvType _env = EnvType.PROD;
+  EnvType _env = EnvType.STG;
 
   String? _bankUrl;
 

@@ -25,18 +25,24 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
     on<UpdateUrlEvent>(_updateUrl);
   }
 
-  ConnectGgChatRepository _repository = ConnectGgChatRepository();
+  final ConnectGgChatRepository _repository = ConnectGgChatRepository();
 
   void _getListTele(ConnectMediaEvent event, Emitter emit) async {
     try {
       if (event is GetListTeleEvent) {
         emit(state.copyWith(
-            status: BlocStatus.NONE, request: ConnectMedia.GET_LIST_TELE));
-        final result = await _repository.getTeleList();
+            status: BlocStatus.NONE,
+            request: event.isLoadMore
+                ? ConnectMedia.LOAD_MORE
+                : ConnectMedia.GET_LIST_TELE));
+        final result =
+            await _repository.getTeleList(page: event.page, size: event.size);
         emit(state.copyWith(
-            status: BlocStatus.SUCCESS,
-            request: ConnectMedia.GET_LIST_TELE,
-            listTele: [...result]));
+          status: event.isLoadMore ? BlocStatus.LOAD_MORE : BlocStatus.SUCCESS,
+          request: ConnectMedia.GET_LIST_TELE,
+          listTele: [...result],
+          metadata: _repository.metaDataDTO,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -49,12 +55,18 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
     try {
       if (event is GetListLarkEvent) {
         emit(state.copyWith(
-            status: BlocStatus.NONE, request: ConnectMedia.GET_LIST_LARK));
-        final result = await _repository.getLarkList();
+            status: BlocStatus.NONE,
+            request: event.isLoadMore
+                ? ConnectMedia.LOAD_MORE
+                : ConnectMedia.GET_LIST_LARK));
+        final result =
+            await _repository.getLarkList(page: event.page, size: event.size);
         emit(state.copyWith(
-            status: BlocStatus.SUCCESS,
-            request: ConnectMedia.GET_LIST_LARK,
-            listLark: [...result]));
+          status: event.isLoadMore ? BlocStatus.LOAD_MORE : BlocStatus.SUCCESS,
+          request: ConnectMedia.GET_LIST_LARK,
+          listLark: [...result],
+          metadata: _repository.metaDataDTO,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -67,12 +79,18 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
     try {
       if (event is GetListGGChatEvent) {
         emit(state.copyWith(
-            status: BlocStatus.NONE, request: ConnectMedia.GET_LIST_CHAT));
-        final result = await _repository.getChatList();
+            status: BlocStatus.NONE,
+            request: event.isLoadMore
+                ? ConnectMedia.LOAD_MORE
+                : ConnectMedia.GET_LIST_CHAT));
+        final result =
+            await _repository.getChatList(page: event.page, size: event.size);
         emit(state.copyWith(
-            status: BlocStatus.SUCCESS,
-            request: ConnectMedia.GET_LIST_CHAT,
-            listChat: [...result]));
+          status: event.isLoadMore ? BlocStatus.LOAD_MORE : BlocStatus.SUCCESS,
+          request: ConnectMedia.GET_LIST_CHAT,
+          listChat: [...result],
+          metadata: _repository.metaDataDTO,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());

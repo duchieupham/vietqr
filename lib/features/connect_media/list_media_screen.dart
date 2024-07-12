@@ -12,9 +12,10 @@ import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_media/events/connect_media_evens.dart';
 import 'package:vierqr/features/connect_media/states/connect_media_states.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/models/gg_chat_dto.dart';
-import 'package:vierqr/models/lart_dto.dart';
-import 'package:vierqr/models/tele_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/gg_chat_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/lark_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/tele_dto.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 
 class ListMediaScreen extends StatefulWidget {
   final TypeConnect type;
@@ -28,21 +29,50 @@ class ListMediaScreen extends StatefulWidget {
 }
 
 class _ListMediaScreenState extends State<ListMediaScreen> {
+  final ScrollController _controller = ScrollController();
+
   final _bloc = getIt.get<ConnectMediaBloc>();
 
   @override
   void initState() {
     super.initState();
     if (widget.type == TypeConnect.GG_CHAT) {
-      _bloc.add(GetListGGChatEvent());
+      _bloc.add(const GetListGGChatEvent(isLoadMore: false, page: 1, size: 20));
     }
     if (widget.type == TypeConnect.TELE) {
-      _bloc.add(GetListTeleEvent());
+      _bloc.add(const GetListTeleEvent(isLoadMore: false, page: 1, size: 20));
     }
     if (widget.type == TypeConnect.LARK) {
-      _bloc.add(GetListLarkEvent());
+      _bloc.add(const GetListLarkEvent(isLoadMore: false, page: 1, size: 20));
     }
+
+    _controller.addListener(
+      () {
+        if (_controller.position.pixels ==
+            _controller.position.maxScrollExtent) {
+          if (metadata != null) {
+            int total = (metadata!.total! / 20).ceil();
+            if (total > metadata!.page!) {
+              if (widget.type == TypeConnect.GG_CHAT) {
+                _bloc.add(const GetListGGChatEvent(
+                    isLoadMore: true, page: 1, size: 20));
+              }
+              if (widget.type == TypeConnect.TELE) {
+                _bloc.add(const GetListTeleEvent(
+                    isLoadMore: true, page: 1, size: 20));
+              }
+              if (widget.type == TypeConnect.LARK) {
+                _bloc.add(const GetListLarkEvent(
+                    isLoadMore: true, page: 1, size: 20));
+              }
+            }
+          }
+        }
+      },
+    );
   }
+
+  MetaDataDTO? metadata;
 
   @override
   Widget build(BuildContext context) {
@@ -53,30 +83,51 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
         List<GoogleChatDTO> listChat = [];
         List<LarkDTO> listLark = [];
         List<TeleDTO> listTele = [];
+        if (state.request == ConnectMedia.GET_LIST_CHAT &&
+            state.status == BlocStatus.LOAD_MORE) {
+          listChat = [...listChat, ...state.listChat!];
+          metadata = state.metadata;
+        }
+        if (state.request == ConnectMedia.GET_LIST_LARK &&
+            state.status == BlocStatus.LOAD_MORE) {
+          listLark = [...listLark, ...state.listLark!];
+          metadata = state.metadata;
+        }
+        if (state.request == ConnectMedia.GET_LIST_TELE &&
+            state.status == BlocStatus.LOAD_MORE) {
+          listTele = [...listTele, ...state.listTele!];
+          metadata = state.metadata;
+        }
 
         if (state.request == ConnectMedia.GET_LIST_CHAT &&
             state.status == BlocStatus.SUCCESS) {
-          listChat = state.listChat!;
+          listChat = [...state.listChat!];
+          metadata = state.metadata;
         }
         if (state.request == ConnectMedia.GET_LIST_LARK &&
             state.status == BlocStatus.SUCCESS) {
-          listLark = state.listLark!;
+          listLark = [...state.listLark!];
+          metadata = state.metadata;
         }
         if (state.request == ConnectMedia.GET_LIST_TELE &&
             state.status == BlocStatus.SUCCESS) {
-          listTele = state.listTele!;
+          listTele = [...state.listTele!];
+          metadata = state.metadata;
         }
 
         if (state.request == ConnectMedia.DELETE_URL &&
             state.status == BlocStatus.SUCCESS) {
           if (widget.type == TypeConnect.GG_CHAT) {
-            _bloc.add(GetListGGChatEvent());
+            _bloc.add(
+                const GetListGGChatEvent(isLoadMore: false, page: 1, size: 20));
           }
           if (widget.type == TypeConnect.TELE) {
-            _bloc.add(GetListTeleEvent());
+            _bloc.add(
+                const GetListTeleEvent(isLoadMore: false, page: 1, size: 20));
           }
           if (widget.type == TypeConnect.LARK) {
-            _bloc.add(GetListLarkEvent());
+            _bloc.add(
+                const GetListLarkEvent(isLoadMore: false, page: 1, size: 20));
           }
         }
 
@@ -96,6 +147,7 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                 const SizedBox(height: 30),
                 Expanded(
                   child: SingleChildScrollView(
+                    controller: _controller,
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Column(
                       children: [
@@ -127,6 +179,17 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                               child: Text('Trống'),
                             ),
                         ],
+                        if (state.request == ConnectMedia.LOAD_MORE)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: SizedBox(
+                              height: 25,
+                              width: 25,
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -169,7 +232,8 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
             Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN,
                 arguments: {'id': id}).then(
               (value) {
-                _bloc.add(GetListGGChatEvent());
+                _bloc.add(const GetListGGChatEvent(
+                    isLoadMore: false, page: 1, size: 20));
                 // Navigator.of(context).pop();
               },
             );
@@ -178,7 +242,8 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
             Navigator.pushNamed(context, Routes.CONNECT_TELE_SCREEN,
                 arguments: {'id': id}).then(
               (value) {
-                _bloc.add(GetListTeleEvent());
+                _bloc.add(const GetListTeleEvent(
+                    isLoadMore: false, page: 1, size: 20));
                 // Navigator.of(context).pop();
               },
             );
@@ -188,7 +253,8 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
             Navigator.pushNamed(context, Routes.CONNECT_LARK_SCREEN,
                 arguments: {'id': id}).then(
               (value) {
-                _bloc.add(GetListLarkEvent());
+                _bloc.add(const GetListLarkEvent(
+                    isLoadMore: false, page: 1, size: 20));
                 // Navigator.of(context).pop();
               },
             );
@@ -354,7 +420,8 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                 Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN,
                     arguments: {'id': ''}).then(
                   (value) {
-                    _bloc.add(GetListGGChatEvent());
+                    _bloc.add(const GetListGGChatEvent(
+                        isLoadMore: false, page: 1, size: 20));
                     // Navigator.of(context).pop();
                   },
                 );
@@ -363,7 +430,8 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                 Navigator.pushNamed(context, Routes.CONNECT_TELE_SCREEN,
                     arguments: {'id': ''}).then(
                   (value) {
-                    _bloc.add(GetListTeleEvent());
+                    _bloc.add(const GetListTeleEvent(
+                        isLoadMore: false, page: 1, size: 20));
                     // Navigator.of(context).pop();
                   },
                 );
@@ -373,7 +441,8 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                 Navigator.pushNamed(context, Routes.CONNECT_LARK_SCREEN,
                     arguments: {'id': ''}).then(
                   (value) {
-                    _bloc.add(GetListLarkEvent());
+                    _bloc.add(const GetListLarkEvent(
+                        isLoadMore: false, page: 1, size: 20));
                     // Navigator.of(context).pop();
                   },
                 );

@@ -1,13 +1,11 @@
 import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
-import 'package:vierqr/models/gg_chat_dto.dart';
-import 'package:vierqr/models/info_tele_dto.dart';
-import 'package:vierqr/models/lart_dto.dart';
-import 'package:vierqr/models/tele_dto.dart';
-
+import 'package:vierqr/features/invoice/repositories/base_repository.dart';
+import 'package:vierqr/models/B%C4%90SD/gg_chat_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/lark_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/tele_dto.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 import '../../../commons/constants/env/env_config.dart';
 import '../../../commons/enums/authentication_type.dart';
 import '../../../commons/utils/base_api.dart';
@@ -15,7 +13,7 @@ import '../../../commons/utils/log.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
 import '../../../services/local_storage/shared_preference/shared_pref_utils.dart';
 
-class ConnectGgChatRepository {
+class ConnectGgChatRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
   Future<bool?> updateUrl({
@@ -211,11 +209,14 @@ class ConnectGgChatRepository {
     return false;
   }
 
-  Future<List<TeleDTO>> getTeleList() async {
+  Future<List<TeleDTO>> getTeleList({
+    required int page,
+    required int size,
+  }) async {
     List<TeleDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/list?userId=$userId&page=1&size=50';
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/list?userId=$userId&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -223,6 +224,8 @@ class ConnectGgChatRepository {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        metaDataDTO = MetaDataDTO.fromJson(data['metadata']);
+
         result = data['data'].map<TeleDTO>((json) {
           return TeleDTO.fromJson(json);
         }).toList();
@@ -233,11 +236,14 @@ class ConnectGgChatRepository {
     return result;
   }
 
-  Future<List<LarkDTO>> getLarkList() async {
+  Future<List<LarkDTO>> getLarkList({
+    required int page,
+    required int size,
+  }) async {
     List<LarkDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}service/larks/list?userId=$userId&page=1&size=50';
+          '${getIt.get<AppConfig>().getBaseUrl}service/larks/list?userId=$userId&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -245,6 +251,8 @@ class ConnectGgChatRepository {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        metaDataDTO = MetaDataDTO.fromJson(data['metadata']);
+
         result = data['data'].map<LarkDTO>((json) {
           return LarkDTO.fromJson(json);
         }).toList();
@@ -255,11 +263,14 @@ class ConnectGgChatRepository {
     return result;
   }
 
-  Future<List<GoogleChatDTO>> getChatList() async {
+  Future<List<GoogleChatDTO>> getChatList({
+    required int page,
+    required int size,
+  }) async {
     List<GoogleChatDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/list?userId=$userId&page=1&size=50';
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chats/list?userId=$userId&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -267,6 +278,7 @@ class ConnectGgChatRepository {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        metaDataDTO = MetaDataDTO.fromJson(data['metadata']);
         result = data['data'].map<GoogleChatDTO>((json) {
           return GoogleChatDTO.fromJson(json);
         }).toList();
