@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
@@ -67,7 +68,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         physics: NeverScrollableScrollPhysics(),
         onPageChanged: widget.onPageChanged,
         children: [
-          startConnectGgChat(),
+          startConnectMedia(),
           listAccountLinked(),
           inputWebhook(),
           settingConnect(),
@@ -78,6 +79,28 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
   }
 
   Widget settingConnect() {
+    String text = '';
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        text = 'Google Chat';
+        break;
+      case TypeConnect.TELE:
+        text = 'Telegram';
+        break;
+      case TypeConnect.LARK:
+        text = 'Lark';
+        break;
+      case TypeConnect.SLACK:
+        text = 'Slack';
+        break;
+      case TypeConnect.DISCORD:
+        text = 'Discord';
+        break;
+      case TypeConnect.GG_SHEET:
+        text = 'Google Sheet';
+        break;
+      default:
+    }
     return Container(
       padding: const EdgeInsets.only(left: 20, right: 20),
       width: double.infinity,
@@ -86,9 +109,9 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox(height: 30),
-          const Text(
-            'Tiếp theo, cấu hình thông tin\nchia sẻ BĐSD qua Google Chat',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          Text(
+            'Tiếp theo, cấu hình thông tin\nchia sẻ BĐSD qua $text',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const SizedBox(height: 30),
           const Text(
@@ -110,7 +133,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                 onTap: () {
                   DialogWidget.instance.showModelBottomSheet(
                     borderRadius: BorderRadius.circular(16),
-                    widget: PopUpConfirm(),
+                    widget: const PopUpConfirm(),
                     // height: MediaQuery.of(context).size.height * 0.6,
                   );
                 },
@@ -213,7 +236,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
     );
   }
 
-  Widget startConnectGgChat() {
+  Widget startConnectMedia() {
     String url = '';
     String title = '';
     String description = '';
@@ -238,6 +261,24 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         title = 'Kết nối Telegram để nhận\nthông tin biến động số dư';
         description =
             'Nhận thông tin Biến động số dư qua Telegram khi quý khách thực hiện kết nối. An tâm về vấn đề an toàn thông tin - dữ liệu của Telegram mang lại.';
+        break;
+      case TypeConnect.SLACK:
+        url = ImageConstant.logoSlackHome;
+        title = 'Kết nối Slack để nhận\nthông tin biến động số dư';
+        description =
+            'Nhận thông tin Biến động số dư qua Slack khi quý khách thực hiện kết nối. An tâm về vấn đề an toàn thông tin - dữ liệu của Slack mang lại.';
+        break;
+      case TypeConnect.DISCORD:
+        url = ImageConstant.logoDiscordHome;
+        title = 'Kết nối Discord để nhận\nthông tin biến động số dư';
+        description =
+            'Nhận thông tin Biến động số dư qua Discord khi quý khách thực hiện kết nối. An tâm về vấn đề an toàn thông tin - dữ liệu của Discord mang lại.';
+        break;
+      case TypeConnect.GG_SHEET:
+        url = ImageConstant.logoGGSheetHome;
+        title = 'Kết nối Google Sheet để nhận\nthông tin biến động số dư';
+        description =
+            'Nhận thông tin Biến động số dư qua Google Sheet khi quý khách thực hiện kết nối. An tâm về vấn đề an toàn thông tin - dữ liệu của Google Sheet mang lại.';
         break;
       default:
     }

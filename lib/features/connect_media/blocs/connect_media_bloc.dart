@@ -10,10 +10,13 @@ import '../repositories/connect_media_repositories.dart';
 import '../states/connect_media_states.dart';
 
 class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
-  ConnectMediaBloc() : super(ConnectMediaStates()) {
+  ConnectMediaBloc() : super(const ConnectMediaStates()) {
     on<GetListGGChatEvent>(_getListChat);
     on<GetListLarkEvent>(_getListLark);
     on<GetListTeleEvent>(_getListTele);
+    on<GetListSlackEvent>(_getListSlack);
+    on<GetListDiscordEvent>(_getListDiscord);
+    on<GetListGGSheetEvent>(_getListGgSheet);
 
     on<GetInfoEvent>(_getInfo);
     on<CheckWebhookUrlEvent>(_checkValidUrl);
@@ -26,6 +29,78 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
   }
 
   final ConnectGgChatRepository _repository = ConnectGgChatRepository();
+
+  void _getListGgSheet(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is GetListGGSheetEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: event.isLoadMore
+                ? ConnectMedia.LOAD_MORE
+                : ConnectMedia.GET_LIST_SHEET));
+        final result = await _repository.getGgSheetList(
+            page: event.page, size: event.size);
+        emit(state.copyWith(
+          status: event.isLoadMore ? BlocStatus.LOAD_MORE : BlocStatus.SUCCESS,
+          request: ConnectMedia.GET_LIST_SHEET,
+          listGgSheet: [...result],
+          metadata: _repository.metaDataDTO,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.GET_LIST_SHEET));
+    }
+  }
+
+  void _getListDiscord(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is GetListDiscordEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: event.isLoadMore
+                ? ConnectMedia.LOAD_MORE
+                : ConnectMedia.GET_LIST_DISCORD));
+        final result = await _repository.getDiscordList(
+            page: event.page, size: event.size);
+        emit(state.copyWith(
+          status: event.isLoadMore ? BlocStatus.LOAD_MORE : BlocStatus.SUCCESS,
+          request: ConnectMedia.GET_LIST_DISCORD,
+          listDiscord: [...result],
+          metadata: _repository.metaDataDTO,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.GET_LIST_DISCORD));
+    }
+  }
+
+  void _getListSlack(ConnectMediaEvent event, Emitter emit) async {
+    try {
+      if (event is GetListSlackEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: event.isLoadMore
+                ? ConnectMedia.LOAD_MORE
+                : ConnectMedia.GET_LIST_SLACK));
+        final result =
+            await _repository.getSlackList(page: event.page, size: event.size);
+        emit(state.copyWith(
+          status: event.isLoadMore ? BlocStatus.LOAD_MORE : BlocStatus.SUCCESS,
+          request: ConnectMedia.GET_LIST_SLACK,
+          listSlack: [...result],
+          metadata: _repository.metaDataDTO,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: ConnectMedia.GET_LIST_SLACK));
+    }
+  }
 
   void _getListTele(ConnectMediaEvent event, Emitter emit) async {
     try {

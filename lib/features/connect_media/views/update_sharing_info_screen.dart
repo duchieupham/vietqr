@@ -261,44 +261,59 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
   }
 
   Widget _bottom() {
+    bool isEnable = false;
+    if (isChecked1 == true || isChecked2 == true || isChecked3 == true) {
+      isEnable = true;
+    } else {
+      isEnable = false;
+    }
+    if (isChecked4 == true || isChecked5 == true || isChecked6 == true) {
+      isEnable = true;
+    } else {
+      isEnable = false;
+    }
     return InkWell(
-      onTap: () {
-        List<String> list1 = [];
-        List<String> lsit2 = [];
-        if (isChecked1) list1.add('CREDIT');
-        if (isChecked2) list1.add('DEBIT');
-        if (isChecked3) list1.add('RECON');
+      onTap: isEnable
+          ? () {
+              List<String> list1 = [];
+              List<String> lsit2 = [];
+              if (isChecked1) list1.add('CREDIT');
+              if (isChecked2) list1.add('DEBIT');
+              if (isChecked3) list1.add('RECON');
 
-        if (isChecked4) lsit2.add('AMOUNT');
-        if (isChecked5) lsit2.add('REFERENCE_NUMBER');
-        if (isChecked6) lsit2.add('CONTENT');
+              if (isChecked4) lsit2.add('AMOUNT');
+              if (isChecked5) lsit2.add('REFERENCE_NUMBER');
+              if (isChecked6) lsit2.add('CONTENT');
 
-        _bloc.add(UpdateSharingEvent(
-            type: widget.type,
-            notificationTypes: list1,
-            notificationContents: lsit2,
-            id: widget.id));
-      },
+              _bloc.add(UpdateSharingEvent(
+                  type: widget.type,
+                  notificationTypes: list1,
+                  notificationContents: lsit2,
+                  id: widget.id));
+            }
+          : null,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
         width: double.infinity,
         height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF00C6FF),
-              Color(0xFF0072FF),
-            ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          color: const Color(0xFFF0F4FA),
+          gradient: isEnable
+              ? const LinearGradient(
+                  colors: [
+                    Color(0xFF00C6FF),
+                    Color(0xFF0072FF),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                )
+              : null,
+          color: isEnable ? null : const Color(0xFFF0F4FA),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(left: 16.0),
               child: Icon(
                 Icons.arrow_forward,
@@ -310,13 +325,13 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
                 child: Text(
                   'Cập nhật',
                   style: TextStyle(
-                    color: AppColor.WHITE,
+                    color: isEnable ? AppColor.WHITE : AppColor.BLACK,
                     fontSize: 16,
                   ),
                 ),
               ),
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(right: 16.0),
               child: Icon(
                 Icons.arrow_forward,

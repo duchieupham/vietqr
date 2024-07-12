@@ -12,8 +12,11 @@ import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_media/events/connect_media_evens.dart';
 import 'package:vierqr/features/connect_media/states/connect_media_states.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/B%C4%90SD/discord_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/gg_chat_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/gg_sheet_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/lark_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/slack_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/tele_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 
@@ -45,6 +48,17 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
     if (widget.type == TypeConnect.LARK) {
       _bloc.add(const GetListLarkEvent(isLoadMore: false, page: 1, size: 20));
     }
+    if (widget.type == TypeConnect.SLACK) {
+      _bloc.add(const GetListSlackEvent(isLoadMore: false, page: 1, size: 20));
+    }
+    if (widget.type == TypeConnect.DISCORD) {
+      _bloc
+          .add(const GetListDiscordEvent(isLoadMore: false, page: 1, size: 20));
+    }
+    if (widget.type == TypeConnect.GG_SHEET) {
+      _bloc
+          .add(const GetListGGSheetEvent(isLoadMore: false, page: 1, size: 20));
+    }
 
     _controller.addListener(
       () {
@@ -65,6 +79,18 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                 _bloc.add(const GetListLarkEvent(
                     isLoadMore: true, page: 1, size: 20));
               }
+              if (widget.type == TypeConnect.SLACK) {
+                _bloc.add(const GetListSlackEvent(
+                    isLoadMore: true, page: 1, size: 20));
+              }
+              if (widget.type == TypeConnect.DISCORD) {
+                _bloc.add(const GetListDiscordEvent(
+                    isLoadMore: true, page: 1, size: 20));
+              }
+              if (widget.type == TypeConnect.GG_SHEET) {
+                _bloc.add(const GetListGGSheetEvent(
+                    isLoadMore: true, page: 1, size: 20));
+              }
             }
           }
         }
@@ -76,13 +102,67 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String name = '';
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        name = 'Google chat';
+        break;
+      case TypeConnect.TELE:
+        name = 'Telegram';
+        break;
+      case TypeConnect.LARK:
+        name = 'Lark';
+        break;
+      case TypeConnect.SLACK:
+        name = 'Slack';
+        break;
+      case TypeConnect.DISCORD:
+        name = 'Discord';
+        break;
+      case TypeConnect.GG_SHEET:
+        name = 'Google Sheet';
+        break;
+      default:
+    }
     return BlocConsumer<ConnectMediaBloc, ConnectMediaStates>(
       bloc: _bloc,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.request == ConnectMedia.DELETE_URL &&
+            state.status == BlocStatus.SUCCESS) {
+          if (widget.type == TypeConnect.GG_CHAT) {
+            _bloc.add(
+                const GetListGGChatEvent(isLoadMore: false, page: 1, size: 20));
+          }
+          if (widget.type == TypeConnect.TELE) {
+            _bloc.add(
+                const GetListTeleEvent(isLoadMore: false, page: 1, size: 20));
+          }
+          if (widget.type == TypeConnect.LARK) {
+            _bloc.add(
+                const GetListLarkEvent(isLoadMore: false, page: 1, size: 20));
+          }
+          if (widget.type == TypeConnect.SLACK) {
+            _bloc.add(
+                const GetListSlackEvent(isLoadMore: false, page: 1, size: 20));
+          }
+          if (widget.type == TypeConnect.DISCORD) {
+            _bloc.add(const GetListDiscordEvent(
+                isLoadMore: false, page: 1, size: 20));
+          }
+          if (widget.type == TypeConnect.GG_SHEET) {
+            _bloc.add(const GetListGGSheetEvent(
+                isLoadMore: false, page: 1, size: 20));
+          }
+        }
+      },
       builder: (context, state) {
         List<GoogleChatDTO> listChat = [];
         List<LarkDTO> listLark = [];
         List<TeleDTO> listTele = [];
+        List<SlackDTO> listSlack = [];
+        List<DiscordDTO> listDiscord = [];
+        List<GoogleSheetDTO> listSheet = [];
+
         if (state.request == ConnectMedia.GET_LIST_CHAT &&
             state.status == BlocStatus.LOAD_MORE) {
           listChat = [...listChat, ...state.listChat!];
@@ -98,7 +178,23 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
           listTele = [...listTele, ...state.listTele!];
           metadata = state.metadata;
         }
+        if (state.request == ConnectMedia.GET_LIST_SLACK &&
+            state.status == BlocStatus.LOAD_MORE) {
+          listSlack = [...listSlack, ...state.listSlack!];
+          metadata = state.metadata;
+        }
+        if (state.request == ConnectMedia.GET_LIST_DISCORD &&
+            state.status == BlocStatus.LOAD_MORE) {
+          listDiscord = [...listDiscord, ...state.listDiscord!];
+          metadata = state.metadata;
+        }
+        if (state.request == ConnectMedia.GET_LIST_SHEET &&
+            state.status == BlocStatus.LOAD_MORE) {
+          listSheet = [...listSheet, ...state.listGgSheet!];
+          metadata = state.metadata;
+        }
 
+        ///Danh sách bank media
         if (state.request == ConnectMedia.GET_LIST_CHAT &&
             state.status == BlocStatus.SUCCESS) {
           listChat = [...state.listChat!];
@@ -114,21 +210,20 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
           listTele = [...state.listTele!];
           metadata = state.metadata;
         }
-
-        if (state.request == ConnectMedia.DELETE_URL &&
+        if (state.request == ConnectMedia.GET_LIST_SLACK &&
             state.status == BlocStatus.SUCCESS) {
-          if (widget.type == TypeConnect.GG_CHAT) {
-            _bloc.add(
-                const GetListGGChatEvent(isLoadMore: false, page: 1, size: 20));
-          }
-          if (widget.type == TypeConnect.TELE) {
-            _bloc.add(
-                const GetListTeleEvent(isLoadMore: false, page: 1, size: 20));
-          }
-          if (widget.type == TypeConnect.LARK) {
-            _bloc.add(
-                const GetListLarkEvent(isLoadMore: false, page: 1, size: 20));
-          }
+          listSlack = [...state.listSlack!];
+          metadata = state.metadata;
+        }
+        if (state.request == ConnectMedia.GET_LIST_DISCORD &&
+            state.status == BlocStatus.SUCCESS) {
+          listDiscord = [...state.listDiscord!];
+          metadata = state.metadata;
+        }
+        if (state.request == ConnectMedia.GET_LIST_SHEET &&
+            state.status == BlocStatus.SUCCESS) {
+          listSheet = [...state.listGgSheet!];
+          metadata = state.metadata;
         }
 
         return Scaffold(
@@ -140,9 +235,10 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Danh sách kết nối\nqua nền tảng Google Chat',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  'Danh sách kết nối\nqua nền tảng $name',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
                 Expanded(
@@ -178,6 +274,33 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                             const Center(
                               child: Text('Trống'),
                             ),
+                        ] else if (widget.type == TypeConnect.SLACK) ...[
+                          if (listSlack.isNotEmpty)
+                            ...listSlack.map(
+                              (e) => _buildItem(slack: e),
+                            )
+                          else
+                            const Center(
+                              child: Text('Trống'),
+                            ),
+                        ] else if (widget.type == TypeConnect.DISCORD) ...[
+                          if (listDiscord.isNotEmpty)
+                            ...listDiscord.map(
+                              (e) => _buildItem(discord: e),
+                            )
+                          else
+                            const Center(
+                              child: Text('Trống'),
+                            ),
+                        ] else if (widget.type == TypeConnect.GG_SHEET) ...[
+                          if (listSheet.isNotEmpty)
+                            ...listSheet.map(
+                              (e) => _buildItem(sheet: e),
+                            )
+                          else
+                            const Center(
+                              child: Text('Trống'),
+                            ),
                         ],
                         if (state.request == ConnectMedia.LOAD_MORE)
                           const Padding(
@@ -202,7 +325,14 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
     );
   }
 
-  Widget _buildItem({GoogleChatDTO? chat, LarkDTO? lark, TeleDTO? tele}) {
+  Widget _buildItem({
+    GoogleChatDTO? chat,
+    LarkDTO? lark,
+    TeleDTO? tele,
+    SlackDTO? slack,
+    DiscordDTO? discord,
+    GoogleSheetDTO? sheet,
+  }) {
     String url = '';
     String id = '';
     int bankAcc = 0;
@@ -222,6 +352,21 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
         url = lark.webhook;
         bankAcc = lark.bankAccountCount;
         break;
+      case TypeConnect.SLACK:
+        id = slack!.slackId;
+        url = slack.webhook;
+        bankAcc = slack.bankAccountCount;
+        break;
+      case TypeConnect.DISCORD:
+        id = discord!.discordId;
+        url = discord.webhook;
+        bankAcc = discord.bankAccountCount;
+        break;
+      case TypeConnect.GG_SHEET:
+        id = sheet!.ggSheetId;
+        url = sheet.webhook;
+        bankAcc = sheet.bankAccountCount;
+        break;
       default:
     }
 
@@ -234,7 +379,6 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
               (value) {
                 _bloc.add(const GetListGGChatEvent(
                     isLoadMore: false, page: 1, size: 20));
-                // Navigator.of(context).pop();
               },
             );
             break;
@@ -244,7 +388,6 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
               (value) {
                 _bloc.add(const GetListTeleEvent(
                     isLoadMore: false, page: 1, size: 20));
-                // Navigator.of(context).pop();
               },
             );
 
@@ -255,10 +398,36 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
               (value) {
                 _bloc.add(const GetListLarkEvent(
                     isLoadMore: false, page: 1, size: 20));
-                // Navigator.of(context).pop();
               },
             );
 
+            break;
+          case TypeConnect.SLACK:
+            Navigator.pushNamed(context, Routes.CONNECT_SLACK_SCREEN,
+                arguments: {'id': id}).then(
+              (value) {
+                _bloc.add(const GetListSlackEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case TypeConnect.DISCORD:
+            Navigator.pushNamed(context, Routes.CONNECT_DISCORD_SCREEN,
+                arguments: {'id': id}).then(
+              (value) {
+                _bloc.add(const GetListDiscordEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case TypeConnect.GG_SHEET:
+            Navigator.pushNamed(context, Routes.CONNECT_GG_SHEET_SCREEN,
+                arguments: {'id': id}).then(
+              (value) {
+                _bloc.add(const GetListGGSheetEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
             break;
           default:
         }
@@ -422,7 +591,6 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                   (value) {
                     _bloc.add(const GetListGGChatEvent(
                         isLoadMore: false, page: 1, size: 20));
-                    // Navigator.of(context).pop();
                   },
                 );
                 break;
@@ -432,7 +600,6 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                   (value) {
                     _bloc.add(const GetListTeleEvent(
                         isLoadMore: false, page: 1, size: 20));
-                    // Navigator.of(context).pop();
                   },
                 );
 
@@ -443,7 +610,36 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                   (value) {
                     _bloc.add(const GetListLarkEvent(
                         isLoadMore: false, page: 1, size: 20));
-                    // Navigator.of(context).pop();
+                  },
+                );
+
+                break;
+              case TypeConnect.SLACK:
+                Navigator.pushNamed(context, Routes.CONNECT_SLACK_SCREEN,
+                    arguments: {'id': ''}).then(
+                  (value) {
+                    _bloc.add(const GetListSlackEvent(
+                        isLoadMore: false, page: 1, size: 20));
+                  },
+                );
+
+                break;
+              case TypeConnect.DISCORD:
+                Navigator.pushNamed(context, Routes.CONNECT_DISCORD_SCREEN,
+                    arguments: {'id': ''}).then(
+                  (value) {
+                    _bloc.add(const GetListDiscordEvent(
+                        isLoadMore: false, page: 1, size: 20));
+                  },
+                );
+
+                break;
+              case TypeConnect.GG_SHEET:
+                Navigator.pushNamed(context, Routes.CONNECT_GG_SHEET_SCREEN,
+                    arguments: {'id': ''}).then(
+                  (value) {
+                    _bloc.add(const GetListGGSheetEvent(
+                        isLoadMore: false, page: 1, size: 20));
                   },
                 );
 

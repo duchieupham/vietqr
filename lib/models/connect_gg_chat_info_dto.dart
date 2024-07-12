@@ -31,6 +31,15 @@ class BankMedia {
       case TypeConnect.LARK:
         typeJson = 'larkBankId';
         break;
+      case TypeConnect.SLACK:
+        typeJson = 'slackBankId';
+        break;
+      case TypeConnect.DISCORD:
+        typeJson = 'discordAccountBankId';
+        break;
+      case TypeConnect.GG_SHEET:
+        typeJson = 'googleSheetAccountBankId';
+        break;
       default:
         break;
     }
@@ -85,6 +94,15 @@ class InfoMediaDTO {
         typeJson = 'chatId';
         break;
       case TypeConnect.LARK:
+        typeJson = 'webhook';
+        break;
+      case TypeConnect.SLACK:
+        typeJson = 'webhook';
+        break;
+      case TypeConnect.DISCORD:
+        typeJson = 'webhook';
+        break;
+      case TypeConnect.GG_SHEET:
         typeJson = 'webhook';
         break;
       default:

@@ -50,6 +50,10 @@ class Routes {
   static const String CONNECT_GG_CHAT_SCREEN = '/connect_gg_chat_screen';
   static const String CONNECT_TELE_SCREEN = '/connect_tele_screen';
   static const String CONNECT_LARK_SCREEN = '/connect_lark_screen';
+  static const String CONNECT_SLACK_SCREEN = '/connect_slack_screen';
+  static const String CONNECT_DISCORD_SCREEN = '/connect_discord_screen';
+  static const String CONNECT_GG_SHEET_SCREEN = '/connect_gg_sheet_screen';
+
   static const String UPDATE_SHARE_INFO_MEDIA = '/update_share_info_media';
   static const String UPDATE_MEDIA_URL = '/update_media_url';
 

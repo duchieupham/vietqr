@@ -162,6 +162,30 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
                   arguments: {'type': TypeConnect.GG_CHAT});
               // Navigator.pushNamed(context, Routes.QR_BOX);
             }),
+        ItemService(
+            pathIcon: ImageConstant.logoSlackHome,
+            title: 'Slack',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+                  arguments: {'type': TypeConnect.SLACK});
+              // Navigator.pushNamed(context, Routes.QR_BOX);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoDiscordHome,
+            title: 'Discord',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+                  arguments: {'type': TypeConnect.DISCORD});
+              // Navigator.pushNamed(context, Routes.QR_BOX);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoGGSheetHome,
+            title: 'Google Sheet',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.MEDIAS_SCREEN,
+                  arguments: {'type': TypeConnect.GG_SHEET});
+              // Navigator.pushNamed(context, Routes.QR_BOX);
+            }),
       ],
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
@@ -65,7 +66,18 @@ class InfoMediaScreen extends StatelessWidget {
       case TypeConnect.LARK:
         mediaText = 'Lark';
         img = 'assets/images/logo-lark.png';
-
+        break;
+      case TypeConnect.SLACK:
+        mediaText = 'Slack';
+        img = ImageConstant.logoSlackHome;
+        break;
+      case TypeConnect.DISCORD:
+        mediaText = 'Discord';
+        img = ImageConstant.logoDiscordHome;
+        break;
+      case TypeConnect.GG_SHEET:
+        mediaText = 'Google Sheet';
+        img = ImageConstant.logoGGSheetHome;
         break;
       default:
         break;
@@ -154,7 +166,7 @@ class InfoMediaScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        MySeparator(
+        const MySeparator(
           color: AppColor.GREY_DADADA,
         ),
         const SizedBox(height: 16),
@@ -163,15 +175,15 @@ class InfoMediaScreen extends StatelessWidget {
           children: [
             Text(
               type == TypeConnect.TELE ? 'Chat ID' : 'Webhook:',
-              style: TextStyle(fontSize: 15),
+              style: const TextStyle(fontSize: 15),
             ),
-            Container(
+            SizedBox(
               width: 250,
               child: Text(
                 dto.chatId ?? '-',
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.normal,
                 ),
@@ -193,7 +205,7 @@ class InfoMediaScreen extends StatelessWidget {
                 color: AppColor.BLUE_TEXT.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(35),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
@@ -201,7 +213,7 @@ class InfoMediaScreen extends StatelessWidget {
                     size: 12,
                     color: AppColor.BLUE_TEXT,
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                   Text(
                     'Sao chép',
                     style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
@@ -375,7 +387,7 @@ class InfoMediaScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(width: 0.5, color: AppColor.GREY_DADADA),
                   image: DecorationImage(
-                    image: ImageUtils.instance.getImageNetWork(bank.imgId!),
+                    image: ImageUtils.instance.getImageNetWork(bank.imgId),
                   ),
                 ),
               ),
@@ -400,7 +412,7 @@ class InfoMediaScreen extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              onRemoveBank(bank.bankId!);
+              onRemoveBank(bank.bankId);
             },
             child: const Icon(
               Icons.remove_circle_outline,
