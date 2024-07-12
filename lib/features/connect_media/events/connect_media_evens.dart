@@ -8,11 +8,95 @@ class ConnectMediaEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class GetListGGChatEvent extends ConnectMediaEvent {}
+class GetListGGSheetEvent extends ConnectMediaEvent {
+  final int page;
+  final int size;
+  final bool isLoadMore;
 
-class GetListTeleEvent extends ConnectMediaEvent {}
+  const GetListGGSheetEvent({
+    required this.page,
+    required this.size,
+    required this.isLoadMore,
+  });
 
-class GetListLarkEvent extends ConnectMediaEvent {}
+  @override
+  List<Object?> get props => [page, size, isLoadMore];
+}
+
+class GetListSlackEvent extends ConnectMediaEvent {
+  final int page;
+  final int size;
+  final bool isLoadMore;
+
+  const GetListSlackEvent({
+    required this.page,
+    required this.size,
+    required this.isLoadMore,
+  });
+
+  @override
+  List<Object?> get props => [page, size, isLoadMore];
+}
+
+class GetListDiscordEvent extends ConnectMediaEvent {
+  final int page;
+  final int size;
+  final bool isLoadMore;
+
+  const GetListDiscordEvent({
+    required this.page,
+    required this.size,
+    required this.isLoadMore,
+  });
+
+  @override
+  List<Object?> get props => [page, size, isLoadMore];
+}
+
+class GetListGGChatEvent extends ConnectMediaEvent {
+  final int page;
+  final int size;
+  final bool isLoadMore;
+
+  const GetListGGChatEvent({
+    required this.page,
+    required this.size,
+    required this.isLoadMore,
+  });
+
+  @override
+  List<Object?> get props => [page, size, isLoadMore];
+}
+
+class GetListTeleEvent extends ConnectMediaEvent {
+  final int page;
+  final int size;
+  final bool isLoadMore;
+
+  const GetListTeleEvent({
+    required this.page,
+    required this.size,
+    required this.isLoadMore,
+  });
+
+  @override
+  List<Object?> get props => [page, size, isLoadMore];
+}
+
+class GetListLarkEvent extends ConnectMediaEvent {
+  final int page;
+  final int size;
+  final bool isLoadMore;
+
+  const GetListLarkEvent({
+    required this.page,
+    required this.size,
+    required this.isLoadMore,
+  });
+
+  @override
+  List<Object?> get props => [page, size, isLoadMore];
+}
 
 class GetInfoEvent extends ConnectMediaEvent {
   final TypeConnect type;

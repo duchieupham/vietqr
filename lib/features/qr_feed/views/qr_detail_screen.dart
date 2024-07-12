@@ -680,14 +680,20 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          XImage(
-            borderRadius: BorderRadius.circular(100),
-            imagePath: commend.imageId.isNotEmpty
-                ? commend.imageId
-                : ImageConstant.icAvatar,
+          Container(
             width: 30,
             height: 30,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(100)),
+            child: XImage(
+              borderRadius: BorderRadius.circular(100),
+              imagePath: commend.imageId.isNotEmpty
+                  ? commend.imageId
+                  : ImageConstant.icAvatar,
+              width: 30,
+              height: 30,
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(

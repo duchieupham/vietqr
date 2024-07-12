@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/gg_chat_dto.dart';
-import 'package:vierqr/models/lart_dto.dart';
-import 'package:vierqr/models/tele_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/gg_chat_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/lark_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/tele_dto.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
@@ -14,6 +15,7 @@ class ConnectMediaStates extends Equatable {
   final List<GoogleChatDTO>? listChat;
   final List<LarkDTO>? listLark;
   final List<TeleDTO>? listTele;
+  final MetaDataDTO? metadata;
 
   final bool? hasInfo;
   final bool? isValidUrl;
@@ -32,20 +34,23 @@ class ConnectMediaStates extends Equatable {
     this.listChat,
     this.listLark,
     this.listTele,
+    this.metadata,
   });
 
-  ConnectMediaStates copyWith(
-      {BlocStatus? status,
-      ConnectMedia? request,
-      String? msg,
-      InfoMediaDTO? dto,
-      bool? hasInfo,
-      bool? isValidUrl,
-      bool? isConnectSuccess,
-      bool? isAddSuccess,
-      List<GoogleChatDTO>? listChat,
-      List<LarkDTO>? listLark,
-      List<TeleDTO>? listTele}) {
+  ConnectMediaStates copyWith({
+    BlocStatus? status,
+    ConnectMedia? request,
+    String? msg,
+    InfoMediaDTO? dto,
+    bool? hasInfo,
+    bool? isValidUrl,
+    bool? isConnectSuccess,
+    bool? isAddSuccess,
+    List<GoogleChatDTO>? listChat,
+    List<LarkDTO>? listLark,
+    List<TeleDTO>? listTele,
+    MetaDataDTO? metadata,
+  }) {
     return ConnectMediaStates(
       status: status ?? this.status,
       request: request ?? this.request,
@@ -58,6 +63,7 @@ class ConnectMediaStates extends Equatable {
       listChat: listChat ?? this.listChat,
       listLark: listLark ?? this.listLark,
       listTele: listTele ?? this.listTele,
+      metadata: metadata ?? this.metadata,
     );
   }
 
@@ -74,5 +80,6 @@ class ConnectMediaStates extends Equatable {
         listChat,
         listLark,
         listTele,
+        metadata,
       ];
 }
