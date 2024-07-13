@@ -14,6 +14,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
+import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 
 import '../../../services/providers/invoice_provider.dart';
 
@@ -92,6 +93,12 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         BuildContext context = NavigationService.context!;
         Provider.of<InvoiceProvider>(context, listen: false)
             .setListUnAuth(list);
+        Provider.of<ConnectMediaProvider>(context, listen: false)
+            .setListBank(list
+                .where(
+                  (element) => element.isOwner && element.isAuthenticated,
+                )
+                .toList());
         if (list.isNotEmpty) {
           List<BankAccountDTO> listLinked =
               list.where((e) => e.isAuthenticated).toList();

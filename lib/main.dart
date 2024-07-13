@@ -174,8 +174,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(
                 create: (context) => MaintainChargeProvider()),
             ChangeNotifierProvider(create: (context) => InvoiceProvider()),
-            ChangeNotifierProvider(
-                create: (context) => ConnectGgChatProvider()),
+            ChangeNotifierProvider(create: (context) => ConnectMediaProvider()),
             ChangeNotifierProvider(create: (context) => QRBoxProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),

@@ -32,7 +32,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: Consumer<ConnectGgChatProvider>(
+      child: Consumer<ConnectMediaProvider>(
         builder: (context, provider, child) {
           return Container(
             margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
@@ -241,7 +241,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
             activeColor: AppColor.BLUE_TEXT,
             value: dto.value!,
             onChanged: (value) {
-              Provider.of<ConnectGgChatProvider>(context, listen: false)
+              Provider.of<ConnectMediaProvider>(context, listen: false)
                   .selectValue(value, index);
             },
           )

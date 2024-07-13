@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/connect_media/states/connect_media_states.dart';
 import 'package:vierqr/features/connect_media/views/info_media_screen.dart';
@@ -53,10 +57,11 @@ class _Screen extends StatefulWidget {
 
 class __ScreenState extends State<_Screen> {
   // late ConnectGgChatBloc _bloc;
-  late ConnectGgChatProvider _provider;
+  late ConnectMediaProvider _provider;
   final _bloc = getIt.get<ConnectMediaBloc>();
   PageController _pageController = PageController(initialPage: 0);
   TextEditingController _textEditingController = TextEditingController();
+  Timer? _timer;
 
   int currentPageIndex = 0;
   bool hasInfo = false;
@@ -77,11 +82,23 @@ class __ScreenState extends State<_Screen> {
   void initState() {
     super.initState();
     // _bloc = getIt.get<ConnectGgChatBloc>();
-    _provider = Provider.of<ConnectGgChatProvider>(context, listen: false);
+    _provider = Provider.of<ConnectMediaProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
+  }
+
+  String _clipboardContent = '';
+
+  void _getClipboardContent() async {
+    ClipboardData? clipboardContent =
+        await Clipboard.getData(Clipboard.kTextPlain);
+    if (clipboardContent != null && clipboardContent.text!.isNotEmpty) {
+      setState(() {
+        _clipboardContent = clipboardContent.text!;
+      });
+    }
   }
 
   @override
@@ -89,16 +106,26 @@ class __ScreenState extends State<_Screen> {
     super.dispose();
     _pageController.dispose();
     _textEditingController.dispose();
+    _timer?.cancel();
   }
 
   initData() {
     typeConnect = widget.type;
     isFirst = true;
     _textEditingController.clear();
-    list = Provider.of<InvoiceProvider>(context, listen: false).listBank!;
+    list = Provider.of<ConnectMediaProvider>(context, listen: false)
+        .listIsOwnerBank;
     if (list.isNotEmpty) {
       _provider.init(list);
     }
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        if (currentPageIndex == 2) {
+          _getClipboardContent();
+        }
+      },
+    );
     _bloc.add(GetInfoEvent(type: typeConnect, id: widget.id));
   }
 
@@ -208,7 +235,7 @@ class __ScreenState extends State<_Screen> {
         }
       },
       builder: (context, state) {
-        return Consumer<ConnectGgChatProvider>(
+        return Consumer<ConnectMediaProvider>(
           builder: (context, provider, child) {
             return Scaffold(
               backgroundColor: Colors.white,
@@ -224,12 +251,17 @@ class __ScreenState extends State<_Screen> {
                       child: hasInfo == false
                           ? WebhookMediaScreen(
                               type: typeConnect,
+                              clipBoard: _clipboardContent,
                               isChecked1: isChecked1,
                               isChecked2: isChecked2,
                               isChecked3: isChecked3,
                               isChecked4: isChecked4,
                               isChecked5: isChecked5,
                               isChecked6: isChecked6,
+                              onClipBoard: () {
+                                _textEditingController.text = _clipboardContent;
+                                setState(() {});
+                              },
                               onChecked: (value, type) {
                                 switch (type) {
                                   case 1:
@@ -408,6 +440,28 @@ class __ScreenState extends State<_Screen> {
   }
 
   _buildAppBar(ConnectMediaStates state) {
+    String img = '';
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        img = ImageConstant.logoGGChatHome;
+        break;
+      case TypeConnect.TELE:
+        img = ImageConstant.logoTelegramDash;
+        break;
+      case TypeConnect.LARK:
+        img = ImageConstant.logoLarkDash;
+        break;
+      case TypeConnect.SLACK:
+        img = ImageConstant.logoSlackHome;
+        break;
+      case TypeConnect.DISCORD:
+        img = ImageConstant.logoDiscordHome;
+        break;
+      case TypeConnect.GG_SHEET:
+        img = ImageConstant.logoGGSheetHome;
+        break;
+      default:
+    }
     return AppBar(
       forceMaterialTransparency: true,
       backgroundColor: AppColor.WHITE,
@@ -442,16 +496,24 @@ class __ScreenState extends State<_Screen> {
         ),
       ),
       actions: [
-        if (!hasInfo)
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Image.asset(
-              AppImages.icLogoVietQr,
-              width: 95,
-              fit: BoxFit.fitWidth,
+        if (!hasInfo) ...[
+          Image.asset(
+            AppImages.icLogoVietQr,
+            width: 95,
+            fit: BoxFit.fitWidth,
+          ),
+          if (currentPageIndex != 0) ...[
+            const SizedBox(width: 4),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage(img), fit: BoxFit.cover)),
             ),
-          )
-        else
+          ],
+          const SizedBox(width: 8),
+        ] else
           GestureDetector(
             onTapDown: (TapDownDetails details) {
               showMenu(

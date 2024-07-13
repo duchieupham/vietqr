@@ -3,7 +3,7 @@ import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 
 import '../../models/bank_account_dto.dart';
 
-class ConnectGgChatProvider extends ChangeNotifier {
+class ConnectMediaProvider extends ChangeNotifier {
   int pageIndex = 0;
   FocusNode? focusNode = FocusNode();
   bool isAllLinked = false;
@@ -12,6 +12,7 @@ class ConnectGgChatProvider extends ChangeNotifier {
 
   List<BankSelection> listBank = [];
   List<BankSelection> filterBanks = [];
+  List<BankAccountDTO> listIsOwnerBank = [];
 
   Future<void> init(List<BankAccountDTO> list) async {
     focusNode?.unfocus();
@@ -19,9 +20,18 @@ class ConnectGgChatProvider extends ChangeNotifier {
     isAllLinked = false;
     isFilter = false;
     listBank = [];
-    for (var item in list) {
-      listBank.add(BankSelection(bank: item, value: false));
-    }
+    listBank = List.generate(
+      list.length,
+      (index) => BankSelection(bank: list[index], value: false),
+    ).toList();
+    // for (var item in list) {
+    //   listBank.add(BankSelection(bank: item, value: false));
+    // }
+    notifyListeners();
+  }
+
+  void setListBank(List<BankAccountDTO> list) {
+    listIsOwnerBank = list;
     notifyListeners();
   }
 
@@ -90,9 +100,9 @@ class ConnectGgChatProvider extends ChangeNotifier {
 
   void changeAllValue(bool value) {
     isAllLinked = value;
-    listBank.forEach((element) {
+    for (var element in listBank) {
       element.value = value;
-    });
+    }
     notifyListeners();
   }
 

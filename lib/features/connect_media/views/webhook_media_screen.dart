@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,8 @@ class WebhookMediaScreen extends StatefulWidget {
   final Function(int) onPageChanged;
   final Function(String) onSubmitInput;
   final Function(String) onChangeInput;
+  final Function() onClipBoard;
+
   final Function() onGuide;
   final bool isChecked1;
   final bool isChecked2;
@@ -31,6 +34,7 @@ class WebhookMediaScreen extends StatefulWidget {
   final bool isChecked4;
   final bool isChecked5;
   final bool isChecked6;
+  final String clipBoard;
 
   final Function(bool, int) onChecked;
 
@@ -44,7 +48,9 @@ class WebhookMediaScreen extends StatefulWidget {
     required this.onPageChanged,
     required this.onSubmitInput,
     required this.onChangeInput,
+    required this.onClipBoard,
     required this.onGuide,
+    required this.clipBoard,
     required this.isChecked1,
     required this.isChecked2,
     required this.isChecked3,
@@ -60,12 +66,19 @@ class WebhookMediaScreen extends StatefulWidget {
 
 class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  // String _clipboardContent = '';
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height,
       child: PageView(
         controller: widget.controller,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         onPageChanged: widget.onPageChanged,
         children: [
           startConnectMedia(),
@@ -391,8 +404,11 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         break;
       default:
     }
-    return Consumer<ConnectGgChatProvider>(
+    return Consumer<ConnectMediaProvider>(
       builder: (context, provider, child) {
+        bool isAllActive = provider.listBank.every(
+          (element) => element.value == true,
+        );
         return Container(
           padding: const EdgeInsets.only(left: 20, right: 20),
           width: double.infinity,
@@ -425,7 +441,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                     ),
                     CupertinoSwitch(
                       activeColor: AppColor.BLUE_TEXT,
-                      value: provider.isAllLinked,
+                      value: isAllActive,
                       onChanged: (value) {
                         provider.changeAllValue(value);
                       },
@@ -454,7 +470,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
   }
 
   Widget _itemBank(
-      BankSelection dto, int index, ConnectGgChatProvider ggChatProvider) {
+      BankSelection dto, int index, ConnectMediaProvider ggChatProvider) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -518,7 +534,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         break;
       default:
     }
-    return Consumer<ConnectGgChatProvider>(
+    return Consumer<ConnectMediaProvider>(
       builder: (context, value, child) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -615,6 +631,49 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                   style: const TextStyle(fontSize: 15),
                 ),
               ),
+              widget.clipBoard.isNotEmpty
+                  ? InkWell(
+                      onTap: widget.onClipBoard,
+                      child: Container(
+                        width: 250,
+                        margin: const EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            gradient: const LinearGradient(
+                                colors: [
+                                  AppColor.D8ECF8,
+                                  AppColor.FFEAD9,
+                                  AppColor.F5C9D1,
+                                ],
+                                begin: Alignment.bottomLeft,
+                                end: Alignment.topRight)),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: XImage(
+                                imagePath: 'assets/images/ic-suggest.png',
+                                width: 30,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                widget.clipBoard,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: AppColor.BLACK,
+                                  fontSize: 12,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
               Visibility(
                 visible: widget.textController.text.isNotEmpty
                     ? (!value.isValidWebhook ? true : false)
