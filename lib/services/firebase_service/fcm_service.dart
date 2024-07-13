@@ -20,12 +20,18 @@ class FCMService {
       LOG.info(
           "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
       LOG.info("receive data: ${message.data}");
-      if (message.data['notificationType'] != 'N05')
+      if (message.data['notificationType'] != 'N05') {
         NotificationService().showNotification(
           title: message.notification?.title,
           body: message.notification?.body,
           payload: json.encode(message.data),
         );
+      }
+      // NotificationService().showNotification(
+      //   title: message.notification?.title,
+      //   body: message.notification?.body,
+      //   payload: json.encode(message.data),
+      // );
 
       //process when receive data
       if (message.data.isNotEmpty) {

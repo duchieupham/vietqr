@@ -76,7 +76,8 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
       text = ""; // Nếu không muốn đọc gì khi widget.dto.getAmount là "*****"
     } else {
       isValidAmount = true;
-      text = '${widget.dto.amount} đồng'; // Thiết lập text để đọc
+      // text = '${widget.dto.amount} đồng'; // Thiết lập text để đọc
+      text = '${widget.dto.amount.replaceAll(',', '')} đồng';
     }
     SocketService.instance.updateConnect(true);
     authProvider = Provider.of<AuthProvider>(context, listen: false);
