@@ -326,6 +326,33 @@ class NavigationService {
               type: TypeConnect.TELE,
               id: id,
             ));
+      case Routes.CONNECT_SLACK_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            ConnectMediaScreen(
+              type: TypeConnect.SLACK,
+              id: id,
+            ));
+      case Routes.CONNECT_DISCORD_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            ConnectMediaScreen(
+              type: TypeConnect.DISCORD,
+              id: id,
+            ));
+      case Routes.CONNECT_GG_SHEET_SCREEN:
+        Map map = settings.arguments as Map;
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            ConnectMediaScreen(
+              type: TypeConnect.GG_SHEET,
+              id: id,
+            ));
       case Routes.SHOW_QR:
         Map map = settings.arguments as Map;
 

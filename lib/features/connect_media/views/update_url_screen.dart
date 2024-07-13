@@ -56,6 +56,18 @@ class _UpdateUrlScreenState extends State<UpdateUrlScreen> {
         text = 'Lark';
         webhook = 'Webhook Lark';
         break;
+      case TypeConnect.SLACK:
+        text = 'Slack';
+        webhook = 'Webhook Slack';
+        break;
+      case TypeConnect.DISCORD:
+        text = 'Discord';
+        webhook = 'Webhook Discord';
+        break;
+      case TypeConnect.GG_SHEET:
+        text = 'Google Sheet';
+        webhook = 'Webhook Google Sheet';
+        break;
       default:
     }
     return BlocConsumer<ConnectMediaBloc, ConnectMediaStates>(

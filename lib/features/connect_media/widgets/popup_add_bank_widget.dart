@@ -104,13 +104,13 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                     ),
                     if (provider.listBank.isNotEmpty) ...[
                       const SizedBox(height: 30),
-                      Container(
+                      SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               'Tất cả tài khoản đã liên kết',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 15),
@@ -125,7 +125,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                           ],
                         ),
                       ),
-                      MySeparator(
+                      const MySeparator(
                         color: Color.fromRGBO(218, 218, 218, 1),
                       ),
                     ] else
@@ -145,7 +145,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                                   ? provider.filterBanks.length
                                   : provider.listBank.length,
                             )
-                          : SizedBox(
+                          : const SizedBox(
                               child: Center(
                                 child: Text(
                                     'Hiện tất cả các tài khoản ngân hàng đã được thêm.'),
@@ -168,7 +168,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                                   : AppColor.GREY_DADADA),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             'Hoàn thành',
                             style: TextStyle(
@@ -188,7 +188,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                     onTap: () {
                       Navigator.of(context).pop();
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.close,
                       color: Colors.black,
                       size: 20,
@@ -229,9 +229,10 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(dto.bank!.bankAccount,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  Text(dto.bank!.userBankName, style: TextStyle(fontSize: 12)),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.bold)),
+                  Text(dto.bank!.userBankName,
+                      style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ],

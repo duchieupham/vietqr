@@ -5,9 +5,12 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
+import 'package:vierqr/features/connect_media/widgets/guide/discord_guide_widget.dart';
+import 'package:vierqr/features/connect_media/widgets/guide/sheet_guide_widget.dart';
+import 'package:vierqr/features/connect_media/widgets/guide/slack_guide_widget.dart';
 
-import '../../../commons/constants/configurations/theme.dart';
-import '../../../layouts/m_button_widget.dart';
+import '../../../../commons/constants/configurations/theme.dart';
+import '../../../../layouts/m_button_widget.dart';
 
 class PopupGuideWidget extends StatefulWidget {
   final TypeConnect type;
@@ -51,12 +54,45 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String name = '';
+    String webhook = 'webhook';
+
+    double height = 0.0;
+
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        name = 'Google Chat';
+        break;
+      case TypeConnect.TELE:
+        name = 'Telegram';
+        webhook = 'Chat ID';
+        break;
+      case TypeConnect.LARK:
+        name = 'Lark';
+
+        break;
+      case TypeConnect.SLACK:
+        name = 'Slack';
+
+        break;
+      case TypeConnect.DISCORD:
+        name = 'Discord';
+
+        break;
+      case TypeConnect.GG_SHEET:
+        name = 'Google Sheet';
+
+        break;
+      default:
+    }
+
     return Material(
       color: Colors.transparent,
       child: Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-        height: MediaQuery.of(context).size.height * 0.8,
+        height: MediaQuery.of(context).size.height *
+            (widget.type == TypeConnect.SLACK ? 0.85 : 0.8),
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -74,11 +110,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                     fontWeight: FontWeight.bold,
                   ),
                   child: Text(
-                    widget.type == TypeConnect.GG_CHAT
-                        ? 'Hướng dẫn lấy thông tin \nWebhook trên Google Chat'
-                        : widget.type == TypeConnect.LARK
-                            ? 'Hướng dẫn lấy thông tin \nWebhook trên Lark'
-                            : 'Hướng dẫn lấy thông tin \nIdChat trên Telegram',
+                    'Hướng dẫn lấy thông tin \n$webhook trên $name',
                   ),
                 ),
                 Expanded(
@@ -97,8 +129,26 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                         guideStep2(),
                         guideStep3(),
                         guideStep4(),
-                      ] else
-                        guideTele(),
+                      ] else if (widget.type == TypeConnect.TELE)
+                        guideTele()
+                      else if (widget.type == TypeConnect.DISCORD) ...[
+                        const DiscordGuide1Widget(),
+                        const DiscordGuide2Widget()
+                      ] else if (widget.type == TypeConnect.SLACK) ...[
+                        const SlackGuide1Widget(),
+                        const SlackGuide2Widget(),
+                        const SlackGuide3Widget(),
+                        const SlackGuide4Widget(),
+                        const SlackGuide5Widget(),
+                      ] else if (widget.type == TypeConnect.GG_SHEET) ...[
+                        const SheetGuide1Widget(),
+                        const SheetGuide2Widget(),
+                        const SheetGuide3Widget(),
+                        const SheetGuide4Widget(),
+                        const SheetGuide5Widget(),
+                        const SheetGuide6Widget(),
+                        const SheetGuide7Widget(),
+                      ],
                     ],
                   ),
                 ),
@@ -594,6 +644,15 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       case TypeConnect.TELE:
         page = 1;
         break;
+      case TypeConnect.DISCORD:
+        page = 2;
+        break;
+      case TypeConnect.SLACK:
+        page = 5;
+        break;
+      case TypeConnect.GG_SHEET:
+        page = 7;
+        break;
       default:
     }
     return Row(
@@ -623,6 +682,15 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
         break;
       case TypeConnect.TELE:
         page = 0;
+        break;
+      case TypeConnect.DISCORD:
+        page = 1;
+        break;
+      case TypeConnect.SLACK:
+        page = 4;
+        break;
+      case TypeConnect.GG_SHEET:
+        page = 6;
         break;
       default:
     }

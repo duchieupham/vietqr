@@ -10,7 +10,7 @@ import 'package:vierqr/features/connect_media/views/info_media_screen.dart';
 import 'package:vierqr/features/connect_media/views/webhook_media_screen.dart';
 import 'package:vierqr/features/connect_media/widgets/popup_add_bank_widget.dart';
 import 'package:vierqr/features/connect_media/widgets/popup_delete_webhook_widget.dart';
-import 'package:vierqr/features/connect_media/widgets/popup_guide_widget.dart';
+import 'package:vierqr/features/connect_media/widgets/guide/popup_guide_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import '../../commons/constants/configurations/app_images.dart';
@@ -25,7 +25,7 @@ import 'blocs/connect_media_bloc.dart';
 import 'events/connect_media_evens.dart';
 
 // ignore: constant_identifier_names
-enum TypeConnect { GG_SHEET, GG_CHAT, TELE, LARK, DISCORD }
+enum TypeConnect { GG_SHEET, GG_CHAT, TELE, LARK, DISCORD, SLACK }
 
 class ConnectMediaScreen extends StatelessWidget {
   final String id;
@@ -106,6 +106,7 @@ class __ScreenState extends State<_Screen> {
     DialogWidget.instance.openDialogIntroduce(
         ctx: context,
         child: PopupDeleteWebhookWidget(
+          type: typeConnect,
           onDelete: () {
             Navigator.of(context).pop();
             _bloc.add(DeleteWebhookEvent(id: id, type: typeConnect));

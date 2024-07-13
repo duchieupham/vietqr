@@ -2,15 +2,48 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
 
 class PopupDeleteWebhookWidget extends StatelessWidget {
+  final TypeConnect type;
   final Function() onDelete;
-  const PopupDeleteWebhookWidget({super.key, required this.onDelete});
+  const PopupDeleteWebhookWidget(
+      {super.key, required this.onDelete, required this.type});
 
   @override
   Widget build(BuildContext context) {
+    String webhook = '';
+
+    String text = '';
+    switch (type) {
+      case TypeConnect.GG_CHAT:
+        text = 'Google Chat';
+        webhook = 'Webhook Google Chat';
+        break;
+      case TypeConnect.TELE:
+        text = 'Telegram';
+        webhook = 'Chat Id';
+        break;
+      case TypeConnect.LARK:
+        text = 'Lark';
+        webhook = 'Webhook Lark';
+        break;
+      case TypeConnect.SLACK:
+        text = 'Slack';
+        webhook = 'Webhook Slack';
+        break;
+      case TypeConnect.DISCORD:
+        text = 'Discord';
+        webhook = 'Webhook Discord';
+        break;
+      case TypeConnect.GG_SHEET:
+        text = 'Google Sheet';
+        webhook = 'Webhook Google Sheet';
+        break;
+      default:
+    }
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(45, 0, 45, 0),
@@ -29,18 +62,18 @@ class PopupDeleteWebhookWidget extends StatelessWidget {
             fit: BoxFit.fitHeight,
           ),
           const SizedBox(height: 40),
-          Text(
+          const Text(
             'Huỷ kết nối Google Chat',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'Ngưng nhận Biến động số dư qua \nnền tảng Google Chat.',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+            'Ngưng nhận Biến động số dư qua \nnền tảng $text.',
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
             textAlign: TextAlign.center,
           ),
-          Spacer(),
+          const Spacer(),
           InkWell(
             onTap: onDelete,
             child: Container(
@@ -49,7 +82,7 @@ class PopupDeleteWebhookWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   color: AppColor.BLUE_TEXT,
                   borderRadius: BorderRadius.circular(5)),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'Xác nhận',
                   style: TextStyle(
@@ -71,7 +104,7 @@ class PopupDeleteWebhookWidget extends StatelessWidget {
               decoration: BoxDecoration(
                   color: AppColor.GREY_DADADA,
                   borderRadius: BorderRadius.circular(5)),
-              child: Center(
+              child: const Center(
                 child: Text(
                   'Đóng cửa sổ',
                   style: TextStyle(

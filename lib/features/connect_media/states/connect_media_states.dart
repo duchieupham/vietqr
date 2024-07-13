@@ -1,6 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/B%C4%90SD/discord_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/gg_chat_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/gg_sheet_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/lark_dto.dart';
+import 'package:vierqr/models/B%C4%90SD/slack_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/tele_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 
@@ -15,6 +18,9 @@ class ConnectMediaStates extends Equatable {
   final List<GoogleChatDTO>? listChat;
   final List<LarkDTO>? listLark;
   final List<TeleDTO>? listTele;
+  final List<SlackDTO>? listSlack;
+  final List<DiscordDTO>? listDiscord;
+  final List<GoogleSheetDTO>? listGgSheet;
   final MetaDataDTO? metadata;
 
   final bool? hasInfo;
@@ -22,7 +28,7 @@ class ConnectMediaStates extends Equatable {
   final bool? isConnectSuccess;
   final bool? isAddSuccess;
 
-  ConnectMediaStates({
+  const ConnectMediaStates({
     this.msg,
     this.status = BlocStatus.NONE,
     this.request = ConnectMedia.NONE,
@@ -34,6 +40,9 @@ class ConnectMediaStates extends Equatable {
     this.listChat,
     this.listLark,
     this.listTele,
+    this.listSlack,
+    this.listDiscord,
+    this.listGgSheet,
     this.metadata,
   });
 
@@ -49,6 +58,9 @@ class ConnectMediaStates extends Equatable {
     List<GoogleChatDTO>? listChat,
     List<LarkDTO>? listLark,
     List<TeleDTO>? listTele,
+    List<SlackDTO>? listSlack,
+    List<DiscordDTO>? listDiscord,
+    List<GoogleSheetDTO>? listGgSheet,
     MetaDataDTO? metadata,
   }) {
     return ConnectMediaStates(
@@ -63,6 +75,9 @@ class ConnectMediaStates extends Equatable {
       listChat: listChat ?? this.listChat,
       listLark: listLark ?? this.listLark,
       listTele: listTele ?? this.listTele,
+      listSlack: listSlack ?? this.listSlack,
+      listDiscord: listDiscord ?? this.listDiscord,
+      listGgSheet: listGgSheet ?? this.listGgSheet,
       metadata: metadata ?? this.metadata,
     );
   }
@@ -80,6 +95,9 @@ class ConnectMediaStates extends Equatable {
         listChat,
         listLark,
         listTele,
+        listSlack,
+        listDiscord,
+        listGgSheet,
         metadata,
       ];
 }
