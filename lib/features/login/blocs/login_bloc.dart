@@ -102,25 +102,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
                     status: BlocStatus.UNLOADING,
                     infoUserDTO: value),
               );
-            } else if (value is ResponseMessageDTO) {
-              if (value.status == Stringify.RESPONSE_STATUS_CHECK) {
-                String message =
-                    CheckUtils.instance.getCheckMessage(value.message);
-                emit(
-                  state.copyWith(
-                    msg: message,
-                    request: LoginType.REGISTER,
-                    status: BlocStatus.UNLOADING,
-                    phone: event.phone,
-                  ),
-                );
-              }
             }
           },
         ).catchError((onError) {
           emit(
             state.copyWith(
-                request: LoginType.CHECK_EXIST, status: BlocStatus.UNLOADING),
+              request: LoginType.REGISTER,
+              status: BlocStatus.UNLOADING,
+              phone: event.phone,
+            ),
           );
         });
       }

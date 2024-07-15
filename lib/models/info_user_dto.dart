@@ -6,7 +6,7 @@ class InfoUserDTO {
   String? middleName;
   String? lastName;
   String? imgId;
-  String? id;
+  String id;
   String? createdTime;
 
   get fullName => '${lastName ?? ''} ${middleName ?? ''} ${firstName ?? ''}';
@@ -20,7 +20,7 @@ class InfoUserDTO {
       middleName: json['middleName'] ?? '',
       lastName: json['lastName'] ?? '',
       imgId: json['imgId'] ?? '',
-      id: json['id'] ?? '',
+      id: json['id'],
       createdTime: DateTime.now().toIso8601String(),
     );
   }
@@ -56,7 +56,7 @@ class InfoUserDTO {
       this.lastName,
       this.imgId,
       this.createdTime,
-      this.id});
+      required this.id});
 }
 
 class ListLoginAccountDTO {

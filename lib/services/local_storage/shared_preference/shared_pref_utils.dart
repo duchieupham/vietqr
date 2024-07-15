@@ -191,7 +191,7 @@ class SharePrefUtils {
 
     return sharedPreferenceService.get(
             fromJson: (json) => InfoUserDTO.fromJson(json)) ??
-        InfoUserDTO();
+        InfoUserDTO(id: '');
   }
 
   /// Account Setting
