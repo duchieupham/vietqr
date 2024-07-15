@@ -356,25 +356,25 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                             imagePath: 'assets/images/ic-scan-content.png'),
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    InkWell(
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.all(13),
-                        height: 42,
-                        width: 42,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: AppColor.GREEN.withOpacity(0.2),
-                        ),
-                        child: const XImage(
-                          fit: BoxFit.fitWidth,
-                          width: 42,
-                          height: 42,
-                          imagePath: 'assets/images/ic-img-picker.png',
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(width: 4),
+                    // InkWell(
+                    //   onTap: () {},
+                    //   child: Container(
+                    //     padding: const EdgeInsets.all(13),
+                    //     height: 42,
+                    //     width: 42,
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(100),
+                    //       color: AppColor.GREEN.withOpacity(0.2),
+                    //     ),
+                    //     child: const XImage(
+                    //       fit: BoxFit.fitWidth,
+                    //       width: 42,
+                    //       height: 42,
+                    //       imagePath: 'assets/images/ic-img-picker.png',
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ],

@@ -111,8 +111,7 @@ class _QrStyleState extends State<QrStyle> {
   @override
   Widget build(BuildContext context) {
     bool isEnable = false;
-    if (_titleController.text.isNotEmpty &&
-        _descriptionController.text.isNotEmpty) {
+    if (_titleController.text.isNotEmpty) {
       isEnable = true;
     } else {
       isEnable = false;
@@ -232,8 +231,7 @@ class _QrStyleState extends State<QrStyle> {
                             version: QrVersions.auto,
                             embeddedImage: filePicker != null
                                 ? Image.file(filePicker!).image
-                                : const AssetImage(
-                                    'assets/images/ic-viet-qr-small.png'),
+                                : const AssetImage(''),
                             embeddedImageStyle: const QrEmbeddedImageStyle(
                               size: Size(20, 20),
                             ),
@@ -404,7 +402,7 @@ class _QrStyleState extends State<QrStyle> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                'Tiêu đề ($_charCount/50)',
+                'Tiêu đề ($_charCount/50)*',
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),

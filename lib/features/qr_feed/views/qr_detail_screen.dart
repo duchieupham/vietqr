@@ -589,9 +589,11 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 Row(
                   children: [
                     XImage(
-                      imagePath: 'assets/images/ic-global.png',
-                      width: 15,
-                      height: 15,
+                      imagePath: widget.isPublic
+                          ? 'assets/images/ic-global.png'
+                          : 'assets/images/ic-person.png',
+                      width: widget.isPublic ? 15 : 15,
+                      height: widget.isPublic ? 15 : 15,
                       fit: BoxFit.cover,
                     ),
                     const SizedBox(width: 4),
@@ -1289,49 +1291,122 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     );
   }
 
+  // void _showDeleteConfirmationDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Xác nhận xoá'),
+  //         content: const Text('Bạn có chắc chắn muốn xoá mã QR này không?'),
+  //         actions: <Widget>[
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 40, // Set a fixed height for the containers
+  //                   padding: const EdgeInsets.symmetric(
+  //                       horizontal: 10), // Padding on both sides
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(8),
+  //                     color: Colors.red.withOpacity(0.1),
+  //                   ),
+  //                   child: TextButton(
+  //                     child: const Text(
+  //                       'Huỷ',
+  //                       style: TextStyle(color: Colors.red),
+  //                     ),
+  //                     onPressed: () {
+  //                       Navigator.of(context).pop(); // Close the dialog
+  //                     },
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 10), // Add some space between the buttons
+  //               Expanded(
+  //                 child: Container(
+  //                   height: 40,
+  //                   padding: const EdgeInsets.symmetric(horizontal: 10),
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(8),
+  //                     color: Colors.blue.withOpacity(0.1),
+  //                   ),
+  //                   child: TextButton(
+  //                     child: const Text(
+  //                       'Xác nhận',
+  //                       style: TextStyle(color: Colors.blue),
+  //                     ),
+  //                     onPressed: () {
+  // Navigator.of(context).pop();
+  // _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
+  // ScaffoldMessenger.of(context).showSnackBar(
+  //   const SnackBar(
+  //     content: Text('Xoá thành công'),
+  //   ),
+  // );
+  //                     },
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
   void _showDeleteConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Xác nhận xoá'),
-          content: const Text('Bạn có chắc chắn muốn xoá mã QR này không?'),
-          actions: <Widget>[
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 40, // Set a fixed height for the containers
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10), // Padding on both sides
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.red.withOpacity(0.1),
-                    ),
-                    child: TextButton(
-                      child: const Text(
-                        'Huỷ',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                      },
-                    ),
-                  ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: const Column(
+            children: [
+              Icon(
+                Icons.info,
+                color: Colors.blue,
+                size: 40,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Xoá mã QR',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(width: 10), // Add some space between the buttons
-                Expanded(
+              ),
+            ],
+          ),
+          content: Container(
+            height: 200, // Increase the height of the dialog
+            child: Column(
+              children: [
+                Text(
+                  'Gỡ bỏ mã QR này khỏi ví QR của bạn?',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                const Spacer(),
+                SizedBox(
+                  width: double.infinity,
                   child: Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.blue.withOpacity(0.1),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: TextButton(
-                      child: const Text(
-                        'Xác nhận',
-                        style: TextStyle(color: Colors.blue),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -1342,12 +1417,42 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                           ),
                         );
                       },
+                      child: const Text(
+                        'Xác nhận',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: AppColor.GREY_BUTTON,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: const Text(
+                      'Đóng cửa sổ',
+                      style: TextStyle(
+                        color: AppColor.BLACK,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-          ],
+          ),
         );
       },
     );

@@ -339,8 +339,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
 
         if (widget.action == ActionType.CREATE) {
           if (_currentPageIndex == 0) {
-            if (_folderNameController.text.isNotEmpty &&
-                _descriptionController.text.isNotEmpty) {
+            if (_folderNameController.text.isNotEmpty) {
               isEnable = true;
             } else {
               isEnable = false;
@@ -1591,28 +1590,56 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                     ValueListenableBuilder<List<ListQRFolder>>(
                       valueListenable: listQRUpdateNotifier,
                       builder: (context, value, child) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 8),
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
+                        // return Container(
+                        //   padding: const EdgeInsets.symmetric(
+                        //       horizontal: 8, vertical: 8),
+                        //   height: 40,
+                        //   width: 40,
+                        //   decoration: BoxDecoration(
+                        //       borderRadius: BorderRadius.circular(100),
+                        //       // color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                        //       gradient: LinearGradient(
+                        //           colors: _gradients[0],
+                        //           begin: Alignment.centerLeft,
+                        //           end: Alignment.centerRight)),
+                        //   child: Center(
+                        //     child: Text(
+                        //       widget.action == ActionType.UPDATE_QR ||
+                        //               widget.action == ActionType.REMOVE_QR
+                        //           ? countItemsAddedToFolder(value).toString()
+                        //           : checkedCount.toString(),
+                        //       style: const TextStyle(fontSize: 12),
+                        //     ),
+                        //   ),
+                        // );
+                        if (checkedCount != 0) {
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 8),
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
-                              // color: AppColor.BLUE_TEXT.withOpacity(0.2),
                               gradient: LinearGradient(
-                                  colors: _gradients[0],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight)),
-                          child: Center(
-                            child: Text(
-                              widget.action == ActionType.UPDATE_QR ||
-                                      widget.action == ActionType.REMOVE_QR
-                                  ? countItemsAddedToFolder(value).toString()
-                                  : checkedCount.toString(),
-                              style: const TextStyle(fontSize: 12),
+                                colors: _gradients[0],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
                             ),
-                          ),
-                        );
+                            child: Center(
+                              child: Text(
+                                (widget.action == ActionType.UPDATE_QR ||
+                                        widget.action == ActionType.REMOVE_QR)
+                                    ? countItemsAddedToFolder(value).toString()
+                                    : checkedCount.toString(),
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
+                          );
+                        } else {
+                          return SizedBox
+                              .shrink(); // or any other widget like Container with height: 0
+                        }
                       },
                     ),
                     const SizedBox(width: 5),
