@@ -198,12 +198,14 @@ class _PopupFolderChoiceWidgetState extends State<PopupFolderChoiceWidget> {
                     onTap: () {
                       Navigator.of(context).pop();
                       DialogWidget.instance.openWidgetDialog(
-                          heightPopup: MediaQuery.of(context).size.height * 0.5,
-                          padding: const EdgeInsets.all(0),
-                          radius: 10,
-                          child: DeleteDialogWidget(
-                            folderId: widget.dto.id,
-                          ));
+                        heightPopup: MediaQuery.of(context).size.height * 0.5,
+                        padding: const EdgeInsets.all(0),
+                        radius: 10,
+                        child: DeleteDialogWidget(
+                          folderId: widget.dto.id,
+                        ),
+                        onClose: () {},
+                      );
                     },
                     child: const _buildItem(
                         img: 'assets/images/ic-remove-black.png',

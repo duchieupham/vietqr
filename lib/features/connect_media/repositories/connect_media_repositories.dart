@@ -333,7 +333,7 @@ class ConnectGgChatRepository extends BaseRepo {
     List<SlackDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}service/larks/list?userId=$userId&page=$page&size=$size';
+          '${getIt.get<AppConfig>().getBaseUrl}service/slacks/list?userId=$userId&page=$page&size=$size';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -550,7 +550,6 @@ class ConnectGgChatRepository extends BaseRepo {
           break;
         case TypeConnect.TELE:
           url = '${getIt.get<AppConfig>().getBaseUrl}service/telegrams';
-
           break;
         case TypeConnect.LARK:
           url = '${getIt.get<AppConfig>().getBaseUrl}service/larks';

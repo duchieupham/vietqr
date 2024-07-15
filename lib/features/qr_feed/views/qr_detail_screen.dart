@@ -1024,20 +1024,29 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               ),
               const SizedBox(width: 2),
               if (isLoading == false && detailQr != null) ...[
-                ClipOval(
-                  child: Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: AppColor.WHITE,
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: ImageUtils.instance
-                            .getImageNetWork(detailQr!.imageId),
+                detailQr!.imageId.isNotEmpty
+                    ? ClipOval(
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: AppColor.WHITE,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: ImageUtils.instance
+                                  .getImageNetWork(detailQr!.imageId),
+                            ),
+                          ),
+                        ),
+                      )
+                    : ClipOval(
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          child:
+                              const XImage(imagePath: ImageConstant.icAvatar),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
                 const SizedBox(width: 10),
                 Text(
                   detailQr!.fullName,

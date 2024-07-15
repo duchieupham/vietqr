@@ -260,6 +260,14 @@ class _DeleteDialogWidgetState extends State<DeleteDialogWidget> {
           ],
         );
       },
+    ).then(
+      (value) {
+        getIt.get<QrFeedBloc>().add(const GetQrFeedPrivateEvent(
+            type: 9, isGetFolder: true, isFolderLoading: true, value: ''));
+        Navigator.of(context).popUntil(
+          (route) => route.isFirst,
+        );
+      },
     );
   }
 }

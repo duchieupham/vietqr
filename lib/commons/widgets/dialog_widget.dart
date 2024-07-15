@@ -1257,6 +1257,7 @@ class DialogWidget {
       EdgeInsets? margin,
       EdgeInsets? padding,
       double? widthPopup,
+      Function()? onClose,
       double radius = 15}) {
     final BuildContext context = NavigationService.context!;
     final double width = MediaQuery.of(context).size.width;
@@ -1285,6 +1286,10 @@ class DialogWidget {
             ),
           ),
         );
+      },
+    ).then(
+      (value) {
+        // onClose;
       },
     );
   }

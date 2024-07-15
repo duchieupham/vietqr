@@ -260,6 +260,7 @@ class __ScreenState extends State<_Screen> {
                               isChecked6: isChecked6,
                               onClipBoard: () {
                                 _textEditingController.text = _clipboardContent;
+                                provider.checkValidInput(true);
                                 setState(() {});
                               },
                               onChecked: (value, type) {
