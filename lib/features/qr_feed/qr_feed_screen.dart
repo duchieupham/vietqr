@@ -229,21 +229,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         }
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
-            state.status == BlocStatus.SUCCESS) {
-          Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN, arguments: {
-            'id': state.qrId,
-            'isPublic': true,
-            'folderId': state.folderId
-          }).then(
-            (value) {
-              final folderId = value as String;
-              if (folderId.isNotEmpty) {
-                _bloc.add(GetFolderDetailEvent(
-                    isLoading: false, value: '', type: 9, folderId: folderId));
-              }
-            },
-          );
-        }
+            state.status == BlocStatus.SUCCESS) {}
       },
       builder: (context, state) {
         if (state.request == QrFeed.GET_QR_FEED_LIST &&
@@ -388,8 +374,22 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   QrPrivateScreen(
                     listGradient: _gradients,
                     onDetail: (qrId) {
-                      _bloc
-                          .add(GetQrFeedDetailEvent(id: qrId, isLoading: true));
+                      Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
+                          arguments: {
+                            'id': qrId,
+                            'isPublic': true,
+                            'folderId': ''
+                          }).then(
+                        (value) {
+                          _bloc.add(GetQrFeedPrivateEvent(
+                              type: _qrTypeDTO.type,
+                              isGetFolder: true,
+                              isFolderLoading: true,
+                              value: ''));
+                        },
+                      );
+                      // _bloc
+                      //     .add(GetQrFeedDetailEvent(id: qrId, isLoading: true));
                       setState(() {
                         selectedQrId = qrId;
                       });
@@ -1023,9 +1023,11 @@ class _buildQRFeed extends StatelessWidget {
           const SizedBox(height: 10),
           InkWell(
             onTap: () {
-              getIt
-                  .get<QrFeedBloc>()
-                  .add(GetQrFeedDetailEvent(id: dto.id, isLoading: true));
+              Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
+                  arguments: {'id': dto.id, 'isPublic': true, 'folderId': ''});
+              // getIt
+              //     .get<QrFeedBloc>()
+              //     .add(GetQrFeedDetailEvent(id: dto.id, isLoading: true));
               onTap(dto.id);
             },
             child: Container(
@@ -1138,9 +1140,16 @@ class _buildQRFeed extends StatelessWidget {
                               const SizedBox(width: 20),
                               InkWell(
                                 onTap: () {
-                                  getIt.get<QrFeedBloc>().add(
-                                      GetQrFeedDetailEvent(
-                                          id: dto.id, isLoading: true));
+                                  Navigator.of(context).pushNamed(
+                                      Routes.QR_DETAIL_SCREEN,
+                                      arguments: {
+                                        'id': dto.id,
+                                        'isPublic': true,
+                                        'folderId': ''
+                                      });
+                                  // getIt.get<QrFeedBloc>().add(
+                                  //     GetQrFeedDetailEvent(
+                                  //         id: dto.id, isLoading: true));
                                   onTap(dto.id);
                                 },
                                 child: Row(

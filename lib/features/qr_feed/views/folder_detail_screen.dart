@@ -473,8 +473,21 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
             name: 'Tất cả',
           );
         });
-        getIt.get<QrFeedBloc>().add(GetQrFeedDetailEvent(
-            id: dto!.id, isLoading: true, folderId: widget.folderId));
+        Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN, arguments: {
+          'id': dto!.id,
+          'isPublic': true,
+          'folderId': widget.folderId
+        }).then(
+          (value) {
+            final folderId = value as String;
+            if (folderId.isNotEmpty) {
+              _bloc.add(GetFolderDetailEvent(
+                  isLoading: false, value: '', type: 9, folderId: folderId));
+            }
+          },
+        );
+        // getIt.get<QrFeedBloc>().add(GetQrFeedDetailEvent(
+        //     id: dto!.id, isLoading: true, folderId: widget.folderId));
       },
       child: Column(
         children: [
