@@ -592,11 +592,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                       imagePath: widget.isPublic
                           ? 'assets/images/ic-global.png'
                           : 'assets/images/ic-person.png',
-                      width: widget.isPublic ? 15 : 15,
-                      height: widget.isPublic ? 15 : 15,
+                      width: widget.isPublic ? 15 : 25,
+                      height: widget.isPublic ? 15 : 25,
                       fit: BoxFit.cover,
                     ),
-                    const SizedBox(width: 4),
+                    widget.isPublic
+                        ? const SizedBox(width: 4)
+                        : const SizedBox.shrink(),
                     Text(
                       // TimeUtils.instance.formatTimeNotification(dto.timeCreated),
                       TimeUtils.instance

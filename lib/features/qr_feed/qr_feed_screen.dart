@@ -377,7 +377,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
                           arguments: {
                             'id': qrId,
-                            'isPublic': true,
+                            'isPublic': false,
                             'folderId': ''
                           }).then(
                         (value) {
