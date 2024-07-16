@@ -405,8 +405,8 @@ class __ScreenState extends State<_Screen> {
               if (isChecked3) notificationTypes.add('DEBIT');
 
               if (isChecked4) notificationContents.add('AMOUNT');
-              if (isChecked5) notificationContents.add('REFERENCE_NUMBER');
-              if (isChecked6) notificationContents.add('CONTENT');
+              if (isChecked5) notificationContents.add('CONTENT');
+              if (isChecked6) notificationContents.add('REFERENCE_NUMBER');
 
               if (listId.isNotEmpty) {
                 _bloc.add(MakeMediaConnectionEvent(

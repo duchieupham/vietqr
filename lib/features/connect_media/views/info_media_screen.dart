@@ -254,10 +254,10 @@ class InfoMediaScreen extends StatelessWidget {
         case 'AMOUNT':
           text = 'Số tiền';
           break;
-        case 'REFERENCE_NUMBER':
+        case 'CONTENT':
           text = 'Nội dung thanh toán';
           break;
-        case 'CONTENT':
+        case 'REFERENCE_NUMBER':
           text = 'Mã giao dịch';
           break;
         default:

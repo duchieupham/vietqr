@@ -79,10 +79,10 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
             case 'AMOUNT':
               isChecked4 = true;
               break;
-            case 'REFERENCE_NUMBER':
+            case 'CONTENT':
               isChecked5 = true;
               break;
-            case 'CONTENT':
+            case 'REFERENCE_NUMBER':
               isChecked6 = true;
               break;
             default:
