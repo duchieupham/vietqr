@@ -233,14 +233,14 @@ class InfoMediaScreen extends StatelessWidget {
     for (var item in dto.notificationTypes) {
       String text = '';
       switch (item) {
-        case 'CREDIT':
+        case 'RECON':
           text = 'Giao dịch có đối soát';
           break;
-        case 'DEBIT':
+        case 'CREDIT':
           text = 'Giao dịch nhận tiền đến (+)';
 
           break;
-        case 'RECON':
+        case 'DEBIT':
           text = 'Giao dịch chuyển tiền đi (-)';
 
           break;
