@@ -177,52 +177,50 @@ class InfoMediaScreen extends StatelessWidget {
               type == TypeConnect.TELE ? 'Chat ID' : 'Webhook:',
               style: const TextStyle(fontSize: 15),
             ),
-            SizedBox(
-              width: 250,
-              child: Text(
-                dto.chatId ?? '-',
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.normal,
+            Row(
+              children: [
+                SizedBox(
+                  width: 220,
+                  child: Text(
+                    dto.chatId ?? '-',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 4),
+                InkWell(
+                  onTap: () {
+                    Clipboard.setData(
+                        new ClipboardData(text: dto.chatId ?? ''));
+                  },
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Container(
+                      width: 30,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        color: AppColor.BLUE_BGR,
+                        borderRadius: BorderRadius.circular(35),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.copy,
+                          size: 12,
+                          color: AppColor.BLUE_TEXT,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
         const SizedBox(height: 16),
-        InkWell(
-          onTap: () {
-            Clipboard.setData(new ClipboardData(text: dto.chatId ?? ''));
-          },
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              width: 100,
-              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-              decoration: BoxDecoration(
-                color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(35),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.copy,
-                    size: 12,
-                    color: AppColor.BLUE_TEXT,
-                  ),
-                  SizedBox(width: 4),
-                  Text(
-                    'Sao chép',
-                    style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }

@@ -733,7 +733,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           curve: Curves.easeInOut,
           width: 50,
           height: 50,
-          margin: const EdgeInsets.only(bottom: 80, right: 5),
+          margin: const EdgeInsets.only(bottom: 40, right: 5),
           child: FloatingActionButton(
             backgroundColor: Colors.transparent,
             elevation: 4,

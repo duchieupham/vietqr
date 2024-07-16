@@ -884,13 +884,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                                           child: InkWell(
                                             onTap: () {
                                               focusNode.unfocus();
-                                              _cmtController.clear();
                                               _bloc.add(AddCommendEvent(
                                                   qrWalletId: detailQr!.id,
                                                   message: _cmtController.text,
                                                   size: list.isEmpty
                                                       ? 10
                                                       : list.length + 1));
+                                              _cmtController.clear();
                                             },
                                             child: Container(
                                               width: 30,
