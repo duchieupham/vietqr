@@ -64,7 +64,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   List<Comment> list = [];
   QrInteract qrInteract = QrInteract();
 
-  bool isLoading = true;
+  // bool isLoading = true;
 
   Timer? _timer;
   // double _inputHeight = 40;
@@ -78,7 +78,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       ValueNotifier<double>(40.0);
 
   String qrType = '';
-  QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
+  // QrFeedPopupDetailDTO? qrFeedPopupDetailDTO;
   final globalKey = GlobalKey();
 
   @override
@@ -123,7 +123,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         );
         _cmtController.addListener(_checkInputHeight);
         _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
-        _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
+        // _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
       },
     );
 
@@ -136,9 +136,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     //     }
     //   },
     // );
-    await Future.delayed(const Duration(milliseconds: 500));
-    isLoading = false;
-    updateState();
+    // await Future.delayed(const Duration(milliseconds: 500));
+    // isLoading = false;
+    // updateState();
   }
 
   Future<void> onRefresh() async {
@@ -146,7 +146,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         LoadConmmentEvent(id: widget.id, isLoadMore: false, isLoading: true));
   }
 
-  QrFeedDetailDTO? detailQr;
+  // QrFeedDetailDTO? detailQr;
 
   @override
   void dispose() {
@@ -178,21 +178,36 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           );
           _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
         }
+        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
+            state.status == BlocStatus.SUCCESS) {
+          final qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
+          if (qrFeedPopupDetailDTO != null) {
+            DialogWidget.instance.showModelBottomSheet(
+              borderRadius: BorderRadius.circular(16),
+              widget: PopUpQrDetail(
+                qrType: qrType,
+                dto: qrFeedPopupDetailDTO,
+              ),
+              // height: MediaQuery.of(context).size.height * 0.6,
+            );
+          }
+          // updateState();
+        }
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
             state.status == BlocStatus.SUCCESS) {
           metadata = state.detailMetadata;
-          detailQr = state.detailQr;
+          final detailQr = state.detailQr;
 
           if (detailQr != null) {
             qrInteract = QrInteract(
-              likes: detailQr!.likeCount,
-              cmt: detailQr!.commentCount,
-              hasLike: detailQr!.hasLiked == 1 ? true : false,
-              timeCreate: detailQr!.timeCreated,
+              likes: detailQr.likeCount,
+              cmt: detailQr.commentCount,
+              hasLike: detailQr.hasLiked == 1 ? true : false,
+              timeCreate: detailQr.timeCreated,
             );
-            list = [...detailQr!.comments.data];
-            qrType = detailQr!.qrType;
+            list = [...detailQr.comments.data];
+            qrType = detailQr.qrType;
           }
         }
       },
@@ -214,11 +229,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           // updateState();
           // onRefresh();
         }
-        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
-            state.status == BlocStatus.SUCCESS) {
-          qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
-          // updateState();
-        }
+
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.SUCCESS) {
           metadata = state.detailMetadata;
@@ -266,11 +277,22 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           // updateState();
         }
 
+        bool isLoading = false;
+        if (state.request == QrFeed.GET_DETAIL_QR &&
+            state.status == BlocStatus.LOADING_PAGE) {
+          isLoading = true;
+        } else if (state.request == QrFeed.GET_DETAIL_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          isLoading = false;
+        }
+
         return Scaffold(
           backgroundColor: Colors.white,
           resizeToAvoidBottomInset: true,
-          appBar: _buildAppBar(),
-          bottomNavigationBar: _bottom(interact: qrInteract),
+          appBar: _buildAppBar(
+              isLoading: isLoading, detailQr: state.detailQr, state: state),
+          bottomNavigationBar:
+              _bottom(detailQr: state.detailQr, interact: qrInteract),
           body: RefreshIndicator(
             displacement: 0,
             edgeOffset: 0,
@@ -281,7 +303,11 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   // height: MediaQuery.of(context).size.height,
-                  child: _buildBody(state: state, interact: qrInteract)),
+                  child: _buildBody(
+                      state: state,
+                      isLoading: isLoading,
+                      detailQr: state.detailQr,
+                      interact: qrInteract)),
             ),
           ),
           // body: CustomScrollView(
@@ -317,10 +343,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
   ];
 
   Widget _buildBody(
-      {required QrFeedState state, required QrInteract interact}) {
+      {required bool isLoading,
+      required QrFeedState state,
+      QrFeedDetailDTO? detailQr,
+      required QrInteract interact}) {
     String qrType = '';
     if (detailQr != null) {
-      switch (detailQr!.qrType) {
+      switch (detailQr.qrType) {
         case '0':
           qrType = 'QR đường dẫn';
           break;
@@ -336,8 +365,6 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           break;
         default:
       }
-    } else {
-      return const SizedBox.shrink();
     }
 
     return Column(
@@ -347,13 +374,17 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
         Container(
           height: 420,
           margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-                colors: _gradients[int.parse(detailQr!.theme) - 1],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight),
-          ),
+          decoration: isLoading || detailQr == null
+              ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[300])
+              : BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                      colors: _gradients[int.parse(detailQr.theme) - 1],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight),
+                ),
           child: Container(
             // height: 450,
             margin: const EdgeInsets.fromLTRB(30, 25, 30, 25),
@@ -381,20 +412,20 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                           color: AppColor.TRANSPARENT,
                         ),
                       ),
-                      isLoading == false
+                      !isLoading && detailQr != null
                           ? Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    detailQr!.title,
+                                    detailQr.title,
                                     style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    detailQr!.data,
+                                    detailQr.data,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(fontSize: 12),
                                   ),
@@ -407,23 +438,26 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                               borderRadius: 50,
                             ),
                       InkWell(
-                        onTap: () {
-                          FlutterClipboard.copy(
-                                  '${detailQr!.title}\n${detailQr!.data}')
-                              .then(
-                            (value) => Fluttertoast.showToast(
-                              msg: 'Đã sao chép',
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              textColor: Theme.of(context).hintColor,
-                              fontSize: 15,
-                              webBgColor: 'rgba(255, 255, 255, 0.5)',
-                              webPosition: 'center',
-                            ),
-                          );
-                        },
+                        onTap: detailQr != null
+                            ? () {
+                                FlutterClipboard.copy(
+                                        '${detailQr.title}\n${detailQr.data}')
+                                    .then(
+                                  (value) => Fluttertoast.showToast(
+                                    msg: 'Đã sao chép',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    textColor: Theme.of(context).hintColor,
+                                    fontSize: 15,
+                                    webBgColor: 'rgba(255, 255, 255, 0.5)',
+                                    webPosition: 'center',
+                                  ),
+                                );
+                              }
+                            : null,
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           height: 40,
@@ -444,18 +478,18 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 25),
-                isLoading == false
+                !isLoading && detailQr != null
                     ? Container(
                         height: 250,
                         width: 250,
                         margin: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                         child: QrImageView(
                           padding: EdgeInsets.zero,
-                          data: detailQr!.value,
+                          data: detailQr.value,
                           size: 80,
                           backgroundColor: AppColor.WHITE,
                           embeddedImage: ImageUtils.instance
-                              .getImageNetworkCache(detailQr!.fileAttachmentId),
+                              .getImageNetworkCache(detailQr.fileAttachmentId),
                           embeddedImageStyle: const QrEmbeddedImageStyle(
                             size: Size(50, 50),
                           ),
@@ -470,7 +504,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         ),
                       ),
                 const Spacer(),
-                isLoading == false
+                !isLoading
                     ? Center(
                         child: Text(
                           textAlign: TextAlign.center,
@@ -490,12 +524,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           ),
         ),
         const SizedBox(height: 25),
-        if (isLoading == false)
+        if (!isLoading && detailQr != null)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              detailQr!.description,
+              detailQr.description,
               textAlign: TextAlign.left,
               style: const TextStyle(fontSize: 12),
             ),
@@ -533,11 +567,14 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   GestureDetector(
-                    onTap: () {
-                      _bloc.add(InteractWithQrEvent(
-                          qrWalletId: detailQr!.id,
-                          interactionType: qrInteract.hasLike ? '0' : '1'));
-                    },
+                    onTap: detailQr != null
+                        ? () {
+                            _bloc.add(InteractWithQrEvent(
+                                qrWalletId: detailQr.id,
+                                interactionType:
+                                    qrInteract.hasLike ? '0' : '1'));
+                          }
+                        : null,
                     child: XImage(
                       imagePath: interact.hasLike
                           ? 'assets/images/ic-heart-red.png'
@@ -626,7 +663,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           _loadingCmt(),
         ] else if (list.isNotEmpty && isLoading == false)
           ...list.map(
-            (e) => _buildCommend(e),
+            (e) => _buildCommend(e, isLoading: isLoading),
           ),
         if (state.request == QrFeed.LOAD_CMT &&
             state.status == BlocStatus.LOADING)
@@ -677,7 +714,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     );
   }
 
-  Widget _buildCommend(Comment commend) {
+  Widget _buildCommend(Comment commend, {bool isLoading = false}) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       curve: Curves.bounceInOut,
@@ -705,7 +742,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  commend.id == userId ? 'Tôi' : commend.fullName,
+                  commend.userId == userId ? 'Tôi' : commend.fullName,
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.bold),
                 ),
@@ -738,7 +775,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     );
   }
 
-  Widget _bottom({required QrInteract interact}) {
+  Widget _bottom({QrFeedDetailDTO? detailQr, required QrInteract interact}) {
     return Container(
       // height: 70 +
       //     (MediaQuery.of(context).viewInsets.bottom > 0.0
@@ -915,18 +952,21 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 children: [
                   const SizedBox(width: 10),
                   InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                        'type': TypeImage.SAVE,
-                        'title': detailQr!.title,
-                        'data': detailQr!.data,
-                        'value': detailQr!.value,
-                        'fileAttachmentId': detailQr!.fileAttachmentId,
-                        'qrType': detailQr!.qrType,
-                        'theme': detailQr!.theme,
-                      });
-                    },
+                    onTap: detailQr != null
+                        ? () {
+                            Navigator.of(context).pushNamed(
+                                Routes.QR_SAVE_SHARE_SCREEN,
+                                arguments: {
+                                  'type': TypeImage.SAVE,
+                                  'title': detailQr.title,
+                                  'data': detailQr.data,
+                                  'value': detailQr.value,
+                                  'fileAttachmentId': detailQr.fileAttachmentId,
+                                  'qrType': detailQr.qrType,
+                                  'theme': detailQr.theme,
+                                });
+                          }
+                        : null,
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       height: 40,
@@ -943,18 +983,21 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                   ),
                   const SizedBox(width: 10),
                   InkWell(
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(Routes.QR_SAVE_SHARE_SCREEN, arguments: {
-                        'type': TypeImage.SHARE,
-                        'title': detailQr!.title,
-                        'data': detailQr!.data,
-                        'value': detailQr!.value,
-                        'fileAttachmentId': detailQr!.fileAttachmentId,
-                        'qrType': detailQr!.qrType,
-                        'theme': detailQr!.theme,
-                      });
-                    },
+                    onTap: detailQr != null
+                        ? () {
+                            Navigator.of(context).pushNamed(
+                                Routes.QR_SAVE_SHARE_SCREEN,
+                                arguments: {
+                                  'type': TypeImage.SHARE,
+                                  'title': detailQr.title,
+                                  'data': detailQr.data,
+                                  'value': detailQr.value,
+                                  'fileAttachmentId': detailQr.fileAttachmentId,
+                                  'qrType': detailQr.qrType,
+                                  'theme': detailQr.theme,
+                                });
+                          }
+                        : null,
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       height: 40,
@@ -1004,7 +1047,10 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     );
   }
 
-  _buildAppBar() {
+  _buildAppBar(
+      {required bool isLoading,
+      QrFeedDetailDTO? detailQr,
+      required QrFeedState state}) {
     return AppBar(
       forceMaterialTransparency: true,
       backgroundColor: AppColor.WHITE,
@@ -1023,8 +1069,8 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 size: 25,
               ),
               const SizedBox(width: 2),
-              if (isLoading == false && detailQr != null) ...[
-                detailQr!.imageId.isNotEmpty
+              if (!isLoading && detailQr != null) ...[
+                detailQr.imageId.isNotEmpty
                     ? ClipOval(
                         child: Container(
                           width: 30,
@@ -1034,7 +1080,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                             image: DecorationImage(
                               fit: BoxFit.cover,
                               image: ImageUtils.instance
-                                  .getImageNetWork(detailQr!.imageId),
+                                  .getImageNetWork(detailQr.imageId),
                             ),
                           ),
                         ),
@@ -1049,7 +1095,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                       ),
                 const SizedBox(width: 10),
                 Text(
-                  detailQr!.fullName,
+                  detailQr.fullName,
                   style: const TextStyle(
                       fontSize: 12, fontWeight: FontWeight.bold),
                 ),
@@ -1075,85 +1121,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             padding: const EdgeInsets.only(right: 8),
             child: Row(
               children: [
-                if (detailQr != null && detailQr!.userId == userId)
-                  // GestureDetector(
-                  //   onTapDown: (TapDownDetails details) {
-                  //     showMenu(
-                  //       context: context,
-                  //       position: RelativeRect.fromLTRB(
-                  //         details.globalPosition.dx,
-                  //         details.globalPosition.dy + 20,
-                  //         details.globalPosition.dx,
-                  //         details.globalPosition.dy + 20,
-                  //       ),
-                  //       items: <PopupMenuEntry<int>>[
-                  //         const PopupMenuItem<int>(
-                  //           value: 0,
-                  //           child: ListTile(
-                  //             title: Text(
-                  //               'Cập nhật nội dung mã QR',
-                  //               style:
-                  //                   TextStyle(fontSize: 12, color: Colors.blue),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const PopupMenuItem<int>(
-                  //           value: 1,
-                  //           child: ListTile(
-                  //             title: Text(
-                  //               'Tuỳ chỉnh giao diện mã QR',
-                  //               style:
-                  //                   TextStyle(fontSize: 12, color: Colors.blue),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const PopupMenuItem<int>(
-                  //           value: 2,
-                  //           child: ListTile(
-                  //             title: Text(
-                  //               'Xoá QR',
-                  //               style:
-                  //                   TextStyle(fontSize: 12, color: Colors.red),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ).then((int? result) {
-                  //       if (result != null) {
-                  //         switch (result) {
-                  //           case 0:
-                  //             Navigator.of(context)
-                  //                 .pushNamed(Routes.QR_UPDATE_SCREEN);
-                  //             // Handle "Cập nhật nội dung mã QR"
-                  //             break;
-                  //           case 1:
-                  //             // Handle "Tuỳ chỉnh giao diện mã QR"
-                  //             break;
-                  //           case 2:
-                  //             // Handle "Xoá QR"
-                  //             _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
-                  //             break;
-                  //         }
-                  //       }
-                  //     });
-                  //   },
-                  //   child: Container(
-                  //     padding: const EdgeInsets.all(4),
-                  //     height: 40,
-                  //     width: 40,
-                  //     decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(100),
-                  //       gradient: LinearGradient(
-                  //         colors: _gradients[0],
-                  //         begin: Alignment.centerLeft,
-                  //         end: Alignment.centerRight,
-                  //       ),
-                  //     ),
-                  //     child: const Image(
-                  //       image: AssetImage('assets/images/ic-effect.png'),
-                  //     ),
-                  //   ),
-                  // ),
+                if (!isLoading && detailQr != null && detailQr.userId == userId)
                   GestureDetector(
                     onTapDown: (TapDownDetails details) {
                       showMenu(
@@ -1197,7 +1165,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                           ),
                         ],
                       ).then((int? result) {
-                        if (result != null) {
+                        if (result != null && state.qrFeedPopupDetail != null) {
                           switch (result) {
                             case 0:
                               Navigator.of(context).pushNamed(
@@ -1205,42 +1173,42 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                                   arguments: {
                                     'isPublic': widget.isPublic,
                                     'detail': detailQr,
-                                    'moreDetail': qrFeedPopupDetailDTO
+                                    'moreDetail': state.qrFeedPopupDetail
                                   });
                               break;
                             case 1:
                               QrCreateFeedDTO dto = QrCreateFeedDTO(
-                                typeDto: detailQr!.qrType,
+                                typeDto: detailQr.qrType,
                                 userIdDTO: userId,
-                                qrNameDTO: detailQr!.title,
-                                qrDescriptionDTO: detailQr!.description,
-                                valueDTO: detailQr!.value,
+                                qrNameDTO: detailQr.title,
+                                qrDescriptionDTO: detailQr.description,
+                                valueDTO: detailQr.value,
                                 pinDTO: '',
-                                fullNameDTO: detailQr!.fullName,
-                                phoneNoDTO: qrFeedPopupDetailDTO?.phoneNo,
-                                emailDTO: qrFeedPopupDetailDTO?.email,
+                                fullNameDTO: detailQr.fullName,
+                                phoneNoDTO: state.qrFeedPopupDetail?.phoneNo,
+                                emailDTO: state.qrFeedPopupDetail?.email,
                                 companyNameDTO:
-                                    qrFeedPopupDetailDTO?.companyName,
-                                websiteDTO: qrFeedPopupDetailDTO?.website,
-                                addressDTO: qrFeedPopupDetailDTO?.address,
+                                    state.qrFeedPopupDetail?.companyName,
+                                websiteDTO: state.qrFeedPopupDetail?.website,
+                                addressDTO: state.qrFeedPopupDetail?.address,
                                 additionalDataDTO: '',
                                 bankAccountDTO:
-                                    qrFeedPopupDetailDTO?.bankAccount,
-                                bankCodeDTO: qrFeedPopupDetailDTO?.bankCode,
+                                    state.qrFeedPopupDetail?.bankAccount,
+                                bankCodeDTO: state.qrFeedPopupDetail?.bankCode,
                                 userBankNameDTO:
-                                    qrFeedPopupDetailDTO?.userBankName,
-                                amountDTO: qrFeedPopupDetailDTO?.amount,
-                                contentDTO: qrFeedPopupDetailDTO?.content,
+                                    state.qrFeedPopupDetail?.userBankName,
+                                amountDTO: state.qrFeedPopupDetail?.amount,
+                                contentDTO: state.qrFeedPopupDetail?.content,
                                 isPublicDTO: widget.isPublic ? '1' : '0',
-                                styleDTO: detailQr!.style,
-                                themeDTO: detailQr!.theme,
+                                styleDTO: detailQr.style,
+                                themeDTO: detailQr.theme,
                               );
                               NavigatorUtils.navigatePage(
                                   context,
                                   QrStyle(
-                                    imgId: detailQr!.fileAttachmentId,
+                                    imgId: detailQr.fileAttachmentId,
                                     isUpdate: true,
-                                    type: int.parse(detailQr!.qrType),
+                                    type: int.parse(detailQr.qrType),
                                     dto: dto,
                                     qrId: widget.id,
                                   ),
@@ -1271,101 +1239,31 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                     ),
                   ),
                 const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {
-                    // _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
-                    DialogWidget.instance.showModelBottomSheet(
-                      borderRadius: BorderRadius.circular(16),
-                      widget: PopUpQrDetail(
-                        qrType: qrType,
-                        dto: qrFeedPopupDetailDTO!,
-                      ),
-                      // height: MediaQuery.of(context).size.height * 0.6,
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                            colors: _gradients[0],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight)),
-                    child:
-                        const XImage(imagePath: 'assets/images/ic-i-black.png'),
+                if (!isLoading)
+                  InkWell(
+                    onTap: () {
+                      _bloc.add(
+                          GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          gradient: LinearGradient(
+                              colors: _gradients[0],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight)),
+                      child: const XImage(
+                          imagePath: 'assets/images/ic-i-black.png'),
+                    ),
                   ),
-                ),
               ],
             ))
       ],
     );
   }
-
-  // void _showDeleteConfirmationDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Xác nhận xoá'),
-  //         content: const Text('Bạn có chắc chắn muốn xoá mã QR này không?'),
-  //         actions: <Widget>[
-  //           Row(
-  //             children: [
-  //               Expanded(
-  //                 child: Container(
-  //                   height: 40, // Set a fixed height for the containers
-  //                   padding: const EdgeInsets.symmetric(
-  //                       horizontal: 10), // Padding on both sides
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(8),
-  //                     color: Colors.red.withOpacity(0.1),
-  //                   ),
-  //                   child: TextButton(
-  //                     child: const Text(
-  //                       'Huỷ',
-  //                       style: TextStyle(color: Colors.red),
-  //                     ),
-  //                     onPressed: () {
-  //                       Navigator.of(context).pop(); // Close the dialog
-  //                     },
-  //                   ),
-  //                 ),
-  //               ),
-  //               const SizedBox(width: 10), // Add some space between the buttons
-  //               Expanded(
-  //                 child: Container(
-  //                   height: 40,
-  //                   padding: const EdgeInsets.symmetric(horizontal: 10),
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(8),
-  //                     color: Colors.blue.withOpacity(0.1),
-  //                   ),
-  //                   child: TextButton(
-  //                     child: const Text(
-  //                       'Xác nhận',
-  //                       style: TextStyle(color: Colors.blue),
-  //                     ),
-  //                     onPressed: () {
-  // Navigator.of(context).pop();
-  // _bloc.add(DeleteQrCodesEvent(qrIds: [widget.id]));
-  // ScaffoldMessenger.of(context).showSnackBar(
-  //   const SnackBar(
-  //     content: Text('Xoá thành công'),
-  //   ),
-  // );
-  //                     },
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   void _showDeleteConfirmationDialog(BuildContext context) {
     showDialog(
@@ -1396,7 +1294,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             height: 200, // Increase the height of the dialog
             child: Column(
               children: [
-                Text(
+                const Text(
                   'Gỡ bỏ mã QR này khỏi ví QR của bạn?',
                   style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
