@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -13,6 +14,7 @@ import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
@@ -54,7 +56,8 @@ class BankCardDetailNewState extends StatefulWidget {
 }
 
 class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
-  ScrollController scrollController = ScrollController();
+  ScrollController scrollController =
+      ScrollController(initialScrollOffset: 0.0);
   String get userId => SharePrefUtils.getProfile().userId;
   late BankCardBloc bankCardBloc;
   late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
@@ -81,7 +84,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
   void initData(BuildContext context) {
     scrollController.addListener(
       () {
-        isScrollNotifier.value = scrollController.offset > 0.0;
+        isScrollNotifier.value = scrollController.offset == 0.0;
       },
     );
     bankCardBloc
@@ -91,7 +94,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
   }
 
   ValueNotifier<double> heightNotifier = ValueNotifier<double>(0.0);
-  ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
 
   @override
   void initState() {
@@ -253,6 +256,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                   return Column(
                     children: [
                       BankDetailAppbar(
+                        isScroll: isScrollNotifier,
                         onSelect: (index) {
                           setState(() {
                             _selectedIndex = index;
@@ -277,6 +281,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                           child: LayoutBuilder(
                             builder: (context, constraints) {
                               return SingleChildScrollView(
+                                controller: scrollController,
                                 physics: const ClampingScrollPhysics(),
                                 child: Stack(
                                   children: [
@@ -311,14 +316,14 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                             itemheight);
                                               }
                                             },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                            child: Column(
+                                              children: [
+                                                const SizedBox(height: 20),
+                                                Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
                                                       horizontal: 30),
-                                              child: Column(
-                                                children: [
-                                                  const SizedBox(height: 20),
-                                                  Row(
+                                                  child: Row(
                                                     children: [
                                                       Expanded(
                                                         child: Container(
@@ -398,9 +403,434 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                       ),
                                                     ],
                                                   ),
-                                                  const SizedBox(height: 10),
-                                                ],
-                                              ),
+                                                ),
+                                                const SizedBox(height: 20),
+                                                Container(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12),
+                                                  height: 440,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    border: Border.all(
+                                                        color: Colors.white),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.grey
+                                                            .withOpacity(0.5),
+                                                        spreadRadius: 3,
+                                                        blurRadius: 7,
+                                                        offset: Offset(0, 2),
+                                                      ),
+                                                    ],
+                                                    gradient: LinearGradient(
+                                                      colors: [
+                                                        Color(0xFFD8ECF8),
+                                                        Color(0xFFFFEAD9),
+                                                        Color(0xFFF5C9D1),
+                                                      ],
+                                                      begin:
+                                                          Alignment.centerLeft,
+                                                      end:
+                                                          Alignment.centerRight,
+                                                    ),
+                                                  ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        const Row(
+                                                          children: [
+                                                            XImage(
+                                                              imagePath:
+                                                                  'assets/images/ic-suggest.png',
+                                                              width: 30,
+                                                            ),
+                                                            SizedBox(width: 8),
+                                                            Text(
+                                                              'Gợi ý',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: AppColor
+                                                                    .GREY_TEXT,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const Divider(
+                                                          color: Colors.white,
+                                                          thickness: 1,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 4),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            print(
+                                                                'lien ket tai khoan');
+                                                          },
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                width: 30,
+                                                                height: 30,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        gradient: const LinearGradient(
+                                                                            colors: [
+                                                                              Color(0xFFBAFFBF),
+                                                                              Color(0xFFCFF4D2),
+                                                                            ],
+                                                                            begin: Alignment
+                                                                                .centerLeft,
+                                                                            end: Alignment
+                                                                                .centerRight),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8)),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/ic-linked-black.png',
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 10),
+                                                              Expanded(
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    RichText(
+                                                                      text:
+                                                                          const TextSpan(
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                            color:
+                                                                                Colors.black),
+                                                                        children: <TextSpan>[
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Liên kết tài khoản',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold),
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                ' ngay để nhận thông báo\nBiến động số dư và sử dụng các tính năng tích hợp.',
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              const Icon(
+                                                                Icons
+                                                                    .arrow_forward,
+                                                                size: 16,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const Divider(
+                                                          color: Colors.white,
+                                                          thickness: 1,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 4),
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      gradient: const LinearGradient(
+                                                                          colors: [
+                                                                            Color(0xFFA6C5FF),
+                                                                            Color(0xFFC5CDFF),
+                                                                          ],
+                                                                          begin: Alignment
+                                                                              .centerLeft,
+                                                                          end: Alignment
+                                                                              .centerRight),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8)),
+                                                              child:
+                                                                  Image.asset(
+                                                                'assets/images/ic-earth-black.png',
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 10),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  RichText(
+                                                                    text:
+                                                                        const TextSpan(
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              12,
+                                                                          color:
+                                                                              Colors.black),
+                                                                      children: <TextSpan>[
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Giới thiệu tính năng ',
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              'Chia sẻ Biến động số dư',
+                                                                          style:
+                                                                              TextStyle(fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                        TextSpan(
+                                                                          text:
+                                                                              ' qua các nền tảng mạng xã hội:',
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            8.0),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Image
+                                                                            .asset(
+                                                                          ImageConstant
+                                                                              .logoDiscordHome,
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                4),
+                                                                        Image
+                                                                            .asset(
+                                                                          ImageConstant
+                                                                              .logoSlackHome,
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                4),
+                                                                        Image
+                                                                            .asset(
+                                                                          ImageConstant
+                                                                              .logoGGSheetHome,
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                4),
+                                                                        Image
+                                                                            .asset(
+                                                                          ImageConstant
+                                                                              .logoGGChatHome,
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                4),
+                                                                        Image
+                                                                            .asset(
+                                                                          ImageConstant
+                                                                              .logoLarkDash,
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                4),
+                                                                        Image
+                                                                            .asset(
+                                                                          ImageConstant
+                                                                              .logoTelegramDash,
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                4),
+                                                                        Text(
+                                                                          'và nhiều\nhơn thế!!!',
+                                                                          style:
+                                                                              TextStyle(fontSize: 12),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const Divider(
+                                                          color: Colors.white,
+                                                          thickness: 1,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 4),
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Container(
+                                                              width: 20,
+                                                              height: 20,
+                                                              color:
+                                                                  Colors.blue,
+                                                            ),
+                                                            SizedBox(width: 10),
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    'Bạn là hộ kinh doanh?\nQuản lý dòng tiền cửa hàng để dễ dàng với VietQR.VN',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            8.0),
+                                                                    child:
+                                                                        Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                            '📊 Tổng hợp doanh thu mỗi ngày.'),
+                                                                        Text(
+                                                                            '💲 Tách bạch tiền bán hàng và tiền cá nhân.')
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 10),
+                                                        Text(
+                                                          'Bộ công cụ quản lý dòng tiền',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: 8),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceAround,
+                                                          children: [
+                                                            Column(
+                                                              children: [
+                                                                Container(
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 4),
+                                                                Text(
+                                                                  'Chia sẻ\nbiến động\nsố dư',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          12),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Container(
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 4),
+                                                                Text(
+                                                                  'Thông báo\ngiọng nói',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          12),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Container(
+                                                                  width: 30,
+                                                                  height: 30,
+                                                                  color: Colors
+                                                                      .blue,
+                                                                ),
+                                                                SizedBox(
+                                                                    height: 4),
+                                                                Text(
+                                                                  'Theo dõi\ndoanh thu\ncửa hàng',
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          12),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 200),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -444,7 +874,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
               ),
               child: Container(
                 width: double.infinity,
-                height: value,
+                height: value + 10,
                 decoration: BoxDecoration(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
