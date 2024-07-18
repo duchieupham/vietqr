@@ -69,7 +69,6 @@ class _BanksAuthenticatedState extends State<BanksAuthenticated>
                             offset: Offset(0, -index * 20.0),
                             child: MeasureSize(
                               onChange: (size) {
-                                print(size.height);
                                 if (heightOfItemWidget.value == 1) {
                                   heightOfItemWidget.value = size.height;
                                   if (heightWidget.value == 1) {

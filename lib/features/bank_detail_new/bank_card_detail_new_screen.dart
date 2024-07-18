@@ -19,6 +19,7 @@ import 'package:vierqr/commons/widgets/widget_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/bank_card_detail_app_bar.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -29,6 +30,8 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/account_bank_detail_provider.dart';
+
+import 'widgets/bank_detail_appbar.dart';
 
 class BankCardDetailNewScreen extends StatelessWidget {
   final String bankId;
@@ -61,6 +64,7 @@ class BankCardDetailNewState extends StatefulWidget {
 }
 
 class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
+  ScrollController scrollController = ScrollController();
   String get userId => SharePrefUtils.getProfile().userId;
   late BankCardBloc bankCardBloc;
   late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
@@ -76,11 +80,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
   late List<TerminalAccountDTO> listTerminalAcc = [];
   final otpController = TextEditingController();
   late AccountBankDetailProvider _provider;
-  List<String> listTitle = [
-    'Chi tiết',
-    'Giao dịch',
-    'Thống kê',
-  ];
+
   int _selectedIndex = 0;
 
   Future<void> _refresh() async {
@@ -89,6 +89,11 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
   }
 
   void initData(BuildContext context) {
+    scrollController.addListener(
+      () {
+        isScrollNotifier.value = scrollController.offset > 0.0;
+      },
+    );
     bankCardBloc
         .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
     bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
@@ -96,6 +101,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
   }
 
   ValueNotifier<double> heightNotifier = ValueNotifier<double>(0.0);
+  ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -172,7 +178,9 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                   dto = state.bankDetailDTO!;
                 }
 
-                if (dto.isHideBDSD && state.isInit) listTitle.removeLast();
+                ///tắt BĐSD
+                // if (dto.isHideBDSD && state.isInit) listTitle.removeLast();
+
                 // if (widget.pageIndex != 0) {
                 //   _provider.changeCurrentPage(widget.pageIndex);
                 //   pageController.jumpToPage(widget.pageIndex);
@@ -254,101 +262,15 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                   final width = MediaQuery.of(context).size.width;
                   return Container(
                     width: MediaQuery.of(context).size.width,
-                    // height: 150,
-                    // decoration: const BoxDecoration(
-                    //   gradient: LinearGradient(
-                    //     colors: [
-                    //       Color(0xFFE1EFFF),
-                    //       Color(0xFFE5F9FF),
-                    //     ],
-                    //     begin: Alignment.centerLeft,
-                    //     end: Alignment.centerRight,
-                    //   ),
-                    // ),
                     child: Column(
                       children: [
-                        Container(
-                          height: 100,
-                          padding: const EdgeInsets.only(top: 50, bottom: 0),
-                          // color: AppColor.TRANSPARENT,
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Color(0xFFE1EFFF),
-                                Color(0xFFE5F9FF),
-                              ],
-                              end: Alignment.centerRight,
-                              begin: Alignment.centerLeft,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Icon(
-                                  Icons.arrow_back_ios,
-                                  size: 20,
-                                ),
-                              ),
-                              // Spacer(),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              ...listTitle.map(
-                                (title) {
-                                  int index = listTitle.indexOf(title);
-                                  bool isSelected = _selectedIndex == index;
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedIndex = index;
-                                      });
-                                      print(title);
-                                    },
-                                    child: Container(
-                                      height: 30,
-                                      width: 80,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 8),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 6, horizontal: 4),
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        gradient: isSelected
-                                            ? const LinearGradient(
-                                                colors: [
-                                                  Color(0xFF00C6FF),
-                                                  Color(0xFF0072FF),
-                                                ],
-                                                begin: Alignment.topLeft,
-                                                end: Alignment.bottomRight,
-                                              )
-                                            : null,
-                                      ),
-                                      child: Text(
-                                        title,
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? Colors.white
-                                              : AppColor.GREY_TEXT,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
+                        BankDetailAppbar(
+                          onSelect: (index) {
+                            setState(() {
+                              _selectedIndex = index;
+                            });
+                          },
+                          selected: _selectedIndex,
                         ),
                         Expanded(
                           child: Container(
@@ -572,8 +494,9 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                       size: 80,
                                                       backgroundColor:
                                                           AppColor.WHITE,
-                                                      embeddedImage: AssetImage(
-                                                          'assets/images/ic-viet-qr-small.png'),
+                                                      embeddedImage:
+                                                          const AssetImage(
+                                                              'assets/images/ic-viet-qr-small.png'),
                                                       embeddedImageStyle:
                                                           const QrEmbeddedImageStyle(
                                                         size: Size(30, 30),
