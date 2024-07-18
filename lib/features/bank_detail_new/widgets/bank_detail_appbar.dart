@@ -49,27 +49,30 @@ class _BankDetailAppbarState extends State<BankDetailAppbar> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(
-                width: 20,
-              ),
-              GestureDetector(
+              // const SizedBox(width: 10),
+              InkWell(
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: const Icon(
-                  Icons.arrow_back_ios,
-                  size: 20,
+                child: Container(
+                  padding: const EdgeInsets.only(left: 10),
+                  height: 50,
+                  width: 50,
+                  child: const Center(
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      size: 20,
+                    ),
+                  ),
                 ),
               ),
               // Spacer(),
-              const SizedBox(
-                width: 10,
-              ),
+
               ...listTitle.map(
                 (title) {
                   int index = listTitle.indexOf(title);
                   bool isSelected = widget.selected == index;
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () {
                       widget.onSelect(index);
                       // setState(() {
@@ -109,7 +112,7 @@ class _BankDetailAppbarState extends State<BankDetailAppbar> {
                   );
                 },
               ),
-              const Spacer(),
+              const SizedBox(width: 60),
             ],
           ),
         );
