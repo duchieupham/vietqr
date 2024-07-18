@@ -13,10 +13,12 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/widget_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/bank_card_detail_app_bar.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/main.dart';
@@ -91,6 +93,8 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
     bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
     bankCardBloc.add(GetMerchantEvent());
   }
+
+  ValueNotifier<double> heightNotifier = ValueNotifier<double>(0.0);
 
   @override
   void initState() {
@@ -249,19 +253,18 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                   final width = MediaQuery.of(context).size.width;
                   return Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 150,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFE1EFFF),
-                          Color(0xFFE5F9FF),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                    ),
+                    // height: 150,
+                    // decoration: const BoxDecoration(
+                    //   gradient: LinearGradient(
+                    //     colors: [
+                    //       Color(0xFFE1EFFF),
+                    //       Color(0xFFE5F9FF),
+                    //     ],
+                    //     begin: Alignment.centerLeft,
+                    //     end: Alignment.centerRight,
+                    //   ),
+                    // ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.max,
                       children: [
                         Container(
                           height: 100,
@@ -347,54 +350,387 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                           ),
                         ),
                         Expanded(
-                          child: SizedBox(
-                            child: Stack(
-                              // fit: StackFit.expand,
-                              children: [
-                                Positioned.fill(
-                                  child: Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(30),
-                                        topRight: Radius.circular(30),
-                                      ),
-                                      color: AppColor.WHITE.withOpacity(0.6),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: Column(
+                          child: Container(
+                            width: double.infinity,
+                            // height: 200,
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xFFE1EFFF),
+                                  Color(0xFFE5F9FF),
+                                ],
+                                end: Alignment.centerRight,
+                                begin: Alignment.centerLeft,
+                              ),
+                            ),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  physics: const ClampingScrollPhysics(),
+                                  child: Stack(
                                     children: [
-                                      Container(
-                                        margin: const EdgeInsets.fromLTRB(
-                                            30, 0, 30, 0),
-                                        height: 400,
-                                        decoration: BoxDecoration(
-                                          color: AppColor.WHITE,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.4),
-                                              spreadRadius: 2,
-                                              blurRadius: 10,
-                                              offset: const Offset(5, 5),
+                                      ValueListenableBuilder<double>(
+                                        valueListenable: heightNotifier,
+                                        builder: (context, value, child) {
+                                          return Column(
+                                            children: [
+                                              const SizedBox(height: 200),
+                                              Container(
+                                                decoration: const BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      Color(0xFFE1EFFF),
+                                                      Color(0xFFE5F9FF),
+                                                    ],
+                                                    end: Alignment.centerRight,
+                                                    begin: Alignment.centerLeft,
+                                                  ),
+                                                ),
+                                                child: Container(
+                                                  width: double.infinity,
+                                                  height: value,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(30),
+                                                      topRight:
+                                                          Radius.circular(30),
+                                                    ),
+                                                    color: AppColor.WHITE
+                                                        .withOpacity(0.6),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              // width: 320,
+                                              margin: const EdgeInsets.fromLTRB(
+                                                  30, 0, 30, 0),
+                                              height: 400,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                color: AppColor.WHITE,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
+                                                    spreadRadius: 1,
+                                                    blurRadius: 10,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                children: [
+                                                  const SizedBox(height: 10),
+                                                  Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10),
+                                                    width: double.infinity,
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4),
+                                                          height: 40,
+                                                          width: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            color: AppColor
+                                                                .TRANSPARENT,
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                qrGeneratedDTO
+                                                                    .userBankName,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              ),
+                                                              Text(
+                                                                qrGeneratedDTO
+                                                                    .bankAccount,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            12),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            FlutterClipboard.copy(
+                                                                    '${qrGeneratedDTO.userBankName}\n${qrGeneratedDTO.bankAccount}')
+                                                                .then(
+                                                              (value) =>
+                                                                  Fluttertoast
+                                                                      .showToast(
+                                                                msg:
+                                                                    'Đã sao chép',
+                                                                toastLength: Toast
+                                                                    .LENGTH_SHORT,
+                                                                gravity:
+                                                                    ToastGravity
+                                                                        .CENTER,
+                                                                timeInSecForIosWeb:
+                                                                    1,
+                                                                backgroundColor:
+                                                                    Theme.of(
+                                                                            context)
+                                                                        .primaryColor,
+                                                                textColor: Theme.of(
+                                                                        context)
+                                                                    .hintColor,
+                                                                fontSize: 15,
+                                                                webBgColor:
+                                                                    'rgba(255, 255, 255, 0.5)',
+                                                                webPosition:
+                                                                    'center',
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(4),
+                                                            height: 30,
+                                                            width: 30,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          100),
+                                                              color: AppColor
+                                                                  .GREY_F0F4FA,
+                                                            ),
+                                                            child: const XImage(
+                                                              imagePath:
+                                                                  'assets/images/ic-save-blue.png',
+                                                              width: 30,
+                                                              height: 30,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  Container(
+                                                    height: 250,
+                                                    width: 250,
+                                                    child: QrImageView(
+                                                      padding: EdgeInsets.zero,
+                                                      data:
+                                                          qrGeneratedDTO.qrCode,
+                                                      size: 80,
+                                                      backgroundColor:
+                                                          AppColor.WHITE,
+                                                      embeddedImage: AssetImage(
+                                                          'assets/images/ic-viet-qr-small.png'),
+                                                      embeddedImageStyle:
+                                                          const QrEmbeddedImageStyle(
+                                                        size: Size(30, 30),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Spacer(),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const SizedBox(width: 30),
+                                                      Image.asset(
+                                                          'assets/images/logo_vietgr_payment.png',
+                                                          height: 40),
+                                                      Image.asset(
+                                                          'assets/images/ic-napas247.png',
+                                                          height: 40),
+                                                      const SizedBox(width: 30),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                ],
+                                              ),
+                                            ),
+                                            MeasureSize(
+                                              onChange: (size) {
+                                                final widgetHeight =
+                                                    size.height;
+                                                // double calculateHeight =
+                                                //     constraints.maxHeight - 200;
+
+                                                double itemheight =
+                                                    constraints.maxHeight - 400;
+
+                                                if (itemheight > widgetHeight) {
+                                                  heightNotifier.value =
+                                                      constraints.maxHeight -
+                                                          200;
+                                                } else if (itemheight <=
+                                                    widgetHeight) {
+                                                  heightNotifier.value =
+                                                      (constraints.maxHeight -
+                                                              200) +
+                                                          (widgetHeight -
+                                                              itemheight);
+                                                }
+                                                // heightNotifier.value =
+                                                //     calculateHeight;
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 30),
+                                                child: Column(
+                                                  children: [
+                                                    const SizedBox(height: 20),
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Container(
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          100),
+                                                              gradient:
+                                                                  const LinearGradient(
+                                                                colors: [
+                                                                  Color(
+                                                                      0xFFE1EFFF),
+                                                                  Color(
+                                                                      0xFFE5F9FF),
+                                                                ],
+                                                                begin: Alignment
+                                                                    .centerLeft,
+                                                                end: Alignment
+                                                                    .centerRight,
+                                                              ),
+                                                            ),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Image(
+                                                                  height: 30,
+                                                                  image: AssetImage(
+                                                                      'assets/images/ic-add-money-content.png'),
+                                                                ),
+                                                                Text(
+                                                                  'Thêm số tiền và nội dung',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          13),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 10),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(4),
+                                                          height: 40,
+                                                          width: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            gradient:
+                                                                const LinearGradient(
+                                                              colors: [
+                                                                Color(
+                                                                    0xFFE1EFFF),
+                                                                Color(
+                                                                    0xFFE5F9FF),
+                                                              ],
+                                                              begin: Alignment
+                                                                  .centerLeft,
+                                                              end: Alignment
+                                                                  .centerRight,
+                                                            ),
+                                                          ),
+                                                          child: const Image(
+                                                            image: AssetImage(
+                                                                'assets/images/ic-effect.png'),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ),
                                           ],
-                                          borderRadius:
-                                              BorderRadius.circular(15),
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
-                                )
-                              ],
+                                );
+                              },
                             ),
                           ),
                         ),
+
+//////////////////////////
+
                         // Expanded(
                         //   child: Stack(
                         //     // fit: StackFit.expand,
