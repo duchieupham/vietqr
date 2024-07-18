@@ -668,7 +668,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                     margin: const EdgeInsets
                                                         .symmetric(
                                                         horizontal: 12),
-                                                    height: 440,
+                                                    // height: 440,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -940,12 +940,27 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                                     .start,
                                                             children: [
                                                               Container(
-                                                                width: 20,
-                                                                height: 20,
-                                                                color:
-                                                                    Colors.blue,
+                                                                width: 30,
+                                                                height: 30,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        gradient: const LinearGradient(
+                                                                            colors: [
+                                                                              Color(0xFF91E2FF),
+                                                                              Color(0xFF91FFFF),
+                                                                            ],
+                                                                            begin: Alignment
+                                                                                .centerLeft,
+                                                                            end: Alignment
+                                                                                .centerRight),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8)),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/ic-store-black.png',
+                                                                ),
                                                               ),
-                                                              SizedBox(
+                                                              const SizedBox(
                                                                   width: 10),
                                                               Expanded(
                                                                 child: Column(
@@ -953,28 +968,71 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children: [
-                                                                    Text(
-                                                                      'Bạn là hộ kinh doanh?\nQuản lý dòng tiền cửa hàng để dễ dàng với VietQR.VN',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
+                                                                    RichText(
+                                                                      text:
+                                                                          const TextSpan(
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                            color:
+                                                                                Colors.black),
+                                                                        children: <TextSpan>[
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Bạn là hộ kinh doanh?\n',
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'Quản lý dòng tiền cửa hàng',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold),
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                ' để dễ dàng với ',
+                                                                          ),
+                                                                          TextSpan(
+                                                                            text:
+                                                                                'VietQR.VN',
+                                                                            style:
+                                                                                TextStyle(fontWeight: FontWeight.bold),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
+                                                                    const Padding(
+                                                                      padding: EdgeInsets
                                                                           .only(
-                                                                          top:
-                                                                              8.0),
+                                                                              top: 8.0),
                                                                       child:
                                                                           Column(
                                                                         crossAxisAlignment:
                                                                             CrossAxisAlignment.start,
                                                                         children: [
-                                                                          Text(
-                                                                              '📊 Tổng hợp doanh thu mỗi ngày.'),
-                                                                          Text(
-                                                                              '💲 Tách bạch tiền bán hàng và tiền cá nhân.')
+                                                                          Row(
+                                                                            children: [
+                                                                              XImage(
+                                                                                imagePath: 'assets/images/ic-statistic-black.png',
+                                                                                height: 30,
+                                                                              ),
+                                                                              Text(
+                                                                                'Tổng hợp doanh thu mỗi ngày.',
+                                                                                style: TextStyle(fontSize: 12),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            children: [
+                                                                              XImage(
+                                                                                imagePath: 'assets/images/ic-money-black.png',
+                                                                                height: 30,
+                                                                              ),
+                                                                              Text(
+                                                                                'Tách bạch tiền bán hàng và tiền cá nhân.',
+                                                                                style: TextStyle(fontSize: 12),
+                                                                              ),
+                                                                            ],
+                                                                          )
                                                                         ],
                                                                       ),
                                                                     ),
@@ -983,29 +1041,35 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                               ),
                                                             ],
                                                           ),
-                                                          SizedBox(height: 10),
-                                                          Text(
-                                                            'Bộ công cụ quản lý dòng tiền',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                          const SizedBox(
+                                                              height: 10),
+                                                          const Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 40),
+                                                            child: Text(
+                                                              'Bộ công cụ quản lý dòng tiền',
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
                                                             ),
                                                           ),
-                                                          SizedBox(height: 8),
-                                                          Row(
+                                                          const SizedBox(
+                                                              height: 8),
+                                                          const Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
                                                                     .spaceAround,
                                                             children: [
                                                               Column(
                                                                 children: [
-                                                                  Container(
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    color: Colors
-                                                                        .blue,
+                                                                  XImage(
+                                                                    imagePath:
+                                                                        'assets/images/ic-share-bdsd-black.png',
+                                                                    height: 50,
                                                                   ),
                                                                   SizedBox(
                                                                       height:
@@ -1023,11 +1087,10 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                               ),
                                                               Column(
                                                                 children: [
-                                                                  Container(
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    color: Colors
-                                                                        .blue,
+                                                                  XImage(
+                                                                    imagePath:
+                                                                        'assets/images/ic-voice-black.png',
+                                                                    height: 50,
                                                                   ),
                                                                   SizedBox(
                                                                       height:
@@ -1045,11 +1108,10 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                               ),
                                                               Column(
                                                                 children: [
-                                                                  Container(
-                                                                    width: 30,
-                                                                    height: 30,
-                                                                    color: Colors
-                                                                        .blue,
+                                                                  XImage(
+                                                                    imagePath:
+                                                                        'assets/images/ic-monitor-store-black.png',
+                                                                    height: 50,
                                                                   ),
                                                                   SizedBox(
                                                                       height:
