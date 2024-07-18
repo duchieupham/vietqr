@@ -586,12 +586,39 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
                                                             .spaceBetween,
                                                     children: [
                                                       const SizedBox(width: 30),
-                                                      Image.asset(
-                                                          'assets/images/logo_vietgr_payment.png',
-                                                          height: 40),
+                                                      // Image.asset(
+                                                      //     'assets/images/logo_vietgr_payment.png',
+                                                      //     height: 40),
+                                                      // Image.asset(
+                                                      //     'assets/images/ic-napas247.png',
+                                                      //     height: 40),
                                                       Image.asset(
                                                           'assets/images/ic-napas247.png',
                                                           height: 40),
+                                                      dto.imgId.isNotEmpty
+                                                          ? Container(
+                                                              width: 80,
+                                                              height: 40,
+                                                              margin: EdgeInsets
+                                                                  .only(top: 2),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image: DecorationImage(
+                                                                    image: ImageUtils
+                                                                        .instance
+                                                                        .getImageNetWork(dto
+                                                                            .imgId),
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                              ),
+                                                            )
+                                                          : Container(
+                                                              width: 40,
+                                                              height: 40,
+                                                              child: Image.asset(
+                                                                  'assets/images/logo_vietgr_payment.png',
+                                                                  height: 40),
+                                                            ),
                                                       const SizedBox(width: 30),
                                                     ],
                                                   ),
