@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -31,12 +32,14 @@ class DetailBankCardScreen extends StatefulWidget {
 
   final int selectedIndex;
   final Function(int) onSelectTab;
+  final Function(bool) onScroll;
 
   DetailBankCardScreen({
     super.key,
     required this.bankId,
     required this.selectedIndex,
     required this.onSelectTab,
+    required this.onScroll,
     this.isLoading = true,
   });
 
@@ -46,7 +49,6 @@ class DetailBankCardScreen extends StatefulWidget {
 
 class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
   ValueNotifier<double> heightNotifier = ValueNotifier<double>(0.0);
-  ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
   ValueNotifier<bool> isScrollToChart = ValueNotifier<bool>(false);
 
   ScrollController scrollController =
@@ -74,10 +76,10 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
     bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
   }
 
-  void initData(BuildContext context) {
+  void initData(BuildContext context) async {
     scrollController.addListener(
       () {
-        isScrollNotifier.value = scrollController.offset == 0.0;
+        widget.onScroll(scrollController.offset == 0.0);
         final RenderBox renderBox =
             _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
         if (renderBox != null) {
@@ -92,7 +94,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
     );
     bankCardBloc
         .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
-    bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
+    // bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
     // bankCardBloc.add(GetMerchantEvent());
   }
 
@@ -248,169 +250,143 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
             }
           },
           builder: (context, state) {
-            if (state.status == BlocStatus.LOADING_PAGE) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            // if (state.status == BlocStatus.LOADING_PAGE) {
+            //   return const Center(child: CircularProgressIndicator());
+            // }
 
-            return Column(
-              children: [
-                BankDetailAppbar(
-                  isScroll: isScrollNotifier,
-                  onSelect: (index) {
-                    widget.onSelectTab(index);
-                  },
-                  selected: widget.selectedIndex,
+            return Expanded(
+              child: Container(
+                width: double.infinity,
+                // height: 200,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFFE1EFFF),
+                      Color(0xFFE5F9FF),
+                    ],
+                    end: Alignment.centerRight,
+                    begin: Alignment.centerLeft,
+                  ),
                 ),
-                Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    // height: 200,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFFE1EFFF),
-                          Color(0xFFE5F9FF),
-                        ],
-                        end: Alignment.centerRight,
-                        begin: Alignment.centerLeft,
-                      ),
-                    ),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return SingleChildScrollView(
-                          controller: scrollController,
-                          physics: const ClampingScrollPhysics(),
-                          child: Stack(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      controller: scrollController,
+                      physics: const ClampingScrollPhysics(),
+                      child: Stack(
+                        children: [
+                          _buildExpandedWidget(),
+                          Column(
                             children: [
-                              _buildExpandedWidget(),
-                              Positioned(
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
+                              const SizedBox(height: 10),
+                              qrGeneratedDTO.qrCode.isNotEmpty
+                                  ? QrWidget(
+                                      dto: qrGeneratedDTO,
+                                    )
+                                  : const QrLoadingWidget(),
+                              MeasureSize(
+                                onChange: (size) {
+                                  final widgetHeight = size.height;
+
+                                  double itemheight =
+                                      constraints.maxHeight - 400;
+
+                                  if (itemheight > widgetHeight) {
+                                    heightNotifier.value =
+                                        constraints.maxHeight - 200;
+                                  } else if (itemheight <= widgetHeight) {
+                                    heightNotifier.value =
+                                        (constraints.maxHeight - 200) +
+                                            (widgetHeight - itemheight);
+                                  }
+                                },
                                 child: Column(
                                   children: [
-                                    const SizedBox(height: 10),
-                                    QrWidget(
-                                      dto: qrGeneratedDTO,
-                                    ),
-                                    MeasureSize(
-                                      onChange: (size) {
-                                        final widgetHeight = size.height;
-
-                                        double itemheight =
-                                            constraints.maxHeight - 400;
-
-                                        if (itemheight > widgetHeight) {
-                                          heightNotifier.value =
-                                              constraints.maxHeight - 200;
-                                        } else if (itemheight <= widgetHeight) {
-                                          heightNotifier.value =
-                                              (constraints.maxHeight - 200) +
-                                                  (widgetHeight - itemheight);
-                                        }
-                                      },
-                                      child: Column(
+                                    const SizedBox(height: 20),
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 30),
+                                      child: Row(
                                         children: [
-                                          const SizedBox(height: 20),
-                                          Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 30),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    height: 40,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100),
-                                                      gradient:
-                                                          const LinearGradient(
-                                                        colors: [
-                                                          Color(0xFFE1EFFF),
-                                                          Color(0xFFE5F9FF),
-                                                        ],
-                                                        begin: Alignment
-                                                            .centerLeft,
-                                                        end: Alignment
-                                                            .centerRight,
-                                                      ),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Image(
-                                                          height: 30,
-                                                          image: AssetImage(
-                                                              'assets/images/ic-add-money-content.png'),
-                                                        ),
-                                                        Text(
-                                                          'Thêm số tiền và nội dung',
-                                                          style: TextStyle(
-                                                              fontSize: 13),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
+                                          Expanded(
+                                            child: Container(
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    Color(0xFFE1EFFF),
+                                                    Color(0xFFE5F9FF),
+                                                  ],
+                                                  begin: Alignment.centerLeft,
+                                                  end: Alignment.centerRight,
                                                 ),
-                                                const SizedBox(width: 10),
-                                                Container(
-                                                  padding:
-                                                      const EdgeInsets.all(4),
-                                                  height: 40,
-                                                  width: 40,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      colors: [
-                                                        Color(0xFFE1EFFF),
-                                                        Color(0xFFE5F9FF),
-                                                      ],
-                                                      begin:
-                                                          Alignment.centerLeft,
-                                                      end:
-                                                          Alignment.centerRight,
-                                                    ),
-                                                  ),
-                                                  child: const Image(
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Image(
+                                                    height: 30,
                                                     image: AssetImage(
-                                                        'assets/images/ic-effect.png'),
+                                                        'assets/images/ic-add-money-content.png'),
                                                   ),
-                                                ),
-                                              ],
+                                                  Text(
+                                                    'Thêm số tiền và nội dung',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                          const SizedBox(height: 20),
-                                          const SuggestionWidget(),
-                                          const SizedBox(height: 20),
-                                          AnimationGraphWidget(
-                                            scrollNotifer: isScrollToChart,
-                                            key: _animatedBarKey,
+                                          const SizedBox(width: 10),
+                                          Container(
+                                            padding: const EdgeInsets.all(4),
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  Color(0xFFE1EFFF),
+                                                  Color(0xFFE5F9FF),
+                                                ],
+                                                begin: Alignment.centerLeft,
+                                                end: Alignment.centerRight,
+                                              ),
+                                            ),
+                                            child: const Image(
+                                              image: AssetImage(
+                                                  'assets/images/ic-effect.png'),
+                                            ),
                                           ),
-                                          const SizedBox(height: 120),
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(height: 20),
+                                    const SuggestionWidget(),
+                                    const SizedBox(height: 20),
+                                    AnimationGraphWidget(
+                                      scrollNotifer: isScrollToChart,
+                                      key: _animatedBarKey,
+                                    ),
+                                    const SizedBox(height: 120),
                                   ],
                                 ),
                               )
                             ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ],
+              ),
             );
           },
         );

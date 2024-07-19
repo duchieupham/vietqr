@@ -25,6 +25,7 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/account_bank_detail_provider.dart';
 
+import 'views/bank_transactions_screen.dart';
 import 'widgets/index.dart';
 
 class BankCardDetailNewScreen extends StatefulWidget {
@@ -45,6 +46,7 @@ class BankCardDetailNewScreen extends StatefulWidget {
 }
 
 class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
+  ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
   int _selectedIndex = 0;
 
   @override
@@ -66,17 +68,44 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            DetailBankCardScreen(
-              selectedIndex: _selectedIndex,
-              onSelectTab: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              bankId: widget.bankId,
-              isLoading: widget.isLoading,
+            Column(
+              children: [
+                BankDetailAppbar(
+                  isScroll: isScrollNotifier,
+                  onSelect: (index) {
+                    setState(() {
+                      _selectedIndex = index;
+                    });
+                  },
+                  selected: _selectedIndex,
+                ),
+                if (_selectedIndex == 0)
+                  DetailBankCardScreen(
+                    selectedIndex: _selectedIndex,
+                    onScroll: (boolValue) {
+                      isScrollNotifier.value = boolValue;
+                    },
+                    onSelectTab: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                    bankId: widget.bankId,
+                    isLoading: widget.isLoading,
+                  )
+                else if (_selectedIndex == 1)
+                  BankTransactionsScreen(
+                    isScroll: isScrollNotifier,
+                    onScroll: (boolValue) {
+                      isScrollNotifier.value = boolValue;
+                    },
+                  )
+              ],
             ),
-            BottomBarWidget(width: width),
+            BottomBarWidget(
+              width: width,
+              selectTab: _selectedIndex,
+            ),
           ],
         ),
       ),

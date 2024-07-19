@@ -6,12 +6,15 @@ class BankDetailAppbar extends StatefulWidget {
   final Function(int) onSelect;
   final int selected;
   final ValueNotifier<bool> isScroll;
+  final Function()? onBack;
 
-  const BankDetailAppbar(
-      {super.key,
-      required this.onSelect,
-      required this.isScroll,
-      required this.selected});
+  const BankDetailAppbar({
+    super.key,
+    required this.onSelect,
+    required this.isScroll,
+    required this.selected,
+    this.onBack,
+  });
 
   @override
   State<BankDetailAppbar> createState() => _BankDetailAppbarState();
@@ -51,9 +54,13 @@ class _BankDetailAppbarState extends State<BankDetailAppbar> {
             children: [
               // const SizedBox(width: 10),
               InkWell(
-                onTap: () {
-                  Navigator.of(context).pop();
-                },
+                onTap: widget.onBack != null
+                    ? () {
+                        widget.onBack;
+                      }
+                    : () {
+                        Navigator.of(context).pop();
+                      },
                 child: Container(
                   padding: const EdgeInsets.only(left: 10),
                   height: 50,

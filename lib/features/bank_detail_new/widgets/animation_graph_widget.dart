@@ -28,12 +28,6 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _controller.dispose();
-  }
-
   double calculateMaxAmount(double totalAmount) {
     if (totalAmount <= 50000000) {
       return 50000000;
@@ -64,7 +58,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     return ValueListenableBuilder<bool>(
       valueListenable: widget.scrollNotifer,
       builder: (context, value, child) {
-        if (value == true) {
+        if (_controller.isDismissed && value == true) {
           _controller.forward();
         }
         return Container(
