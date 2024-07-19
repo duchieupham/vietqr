@@ -60,13 +60,13 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
 
         for (var e in widget.notificationTypes) {
           switch (e) {
-            case 'CREDIT':
+            case 'RECON':
               isChecked1 = true;
               break;
-            case 'DEBIT':
+            case 'CREDIT':
               isChecked2 = true;
               break;
-            case 'RECON':
+            case 'DEBIT':
               isChecked3 = true;
               break;
             default:
@@ -79,10 +79,10 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
             case 'AMOUNT':
               isChecked4 = true;
               break;
-            case 'REFERENCE_NUMBER':
+            case 'CONTENT':
               isChecked5 = true;
               break;
-            case 'CONTENT':
+            case 'REFERENCE_NUMBER':
               isChecked6 = true;
               break;
             default:
@@ -278,9 +278,9 @@ class _UpdateSharingInfoScreenState extends State<UpdateSharingInfoScreen> {
           ? () {
               List<String> list1 = [];
               List<String> lsit2 = [];
-              if (isChecked1) list1.add('CREDIT');
-              if (isChecked2) list1.add('DEBIT');
-              if (isChecked3) list1.add('RECON');
+              if (isChecked1) list1.add('RECON');
+              if (isChecked2) list1.add('CREDIT');
+              if (isChecked3) list1.add('DEBIT');
 
               if (isChecked4) lsit2.add('AMOUNT');
               if (isChecked5) lsit2.add('REFERENCE_NUMBER');

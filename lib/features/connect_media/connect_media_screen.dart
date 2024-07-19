@@ -400,13 +400,13 @@ class __ScreenState extends State<_Screen> {
               List<String> listId = _provider.getListId();
               List<String> notificationTypes = [];
               List<String> notificationContents = [];
-              if (isChecked1) notificationTypes.add('CREDIT');
-              if (isChecked2) notificationTypes.add('DEBIT');
-              if (isChecked3) notificationTypes.add('RECON');
+              if (isChecked1) notificationTypes.add('RECON');
+              if (isChecked2) notificationTypes.add('CREDIT');
+              if (isChecked3) notificationTypes.add('DEBIT');
 
               if (isChecked4) notificationContents.add('AMOUNT');
-              if (isChecked5) notificationContents.add('REFERENCE_NUMBER');
-              if (isChecked6) notificationContents.add('CONTENT');
+              if (isChecked5) notificationContents.add('CONTENT');
+              if (isChecked6) notificationContents.add('REFERENCE_NUMBER');
 
               if (listId.isNotEmpty) {
                 _bloc.add(MakeMediaConnectionEvent(
