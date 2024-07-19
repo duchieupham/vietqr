@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -38,18 +39,23 @@ class BankCardDetailNewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BankCardBloc>(
-      create: (BuildContext context) =>
-          BankCardBloc(bankId, isLoading: isLoading),
-      child: ChangeNotifierProvider(
-          create: (_) => AccountBankDetailProvider(),
-          child: BankCardDetailNewState()),
-    );
+    return ChangeNotifierProvider(
+        create: (_) => AccountBankDetailProvider(),
+        child: BankCardDetailNewState(
+          bankId: bankId,
+          isLoading: isLoading,
+        ));
   }
 }
 
 class BankCardDetailNewState extends StatefulWidget {
-  const BankCardDetailNewState({super.key});
+  final String bankId;
+  final bool isLoading;
+  const BankCardDetailNewState({
+    super.key,
+    required this.bankId,
+    this.isLoading = true,
+  });
 
   @override
   State<BankCardDetailNewState> createState() => _BankCardDetailNewStateState();
@@ -97,10 +103,11 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
         }
       },
     );
+
     bankCardBloc
         .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
     bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
-    bankCardBloc.add(GetMerchantEvent());
+    // bankCardBloc.add(GetMerchantEvent());
   }
 
   ValueNotifier<double> heightNotifier = ValueNotifier<double>(0.0);
@@ -110,7 +117,8 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
   @override
   void initState() {
     super.initState();
-    bankCardBloc = BlocProvider.of(context);
+    bankCardBloc = getIt.get<BankCardBloc>(
+        param1: widget.bankId, param2: widget.isLoading);
     _provider = Provider.of<AccountBankDetailProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
@@ -135,6 +143,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
             }
           }
           return BlocConsumer<BankCardBloc, BankCardState>(
+            bloc: bankCardBloc,
             listener: (context, state) async {
               if (state.status == BlocStatus.LOADING) {
                 DialogWidget.instance.openLoadingDialog();
