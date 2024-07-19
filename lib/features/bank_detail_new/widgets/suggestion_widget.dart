@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 
-class SuggestionWidget extends StatelessWidget {
-  const SuggestionWidget({super.key});
+class SuggestionWidget extends StatefulWidget {
+  final AccountBankDetailDTO dto;
+  final BankCardBloc bloc;
+  SuggestionWidget({super.key, required this.dto, required this.bloc});
 
+  @override
+  State<SuggestionWidget> createState() => _SuggestionWidgetState();
+}
+
+class _SuggestionWidgetState extends State<SuggestionWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -60,6 +73,7 @@ class SuggestionWidget extends StatelessWidget {
             const SizedBox(height: 4),
             GestureDetector(
               onTap: () {
+                _onLinked();
                 print('lien ket tai khoan');
               },
               child: Row(
@@ -353,5 +367,28 @@ class SuggestionWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _onLinked() async {
+    BankTypeDTO bankTypeDTO = BankTypeDTO(
+      id: widget.dto.bankTypeId,
+      bankCode: widget.dto.bankCode,
+      bankName: widget.dto.bankName,
+      imageId: widget.dto.imgId,
+      bankShortName: widget.dto.bankCode,
+      status: widget.dto.bankTypeStatus,
+      caiValue: widget.dto.caiValue,
+      bankId: widget.dto.id,
+      bankAccount: widget.dto.bankAccount,
+      userBankName: widget.dto.userBankName,
+    );
+    await NavigatorUtils.navigatePage(
+            context, AddBankScreen(bankTypeDTO: bankTypeDTO),
+            routeName: AddBankScreen.routeName)
+        .then((value) {
+      if (value is bool) {
+        widget.bloc.add(const BankCardGetDetailEvent());
+      }
+    });
   }
 }
