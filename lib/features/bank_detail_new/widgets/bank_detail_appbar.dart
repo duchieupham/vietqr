@@ -83,7 +83,7 @@ class _BankDetailAppbarState extends State<BankDetailAppbar> {
                     child: Container(
                       height: 30,
                       width: 80,
-                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      // margin: const EdgeInsets.symmetric(horizontal: 8),
                       padding: const EdgeInsets.symmetric(
                           vertical: 6, horizontal: 4),
                       alignment: Alignment.center,

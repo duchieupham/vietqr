@@ -69,8 +69,9 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         } else {
           _controller.reset();
         }
+        print(value);
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 30),
+          margin: const EdgeInsets.symmetric(horizontal: 12),
           height: 280,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
