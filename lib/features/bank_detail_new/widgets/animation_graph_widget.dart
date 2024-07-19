@@ -66,10 +66,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
       builder: (context, value, child) {
         if (value == true) {
           _controller.forward();
-        } else {
-          _controller.reset();
         }
-        print(value);
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 12),
           height: 280,

@@ -96,6 +96,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewState> {
             _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
         if (renderBox != null) {
           final position = renderBox.localToGlobal(Offset.zero);
+          final size = renderBox.size;
           final scrollPosition = scrollController.position;
           isScrollToChart.value = position.dy >= scrollPosition.pixels &&
               position.dy <=
