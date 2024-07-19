@@ -105,7 +105,7 @@ class SuggestionWidget extends StatelessWidget {
                     ),
                   ),
                   const Icon(
-                    Icons.arrow_forward,
+                    Icons.arrow_forward_rounded,
                     size: 16,
                   ),
                 ],

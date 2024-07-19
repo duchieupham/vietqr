@@ -148,8 +148,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                     BoxLayout(
                       width: width,
                       borderRadius: 8,
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
                       child: Column(
                         children: [
                           GestureDetector(
