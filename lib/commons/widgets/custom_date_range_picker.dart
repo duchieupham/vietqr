@@ -51,6 +51,9 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
     _endDate = widget.initialEndDate;
     _rangeStart = widget.initialStartDate;
     _rangeEnd = widget.initialEndDate;
+    if (widget.initialStartDate != null) {
+      _focusedDay = widget.initialStartDate!;
+    }
   }
 
   @override

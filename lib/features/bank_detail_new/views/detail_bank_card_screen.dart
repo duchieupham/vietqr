@@ -91,6 +91,11 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
           final position = renderBox.localToGlobal(Offset.zero);
           final size = renderBox.size;
           final scrollPosition = scrollController.position;
+          // if (position.dy >= scrollPosition.pixels &&
+          //     position.dy <=
+          //         scrollPosition.pixels + scrollPosition.viewportDimension) {
+          //   isScrollToChart.value = true;
+          // }
           isScrollToChart.value = position.dy >= scrollPosition.pixels &&
               position.dy <=
                   scrollPosition.pixels + scrollPosition.viewportDimension;

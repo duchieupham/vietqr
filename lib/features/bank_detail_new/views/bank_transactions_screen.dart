@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/custom_date_range_picker.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 
@@ -49,11 +50,56 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
 
   DateTime? _startDate;
   DateTime? _endDate;
+  FilterTrans selectFilterTime = FilterTrans(title: '7 ngày gần đây', type: 0);
+  FilterTrans selectFilterTransType =
+      FilterTrans(title: 'Tất cả giao dịch', type: 0);
 
   @override
   void dispose() {
     super.dispose();
     scrollController.dispose();
+  }
+
+  Future<FilterTrans> getFilterTransType() async {
+    FilterTrans filterType = await DialogWidget.instance.showModelBottomSheet(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        bgrColor: AppColor.TRANSPARENT,
+        padding: EdgeInsets.zero,
+        widget: FilterTransWidget(
+          isFilerTime: false,
+          filter: selectFilterTransType,
+        ));
+
+    setState(() {
+      selectFilterTransType = filterType;
+    });
+    return filterType;
+  }
+
+  Future<void> getFilterTime() async {
+    final filterType = await DialogWidget.instance.showModelBottomSheet(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        bgrColor: AppColor.TRANSPARENT,
+        padding: EdgeInsets.zero,
+        widget: FilterTransWidget(
+          onDateRangeSelect: _showCustomDateRangePicker,
+          isFilerTime: true,
+          filter: selectFilterTime,
+        ));
+    if (filterType != null) {
+      setState(() {
+        selectFilterTime = filterType;
+      });
+      if (selectFilterTime.type != 3) {
+        _startDate = null;
+        _endDate = null;
+      } else {
+        _showCustomDateRangePicker();
+      }
+    }
+    // return selectFilterTime;
   }
 
   Future<void> _showCustomDateRangePicker() async {
@@ -73,11 +119,43 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
         _startDate = selectedRange.start;
         _endDate = selectedRange.end;
       });
+    } else {
+      if (selectFilterTime.type == 3 && _endDate == null) {
+        getFilterTime();
+      }
+      if (selectFilterTime.type != 3) {
+        getFilterTime();
+      }
+      // setState(() {
+      //   selectFilterTime = FilterTrans(title: '7 ngày gần đây', type: 0);
+      // });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    String timeFilter = '';
+    if (selectFilterTime.type == 3 && _endDate != null) {
+      timeFilter =
+          '${DateFormat('dd/MM/yyyy').format(_startDate!).toString()} - ${DateFormat('dd/MM/yyyy').format(_endDate!).toString()}';
+    } else {
+      timeFilter = selectFilterTime.title;
+    }
+
+    String transType = '';
+    switch (selectFilterTransType.type) {
+      case 0:
+        transType = 'Tất cả GD';
+        break;
+      case 1:
+        transType = 'GD đến';
+        break;
+      case 2:
+        transType = 'GD đi';
+        break;
+      default:
+    }
+
     return Expanded(
       child: Container(
         decoration: const BoxDecoration(
@@ -190,43 +268,8 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                           ),
                           const SizedBox(width: 10),
                           InkWell(
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 15, vertical: 4),
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: AppColor.WHITE,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: AppColor.BLACK.withOpacity(0.1),
-                                      blurRadius: 10,
-                                      spreadRadius: 1,
-                                      offset: const Offset(0, 1),
-                                    )
-                                  ]),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Tất cả GD',
-                                    style: TextStyle(
-                                        fontSize: 12, color: AppColor.BLACK),
-                                  ),
-                                  Icon(
-                                    Icons.keyboard_arrow_down_outlined,
-                                    size: 16,
-                                    color: AppColor.BLACK,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          InkWell(
                             onTap: () {
-                              _showCustomDateRangePicker();
+                              getFilterTransType();
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
@@ -247,10 +290,45 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    _endDate != null
-                                        ? '${DateFormat('dd/MM/yyyy').format(_startDate!).toString()} - ${DateFormat('dd/MM/yyyy').format(_endDate!).toString()}'
-                                        : '7 ngày gần đây',
-                                    style: TextStyle(
+                                    transType,
+                                    style: const TextStyle(
+                                        fontSize: 12, color: AppColor.BLACK),
+                                  ),
+                                  const Icon(
+                                    Icons.keyboard_arrow_down_outlined,
+                                    size: 16,
+                                    color: AppColor.BLACK,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          InkWell(
+                            onTap: () {
+                              getFilterTime();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 4),
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: AppColor.WHITE,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColor.BLACK.withOpacity(0.1),
+                                      blurRadius: 10,
+                                      spreadRadius: 1,
+                                      offset: const Offset(0, 1),
+                                    )
+                                  ]),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    timeFilter,
+                                    style: const TextStyle(
                                         fontSize: 12, color: AppColor.BLACK),
                                   ),
                                   Icon(

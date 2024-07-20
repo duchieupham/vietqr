@@ -69,6 +69,10 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         if (_controller.isDismissed && value == true) {
           _controller.forward();
         }
+        if ((_controller.isCompleted || !_controller.isAnimating) &&
+            value == false) {
+          _controller.reset();
+        }
         return Column(
           children: [
             Container(

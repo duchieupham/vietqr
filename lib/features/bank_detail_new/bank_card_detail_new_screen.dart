@@ -75,6 +75,9 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                 BankDetailAppbar(
                   isScroll: isScrollNotifier,
                   onSelect: (index) {
+                    if (index == 1) {
+                      isScrollNotifier.value = true;
+                    }
                     setState(() {
                       _selectedIndex = index;
                     });
