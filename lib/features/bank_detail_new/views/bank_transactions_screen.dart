@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/widgets/custom_date_range_picker.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 
@@ -44,10 +47,33 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
     );
   }
 
+  DateTime? _startDate;
+  DateTime? _endDate;
+
   @override
   void dispose() {
     super.dispose();
     scrollController.dispose();
+  }
+
+  Future<void> _showCustomDateRangePicker() async {
+    final selectedRange = await DialogWidget.instance.showModelBottomSheet(
+        borderRadius: BorderRadius.circular(0),
+        width: MediaQuery.of(context).size.width,
+        height: 680,
+        margin: EdgeInsets.zero,
+        padding: EdgeInsets.zero,
+        widget: CustomDateRangePicker(
+          initialStartDate: _startDate,
+          initialEndDate: _endDate,
+        ));
+
+    if (selectedRange != null) {
+      setState(() {
+        _startDate = selectedRange.start;
+        _endDate = selectedRange.end;
+      });
+    }
   }
 
   @override
@@ -199,7 +225,9 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                           ),
                           const SizedBox(width: 10),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              _showCustomDateRangePicker();
+                            },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 15, vertical: 4),
@@ -219,7 +247,9 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    '7 ngày gần đây',
+                                    _endDate != null
+                                        ? '${DateFormat('dd/MM/yyyy').format(_startDate!).toString()} - ${DateFormat('dd/MM/yyyy').format(_endDate!).toString()}'
+                                        : '7 ngày gần đây',
                                     style: TextStyle(
                                         fontSize: 12, color: AppColor.BLACK),
                                   ),

@@ -620,6 +620,7 @@ class DialogWidget {
     BuildContext? context,
     required Widget widget,
     double? height,
+    double? width,
     double radius = 15,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
@@ -646,7 +647,7 @@ class DialogWidget {
               margin: margin ?? const EdgeInsets.only(top: kToolbarHeight),
               padding: padding ??
                   EdgeInsets.only(left: 20, right: 20, bottom: keyboardHeight),
-              width: MediaQuery.of(context).size.width - 10,
+              width: width ?? MediaQuery.of(context).size.width - 10,
               height: height != null ? (height + keyboardHeight) : null,
               decoration: BoxDecoration(
                 borderRadius: borderRadius ??
