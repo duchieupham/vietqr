@@ -10,6 +10,7 @@ import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/measure_size.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
@@ -35,6 +36,7 @@ class DetailBankCardScreen extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onSelectTab;
   final Function(bool) onScroll;
+  final GlobalKey globalKey;
 
   DetailBankCardScreen({
     super.key,
@@ -43,6 +45,7 @@ class DetailBankCardScreen extends StatefulWidget {
     required this.onSelectTab,
     required this.onScroll,
     this.isLoading = true,
+    required this.globalKey,
   });
 
   @override
@@ -282,8 +285,13 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                             children: [
                               const SizedBox(height: 10),
                               qrGeneratedDTO.qrCode.isNotEmpty
-                                  ? QrWidget(
-                                      dto: qrGeneratedDTO,
+                                  ? RepaintBoundaryWidget(
+                                      globalKey: widget.globalKey,
+                                      builder: (key) {
+                                        return QrWidget(
+                                          dto: qrGeneratedDTO,
+                                        );
+                                      },
                                     )
                                   : const QrLoadingWidget(),
                               MeasureSize(
@@ -325,23 +333,29 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                                   end: Alignment.centerRight,
                                                 ),
                                               ),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Image(
-                                                    height: 30,
-                                                    image: AssetImage(
-                                                        'assets/images/ic-add-money-content.png'),
-                                                  ),
-                                                  Text(
-                                                    'Thêm số tiền và nội dung',
-                                                    style:
-                                                        TextStyle(fontSize: 13),
-                                                  ),
-                                                ],
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  print(
+                                                      'them so tien va noi dung');
+                                                },
+                                                child: const Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Image(
+                                                      height: 30,
+                                                      image: AssetImage(
+                                                          'assets/images/ic-add-money-content.png'),
+                                                    ),
+                                                    Text(
+                                                      'Thêm số tiền và nội dung',
+                                                      style: TextStyle(
+                                                          fontSize: 13),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -381,6 +395,8 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                       bankId: state.bankId ?? '',
                                       dto: dto,
                                     ),
+                                    const SizedBox(height: 20),
+                                    const ServiceVietqrWidget(),
                                     const SizedBox(height: 20),
                                     AnimationGraphWidget(
                                       scrollNotifer: isScrollToChart,
