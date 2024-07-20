@@ -5,14 +5,18 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 class BottomBarWidget extends StatelessWidget {
-  const BottomBarWidget({
+  BottomBarWidget({
     super.key,
     required this.width,
     required this.selectTab,
+    required this.onSave,
+    required this.onShare,
   });
 
   final double width;
   final int selectTab;
+  final VoidCallback onSave;
+  final VoidCallback onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -78,18 +82,7 @@ class BottomBarWidget extends StatelessWidget {
                     const SizedBox(width: 10),
                     InkWell(
                       onTap: () {
-                        // Navigator.of(context).pushNamed(
-                        //     Routes.QR_SAVE_SHARE_SCREEN,
-                        //     arguments: {
-                        //       'type': TypeImage.SAVE,
-                        //       'title': detailQr!.title,
-                        //       'data': detailQr!.data,
-                        //       'value': detailQr!.value,
-                        //       'fileAttachmentId':
-                        //           detailQr!.fileAttachmentId,
-                        //       'qrType': detailQr!.qrType,
-                        //       'theme': detailQr!.theme,
-                        //     });
+                        onSave();
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4),
@@ -108,18 +101,7 @@ class BottomBarWidget extends StatelessWidget {
                     const SizedBox(width: 8),
                     InkWell(
                       onTap: () {
-                        // Navigator.of(context).pushNamed(
-                        //     Routes.QR_SAVE_SHARE_SCREEN,
-                        //     arguments: {
-                        //       'type': TypeImage.SHARE,
-                        //       'title': detailQr!.title,
-                        //       'data': detailQr!.data,
-                        //       'value': detailQr!.value,
-                        //       'fileAttachmentId':
-                        //           detailQr!.fileAttachmentId,
-                        //       'qrType': detailQr!.qrType,
-                        //       'theme': detailQr!.theme,
-                        //     });
+                        onShare();
                       },
                       child: Container(
                         padding: const EdgeInsets.all(4),
