@@ -187,6 +187,7 @@ flutter:
     - assets/rives/
     - assets/images/
     - assets/images/bottom_bar/
+    - assets/images/bottom-bar-icons/
     - assets/environment/
 
   #   - images/a_dot_burr.jpeg
