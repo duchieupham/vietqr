@@ -357,7 +357,7 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
                 width: 150,
                 height: 30,
                 decoration: BoxDecoration(
-                    gradient: VietQRTheme.gradientColor.scan_qr,
+                    gradient: VietQRTheme.gradientColor.lilyLinear,
                     borderRadius: BorderRadius.circular(20)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -568,7 +568,7 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
             width: 150,
             height: 30,
             decoration: BoxDecoration(
-                gradient: VietQRTheme.gradientColor.scan_qr,
+                gradient: VietQRTheme.gradientColor.lilyLinear,
                 borderRadius: BorderRadius.circular(20)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,

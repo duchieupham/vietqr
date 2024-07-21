@@ -772,7 +772,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       decoration: BoxDecoration(
         color: AppColor.WHITE,
         borderRadius: BorderRadius.circular(10),
-        gradient: VietQRTheme.gradientColor.bottom_bar,
+        gradient: VietQRTheme.gradientColor.brightBlueLinear,
         // boxShadow: [
         //   BoxShadow(
         //       color: AppColor.BLACK.withOpacity(0.1),

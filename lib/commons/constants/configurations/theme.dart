@@ -101,10 +101,116 @@ class AppColor {
 }
 
 class GradientColor {
-  LinearGradient bottom_bar = const LinearGradient(
+  LinearGradient disableLinear = const LinearGradient(
+    colors: [
+      AppColor.BLUE_BGR,
+      AppColor.BLUE_BGR,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient brightBlueLinear = const LinearGradient(
     colors: [
       Color(0xFF00B8F5),
       Color(0xFF0A7AFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient chardonnayLinear = const LinearGradient(
+    colors: [
+      Color(0xFFFFC889),
+      Color(0xFFFFDCA2),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient pastelBlueLinear = const LinearGradient(
+    colors: [
+      Color(0xFFA6C5FF),
+      Color(0xFFC5CDFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient thistleLinear = const LinearGradient(
+    colors: [
+      Color(0xFFCDB3D4),
+      Color(0xFFF7C1D4),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient lightYellow = const LinearGradient(
+    colors: [
+      Color(0xFFFCE9D9),
+      Color(0xFFFCF9DF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient oysterPinkLinear = const LinearGradient(
+    colors: [
+      Color(0xFFF5CEC7),
+      Color(0xFFFFD7BF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient skyBlueLinear = const LinearGradient(
+    colors: [
+      Color(0xFFBFF6FF),
+      Color(0xFFFFDBE7),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient lightLilacLinear = const LinearGradient(
+    colors: [
+      Color(0xFFF1C9FF),
+      Color(0xFFFFB5AC),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient seashellLinear = const LinearGradient(
+    colors: [
+      Color(0xFFF0F0F0),
+      Color(0xFFCDCDCD),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+  LinearGradient columbiaBlueLinear = const LinearGradient(
+    colors: [
+      Color(0xFF91E2FF),
+      Color(0xFF91FFFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient cyanLinear = const LinearGradient(
+    colors: [
+      Color(0xFFB4FFEE),
+      Color(0xFFEDFF96),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+  LinearGradient lilyLinear = const LinearGradient(
+    colors: [
+      AppColor.BLUE_E1EFFF,
+      AppColor.BLUE_E5F9FF,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient lightMintLinear = const LinearGradient(
+    colors: [
+      Color(0xFFBAFFBF),
+      Color(0xFFCFF4D2),
     ],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
@@ -113,46 +219,6 @@ class GradientColor {
     colors: [
       AppColor.WHITE,
       AppColor.GREY_F0F4FA,
-    ],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-  LinearGradient qr_link = const LinearGradient(
-    colors: [
-      Color(0xFF91E2FF),
-      Color(0xFF91FFFF),
-    ],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-  LinearGradient vcard = const LinearGradient(
-    colors: [
-      Color(0xFFB4FFEE),
-      Color(0xFFEDFF96),
-    ],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-  LinearGradient other_qr = const LinearGradient(
-    colors: [
-      Color(0xFFA6C5FF),
-      Color(0xFFC5CDFF),
-    ],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-  LinearGradient scan_qr = const LinearGradient(
-    colors: [
-      AppColor.BLUE_E1EFFF,
-      AppColor.BLUE_E5F9FF,
-    ],
-    begin: Alignment.centerLeft,
-    end: Alignment.centerRight,
-  );
-  LinearGradient import_qr = const LinearGradient(
-    colors: [
-      Color(0xFFBAFFBF),
-      Color(0xFFCFF4D2),
     ],
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,

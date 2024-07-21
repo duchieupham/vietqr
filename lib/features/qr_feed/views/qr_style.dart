@@ -187,17 +187,17 @@ class _QrStyleState extends State<QrStyle> {
       case 0:
         imgQrType = 'assets/images/ic-popup-bank-linked.png';
         textQrType = 'Mã QR đường dẫn';
-        gradient = VietQRTheme.gradientColor.qr_link;
+        gradient = VietQRTheme.gradientColor.columbiaBlueLinear;
         break;
       case 2:
         imgQrType = 'assets/images/ic-vcard-green.png';
         textQrType = 'Mã QR VCard';
-        gradient = VietQRTheme.gradientColor.vcard;
+        gradient = VietQRTheme.gradientColor.cyanLinear;
         break;
       case 1:
         imgQrType = 'assets/images/ic-other-qr.png';
         textQrType = 'Mã QR Khác';
-        gradient = VietQRTheme.gradientColor.other_qr;
+        gradient = VietQRTheme.gradientColor.pastelBlueLinear;
         break;
       default:
     }
