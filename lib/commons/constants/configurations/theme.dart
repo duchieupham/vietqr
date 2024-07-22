@@ -215,6 +215,13 @@ class GradientColor {
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
+
+  LinearGradient suggestLinear = const LinearGradient(colors: [
+    Color(0xFFD8ECF8),
+    Color(0xFFFFEAD9),
+    Color(0xFFF5C9D1),
+  ], begin: Alignment.bottomLeft, end: Alignment.topRight);
+
   LinearGradient viet_qr = const LinearGradient(
     colors: [
       AppColor.WHITE,
