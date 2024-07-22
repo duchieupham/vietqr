@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
-enum VietQRButtonType { gradient, outlined, solid }
+enum VietQRButtonType { gradient, outlined, solid, other }
 
 enum VietQRButtonSize { small, medium, large }
 
@@ -11,9 +11,11 @@ class VietQRButton extends StatelessWidget {
   final VoidCallback onPressed;
   final Widget child;
   final bool? onHover;
-  final double? padding;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
   final VietQRButtonType type;
   final VietQRButtonSize size;
+  final List<BoxShadow>? shadow;
   final Color? bgColor;
   final Color? textColor;
   final double? width;
@@ -26,7 +28,9 @@ class VietQRButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding,
-    this.type = VietQRButtonType.gradient,
+    this.margin,
+    this.type = VietQRButtonType.other,
+    this.shadow,
     this.bgColor,
     this.textColor,
     this.width,
@@ -42,7 +46,9 @@ class VietQRButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding,
+    this.margin,
     this.bgColor,
+    this.shadow,
     this.textColor,
     this.width,
     this.height,
@@ -51,11 +57,14 @@ class VietQRButton extends StatelessWidget {
     this.onHover,
     required this.isDisabled,
   }) : type = VietQRButtonType.solid;
+
   const VietQRButton.outlined({
     super.key,
     required this.onPressed,
     required this.child,
     this.padding,
+    this.margin,
+    this.shadow,
     this.bgColor,
     this.textColor,
     this.width,
@@ -65,11 +74,14 @@ class VietQRButton extends StatelessWidget {
     this.onHover,
     required this.isDisabled,
   }) : type = VietQRButtonType.outlined;
+
   const VietQRButton.gradient({
     super.key,
     required this.onPressed,
     required this.child,
     this.padding,
+    this.margin,
+    this.shadow,
     this.bgColor,
     this.textColor,
     this.width,
@@ -95,12 +107,13 @@ class VietQRButton extends StatelessWidget {
                       : size == VietQRButtonSize.medium
                           ? 40
                           : 30),
-              padding: EdgeInsets.all(padding ??
-                  (size == VietQRButtonSize.large
+              margin: margin,
+              padding: padding ??
+                  EdgeInsets.all(size == VietQRButtonSize.large
                       ? 10
                       : size == VietQRButtonSize.medium
                           ? 8
-                          : 6)),
+                          : 6),
               decoration: BoxDecoration(
                 // color: isDisabled
                 //     ? AppColor.BLUE_BGR
@@ -109,17 +122,7 @@ class VietQRButton extends StatelessWidget {
                     ? VietQRTheme.gradientColor.disableLinear
                     : VietQRTheme.gradientColor.lilyLinear,
                 borderRadius: BorderRadius.circular(borderRadius ?? 5),
-                // border: Border.all(
-                //   color: AppColor.BLUE_TEXT,
-                //   width: 1,
-                //   style: isDisabled ? BorderStyle.none : BorderStyle.solid,
-                // ),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Color.fromRGBO(21, 126, 52, 0.8),
-                //     offset: isDisabled ? Offset(0, 0) : Offset(0, 3),
-                //   ),
-                // ],
+                boxShadow: shadow ?? [],
               ),
               child: child),
         );
@@ -129,23 +132,19 @@ class VietQRButton extends StatelessWidget {
           child: Container(
               width: width,
               height: height ?? 50,
-              padding: EdgeInsets.all(padding ??
-                  (size == VietQRButtonSize.large
+              margin: margin,
+              padding: padding ??
+                  EdgeInsets.all(size == VietQRButtonSize.large
                       ? 10
                       : size == VietQRButtonSize.medium
                           ? 8
-                          : 6)),
+                          : 6),
               decoration: BoxDecoration(
                 gradient: isDisabled
                     ? VietQRTheme.gradientColor.disableLinear
                     : VietQRTheme.gradientColor.brightBlueLinear,
                 borderRadius: BorderRadius.circular(borderRadius ?? 5),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Color.fromRGBO(21, 126, 52, 0.8),
-                //     offset: isDisabled ? Offset(0, 0) : Offset(0, 3),
-                //   ),
-                // ],
+                boxShadow: shadow ?? [],
               ),
               child: child),
         );
@@ -155,12 +154,13 @@ class VietQRButton extends StatelessWidget {
           child: Container(
               width: width,
               height: height ?? 50,
-              padding: EdgeInsets.all(padding ??
-                  (size == VietQRButtonSize.large
+              margin: margin,
+              padding: padding ??
+                  EdgeInsets.all(size == VietQRButtonSize.large
                       ? 10
                       : size == VietQRButtonSize.medium
                           ? 8
-                          : 6)),
+                          : 6),
               decoration: BoxDecoration(
                 color: isDisabled ? AppColor.BLUE_BGR : bgColor ?? Colors.white,
                 borderRadius: BorderRadius.circular(borderRadius ?? 5),
@@ -169,12 +169,7 @@ class VietQRButton extends StatelessWidget {
                   width: 1,
                   style: BorderStyle.solid,
                 ),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Color.fromRGBO(21, 126, 52, 0.8),
-                //     offset: isDisabled ? Offset(0, 0) : Offset(0, 3),
-                //   ),
-                // ],
+                boxShadow: shadow ?? [],
               ),
               child: child),
         );
@@ -184,33 +179,38 @@ class VietQRButton extends StatelessWidget {
           child: Container(
               width: width,
               height: height,
-              padding: EdgeInsets.all(padding ??
-                  (size == VietQRButtonSize.large
+              margin: margin,
+              padding: padding ??
+                  EdgeInsets.all(size == VietQRButtonSize.large
                       ? 10
                       : size == VietQRButtonSize.medium
                           ? 8
-                          : 6)),
+                          : 6),
               decoration: BoxDecoration(
-                color: isDisabled
-                    ? AppColor.BLUE_BGR
-                    : bgColor ?? AppColor.BLUE_TEXT,
+                color:
+                    isDisabled ? AppColor.BLUE_BGR : bgColor ?? AppColor.WHITE,
                 borderRadius: BorderRadius.circular(borderRadius ??
                     (size == VietQRButtonSize.large
                         ? 10
                         : size == VietQRButtonSize.medium
                             ? 8
                             : 6)),
-                border: Border.all(
-                  color: AppColor.BLUE_TEXT,
-                  width: 1,
-                  style: BorderStyle.solid,
-                ),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Color.fromRGBO(21, 126, 52, 0.8),
-                //     offset: Offset(0, 3),
-                //   ),
-                // ],
+                // border: Border.all(
+                //   color: AppColor.BLUE_TEXT,
+                //   width: 1,
+                //   style: BorderStyle.solid,
+                // ),
+                boxShadow: isDisabled
+                    ? []
+                    : shadow ??
+                        [
+                          BoxShadow(
+                            color: AppColor.BLACK.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 10,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
               ),
               child: child),
         );
