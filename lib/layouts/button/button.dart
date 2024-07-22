@@ -2,20 +2,22 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 
-enum VietQRButtonType { gradient, outlined, solid, other }
+enum VietQRButtonType { gradient, outlined, solid, suggest, other }
 
 enum VietQRButtonSize { small, medium, large }
 
 class VietQRButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final Widget child;
+  final Widget? child;
   final bool? onHover;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final VietQRButtonType type;
   final VietQRButtonSize size;
   final List<BoxShadow>? shadow;
+  final String? text;
   final Color? bgColor;
   final Color? textColor;
   final double? width;
@@ -28,6 +30,7 @@ class VietQRButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding,
+    this.text,
     this.margin,
     this.type = VietQRButtonType.other,
     this.shadow,
@@ -41,11 +44,30 @@ class VietQRButton extends StatelessWidget {
     required this.isDisabled,
   });
 
+  const VietQRButton.suggest({
+    super.key,
+    required this.onPressed,
+    required this.text,
+    this.child,
+    this.padding,
+    this.margin,
+    this.bgColor,
+    this.shadow,
+    this.textColor,
+    this.width,
+    this.height,
+    this.borderRadius,
+    this.size = VietQRButtonSize.medium,
+    this.onHover,
+    required this.isDisabled,
+  }) : type = VietQRButtonType.suggest;
+
   const VietQRButton.solid({
     super.key,
     required this.onPressed,
     required this.child,
     this.padding,
+    this.text,
     this.margin,
     this.bgColor,
     this.shadow,
@@ -63,6 +85,7 @@ class VietQRButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding,
+    this.text,
     this.margin,
     this.shadow,
     this.bgColor,
@@ -80,6 +103,7 @@ class VietQRButton extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.padding,
+    this.text,
     this.margin,
     this.shadow,
     this.bgColor,
@@ -95,6 +119,48 @@ class VietQRButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (type) {
+      case VietQRButtonType.suggest:
+        return InkWell(
+          onTap: isDisabled ? null : onPressed,
+          child: Container(
+            width: width,
+            height: height ??
+                (size == VietQRButtonSize.large
+                    ? 50
+                    : size == VietQRButtonSize.medium
+                        ? 40
+                        : 30),
+            margin: margin,
+            padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 22, 0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                gradient: const LinearGradient(colors: [
+                  Color(0xFFD8ECF8),
+                  Color(0xFFFFEAD9),
+                  Color(0xFFF5C9D1),
+                ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const XImage(
+                  imagePath: 'assets/images/ic-suggest.png',
+                  width: 30,
+                ),
+                Text(
+                  text ?? '',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColor.BLACK,
+                    fontSize: 12,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
       case VietQRButtonType.solid:
         return InkWell(
           onHover: (onHover) {},
