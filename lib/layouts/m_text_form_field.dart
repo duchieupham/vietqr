@@ -39,6 +39,7 @@ class MTextFieldCustom extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatter;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final BoxConstraints? suffixIconConstraints;
   final Widget? child;
   final String? value;
   final bool showBorder;
@@ -83,6 +84,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.inputFormatter,
     this.prefixIcon,
     this.suffixIcon,
+    this.suffixIconConstraints,
     this.isRequired = false,
     this.value,
     this.hintColor,
@@ -165,12 +167,13 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
             enabledBorder: widget.enableBorder,
             focusedBorder: widget.focusBorder,
             prefixIcon: widget.prefixIcon,
-            prefixIconConstraints: BoxConstraints(maxWidth: 50),
+            prefixIconConstraints: const BoxConstraints(maxWidth: 50),
             suffixIconConstraints: widget.suffixIcon != null
-                ? const BoxConstraints(
-                    maxWidth: 20,
-                    minHeight: 20,
-                  )
+                ? widget.suffixIconConstraints ??
+                    const BoxConstraints(
+                      maxWidth: 20,
+                      minHeight: 20,
+                    )
                 : null,
             suffixIconColor: AppColor.TRANSPARENT,
             suffixIcon: widget.suffixIcon,

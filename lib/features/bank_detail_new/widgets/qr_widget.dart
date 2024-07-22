@@ -23,11 +23,19 @@ class _QrWidgetState extends State<QrWidget> {
   Widget build(BuildContext context) {
     return Container(
       // width: 320,
-      margin: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+      margin: const EdgeInsets.fromLTRB(50, 0, 50, 0),
       height: 400,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: AppColor.WHITE,
+        // color: AppColor.WHITE.withOpacity(opacity),
+        gradient: LinearGradient(
+          colors: [
+            AppColor.WHITE.withOpacity(0.6),
+            AppColor.WHITE,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),

@@ -13,6 +13,7 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/measure_size.dart';
+import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
@@ -20,6 +21,7 @@ import 'package:vierqr/features/bank_detail_new/views/detail_bank_card_screen.da
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -32,12 +34,13 @@ import 'widgets/index.dart';
 class BankCardDetailNewScreen extends StatefulWidget {
   final String bankId;
   final bool isLoading;
-
+  final BankAccountDTO dto;
   static String routeName = '/bank_card_detail_screen';
 
   const BankCardDetailNewScreen({
     super.key,
     required this.bankId,
+    required this.dto,
     this.isLoading = true,
   });
 
@@ -48,17 +51,28 @@ class BankCardDetailNewScreen extends StatefulWidget {
 
 class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
   ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
+  ValueNotifier<bool> scrollToTopNotifier = ValueNotifier<bool>(false);
+  late ScrollController scrollController;
   int _selectedIndex = 0;
   final GlobalKey globalKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController()
+      ..addListener(
+        () {
+          scrollToTopNotifier.value =
+              scrollController.hasClients && scrollController.offset > 200;
+          isScrollNotifier.value = scrollController.offset == 0.0;
+        },
+      );
   }
 
   @override
   void dispose() {
     super.dispose();
+    scrollController.dispose();
   }
 
   @override
@@ -67,6 +81,15 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
     return ChangeNotifierProvider(
       create: (context) => AccountBankDetailProvider(),
       child: Scaffold(
+        floatingActionButton: ScrollToTopButton(
+          onPressed: () {
+            scrollController.animateTo(0.0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut);
+          },
+          notifier: scrollToTopNotifier,
+          bottom: 55,
+        ),
         body: Stack(
           fit: StackFit.expand,
           children: [
@@ -75,8 +98,9 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                 BankDetailAppbar(
                   isScroll: isScrollNotifier,
                   onSelect: (index) {
-                    if (index == 1) {
-                      isScrollNotifier.value = true;
+                    isScrollNotifier.value = true;
+                    if (scrollController.hasClients) {
+                      scrollController.jumpTo(0.0);
                     }
                     setState(() {
                       _selectedIndex = index;
@@ -101,14 +125,14 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                   )
                 else if (_selectedIndex == 1)
                   BankTransactionsScreen(
+                    bankId: widget.bankId,
+                    scrollController: scrollController,
                     isScroll: isScrollNotifier,
-                    onScroll: (boolValue) {
-                      isScrollNotifier.value = boolValue;
-                    },
                   )
               ],
             ),
             BottomBarWidget(
+              dto: widget.dto,
               width: width,
               selectTab: _selectedIndex,
               onSave: () => onSaveImage(context),

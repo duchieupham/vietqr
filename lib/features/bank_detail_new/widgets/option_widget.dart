@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 
 class OptionWidget extends StatefulWidget {
   AccountBankDetailDTO dto;
@@ -61,8 +64,27 @@ class _OptionWidgetState extends State<OptionWidget> {
             const SizedBox(height: 16),
             if (!widget.dto.authenticated)
               buildOptionRow('Liên kết tài khoản ngân hàng',
-                  'assets/images/ic-linked-black.png', () {
-                print('Liên kết tài khoản ngân hàng');
+                  'assets/images/ic-linked-black.png', () async {
+                BankTypeDTO bankTypeDTO = BankTypeDTO(
+                  id: widget.dto.bankTypeId,
+                  bankCode: widget.dto.bankCode,
+                  bankName: widget.dto.bankName,
+                  imageId: widget.dto.imgId,
+                  bankShortName: widget.dto.bankCode,
+                  status: widget.dto.bankTypeStatus,
+                  caiValue: widget.dto.caiValue,
+                  bankId: widget.dto.id,
+                  bankAccount: widget.dto.bankAccount,
+                  userBankName: widget.dto.userBankName,
+                );
+                await NavigatorUtils.navigatePage(
+                        context, AddBankScreen(bankTypeDTO: bankTypeDTO),
+                        routeName: AddBankScreen.routeName)
+                    .then((value) {
+                  if (value is bool) {
+                    widget.bloc.add(const BankCardGetDetailEvent());
+                  }
+                });
               }),
             if (!widget.dto.authenticated)
               const MySeparator(
@@ -108,7 +130,6 @@ class _OptionWidgetState extends State<OptionWidget> {
                 );
                 widget.bloc.add(BankCardEventRemove(dto: bankAccountRemoveDTO));
               }
-              print('Xoá tài khoản ngân hàng');
             }),
           ],
         ),
@@ -116,8 +137,8 @@ class _OptionWidgetState extends State<OptionWidget> {
     );
   }
 
-  Widget buildOptionRow(String title, String path, VoidCallback onTap) {
-    return GestureDetector(
+  Widget buildOptionRow(String title, String path, Function() onTap) {
+    return InkWell(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0),

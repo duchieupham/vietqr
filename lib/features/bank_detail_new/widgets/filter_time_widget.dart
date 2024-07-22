@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -20,20 +21,34 @@ class FilterTransWidget extends StatefulWidget {
 
 class _FilterTransWidgetState extends State<FilterTransWidget> {
   List<FilterTrans> list = [
-    FilterTrans(title: '7 ngày gần đây', type: 0),
-    FilterTrans(title: 'Hôm nay', type: 1),
-    FilterTrans(title: '3 tháng gần đây', type: 2),
+    FilterTrans(
+        title: '7 ngày gần đây',
+        type: 0,
+        fromDate: DateFormat('yyyy-MM-dd HH:mm:ss')
+            .format(DateTime.now().subtract(const Duration(days: 7))),
+        toDate: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
+    FilterTrans(
+        title: 'Hôm nay',
+        type: 1,
+        fromDate: '',
+        toDate: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
+    FilterTrans(
+        title: '3 tháng gần đây',
+        type: 2,
+        fromDate: DateFormat('yyyy-MM-dd HH:mm:ss')
+            .format(DateTime.now().subtract(const Duration(days: 90))),
+        toDate: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
     FilterTrans(title: 'Tuỳ chọn', type: 3),
   ];
   List<FilterTrans> listTransType = [
-    FilterTrans(title: 'Tất cả giao dịch', type: 0),
-    FilterTrans(title: 'Giao dịch đến (+)', type: 1),
-    FilterTrans(title: 'Giao dịch đi (-)', type: 2),
+    FilterTrans(title: 'Tất cả giao dịch', type: 9),
+    FilterTrans(title: 'Giao dịch đến (+)', type: 0),
+    FilterTrans(title: 'Giao dịch đi (-)', type: 1),
   ];
 
   FilterTrans selectedFilter = FilterTrans(title: '7 ngày gần đây', type: 0);
   FilterTrans selectFilterTransType =
-      FilterTrans(title: 'Tất cả giao dịch', type: 0);
+      FilterTrans(title: 'Tất cả giao dịch', type: 9);
 
   @override
   void initState() {
@@ -194,8 +209,11 @@ class _FilterTransWidgetState extends State<FilterTransWidget> {
 }
 
 class FilterTrans {
-  final String title;
-  final int type;
+  String title;
+  int type;
+  String? fromDate;
+  String? toDate;
 
-  FilterTrans({required this.title, required this.type});
+  FilterTrans(
+      {required this.title, required this.type, this.fromDate, this.toDate});
 }

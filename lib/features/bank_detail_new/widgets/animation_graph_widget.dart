@@ -69,10 +69,10 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         if (_controller.isDismissed && value == true) {
           _controller.forward();
         }
-        if ((_controller.isCompleted || !_controller.isAnimating) &&
-            value == false) {
-          _controller.reset();
-        }
+        // if ((_controller.isCompleted || !_controller.isAnimating) &&
+        //     value == false) {
+        //   _controller.reset();
+        // }
         return Column(
           children: [
             Container(
@@ -322,33 +322,51 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                       color: AppColor.GREY_DADADA,
                     ),
                   ),
-                  for (var transaction in transactions) ...[
-                    Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            transaction.amount,
-                            style: TextStyle(
-                                color: transaction.color, fontSize: 12),
-                          ),
-                          Text(
-                            transaction.time,
-                            style: const TextStyle(
-                                color: AppColor.BLACK, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 12),
-                      child: const MySeparator(
-                        color: AppColor.GREY_DADADA,
-                      ),
-                    ),
-                  ]
+                  Expanded(
+                      child: ListView.separated(
+                          padding: const EdgeInsets.only(top: 0),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final transaction = transactions[index];
+                            return Container(
+                              height: 50,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    transaction.amount,
+                                    style: TextStyle(
+                                        color: transaction.color, fontSize: 12),
+                                  ),
+                                  Text(
+                                    transaction.time,
+                                    style: const TextStyle(
+                                        color: AppColor.BLACK, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: const MySeparator(
+                                  color: AppColor.GREY_DADADA,
+                                ),
+                              ),
+                          itemCount: transactions.length))
+                  // for (var transaction in transactions) ...[
+
+                  //   Container(
+                  //     margin: const EdgeInsets.symmetric(horizontal: 12),
+                  //     child: const MySeparator(
+                  //       color: AppColor.GREY_DADADA,
+                  //     ),
+                  //   ),
+                  // ]
                 ],
               ),
             ),

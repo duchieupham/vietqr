@@ -79,7 +79,8 @@ class CardWidget extends StatelessWidget {
           : () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => BankCardDetailNewScreen(bankId: e.id),
+                  builder: (context) =>
+                      BankCardDetailNewScreen(dto: e, bankId: e.id),
                   settings: const RouteSettings(
                     name: Routes.BANK_CARD_DETAIL_VEW,
                   ),

@@ -98,98 +98,102 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   List barItems = [
     {
-      "icon": "assets/images/bottom_bar/ic-bank-btm.png",
-      "active_icon": "assets/images/bottom_bar/ic-bank-btm-selected.png",
+      "icon": "assets/images/bottom-bar-icons/Artboard.png",
+      "active_icon":
+          "assets/images/bottom-bar-icons/ic-menu-slide-home-blue 10.png",
       "name": "Tài khoản",
     },
     {
-      "icon": "assets/images/bottom_bar/ic-home-btm.png",
-      "active_icon": "assets/images/bottom_bar/ic-home-btm-selected.png",
+      "icon": "assets/images/bottom-bar-icons/ic-menu-slide-home-blue.png",
+      "active_icon":
+          "assets/images/bottom-bar-icons/ic-menu-slide-home-blue 9.png",
       "name": "Trang chủ",
     },
     {
-      "icon": "assets/images/bottom_bar/ic-scan-qr-btm.png",
-      "active_icon": "assets/images/bottom_bar/ic-scan-qr-btm.png",
+      "icon": "assets/images/bottom-bar-icons/ic-qr-scan.gif",
+      "active_icon": "assets/images/bottom-bar-icons/ic-qr-scan.gif",
       "name": "Quét QR",
     },
     {
-      "icon": "assets/images/bottom_bar/ic-qr-wallet-btm.png",
-      "active_icon": "assets/images/bottom_bar/ic-qr-wallet-btm-selected.png",
+      "icon": "assets/images/bottom-bar-icons/ic-menu-slide-home-blue 2.png",
+      "active_icon":
+          "assets/images/bottom-bar-icons/ic-menu-slide-home-blue 8.png",
       "name": "Ví QR",
     },
     {
-      "icon": "assets/images/bottom_bar/ic-store-btm.png",
-      "active_icon": "assets/images/bottom_bar/ic-store-btm-selected.png",
+      "icon": "assets/images/bottom-bar-icons/ic-menu-slide-home-blue 3.png",
+      "active_icon":
+          "assets/images/bottom-bar-icons/ic-menu-slide-home-blue 7.png",
       "name": "Cửa hàng",
     },
   ];
 
-  List<CurvedNavigationBarItem> _listNavigation = [
-    CurvedNavigationBarItem(
-      label: 'Tài khoản',
-      urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
-      urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
-      index: PageType.ACCOUNT.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Trang chủ',
-      urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
-      urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
-      index: PageType.HOME.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Quét QR',
-      urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
-      urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
-      index: PageType.SCAN_QR.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Ví QR',
-      urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
-      urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
-      index: PageType.CARD_QR.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Cửa hàng',
-      urlSelect: 'assets/images/ic-store-bottom-bar-blue.png',
-      urlUnselect: 'assets/images/ic-store-bottom-bar-grey.png',
-      index: PageType.STORE.pageIndex,
-    ),
-    // CurvedNavigationBarItem(
-    //   label: 'Cửa hàng',
-    //   urlSelect: '',
-    //   urlUnselect: '',
-    //   index: PageType.PERSON.pageIndex,
-    //   child: Consumer<AuthProvider>(builder: (context, provider, _) {
-    //     String imgId = SharePrefUtils.getProfile().imgId;
-    //     return Container(
-    //       width: 28,
-    //       height: 28,
-    //       padding: EdgeInsets.all(1),
-    //       decoration: provider.pageSelected == PageType.PERSON.pageIndex
-    //           ? BoxDecoration(
-    //               border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
-    //               borderRadius: BorderRadius.circular(28),
-    //               color: Colors.white,
-    //             )
-    //           : BoxDecoration(),
-    //       child: Container(
-    //         decoration: BoxDecoration(
-    //           shape: BoxShape.circle,
-    //           image: DecorationImage(
-    //             fit: BoxFit.cover,
-    //             image: provider.avatarUser.path.isEmpty
-    //                 ? (imgId.isNotEmpty
-    //                     ? ImageUtils.instance.getImageNetWork(imgId)
-    //                     : Image.asset('assets/images/ic-avatar.png').image)
-    //                 : Image.file(provider.avatarUser).image,
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   }),
-    // ),
-  ];
+  // List<CurvedNavigationBarItem> _listNavigation = [
+  //   CurvedNavigationBarItem(
+  //     label: 'Tài khoản',
+  //     urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
+  //     urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
+  //     index: PageType.ACCOUNT.pageIndex,
+  //   ),
+  //   CurvedNavigationBarItem(
+  //     label: 'Trang chủ',
+  //     urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
+  //     urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
+  //     index: PageType.HOME.pageIndex,
+  //   ),
+  //   CurvedNavigationBarItem(
+  //     label: 'Quét QR',
+  //     urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
+  //     urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
+  //     index: PageType.SCAN_QR.pageIndex,
+  //   ),
+  //   CurvedNavigationBarItem(
+  //     label: 'Ví QR',
+  //     urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
+  //     urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
+  //     index: PageType.CARD_QR.pageIndex,
+  //   ),
+  //   CurvedNavigationBarItem(
+  //     label: 'Cửa hàng',
+  //     urlSelect: 'assets/images/ic-store-bottom-bar-blue.png',
+  //     urlUnselect: 'assets/images/ic-store-bottom-bar-grey.png',
+  //     index: PageType.STORE.pageIndex,
+  //   ),
+  //   // CurvedNavigationBarItem(
+  //   //   label: 'Cửa hàng',
+  //   //   urlSelect: '',
+  //   //   urlUnselect: '',
+  //   //   index: PageType.PERSON.pageIndex,
+  //   //   child: Consumer<AuthProvider>(builder: (context, provider, _) {
+  //   //     String imgId = SharePrefUtils.getProfile().imgId;
+  //   //     return Container(
+  //   //       width: 28,
+  //   //       height: 28,
+  //   //       padding: EdgeInsets.all(1),
+  //   //       decoration: provider.pageSelected == PageType.PERSON.pageIndex
+  //   //           ? BoxDecoration(
+  //   //               border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
+  //   //               borderRadius: BorderRadius.circular(28),
+  //   //               color: Colors.white,
+  //   //             )
+  //   //           : BoxDecoration(),
+  //   //       child: Container(
+  //   //         decoration: BoxDecoration(
+  //   //           shape: BoxShape.circle,
+  //   //           image: DecorationImage(
+  //   //             fit: BoxFit.cover,
+  //   //             image: provider.avatarUser.path.isEmpty
+  //   //                 ? (imgId.isNotEmpty
+  //   //                     ? ImageUtils.instance.getImageNetWork(imgId)
+  //   //                     : Image.asset('assets/images/ic-avatar.png').image)
+  //   //                 : Image.file(provider.avatarUser).image,
+  //   //           ),
+  //   //         ),
+  //   //       ),
+  //   //     );
+  //   //   }),
+  //   // ),
+  // ];
 
   StreamSubscription? _subscription;
   StreamSubscription? _subReloadWallet;
@@ -292,7 +296,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     top: provider.pageSelected == 2 ? 0 : kToolbarHeight * 2),
                 child: PageView(
                   key: const PageStorageKey('PAGE_VIEW'),
-                  physics: const AlwaysScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   controller: _pageController,
                   onPageChanged: (index) async {
                     // if (index != PageType.STORE.pageIndex) {
@@ -305,39 +309,39 @@ class _DashBoardScreen extends State<DashBoardScreen>
               ),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
-              // Positioned(
-              //     bottom: 0,
-              //     right: 0,
-              //     left: 0,
-              //     child: Consumer<AuthProvider>(
-              //       builder: (context, page, _) {
-              //         return getBottomBar(
-              //           page.pageSelected,
-              //           onTap: (index) {
-              //             onTapPage(index);
-              //             page.updateIndex(index,
-              //                 isOnTap: true, isHome: index == 2 ? true : false);
-              //           },
-              //         );
-              //       },
-              //     ))
+              Positioned(
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Consumer<AuthProvider>(
+                    builder: (context, page, _) {
+                      return getBottomBar(
+                        page.pageSelected,
+                        onTap: (index) {
+                          onTapPage(index);
+                          page.updateIndex(index,
+                              isOnTap: true, isHome: index == 2 ? true : false);
+                        },
+                      );
+                    },
+                  ))
             ],
           ),
-          bottomNavigationBar: Consumer<AuthProvider>(
-            builder: (context, page, _) {
-              return CurvedNavigationBar(
-                backgroundColor: AppColor.TRANSPARENT,
-                buttonBackgroundColor: AppColor.TRANSPARENT,
-                animationDuration: const Duration(milliseconds: 300),
-                indexPage: page.pageSelected,
-                indexPaint: 0,
-                iconPadding: 0.0,
-                onTap: onTapPage,
-                items: _listNavigation,
-                stream: bottomBarStream,
-              );
-            },
-          ),
+          // bottomNavigationBar: Consumer<AuthProvider>(
+          //   builder: (context, page, _) {
+          //     return CurvedNavigationBar(
+          //       backgroundColor: AppColor.TRANSPARENT,
+          //       buttonBackgroundColor: AppColor.TRANSPARENT,
+          //       animationDuration: const Duration(milliseconds: 300),
+          //       indexPage: page.pageSelected,
+          //       indexPaint: 0,
+          //       iconPadding: 0.0,
+          //       onTap: onTapPage,
+          //       items: _listNavigation,
+          //       stream: bottomBarStream,
+          //     );
+          //   },
+          // ),
         );
       }),
     );
@@ -765,33 +769,33 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
 
   Widget getBottomBar(int pageSelected, {required Function(int) onTap}) {
     return Container(
-      height: 70,
+      height: 72,
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(30, 0, 30, 16),
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
       decoration: BoxDecoration(
         color: AppColor.WHITE,
-        borderRadius: BorderRadius.circular(10),
-        gradient: VietQRTheme.gradientColor.brightBlueLinear,
-        // boxShadow: [
-        //   BoxShadow(
-        //       color: AppColor.BLACK.withOpacity(0.1),
-        //       blurRadius: 4,
-        //       spreadRadius: 1,
-        //       offset: const Offset(0, 2)),
-        //   BoxShadow(
-        //       color: AppColor.BLACK.withOpacity(0.1),
-        //       blurRadius: 4,
-        //       spreadRadius: 1,
-        //       offset: const Offset(0, -1))
-        // ],
+        borderRadius: BorderRadius.circular(50),
+        // gradient: VietQRTheme.gradientColor.brightBlueLinear,
+        boxShadow: [
+          BoxShadow(
+              color: AppColor.BLACK.withOpacity(0.2),
+              blurRadius: 8,
+              spreadRadius: 1,
+              offset: const Offset(0, 4)),
+          // BoxShadow(
+          //     color: AppColor.BLACK.withOpacity(0.1),
+          //     blurRadius: 4,
+          //     spreadRadius: 1,
+          //     offset: const Offset(0, -1))
+        ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(
             barItems.length,
             (index) => BottomBarItem(
-                  barItems[index]["name"],
                   index,
                   barItems[index]["active_icon"],
                   barItems[index]["icon"],
@@ -830,32 +834,14 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   }
 
 //navigate to page
-  // void _animatedToPage(int index) {
-  //   try {
-  //     if (index < 3) {
-  //       _pageController.jumpToPage(index);
-  //     } else {
-  //       _pageController.jumpToPage(index - 1);
-  //     }
-
-  //     if (index.pageType == PageType.CARD_QR) {
-  //       eventBus.fire(CheckSyncContact());
-  //     }
-  //   } catch (e) {
-  //     _pageController = PageController(
-  //       initialPage: _provider.pageSelected,
-  //       keepPage: true,
-  //     );
-  //     _animatedToPage(index);
-  //     if (index.pageType == PageType.CARD_QR) {
-  //       eventBus.fire(CheckSyncContact());
-  //     }
-  //   }
-  // }
-
   void _animatedToPage(int index) {
     try {
-      _pageController.jumpToPage(index);
+      if (index < 3) {
+        _pageController.jumpToPage(index);
+      } else {
+        _pageController.jumpToPage(index - 1);
+      }
+
       if (index.pageType == PageType.CARD_QR) {
         eventBus.fire(CheckSyncContact());
       }
@@ -870,6 +856,24 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       }
     }
   }
+
+  // void _animatedToPage(int index) {
+  //   try {
+  //     _pageController.jumpToPage(index);
+  //     if (index.pageType == PageType.CARD_QR) {
+  //       eventBus.fire(CheckSyncContact());
+  //     }
+  //   } catch (e) {
+  //     _pageController = PageController(
+  //       initialPage: _provider.pageSelected,
+  //       keepPage: true,
+  //     );
+  //     _animatedToPage(index);
+  //     if (index.pageType == PageType.CARD_QR) {
+  //       eventBus.fire(CheckSyncContact());
+  //     }
+  //   }
+  // }
 
   @override
   bool get wantKeepAlive => true;
