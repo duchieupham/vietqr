@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 
 class EmailEvent extends Equatable {
   const EmailEvent();
@@ -10,6 +11,23 @@ class EmailEvent extends Equatable {
 class SendOTPEvent extends EmailEvent {
   final Map<String, dynamic> param;
   const SendOTPEvent({required this.param});
+
+  @override
+  List<Object?> get props => [param];
+}
+
+class ConfirmOTPEvent extends EmailEvent {
+  final Map<String, dynamic> param;
+  const ConfirmOTPEvent({required this.param});
+
+  @override
+  List<Object?> get props => [param];
+}
+
+class GetKeyFreeEvent extends EmailEvent {
+  final Map<String, dynamic> param;
+  final BankAccountDTO dto;
+  const GetKeyFreeEvent({required this.param, required this.dto});
 
   @override
   List<Object?> get props => [param];
