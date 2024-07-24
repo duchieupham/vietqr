@@ -93,8 +93,9 @@ class _KeyActiveFreeScreenState extends State<KeyActiveFreeScreen> {
           ),
           bottomNavigationBar: InkWell(
             onTap: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              // Navigator.of(context).pop();
+              // Navigator.of(context).pop();
             },
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),

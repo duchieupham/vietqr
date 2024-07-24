@@ -171,7 +171,7 @@ class _UserInfoViewState extends State<UserInfoView> {
         //   },
         // ),
         appBar: AppBar(
-          leadingWidth: appbarNotifier.value ? 500 : 120,
+          leadingWidth: appbarNotifier.value ? 400 : 120,
           elevation: 0,
           backgroundColor: Colors.white,
           forceMaterialTransparency: true,
@@ -195,16 +195,24 @@ class _UserInfoViewState extends State<UserInfoView> {
                             Navigator.of(context).pop();
                           },
                           child: const Text('Trở về'))
-                      : Row(
-                          children: [
-                            _buildAvatarWidget(context, 40),
-                            const SizedBox(width: 8),
-                            Text(
-                              SharePrefUtils.getProfile().fullName,
-                              style: const TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                      : Container(
+                          width: 200,
+                          child: Row(
+                            children: [
+                              _buildAvatarWidget(context, 40),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  SharePrefUtils.getProfile().fullName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ],
+                          ),
                         );
                 },
               ),

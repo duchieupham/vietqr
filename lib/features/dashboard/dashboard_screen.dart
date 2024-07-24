@@ -319,6 +319,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                       return getBottomBar(
                         page.pageSelected,
                         onTap: (index) {
+                          SharePrefUtils.getProfile();
                           onTapPage(index);
                           page.updateIndex(index,
                               isOnTap: true, isHome: index == 2 ? true : false);
