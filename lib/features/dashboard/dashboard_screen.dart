@@ -290,10 +290,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
           resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
-              if (provider.pageSelected != 2) const BackgroundAppBarHome(),
+              if (provider.pageSelected != 3) const BackgroundAppBarHome(),
               Container(
                 padding: EdgeInsets.only(
-                    top: provider.pageSelected == 2 ? 0 : kToolbarHeight * 2),
+                    top: provider.pageSelected == 3 ? 0 : kToolbarHeight * 2),
                 child: PageView(
                   key: const PageStorageKey('PAGE_VIEW'),
                   physics: const NeverScrollableScrollPhysics(),

@@ -16,7 +16,10 @@ import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_detail/page/statistical_page.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
+import 'package:vierqr/features/bank_detail_new/events/transaction_event.dart';
 import 'package:vierqr/features/bank_detail_new/views/detail_bank_card_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
@@ -64,7 +67,14 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
         () {
           scrollToTopNotifier.value =
               scrollController.hasClients && scrollController.offset > 200;
-          isScrollNotifier.value = scrollController.offset == 0.0;
+          isScrollNotifier.value = scrollController.offset <= 0.0;
+          if (scrollController.position.pixels ==
+              scrollController.position.maxScrollExtent) {
+            getIt.get<NewTransactionBloc>().add(GetTransListEvent(
+                  isLoadMore: true,
+                  bankId: widget.bankId,
+                ));
+          }
         },
       );
   }
@@ -88,7 +98,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                 curve: Curves.easeInOut);
           },
           notifier: scrollToTopNotifier,
-          bottom: 55,
+          bottom: 70,
         ),
         body: Stack(
           fit: StackFit.expand,
@@ -110,6 +120,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                 ),
                 if (_selectedIndex == 0)
                   DetailBankCardScreen(
+                    dto: widget.dto,
                     selectedIndex: _selectedIndex,
                     onScroll: (boolValue) {
                       isScrollNotifier.value = boolValue;
@@ -127,7 +138,11 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                   BankTransactionsScreen(
                     bankId: widget.bankId,
                     scrollController: scrollController,
-                    isScroll: isScrollNotifier,
+                    isScrollNotifier: isScrollNotifier,
+                  )
+                else if (_selectedIndex == 2)
+                  Expanded(
+                    child: StatisticalScreen(bankId: widget.bankId),
                   )
               ],
             ),
@@ -179,7 +194,7 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
         textColor: Theme.of(context).hintColor,
         fontSize: 15,
       );
-      Navigator.pop(context);
+      // Navigator.pop(context);
     });
   }
 }

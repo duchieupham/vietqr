@@ -28,6 +28,7 @@ import 'package:vierqr/features/bank_detail_new/widgets/suggestion_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -40,6 +41,7 @@ import 'package:vierqr/services/providers/account_bank_detail_provider.dart';
 class DetailBankCardScreen extends StatefulWidget {
   final String bankId;
   final bool isLoading;
+  final BankAccountDTO dto;
 
   final int selectedIndex;
   final Function(int) onSelectTab;
@@ -52,6 +54,7 @@ class DetailBankCardScreen extends StatefulWidget {
     required this.selectedIndex,
     required this.onSelectTab,
     required this.onScroll,
+    required this.dto,
     this.isLoading = true,
     required this.globalKey,
   });
@@ -305,12 +308,12 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                   state.qrGeneratedDTO!.amount != '0') {
                 qrGeneratedDTO = state.qrGeneratedDTO!;
 
-                // QRDetailBank qrDetailBank = QRDetailBank(
-                //     money: qrGeneratedDTO.amount,
-                //     content: qrGeneratedDTO.content,
-                //     qrCode: qrGeneratedDTO.qrCode,
-                //     bankAccount: qrGeneratedDTO.bankAccount);
-                // AppDataHelper.instance.addListQRDetailBank(qrDetailBank);
+                QRDetailBank qrDetailBank = QRDetailBank(
+                    money: qrGeneratedDTO.amount,
+                    content: qrGeneratedDTO.content,
+                    qrCode: qrGeneratedDTO.qrCode,
+                    bankAccount: qrGeneratedDTO.bankAccount);
+                AppDataHelper.instance.addListQRDetailBank(qrDetailBank);
               }
             }
             if (state.request == BankDetailType.ERROR) {
@@ -401,7 +404,9 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                     ),
                                     const SizedBox(height: 20),
                                     // if(qrGeneratedDT)
-                                    const ServiceVietqrWidget(),
+                                    ServiceVietqrWidget(
+                                      bankDTto: widget.dto,
+                                    ),
                                     // const SizedBox(height: 20),
                                     // AnimationGraphWidget(
                                     //   scrollNotifer: isScrollToChart,

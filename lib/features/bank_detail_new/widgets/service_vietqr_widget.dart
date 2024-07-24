@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/format_date.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 
 class ServiceVietqrWidget extends StatefulWidget {
-  const ServiceVietqrWidget({super.key});
+  final BankAccountDTO bankDTto;
+  const ServiceVietqrWidget({super.key, required this.bankDTto});
 
   @override
   State<ServiceVietqrWidget> createState() => _ServiceVietqrWidgetState();
@@ -32,20 +35,20 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                 ],
               ),
               padding: const EdgeInsets.all(8),
-              child: const Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  XImage(
+                  const XImage(
                     imagePath: 'assets/images/ic-diamond.png',
                     width: 40,
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        GradientText(
+                        const GradientText(
                           'VietQR Plus',
                           style: TextStyle(fontSize: 12),
                           gradient: LinearGradient(colors: [
@@ -53,10 +56,10 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                             Color(0xFF0072FF),
                           ]),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
-                          'Kích hoạt đến 07/09/2026',
-                          style: TextStyle(
+                          'Kích hoạt đến ${timestampToDate(widget.bankDTto.validFeeTo!)}',
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 10,
                           ),

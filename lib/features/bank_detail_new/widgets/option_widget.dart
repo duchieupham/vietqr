@@ -9,14 +9,15 @@ import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 class OptionWidget extends StatefulWidget {
-  AccountBankDetailDTO dto;
+  final AccountBankDetailDTO dto;
   final BankCardBloc bloc;
   final String bankId;
-  OptionWidget(
+  const OptionWidget(
       {super.key, required this.dto, required this.bankId, required this.bloc});
 
   @override
@@ -25,6 +26,21 @@ class OptionWidget extends StatefulWidget {
 
 class _OptionWidgetState extends State<OptionWidget> {
   bool isLinked = false;
+
+  void _unLink() {
+    // Navigator.of(context).pop();
+    if (widget.dto.unLinkBIDV) {
+      Map<String, dynamic> body = {
+        'ewalletToken': widget.dto.ewalletToken,
+        'bankAccount': widget.dto.bankAccount,
+        'bankCode': widget.dto.bankCode,
+      };
+      widget.bloc.add(BankCardEventUnLink(body: body));
+    } else {
+      widget.bloc.add(
+          BankCardEventUnRequestOTP(accountNumber: widget.dto.bankAccount));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +70,14 @@ class _OptionWidgetState extends State<OptionWidget> {
                   'Tuỳ chọn',
                   style: TextStyle(fontSize: 20),
                 ),
-                if (!widget.dto.authenticated)
-                  const Text(
-                    'Chưa liên kết',
-                    style: TextStyle(fontSize: 12, color: AppColor.ORANGE),
-                  ),
+                Text(
+                  !widget.dto.authenticated ? 'Chưa liên kết' : 'Đã liên kết',
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: !widget.dto.authenticated
+                          ? AppColor.ORANGE
+                          : AppColor.GREEN),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -99,28 +118,27 @@ class _OptionWidgetState extends State<OptionWidget> {
                   dto: widget.dto,
                 ),
               );
-              print('Thông tin tài khoản ngân hàng');
             }),
             const MySeparator(
               color: AppColor.GREY_DADADA,
             ),
-            buildOptionRow(
-                'Tuỳ chỉnh giao diện mã VietQR', 'assets/images/ic-effect.png',
-                () {
-              print('Tuỳ chỉnh giao diện mã VietQR');
-            }),
+            buildOptionRow('Tuỳ chỉnh giao diện mã VietQR',
+                'assets/images/ic-effect.png', () {}),
             const MySeparator(
               color: AppColor.GREY_DADADA,
             ),
             buildOptionRow(
-                'Xoá tài khoản ngân hàng', 'assets/images/ic-remove-black.png',
-                () {
+                widget.dto.authenticated
+                    ? 'Huỷ liên kết tài khoản'
+                    : 'Xoá tài khoản ngân hàng',
+                'assets/images/ic-remove-black.png', () {
               if (widget.dto.authenticated) {
-                DialogWidget.instance.openMsgDialog(
-                  title: 'Không thể xoá TK',
-                  msg:
-                      'Vui lòng huỷ liên kết tài khoản ngân hàng trước khi xoá.',
-                );
+                _unLink();
+                // DialogWidget.instance.openMsgDialog(
+                //   title: 'Không thể xoá TK',
+                //   msg:
+                //       'Vui lòng huỷ liên kết tài khoản ngân hàng trước khi xoá.',
+                // );
               } else {
                 BankAccountRemoveDTO bankAccountRemoveDTO =
                     BankAccountRemoveDTO(

@@ -8,6 +8,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
@@ -48,6 +49,10 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.selectTab == 2) {
+      return const SizedBox.shrink();
+    }
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -181,42 +186,62 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
                                 ),
                               ],
                             ),
-                            RichText(
-                                text: TextSpan(
-                              text: '+ ${StringUtils.formatMoney('1235000')} ',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColor.GREEN,
-                                  fontWeight: FontWeight.bold),
-                              children: const [
-                                TextSpan(
-                                  text: 'VND',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColor.GREY_TEXT,
-                                      fontWeight: FontWeight.normal),
-                                  children: [],
-                                )
-                              ],
-                            )),
-                            RichText(
-                                text: TextSpan(
-                              text: '- ${StringUtils.formatMoney('1235000')} ',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColor.RED_TEXT,
-                                  fontWeight: FontWeight.bold),
-                              children: const [
-                                TextSpan(
-                                  text: 'VND',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColor.GREY_TEXT,
-                                      fontWeight: FontWeight.normal),
-                                  children: [],
-                                )
-                              ],
-                            )),
+                            if (state.status == BlocStatus.SUCCESS ||
+                                state.extraData != null)
+                              RichText(
+                                  text: TextSpan(
+                                text: state.extraData!.totalCredit == 0
+                                    ? '0 '
+                                    : '+ ${StringUtils.formatNumber(state.extraData!.totalCredit)} ',
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppColor.GREEN,
+                                    fontWeight: FontWeight.bold),
+                                children: const [
+                                  TextSpan(
+                                    text: 'VND',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: AppColor.GREY_TEXT,
+                                        fontWeight: FontWeight.normal),
+                                    children: [],
+                                  )
+                                ],
+                              ))
+                            else if (state.status == BlocStatus.LOADING)
+                              const ShimmerBlock(
+                                height: 12,
+                                width: 70,
+                                borderRadius: 10,
+                              ),
+                            if (state.status == BlocStatus.SUCCESS ||
+                                state.extraData != null)
+                              RichText(
+                                  text: TextSpan(
+                                text: state.extraData!.totalDebit == 0
+                                    ? '0 '
+                                    : '- ${StringUtils.formatNumber(state.extraData!.totalDebit)} ',
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    color: AppColor.RED_TEXT,
+                                    fontWeight: FontWeight.bold),
+                                children: const [
+                                  TextSpan(
+                                    text: 'VND',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: AppColor.GREY_TEXT,
+                                        fontWeight: FontWeight.normal),
+                                    children: [],
+                                  )
+                                ],
+                              ))
+                            else if (state.status == BlocStatus.LOADING)
+                              const ShimmerBlock(
+                                height: 12,
+                                width: 70,
+                                borderRadius: 10,
+                              ),
                           ],
                         );
                       },

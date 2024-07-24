@@ -59,7 +59,7 @@ class VietQRButton extends StatelessWidget {
     this.borderRadius,
     this.size = VietQRButtonSize.medium,
     this.onHover,
-    required this.isDisabled,
+    this.isDisabled = false,
   }) : type = VietQRButtonType.suggest;
 
   const VietQRButton.solid({
@@ -131,7 +131,7 @@ class VietQRButton extends StatelessWidget {
                         ? 40
                         : 30),
             margin: margin,
-            padding: padding ?? const EdgeInsets.fromLTRB(16, 0, 22, 0),
+            padding: padding ?? const EdgeInsets.fromLTRB(12, 0, 22, 0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(50),
                 gradient: const LinearGradient(colors: [

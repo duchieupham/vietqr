@@ -82,7 +82,7 @@ class CardWidget extends StatelessWidget {
                   builder: (context) =>
                       BankCardDetailNewScreen(dto: e, bankId: e.id),
                   settings: const RouteSettings(
-                    name: Routes.BANK_CARD_DETAIL_VEW,
+                    name: Routes.BANK_CARD_DETAIL_NEW,
                   ),
                 ),
               );

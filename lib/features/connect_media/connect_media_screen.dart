@@ -391,6 +391,9 @@ class __ScreenState extends State<_Screen> {
               if (_textEditingController.text != '' &&
                   _provider.isValidWebhook == true) {
                 _provider.setUnFocusNode();
+                // _pageController.nextPage(
+                //     duration: const Duration(milliseconds: 200),
+                //     curve: Curves.easeInOut);
                 _bloc.add(CheckWebhookUrlEvent(
                     url: _textEditingController.text, type: typeConnect));
               }

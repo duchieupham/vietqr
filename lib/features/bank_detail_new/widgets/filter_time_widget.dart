@@ -24,29 +24,36 @@ class _FilterTransWidgetState extends State<FilterTransWidget> {
     FilterTrans(
         title: '7 ngày gần đây',
         type: 0,
-        fromDate: DateFormat('yyyy-MM-dd HH:mm:ss')
-            .format(DateTime.now().subtract(const Duration(days: 7))),
-        toDate: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
+        fromDate:
+            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 7)))} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
     FilterTrans(
         title: 'Hôm nay',
         type: 1,
-        fromDate: '',
-        toDate: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
+        fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
     FilterTrans(
         title: '3 tháng gần đây',
         type: 2,
-        fromDate: DateFormat('yyyy-MM-dd HH:mm:ss')
-            .format(DateTime.now().subtract(const Duration(days: 90))),
-        toDate: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())),
+        fromDate:
+            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 90)))} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
     FilterTrans(title: 'Tuỳ chọn', type: 3),
   ];
+
   List<FilterTrans> listTransType = [
     FilterTrans(title: 'Tất cả giao dịch', type: 9),
     FilterTrans(title: 'Giao dịch đến (+)', type: 0),
     FilterTrans(title: 'Giao dịch đi (-)', type: 1),
   ];
 
-  FilterTrans selectedFilter = FilterTrans(title: '7 ngày gần đây', type: 0);
+  FilterTrans selectedFilter = FilterTrans(
+      title: '7 ngày gần đây',
+      type: 0,
+      fromDate:
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 7)))} 00:00:00',
+      toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
+
   FilterTrans selectFilterTransType =
       FilterTrans(title: 'Tất cả giao dịch', type: 9);
 
