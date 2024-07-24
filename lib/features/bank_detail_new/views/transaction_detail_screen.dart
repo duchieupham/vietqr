@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
@@ -572,22 +574,22 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ),
                 )),
                 const SizedBox(width: 10),
-                // VietQRButton.solid(
-                //   borderRadius: 50,
-                //   onPressed: () {
-                //     _handleImage(isCamera: true);
-                //   },
-                //   isDisabled: false,
-                //   width: 40,
-                //   size: VietQRButtonSize.medium,
-                //   child: const XImage(
-                //     imagePath: 'assets/images/ic-dowload.png',
-                //     width: 30,
-                //     height: 30,
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
-                // const SizedBox(width: 10),
+                VietQRButton.solid(
+                  borderRadius: 50,
+                  onPressed: () {
+                    _downloadImage();
+                  },
+                  isDisabled: false,
+                  width: 40,
+                  size: VietQRButtonSize.medium,
+                  child: const XImage(
+                    imagePath: 'assets/images/ic-dowload.png',
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(width: 10),
                 VietQRButton.solid(
                   borderRadius: 50,
                   onPressed: () {
@@ -765,6 +767,33 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       LOG.error(e.toString());
     }
     return false;
+  }
+
+  Future<void> _downloadImage() async {
+    String url =
+        '${getIt.get<AppConfig>().getBaseUrl}images/${listImage.first.imgId}';
+    final http.Response response = await http.get(Uri.parse(url));
+    final dir = await getTemporaryDirectory();
+    // Create an image name
+    var filename = '${dir.path}/image.png';
+    // Save to filesystem
+    final file = File(filename);
+    await file.writeAsBytes(response.bodyBytes);
+    // // Ask the user to save it
+    final params = SaveFileDialogParams(sourceFilePath: file.path);
+    final finalPath = await FlutterFileDialog.saveFile(params: params);
+    print(finalPath);
+    // var imageId = await ImageDownloader.downloadImage(
+    //     "${getIt.get<AppConfig>().getBaseUrl}images/${result.first.imgId}");
+    // if (imageId == null) {
+    //   return;
+    // }
+
+    // // Below is a method of obtaining saved image information.
+    // var fileName = await ImageDownloader.findName(imageId);
+    // var path = await ImageDownloader.findPath(imageId);
+    // var size = await ImageDownloader.findByteSize(imageId);
+    // var mimeType = await ImageDownloader.findMimeType(imageId);
   }
 
   Future<List<ImageDTO>> getImages(String id) async {
