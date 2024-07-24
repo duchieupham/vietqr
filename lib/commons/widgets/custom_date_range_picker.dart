@@ -136,7 +136,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 child: Text(
                   _endDate != null
                       ? _endDate!.toLocal().toIso8601String().substring(0, 10)
-                      : 'Ngày bắt đầu',
+                      : 'Ngày kết thúc',
                   style: const TextStyle(fontSize: 16, color: AppColor.WHITE),
                 ),
               ),

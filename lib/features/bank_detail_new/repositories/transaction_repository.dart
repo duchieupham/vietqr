@@ -158,18 +158,7 @@ class TransactionRepository extends BaseRepo {
     return result;
   }
 
-  Future<QRGeneratedDTO> regenerateQR(QRRecreateDTO dto) async {
-    QRGeneratedDTO result = QRGeneratedDTO(
-      bankId: '',
-      bankCode: '',
-      bankName: '',
-      bankAccount: '',
-      userBankName: '',
-      amount: '',
-      content: '',
-      qrCode: '',
-      imgId: '',
-    );
+  Future<QRGeneratedDTO?> regenerateQR(QRRecreateDTO dto) async {
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}qr/re-generate';
       final response = await BaseAPIClient.postAPI(
@@ -179,12 +168,13 @@ class TransactionRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = QRGeneratedDTO.fromJson(data);
+        QRGeneratedDTO result = QRGeneratedDTO.fromJson(data);
         result.setBankId(dto.bankId);
+        return result;
       }
     } catch (e) {
       LOG.error(e.toString());
     }
-    return result;
+    return null;
   }
 }

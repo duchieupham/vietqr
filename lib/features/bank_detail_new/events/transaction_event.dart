@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 
 class TransactionEvent extends Equatable {
   @override
@@ -52,13 +53,23 @@ class GetTransAmount extends TransactionEvent {
       ];
 }
 
-class GetTransDetailEvent extends TransactionEvent {
-  final String id;
+class RegenerateQREvent extends TransactionEvent {
+  final QRRecreateDTO qrDto;
 
-  GetTransDetailEvent({required this.id});
+  RegenerateQREvent({required this.qrDto});
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [qrDto];
+}
+
+class GetTransDetailEvent extends TransactionEvent {
+  final String id;
+  final bool isLoading;
+
+  GetTransDetailEvent({required this.id, required this.isLoading});
+
+  @override
+  List<Object?> get props => [id, isLoading];
 }
 
 class GetTransLOGEvent extends TransactionEvent {

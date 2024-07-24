@@ -15,6 +15,9 @@ class TransactionItemDTO {
   String bankAccount;
   String userBankName;
   String bankCode;
+  String terminalCode;
+  String qrLink;
+
   String bankName;
   String imgId;
   String bankShortName;
@@ -35,6 +38,8 @@ class TransactionItemDTO {
     required this.userBankName,
     required this.bankCode,
     required this.bankName,
+    required this.terminalCode,
+    required this.qrLink,
     required this.imgId,
     required this.bankShortName,
   });
@@ -56,6 +61,8 @@ class TransactionItemDTO {
       userBankName: json['userBankName'],
       bankCode: json['bankCode'],
       bankName: json['bankName'],
+      terminalCode: json['terminalCode'],
+      qrLink: json['qrLink'],
       imgId: json['imgId'],
       bankShortName: json['bankShortName'],
     );
@@ -104,6 +111,7 @@ class TransactionItemDetailDTO {
   String note;
   String orderId;
   String bankShortName;
+  String qrLink;
   String serviceCode;
   String hashTag;
   String qrCode;
@@ -127,6 +135,7 @@ class TransactionItemDetailDTO {
     required this.terminalCode,
     required this.note,
     required this.orderId,
+    required this.qrLink,
     required this.bankShortName,
     required this.serviceCode,
     required this.hashTag,
@@ -151,6 +160,7 @@ class TransactionItemDetailDTO {
       imgId: json['imgId'],
       referenceNumber: json['referenceNumber'],
       terminalCode: json['terminalCode'],
+      qrLink: json['qrLink'],
       note: json['note'],
       orderId: json['orderId'],
       bankShortName: json['bankShortName'],

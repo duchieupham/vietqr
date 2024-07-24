@@ -149,6 +149,9 @@ class _FilterTransWidgetState extends State<FilterTransWidget> {
                             },
                             onTap: () {
                               if (widget.isFilerTime) {
+                                if (item.type == 3) {
+                                  Navigator.of(context).pop(item);
+                                }
                                 setState(() {
                                   selectedFilter = item;
                                 });

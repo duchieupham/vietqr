@@ -8,18 +8,26 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/custom_date_range_picker.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
+import 'package:vierqr/features/bank_detail_new/repositories/transaction_repository.dart';
 import 'package:vierqr/features/bank_detail_new/views/transaction_detail_screen.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/loading_item.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../events/transaction_event.dart';
 import '../states/transaction_state.dart';
@@ -30,12 +38,14 @@ class BankTransactionsScreen extends StatefulWidget {
   final ValueNotifier<bool> isScrollNotifier;
   final ScrollController scrollController;
   final String bankId;
+  final BankAccountDTO dto;
 
   const BankTransactionsScreen({
     super.key,
     required this.isScrollNotifier,
     required this.scrollController,
     required this.bankId,
+    required this.dto,
   });
 
   @override
@@ -45,6 +55,7 @@ class BankTransactionsScreen extends StatefulWidget {
 class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
   final TextEditingController _textController = TextEditingController();
   final NewTransactionBloc _bloc = getIt.get<NewTransactionBloc>();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   void initData() async {
     _bloc.add(SetTransType(type: selectFilterTransType.type));
@@ -213,6 +224,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
             groupsAlphabet[firstChar]!.add(item);
           }
         }
+
         if (state.request == NewTranstype.GET_MORE &&
             state.status == BlocStatus.SUCCESS) {
           listTrans = [...listTrans, ...state.transItem!];
@@ -230,96 +242,137 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
             }
           }
         }
+        // if (state.requestDetail == TransDetail.REGENERATE_QR &&
+        //     state.status == BlocStatus.SUCCESS) {
+        //   NavigatorUtils.navigatePage(
+        //       context, CreateQrScreen(qrDto: state.generateQr, page: 1),
+        //       routeName: CreateQrScreen.routeName);
+        // }
       },
       builder: (context, state) {
-        return Expanded(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              return await onRefresh().then(
-                (value) {
-                  if (widget.scrollController.hasClients) {
-                    widget.scrollController.jumpTo(0.0);
-                  }
-                },
-              );
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                color: AppColor.WHITE,
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFE1EFFF),
-                    Color(0xFFE5F9FF),
-                  ],
-                  end: Alignment.centerRight,
-                  begin: Alignment.centerLeft,
-                ),
+        return RefreshIndicator(
+          onRefresh: () async {
+            return await onRefresh().then(
+              (value) {
+                if (widget.scrollController.hasClients) {
+                  widget.scrollController.jumpTo(0.0);
+                }
+              },
+            );
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColor.WHITE,
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFE1EFFF),
+                  Color(0xFFE5F9FF),
+                ],
+                end: Alignment.centerRight,
+                begin: Alignment.centerLeft,
               ),
-              child: Column(
-                children: [
-                  ValueListenableBuilder<bool>(
-                    valueListenable: widget.isScrollNotifier,
-                    builder: (context, value, child) {
-                      return Container(
-                        width: double.infinity,
-                        height: 140,
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
-                        decoration: BoxDecoration(
-                          color: AppColor.WHITE,
-                          gradient: value
-                              ? const LinearGradient(
-                                  colors: [
-                                    Color(0xFFE1EFFF),
-                                    Color(0xFFE5F9FF),
-                                  ],
-                                  end: Alignment.centerRight,
-                                  begin: Alignment.centerLeft,
-                                )
-                              : null,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: MTextFieldCustom(
-                                      controller: _textController,
-                                      fillColor: AppColor.TRANSPARENT,
-                                      contentPadding: EdgeInsets.zero,
-                                      enable: true,
-                                      focusBorder: const UnderlineInputBorder(
-                                          borderSide: BorderSide(
-                                              color: AppColor.BLUE_TEXT)),
-                                      hintText: 'Tìm kiếm giao dịch',
-                                      keyboardAction: TextInputAction.next,
-                                      onSubmitted: (value) {
-                                        _bloc.add(GetTransListEvent(
-                                            bankId: widget.bankId,
-                                            offset: 0,
-                                            type: selectFilterTransType.type,
-                                            value: _textController.text));
-                                      },
-                                      onChange: (value) {
-                                        _bloc.add(SetTransValue(value: value));
-                                      },
-                                      inputType: TextInputType.text,
-                                      isObscureText: false),
+            ),
+            child: Column(
+              children: [
+                ValueListenableBuilder<bool>(
+                  valueListenable: widget.isScrollNotifier,
+                  builder: (context, value, child) {
+                    return Container(
+                      width: double.infinity,
+                      height: 140,
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+                      decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        gradient: value
+                            ? const LinearGradient(
+                                colors: [
+                                  Color(0xFFE1EFFF),
+                                  Color(0xFFE5F9FF),
+                                ],
+                                end: Alignment.centerRight,
+                                begin: Alignment.centerLeft,
+                              )
+                            : null,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: MTextFieldCustom(
+                                    controller: _textController,
+                                    fillColor: AppColor.TRANSPARENT,
+                                    contentPadding: EdgeInsets.zero,
+                                    enable: true,
+                                    focusBorder: const UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: AppColor.BLUE_TEXT)),
+                                    hintText: 'Tìm kiếm giao dịch',
+                                    keyboardAction: TextInputAction.next,
+                                    onSubmitted: (value) {
+                                      _bloc.add(GetTransListEvent(
+                                          bankId: widget.bankId,
+                                          offset: 0,
+                                          type: selectFilterTransType.type,
+                                          value: _textController.text));
+                                    },
+                                    onChange: (value) {
+                                      _bloc.add(SetTransValue(value: value));
+                                    },
+                                    inputType: TextInputType.text,
+                                    isObscureText: false),
+                              ),
+                              const SizedBox(width: 10),
+                              InkWell(
+                                onTap: () {
+                                  _bloc.add(GetTransListEvent(
+                                      bankId: widget.bankId,
+                                      offset: 0,
+                                      type: selectFilterTransType.type,
+                                      value: _textController.text));
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(100),
+                                    gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFE1EFFF),
+                                          Color(0xFFE5F9FF)
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight),
+                                  ),
+                                  child: const XImage(
+                                      imagePath:
+                                          'assets/images/ic-search-black.png'),
                                 ),
-                                const SizedBox(width: 10),
-                                InkWell(
-                                  onTap: () {
-                                    _bloc.add(GetTransListEvent(
-                                        bankId: widget.bankId,
-                                        offset: 0,
-                                        type: selectFilterTransType.type,
-                                        value: _textController.text));
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    height: 40,
-                                    width: 40,
-                                    decoration: BoxDecoration(
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  DialogWidget.instance.showModelBottomSheet(
+                                      borderRadius: BorderRadius.circular(20),
+                                      margin: const EdgeInsets.only(bottom: 20),
+                                      width: MediaQuery.of(context).size.width -
+                                          20,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20, horizontal: 20),
+                                      height: 440,
+                                      widget: const TransInfoWidget());
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  height: 30,
+                                  width: 30,
+                                  decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(100),
                                       gradient: const LinearGradient(
                                           colors: [
@@ -328,289 +381,241 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                           ],
                                           begin: Alignment.centerLeft,
                                           end: Alignment.centerRight),
-                                    ),
-                                    child: const XImage(
-                                        imagePath:
-                                            'assets/images/ic-search-black.png'),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              AppColor.BLACK.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          spreadRadius: 1,
+                                          offset: const Offset(1, 0),
+                                        )
+                                      ]),
+                                  child: const XImage(
+                                      imagePath:
+                                          'assets/images/ic-i-black.png'),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              InkWell(
+                                onTap: () {
+                                  getFilterTransType().then(
+                                    (value) {
+                                      _bloc.add(GetTransListEvent(
+                                          bankId: widget.bankId,
+                                          offset: 0,
+                                          type: value.type));
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 4),
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      color: AppColor.WHITE,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              AppColor.BLACK.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          spreadRadius: 1,
+                                          offset: const Offset(0, 1),
+                                        )
+                                      ]),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        transType,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.BLACK),
+                                      ),
+                                      const Icon(
+                                        Icons.keyboard_arrow_down_outlined,
+                                        size: 16,
+                                        color: AppColor.BLACK,
+                                      )
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
+                              const SizedBox(width: 10),
+                              InkWell(
+                                onTap: () {
+                                  getFilterTime().then(
+                                    (value) {
+                                      _bloc.add(GetTransListEvent(
+                                          bankId: widget.bankId,
+                                          offset: 0,
+                                          type: selectFilterTransType.type));
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 4),
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      color: AppColor.WHITE,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              AppColor.BLACK.withOpacity(0.1),
+                                          blurRadius: 10,
+                                          spreadRadius: 1,
+                                          offset: const Offset(0, 1),
+                                        )
+                                      ]),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        timeFilter,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.BLACK),
+                                      ),
+                                      const Icon(
+                                        Icons.keyboard_arrow_down_outlined,
+                                        size: 16,
+                                        color: AppColor.BLACK,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return ValueListenableBuilder<bool>(
+                        valueListenable: widget.isScrollNotifier,
+                        builder: (context, value, child) {
+                          return Container(
+                            width: double.infinity,
+                            height: constraints.maxHeight,
+                            padding:
+                                EdgeInsets.fromLTRB(20, !value ? 0 : 20, 20, 0),
+                            decoration: BoxDecoration(
+                              borderRadius: !value
+                                  ? BorderRadius.circular(0)
+                                  : const BorderRadius.only(
+                                      topLeft: Radius.circular(30),
+                                      topRight: Radius.circular(30),
+                                    ),
+                              color: AppColor.WHITE.withOpacity(0.6),
                             ),
-                            const SizedBox(height: 20),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    DialogWidget.instance.showModelBottomSheet(
-                                        borderRadius: BorderRadius.circular(20),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 20),
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                20,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 20, horizontal: 20),
-                                        height: 440,
-                                        widget: const TransInfoWidget());
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    height: 30,
-                                    width: 30,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        gradient: const LinearGradient(
-                                            colors: [
-                                              Color(0xFFE1EFFF),
-                                              Color(0xFFE5F9FF)
+                            child: (state.status == BlocStatus.SUCCESS &&
+                                        state.request ==
+                                            NewTranstype.GET_TRANS_LIST) ||
+                                    ((state.status == BlocStatus.SUCCESS ||
+                                            state.status ==
+                                                BlocStatus.LOAD_MORE) &&
+                                        state.request == NewTranstype.GET_MORE)
+                                ? ListView(
+                                    padding: EdgeInsets.zero,
+                                    controller: widget.scrollController,
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    children: [
+                                      ...groupsAlphabet.entries.map(
+                                        (e) {
+                                          return Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                e.key,
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              ...e.value.map(
+                                                (item) {
+                                                  return _buildItem(item);
+                                                },
+                                              )
                                             ],
-                                            begin: Alignment.centerLeft,
-                                            end: Alignment.centerRight),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                AppColor.BLACK.withOpacity(0.1),
-                                            blurRadius: 10,
-                                            spreadRadius: 1,
-                                            offset: const Offset(1, 0),
-                                          )
-                                        ]),
-                                    child: const XImage(
-                                        imagePath:
-                                            'assets/images/ic-i-black.png'),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                InkWell(
-                                  onTap: () {
-                                    getFilterTransType().then(
-                                      (value) {
-                                        _bloc.add(GetTransListEvent(
-                                            bankId: widget.bankId,
-                                            offset: 0,
-                                            type: value.type));
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 4),
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        color: AppColor.WHITE,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                AppColor.BLACK.withOpacity(0.1),
-                                            blurRadius: 10,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 1),
-                                          )
-                                        ]),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
+                                          );
+                                        },
+                                      ),
+                                      if (state.request ==
+                                              NewTranstype.GET_MORE &&
+                                          state.status == BlocStatus.LOAD_MORE)
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 20, horizontal: 20),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      const SizedBox(height: 150)
+                                    ],
+                                  )
+                                : Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        state.status == BlocStatus.LOADING
+                                            ? MainAxisAlignment.start
+                                            : MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        state.status == BlocStatus.LOADING
+                                            ? CrossAxisAlignment.start
+                                            : CrossAxisAlignment.center,
+                                    children: [
+                                      if (state.request ==
+                                              NewTranstype.GET_TRANS_LIST &&
+                                          state.status == BlocStatus.LOADING)
+                                        const BuildLoading()
+                                      else if (state.request ==
+                                              NewTranstype.GET_TRANS_LIST &&
+                                          state.status == BlocStatus.NONE) ...[
+                                        XImage(
+                                          imagePath: _textController
+                                                  .text.isEmpty
+                                              ? 'assets/images/ic-empty-transaction.png'
+                                              : "assets/images/ic-trans-purple.png",
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
                                         Text(
-                                          transType,
+                                          textAlign: TextAlign.center,
+                                          _textController.text.isEmpty
+                                              ? 'Không tìm thấy thông tin giao dịch.\nVui lòng kiểm tra lại thông tin tìm kiếm của bạn.'
+                                              : 'Bạn chưa có giao dịch nào gần đây.',
                                           style: const TextStyle(
                                               fontSize: 12,
-                                              color: AppColor.BLACK),
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColor.GREY_TEXT),
                                         ),
-                                        const Icon(
-                                          Icons.keyboard_arrow_down_outlined,
-                                          size: 16,
-                                          color: AppColor.BLACK,
-                                        )
-                                      ],
-                                    ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.3),
+                                      ]
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                InkWell(
-                                  onTap: () {
-                                    getFilterTime().then(
-                                      (value) {
-                                        _bloc.add(GetTransListEvent(
-                                            bankId: widget.bankId,
-                                            offset: 0,
-                                            type: selectFilterTransType.type));
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 4),
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        color: AppColor.WHITE,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                AppColor.BLACK.withOpacity(0.1),
-                                            blurRadius: 10,
-                                            spreadRadius: 1,
-                                            offset: const Offset(0, 1),
-                                          )
-                                        ]),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          timeFilter,
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              color: AppColor.BLACK),
-                                        ),
-                                        const Icon(
-                                          Icons.keyboard_arrow_down_outlined,
-                                          size: 16,
-                                          color: AppColor.BLACK,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                          );
+                        },
                       );
                     },
                   ),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return ValueListenableBuilder<bool>(
-                          valueListenable: widget.isScrollNotifier,
-                          builder: (context, value, child) {
-                            return Container(
-                              width: double.infinity,
-                              height: constraints.maxHeight,
-                              padding: EdgeInsets.fromLTRB(
-                                  20, !value ? 0 : 20, 20, 0),
-                              decoration: BoxDecoration(
-                                borderRadius: !value
-                                    ? BorderRadius.circular(0)
-                                    : const BorderRadius.only(
-                                        topLeft: Radius.circular(30),
-                                        topRight: Radius.circular(30),
-                                      ),
-                                color: AppColor.WHITE.withOpacity(0.6),
-                              ),
-                              child: (state.status == BlocStatus.SUCCESS &&
-                                          state.request ==
-                                              NewTranstype.GET_TRANS_LIST) ||
-                                      ((state.status == BlocStatus.SUCCESS ||
-                                              state.status ==
-                                                  BlocStatus.LOAD_MORE) &&
-                                          state.request ==
-                                              NewTranstype.GET_MORE)
-                                  ? ListView(
-                                      padding: EdgeInsets.zero,
-                                      controller: widget.scrollController,
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      children: [
-                                        ...groupsAlphabet.entries.map(
-                                          (e) {
-                                            return Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const SizedBox(height: 10),
-                                                Text(
-                                                  e.key,
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                const SizedBox(height: 10),
-                                                ...e.value.map(
-                                                  (item) {
-                                                    return _buildItem(item);
-                                                  },
-                                                )
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                        if (state.request ==
-                                                NewTranstype.GET_MORE &&
-                                            state.status ==
-                                                BlocStatus.LOAD_MORE)
-                                          const Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 20, horizontal: 20),
-                                            child: Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            ),
-                                          ),
-                                        const SizedBox(height: 150)
-                                      ],
-                                    )
-                                  : Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          state.status == BlocStatus.LOADING
-                                              ? MainAxisAlignment.start
-                                              : MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          state.status == BlocStatus.LOADING
-                                              ? CrossAxisAlignment.start
-                                              : CrossAxisAlignment.center,
-                                      children: [
-                                        if (state.request ==
-                                                NewTranstype.GET_TRANS_LIST &&
-                                            state.status == BlocStatus.LOADING)
-                                          const BuildLoading()
-                                        else if (state.request ==
-                                                NewTranstype.GET_TRANS_LIST &&
-                                            state.status ==
-                                                BlocStatus.NONE) ...[
-                                          XImage(
-                                            imagePath: _textController
-                                                    .text.isEmpty
-                                                ? 'assets/images/ic-empty-transaction.png'
-                                                : "assets/images/ic-trans-purple.png",
-                                            width: 100,
-                                            height: 100,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          Text(
-                                            textAlign: TextAlign.center,
-                                            _textController.text.isEmpty
-                                                ? 'Không tìm thấy thông tin giao dịch.\nVui lòng kiểm tra lại thông tin tìm kiếm của bạn.'
-                                                : 'Bạn chưa có giao dịch nào gần đây.',
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                                color: AppColor.GREY_TEXT),
-                                          ),
-                                          SizedBox(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.3),
-                                        ]
-                                      ],
-                                    ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         );
@@ -665,6 +670,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
         await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => TransactionDetailScreen(
+              bankDto: widget.dto,
               id: item.transactionId,
             ),
             settings: const RouteSettings(
@@ -738,15 +744,68 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
               )
             else
               VietQRButton.solid(
-                onPressed: () {},
+                onPressed: () {
+                  if (text == 'Đã hủy') {
+                    QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+                        terminalCode: item.terminalCode,
+                        bankId: widget.dto.id,
+                        amount: item.amount.replaceAll(',', ''),
+                        content: item.content,
+                        userId: userId,
+                        newTransaction: false);
+                    generateQr(qrRecreateDTO).then(
+                      (value) {
+                        NavigatorUtils.navigatePage(
+                            context, CreateQrScreen(qrDto: value, page: 1),
+                            routeName: CreateQrScreen.routeName);
+                      },
+                    );
+                  } else {
+                    QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
+                      bankCode: item.bankCode,
+                      bankName: item.bankName,
+                      bankAccount: item.bankAccount,
+                      userBankName: item.userBankName,
+                      bankId: widget.dto.id,
+                      imgId: item.imgId,
+                      amount: item.amount,
+                      content: item.content,
+                      qrCode: item.qrCode,
+                      qrLink: item.qrLink,
+                    );
+
+                    NavigatorUtils.navigatePage(
+                        context,
+                        CreateQrScreen(
+                          qrDto: qrGeneratedDTO,
+                          page: 1,
+                        ),
+                        routeName: CreateQrScreen.routeName);
+                  }
+                },
                 borderRadius: 100,
-                child: XImage(imagePath: 'assets/images/ic-qr-black.png'),
                 isDisabled: false,
                 size: VietQRButtonSize.medium,
+                child: XImage(
+                    imagePath: text == 'Đã hủy'
+                        ? 'assets/images/ic-retry-qr-black.png'
+                        : 'assets/images/ic-qr-black.png'),
               )
           ],
         ),
       ),
     );
+  }
+
+  Future<QRGeneratedDTO?> generateQr(QRRecreateDTO dto) async {
+    final TransactionRepository repository = TransactionRepository();
+
+    try {
+      final result = await repository.regenerateQR(dto);
+      return result;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
   }
 }

@@ -6,6 +6,7 @@ import 'package:vierqr/features/bank_detail_new/repositories/transaction_reposit
 import 'package:vierqr/features/bank_detail_new/states/transaction_state.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/models/metadata_dto.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 
 import '../events/transaction_event.dart';
@@ -19,6 +20,7 @@ class NewTransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     on<SetTransValue>(_setValue);
     on<GetTransListEvent>(_getTransList);
     on<GetTransDetailEvent>(_getTransDetail);
+    on<RegenerateQREvent>(_regenerateQr);
   }
 
   int offset = 0;
@@ -72,11 +74,30 @@ class NewTransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   //   }
   // }
 
+  void _regenerateQr(TransactionEvent event, Emitter emit) async {
+    try {
+      if (event is RegenerateQREvent) {
+        // emit(state.copyWith(
+        //     status: BlocStatus.NONE, requestDetail: TransDetail.REGENERATE_QR));
+
+        final result = await _repository.regenerateQR(event.qrDto);
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            requestDetail: TransDetail.REGENERATE_QR,
+            generateQr: result));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, requestDetail: TransDetail.REGENERATE_QR));
+    }
+  }
+
   void _getTransDetail(TransactionEvent event, Emitter emit) async {
     try {
       if (event is GetTransDetailEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING_PAGE,
+            status: event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
             requestDetail: TransDetail.GET_DETAIL));
 
         final result = await _repository.getTransDetail(event.id);
@@ -142,6 +163,7 @@ class NewTransactionBloc extends Bloc<TransactionEvent, TransactionState> {
             emit(state.copyWith(
               status: BlocStatus.NONE,
               request: NewTranstype.GET_TRANS_LIST,
+              extraData: transExtraData,
               transItem: [],
             ));
           }

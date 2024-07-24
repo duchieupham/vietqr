@@ -2,12 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -15,26 +18,36 @@ import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/events/transaction_event.dart';
 import 'package:vierqr/features/bank_detail_new/states/transaction_state.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/update_hashtag_widget.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/update_note_widget.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/trans_update/trans_update_screen.dart';
+import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/notify_trans_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 import 'package:path/path.dart' as path;
 import 'package:vierqr/models/transaction_log_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../models/bank_account_dto.dart';
 
 class TransactionDetailScreen extends StatefulWidget {
   final String id;
-  const TransactionDetailScreen({super.key, required this.id});
+  final BankAccountDTO bankDto;
+  const TransactionDetailScreen(
+      {super.key, required this.id, required this.bankDto});
 
   @override
   State<TransactionDetailScreen> createState() =>
@@ -43,6 +56,8 @@ class TransactionDetailScreen extends StatefulWidget {
 
 class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
+  ScrollController scrollController = ScrollController();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   final NewTransactionBloc _bloc = getIt.get<NewTransactionBloc>();
   File? imageSelect;
@@ -50,8 +65,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   MerchantRole role = MerchantRole();
   List<TransactionLogDTO> transLogList = [];
 
+  String note = '';
+
   void initData() async {
-    _bloc.add(GetTransDetailEvent(id: widget.id));
+    _bloc.add(GetTransDetailEvent(id: widget.id, isLoading: true));
+    scrollController.addListener(
+      () {
+        isScrollNotifier.value = scrollController.offset == 0.0;
+      },
+    );
   }
 
   @override
@@ -154,8 +176,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         if (state.requestDetail == TransDetail.GET_DETAIL &&
             state.status == BlocStatus.SUCCESS) {
           if (state.transDetail != null) {
+            note = state.transDetail!.note;
             onRole(state.transDetail!.bankId);
           }
+        }
+        if (state.requestDetail == TransDetail.REGENERATE_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          NavigatorUtils.navigatePage(
+              context, CreateQrScreen(qrDto: state.generateQr, page: 1),
+              routeName: CreateQrScreen.routeName);
         }
         if (state.transLogList != null) {
           transLogList = [...state.transLogList!];
@@ -169,9 +198,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         }
 
         return Scaffold(
+          bottomNavigationBar:
+              state.status != BlocStatus.LOADING_PAGE && detail != null
+                  ? bottomBar(detail)
+                  : const SizedBox.shrink(),
           body: Column(
             children: [
-              appbar(),
+              appbar(detail),
               Expanded(
                 child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -191,6 +224,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                             child: CircularProgressIndicator(),
                           )
                         : ListView(
+                            controller: scrollController,
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             physics: const ClampingScrollPhysics(),
                             children: [
@@ -214,7 +248,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               if (state.transLogList != null &&
                                   state.transLogList!.isNotEmpty)
                                 _transLog(transLogList),
-                              const SizedBox(height: 100),
+                              // const SizedBox(height: 100),
                             ],
                           )),
               )
@@ -505,35 +539,35 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ),
                 )),
                 const SizedBox(width: 10),
-                VietQRButton.solid(
-                  borderRadius: 50,
-                  onPressed: () {
-                    _handleImage(isCamera: true);
-                  },
-                  isDisabled: false,
-                  width: 40,
-                  size: VietQRButtonSize.medium,
-                  child: const XImage(
-                    imagePath: 'assets/images/ic-dowload.png',
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                VietQRButton.solid(
-                  borderRadius: 50,
-                  onPressed: () {},
-                  isDisabled: false,
-                  width: 40,
-                  size: VietQRButtonSize.medium,
-                  child: const XImage(
-                    imagePath: 'assets/images/ic-remove-black.png',
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                // VietQRButton.solid(
+                //   borderRadius: 50,
+                //   onPressed: () {
+                //     _handleImage(isCamera: true);
+                //   },
+                //   isDisabled: false,
+                //   width: 40,
+                //   size: VietQRButtonSize.medium,
+                //   child: const XImage(
+                //     imagePath: 'assets/images/ic-dowload.png',
+                //     width: 30,
+                //     height: 30,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
+                // const SizedBox(width: 10),
+                // VietQRButton.solid(
+                //   borderRadius: 50,
+                //   onPressed: () {},
+                //   isDisabled: false,
+                //   width: 40,
+                //   size: VietQRButtonSize.medium,
+                //   child: const XImage(
+                //     imagePath: 'assets/images/ic-remove-black.png',
+                //     width: 30,
+                //     height: 30,
+                //     fit: BoxFit.cover,
+                //   ),
+                // ),
               ],
             ),
           ]
@@ -562,7 +596,37 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               ),
               VietQRButton.solid(
                 borderRadius: 50,
-                onPressed: () {},
+                onPressed: () async {
+                  await DialogWidget.instance
+                      .showModelBottomSheet(
+                    widget: UpdateNoteWidget(
+                      text: detail.note,
+                    ),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    bgrColor: AppColor.TRANSPARENT,
+                    padding: EdgeInsets.zero,
+                  )
+                      .then(
+                    (text) async {
+                      Map<String, dynamic> body = {
+                        'note': text as String,
+                        'id': widget.id,
+                      };
+                      _updateNote(body).then(
+                        (value) {
+                          if (value) {
+                            setState(() {
+                              note = text;
+                            });
+                            // _bloc.add(GetTransDetailEvent(
+                            //     id: widget.id, isLoading: false));
+                          }
+                        },
+                      );
+                    },
+                  );
+                },
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 isDisabled: false,
                 size: VietQRButtonSize.small,
@@ -588,9 +652,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           const MySeparator(color: AppColor.GREY_DADADA),
           const SizedBox(height: 20),
           Text(
-            detail.note.isNotEmpty
-                ? detail.note
-                : 'Chưa có ghi chú nào cho giao dịch này.',
+            note.isNotEmpty ? note : 'Chưa có ghi chú nào cho giao dịch này.',
             style: TextStyle(
                 fontSize: 12,
                 color: detail.note.isNotEmpty
@@ -600,6 +662,16 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         ],
       ),
     );
+  }
+
+  Future<bool> _updateNote(Map<String, dynamic> body) async {
+    final transactionRepository = getIt.get<TransactionRepository>();
+
+    final result = await transactionRepository.updateNote(body);
+    if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+      return true;
+    }
+    return false;
   }
 
   Widget _buildDetail(TransactionItemDetailDTO detail) {
@@ -807,7 +879,140 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
     );
   }
 
-  Widget appbar() {
+  Widget bottomBar(TransactionItemDetailDTO detail) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 15, 20, 0),
+      height: 110,
+      color: AppColor.WHITE.withOpacity(0.6),
+      alignment: Alignment.topCenter,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          detail.transType != 'D'
+              ? Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      // BankAccountDTO bankAccountDTO = BankAccountDTO();
+                      // NavigatorUtils.navigatePage(context,
+                      //     CreateQrScreen(bankAccountDTO: bankAccountDTO),
+                      //     routeName: CreateQrScreen.routeName);
+                      if (detail.status != 0) {
+                        QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+                            terminalCode: detail.terminalCode,
+                            bankId: detail.bankId,
+                            amount: detail.amount.replaceAll(',', ''),
+                            content: detail.content,
+                            userId: userId,
+                            newTransaction: false);
+                        _bloc.add(RegenerateQREvent(qrDto: qrRecreateDTO));
+                      } else {
+                        QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
+                          bankCode: detail.bankCode,
+                          bankName: detail.bankName,
+                          bankAccount: detail.bankAccount,
+                          userBankName: detail.userBankName,
+                          bankId: detail.bankId,
+                          imgId: detail.imgId,
+                          amount: detail.amount,
+                          content: detail.content,
+                          qrCode: detail.qrCode,
+                          qrLink: detail.qrLink,
+                        );
+
+                        NavigatorUtils.navigatePage(
+                            context,
+                            CreateQrScreen(
+                              qrDto: qrGeneratedDTO,
+                              page: 1,
+                              // bankAccountDTO: widget.bankDto,
+                            ),
+                            routeName: CreateQrScreen.routeName);
+                      }
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 80,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF00C6FF),
+                            Color(0xFF0072FF),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const XImage(
+                            imagePath:
+                                'assets/images/qr-contact-other-white.png',
+                            height: 30,
+                            width: 30,
+                            fit: BoxFit.cover,
+                          ),
+                          Text(
+                            detail.status == 0
+                                ? "Hiển thị mã VietQR giao dịch"
+                                : 'Thực hiện lại giao dịch',
+                            maxLines: 1,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
+          const SizedBox(width: 10),
+          if (detail.transType != 'D' && detail.status != 2) ...[
+            InkWell(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)),
+                child: const XImage(imagePath: 'assets/images/ic-dowload.png'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            InkWell(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)),
+                child:
+                    const XImage(imagePath: 'assets/images/ic-share-black.png'),
+              ),
+            ),
+          ]
+        ],
+      ),
+    );
+  }
+
+  Widget appbar(TransactionItemDetailDTO? detail) {
     return ValueListenableBuilder<bool>(
       valueListenable: isScrollNotifier,
       builder: (context, value, child) {
@@ -855,28 +1060,45 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ),
                 ),
               ),
-              VietQRButton.solid(
-                onPressed: () {},
-                isDisabled: false,
-                shadow: [
-                  BoxShadow(
-                    color: AppColor.BLACK.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 10,
-                    offset: const Offset(0, 1),
-                  )
-                ],
-                size: VietQRButtonSize.medium,
-                borderRadius: 100,
-                child: const Center(
-                  child: XImage(
-                    imagePath: 'assets/images/ic-hastag.png',
-                    width: 25,
-                    height: 25,
-                    fit: BoxFit.cover,
+              if (detail != null)
+                VietQRButton.solid(
+                  onPressed: () async {
+                    await DialogWidget.instance
+                        .showModelBottomSheet(
+                      widget: UpdateHashtagWidget(
+                        transType: detail.transType,
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      bgrColor: AppColor.TRANSPARENT,
+                      padding: EdgeInsets.zero,
+                    )
+                        .then(
+                      (value) {
+                        print(value);
+                      },
+                    );
+                  },
+                  isDisabled: false,
+                  shadow: [
+                    BoxShadow(
+                      color: AppColor.BLACK.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 10,
+                      offset: const Offset(0, 1),
+                    )
+                  ],
+                  size: VietQRButtonSize.medium,
+                  borderRadius: 100,
+                  child: const Center(
+                    child: XImage(
+                      imagePath: 'assets/images/ic-hastag.png',
+                      width: 25,
+                      height: 25,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-              )
+                )
             ],
           ),
         );

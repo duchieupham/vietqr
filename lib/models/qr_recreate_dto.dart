@@ -3,6 +3,7 @@ class QRRecreateDTO {
   final String amount;
   final String content;
   final String userId;
+  final String terminalCode;
   final bool newTransaction;
 
   const QRRecreateDTO({
@@ -10,6 +11,7 @@ class QRRecreateDTO {
     required this.amount,
     required this.content,
     required this.userId,
+    required this.terminalCode,
     required this.newTransaction,
   });
 
@@ -19,6 +21,7 @@ class QRRecreateDTO {
       amount: json['amount'] ?? '',
       content: json['content'] ?? '',
       userId: json['userId'] ?? '',
+      terminalCode: json['terminalCode'] ?? '',
       newTransaction: json['newTransaction'] ?? false,
     );
   }
@@ -30,6 +33,7 @@ class QRRecreateDTO {
     data['content'] = content;
     data['userId'] = userId;
     data['newTransaction'] = newTransaction;
+    data['terminalCode'] = terminalCode;
     return data;
   }
 }

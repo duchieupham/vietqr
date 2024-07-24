@@ -56,6 +56,8 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
   ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
   ValueNotifier<bool> scrollToTopNotifier = ValueNotifier<bool>(false);
   late ScrollController scrollController;
+  final PageController _pageController = PageController();
+
   int _selectedIndex = 0;
   final GlobalKey globalKey = GlobalKey();
 
@@ -112,38 +114,49 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                     if (scrollController.hasClients) {
                       scrollController.jumpTo(0.0);
                     }
-                    setState(() {
-                      _selectedIndex = index;
-                    });
+                    // setState(() {
+                    //   _selectedIndex = index;
+                    // });
+                    _pageController.jumpToPage(index);
                   },
                   selected: _selectedIndex,
                 ),
-                if (_selectedIndex == 0)
-                  DetailBankCardScreen(
-                    dto: widget.dto,
-                    selectedIndex: _selectedIndex,
-                    onScroll: (boolValue) {
-                      isScrollNotifier.value = boolValue;
-                    },
-                    onSelectTab: (index) {
-                      setState(() {
-                        _selectedIndex = index;
-                      });
-                    },
-                    bankId: widget.bankId,
-                    isLoading: widget.isLoading,
-                    globalKey: globalKey,
-                  )
-                else if (_selectedIndex == 1)
-                  BankTransactionsScreen(
-                    bankId: widget.bankId,
-                    scrollController: scrollController,
-                    isScrollNotifier: isScrollNotifier,
-                  )
-                else if (_selectedIndex == 2)
-                  Expanded(
-                    child: StatisticalScreen(bankId: widget.bankId),
-                  )
+                Expanded(
+                  child: SizedBox(
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (value) {
+                        setState(() {
+                          _selectedIndex = value;
+                        });
+                      },
+                      children: [
+                        DetailBankCardScreen(
+                          dto: widget.dto,
+                          selectedIndex: _selectedIndex,
+                          onScroll: (boolValue) {
+                            isScrollNotifier.value = boolValue;
+                          },
+                          onSelectTab: (index) {
+                            setState(() {
+                              _selectedIndex = index;
+                            });
+                          },
+                          bankId: widget.bankId,
+                          isLoading: widget.isLoading,
+                          globalKey: globalKey,
+                        ),
+                        BankTransactionsScreen(
+                          dto: widget.dto,
+                          bankId: widget.bankId,
+                          scrollController: scrollController,
+                          isScrollNotifier: isScrollNotifier,
+                        ),
+                        StatisticalScreen(bankId: widget.bankId)
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
             BottomBarWidget(

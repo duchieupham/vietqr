@@ -55,7 +55,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
               const SizedBox(height: 24),
-              Align(
+              const Align(
                 alignment: Alignment.center,
                 child: Text(
                   'Nhận tiền từ mọi ngân hàng và ví điện thử có hỗ trợ VietQR',
@@ -77,21 +77,22 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
               ),
               if (widget.dto.qrLink.isNotEmpty) ...[
                 const SizedBox(height: 24),
-                Text(
+                const Text(
                   'QR Link:',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   'Đường dẫn thanh toán qua mã VietQR',
                   style: TextStyle(
                       fontSize: 12, color: AppColor.GREY_TEXT, height: 1.4),
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     color: AppColor.WHITE,
@@ -103,7 +104,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                           widget.dto.qrLink,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: AppColor.BLUE_TEXT,
                               fontWeight: FontWeight.w500),
                         ),
@@ -122,14 +123,14 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
               ],
               ...[
                 const SizedBox(height: 24),
-                Text(
+                const Text(
                   'Thanh toán qua app ngân hàng:',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   'Chọn ngân hàng để thanh toán',
                   style: TextStyle(
                       fontSize: 12, color: AppColor.GREY_TEXT, height: 1.4),
@@ -139,7 +140,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                   height: MediaQuery.of(context).size.height,
                   child: GridView.builder(
                     padding: EdgeInsets.zero,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
@@ -165,7 +166,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                                         image: ImageUtils.instance
                                             .getImageNetWork(data.imageId)),
                               ),
-                              margin: EdgeInsets.all(4),
+                              margin: const EdgeInsets.all(4),
                             ),
                           ],
                         ),

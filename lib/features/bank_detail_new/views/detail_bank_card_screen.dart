@@ -328,101 +328,98 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
             //   return const Center(child: CircularProgressIndicator());
             // }
 
-            return Expanded(
-              child: Container(
-                width: double.infinity,
-                // height: 200,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFFE1EFFF),
-                      Color(0xFFE5F9FF),
-                    ],
-                    end: Alignment.centerRight,
-                    begin: Alignment.centerLeft,
-                  ),
+            return Container(
+              width: double.infinity,
+              // height: 200,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFE1EFFF),
+                    Color(0xFFE5F9FF),
+                  ],
+                  end: Alignment.centerRight,
+                  begin: Alignment.centerLeft,
                 ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      controller: scrollController,
-                      physics: const ClampingScrollPhysics(),
-                      child: Stack(
-                        children: [
-                          _buildExpandedWidget(),
-                          Column(
-                            children: [
-                              const SizedBox(height: 10),
-                              qrGeneratedDTO.qrCode.isNotEmpty
-                                  ? RepaintBoundaryWidget(
-                                      globalKey: widget.globalKey,
-                                      builder: (key) {
-                                        return QrWidget(
-                                          dto: qrGeneratedDTO,
-                                        );
-                                      },
-                                    )
-                                  : const QrLoadingWidget(),
-                              MeasureSize(
-                                onChange: (size) {
-                                  final widgetHeight = size.height;
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    physics: const ClampingScrollPhysics(),
+                    child: Stack(
+                      children: [
+                        _buildExpandedWidget(),
+                        Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            qrGeneratedDTO.qrCode.isNotEmpty
+                                ? RepaintBoundaryWidget(
+                                    globalKey: widget.globalKey,
+                                    builder: (key) {
+                                      return QrWidget(
+                                        dto: qrGeneratedDTO,
+                                      );
+                                    },
+                                  )
+                                : const QrLoadingWidget(),
+                            MeasureSize(
+                              onChange: (size) {
+                                final widgetHeight = size.height;
 
-                                  double itemheight =
-                                      constraints.maxHeight - 400;
+                                double itemheight = constraints.maxHeight - 400;
 
-                                  if (itemheight > widgetHeight) {
-                                    heightNotifier.value =
-                                        constraints.maxHeight - 200;
-                                  } else if (itemheight <= widgetHeight) {
-                                    heightNotifier.value =
-                                        (constraints.maxHeight - 200) +
-                                            (widgetHeight - itemheight);
-                                  }
-                                },
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                        height: qrGeneratedDTO.amount.isNotEmpty
-                                            ? 10
-                                            : 20),
-                                    if (qrGeneratedDTO.amount.isNotEmpty)
-                                      _contentQr(),
-                                    _updateAmount(),
-                                    if (dto.id.isNotEmpty &&
-                                        !dto.authenticated) ...[
-                                      const SizedBox(height: 20),
-                                      SuggestionWidget(
-                                        bloc: bankCardBloc,
-                                        dto: dto,
-                                      ),
-                                    ],
+                                if (itemheight > widgetHeight) {
+                                  heightNotifier.value =
+                                      constraints.maxHeight - 200;
+                                } else if (itemheight <= widgetHeight) {
+                                  heightNotifier.value =
+                                      (constraints.maxHeight - 200) +
+                                          (widgetHeight - itemheight);
+                                }
+                              },
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                      height: qrGeneratedDTO.amount.isNotEmpty
+                                          ? 10
+                                          : 20),
+                                  if (qrGeneratedDTO.amount.isNotEmpty)
+                                    _contentQr(),
+                                  _updateAmount(),
+                                  if (dto.id.isNotEmpty &&
+                                      !dto.authenticated) ...[
                                     const SizedBox(height: 20),
-                                    OptionWidget(
+                                    SuggestionWidget(
                                       bloc: bankCardBloc,
-                                      bankId: state.bankId ?? '',
                                       dto: dto,
                                     ),
-                                    const SizedBox(height: 20),
-                                    // if(qrGeneratedDT)
-                                    ServiceVietqrWidget(
-                                      bankDTto: widget.dto,
-                                    ),
-                                    // const SizedBox(height: 20),
-                                    // AnimationGraphWidget(
-                                    //   scrollNotifer: isScrollToChart,
-                                    //   key: _animatedBarKey,
-                                    // ),
-                                    const SizedBox(height: 120),
                                   ],
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                                  const SizedBox(height: 20),
+                                  OptionWidget(
+                                    bloc: bankCardBloc,
+                                    bankId: state.bankId ?? '',
+                                    dto: dto,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  // if(qrGeneratedDT)
+                                  ServiceVietqrWidget(
+                                    bankDTto: widget.dto,
+                                  ),
+                                  // const SizedBox(height: 20),
+                                  // AnimationGraphWidget(
+                                  //   scrollNotifer: isScrollToChart,
+                                  //   key: _animatedBarKey,
+                                  // ),
+                                  const SizedBox(height: 120),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  );
+                },
               ),
             );
           },

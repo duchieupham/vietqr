@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/metadata_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 import 'package:vierqr/models/transaction_log_dto.dart';
 
@@ -20,6 +22,7 @@ enum TransDetail {
   NONE,
   ERROR,
   GET_DETAIL,
+  REGENERATE_QR,
   LOG,
 }
 
@@ -34,6 +37,7 @@ class TransactionState extends Equatable {
   final TransExtraData? extraData;
   final TransactionItemDetailDTO? transDetail;
   final List<TransactionLogDTO>? transLogList;
+  final QRGeneratedDTO? generateQr;
 
   const TransactionState({
     this.msg,
@@ -45,6 +49,7 @@ class TransactionState extends Equatable {
     this.extraData,
     this.transDetail,
     this.transLogList,
+    this.generateQr,
   });
 
   TransactionState copyWith({
@@ -57,6 +62,7 @@ class TransactionState extends Equatable {
     TransExtraData? extraData,
     TransactionItemDetailDTO? transDetail,
     List<TransactionLogDTO>? transLogList,
+    QRGeneratedDTO? generateQr,
   }) {
     return TransactionState(
       status: status ?? this.status,
@@ -68,6 +74,7 @@ class TransactionState extends Equatable {
       extraData: extraData ?? this.extraData,
       transDetail: transDetail ?? this.transDetail,
       transLogList: transLogList ?? this.transLogList,
+      generateQr: generateQr ?? this.generateQr,
     );
   }
 
@@ -81,6 +88,7 @@ class TransactionState extends Equatable {
         transItem,
         extraData,
         transDetail,
-        transLogList
+        transLogList,
+        generateQr,
       ];
 }
