@@ -41,6 +41,7 @@ class Routes {
   static const String MOBILE_RECHARGE = '/mobile_recharge';
   static const String REGISTER_NEW_BANK = '/register_new_bank';
   static const String REPORT_SCREEN = '/report_screen';
+  static const String KEY_ACTIVE_FREE = '/key_active_free';
   static const String RECHARGE_SUCCESS = '/recharge_success';
   static const String CONNECT_TELEGRAM = '/connect_telegram';
   static const String OPPriEN_BANK_MB = '/open_bank_mb';

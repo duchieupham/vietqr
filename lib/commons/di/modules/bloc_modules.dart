@@ -12,6 +12,7 @@ import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
+import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 
 import '../../../features/login/repositories/login_repository.dart';
@@ -25,6 +26,9 @@ class BlocModule extends DIModule {
       )
       ..registerLazySingleton(
         () => ConnectMediaBloc(),
+      )
+      ..registerLazySingleton(
+        () => EmailBloc(),
       )
       ..registerLazySingleton(
         () => QrFeedBloc(),

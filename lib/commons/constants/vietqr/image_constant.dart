@@ -28,6 +28,7 @@ class ImageConstant {
   static const String icApplicationHome =
       'assets/images/ic-application-home.png';
   static const String icActiveTerminal = 'assets/images/ic-active-terminal.png';
+  static const String email = 'assets/images/logo-email.png';
   static const String shortcutNfc = 'assets/images/shortcut-nfc.png';
   static const String logoCheckAppVersion =
       'assets/images/logo-check-app-version.png';
