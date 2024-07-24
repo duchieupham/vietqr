@@ -266,53 +266,53 @@ class _UserEditViewState extends State<UserEditView> {
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(top: 10)),
-                            ButtonWidget(
-                              width: width - 40,
-                              text: 'Cập nhật ảnh đại diện',
-                              textColor: AppColor.BLUE_TEXT,
-                              bgColor: Theme.of(context).cardColor,
-                              function: () async {
-                                await Permission.mediaLibrary.request();
-                                await imagePicker
-                                    .pickImage(source: ImageSource.gallery)
-                                    .then(
-                                  (pickedFile) async {
-                                    if (pickedFile != null) {
-                                      File? file = File(pickedFile.path);
-                                      File? compressedFile = FileUtils.instance
-                                          .compressImage(file);
+                            // ButtonWidget(
+                            //   width: width - 40,
+                            //   text: 'Cập nhật ảnh đại diện',
+                            //   textColor: AppColor.BLUE_TEXT,
+                            //   bgColor: Theme.of(context).cardColor,
+                            //   function: () async {
+                            //     await Permission.mediaLibrary.request();
+                            //     await imagePicker
+                            //         .pickImage(source: ImageSource.gallery)
+                            //         .then(
+                            //       (pickedFile) async {
+                            //         if (pickedFile != null) {
+                            //           File? file = File(pickedFile.path);
+                            //           File? compressedFile = FileUtils.instance
+                            //               .compressImage(file);
 
-                                      await Future.delayed(
-                                          const Duration(milliseconds: 200),
-                                          () {
-                                        String userId =
-                                            SharePrefUtils.getProfile().userId;
-                                        String imgId =
-                                            SharePrefUtils.getProfile().imgId;
-                                        _userEditBloc.add(
-                                          UserEditAvatarEvent(
-                                              userId: userId,
-                                              imgId: imgId,
-                                              image: compressedFile),
-                                        );
-                                      });
-                                    }
-                                  },
-                                );
-                              },
-                            ),
-                            const Padding(padding: EdgeInsets.only(top: 10)),
-                            ButtonWidget(
-                              width: width - 40,
-                              text: 'Đổi mật khẩu',
-                              textColor: AppColor.BLUE_TEXT,
-                              bgColor: Theme.of(context).cardColor,
-                              function: () {
-                                Navigator.of(context)
-                                    .pushNamed(Routes.UPDATE_PASSWORD);
-                              },
-                            ),
-                            const Padding(padding: EdgeInsets.only(top: 10)),
+                            //           await Future.delayed(
+                            //               const Duration(milliseconds: 200),
+                            //               () {
+                            //             String userId =
+                            //                 SharePrefUtils.getProfile().userId;
+                            //             String imgId =
+                            //                 SharePrefUtils.getProfile().imgId;
+                            //             _userEditBloc.add(
+                            //               UserEditAvatarEvent(
+                            //                   userId: userId,
+                            //                   imgId: imgId,
+                            //                   image: compressedFile),
+                            //             );
+                            //           });
+                            //         }
+                            //       },
+                            //     );
+                            //   },
+                            // ),
+                            // const Padding(padding: EdgeInsets.only(top: 10)),
+                            // ButtonWidget(
+                            //   width: width - 40,
+                            //   text: 'Đổi mật khẩu',
+                            //   textColor: AppColor.BLUE_TEXT,
+                            //   bgColor: Theme.of(context).cardColor,
+                            //   function: () {
+                            //     Navigator.of(context)
+                            //         .pushNamed(Routes.UPDATE_PASSWORD);
+                            //   },
+                            // ),
+                            // const Padding(padding: EdgeInsets.only(top: 10)),
                             ButtonWidget(
                               width: width - 40,
                               text: 'Cập nhật thông tin qua CCCD',
@@ -638,33 +638,33 @@ class _UserEditViewState extends State<UserEditView> {
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(top: 30)),
-                            DividerWidget(width: width),
-                            ButtonIconWidget(
-                              width: width,
-                              height: 40,
-                              icon: Icons.remove_circle_outline_rounded,
-                              title: 'Xoá tài khoản',
-                              function: () {
-                                DialogWidget.instance.openBoxWebConfirm(
-                                  title: 'Xác nhận xoá tài khoản',
-                                  confirmText: 'Đồng ý',
-                                  imageAsset: 'assets/images/ic-warning.png',
-                                  description:
-                                      'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
-                                  confirmFunction: () async {
-                                    Navigator.pop(context);
-                                    String userId =
-                                        SharePrefUtils.getProfile().userId;
-                                    _userEditBloc
-                                        .add(UserDeactiveEvent(userId: userId));
-                                  },
-                                  confirmColor: AppColor.RED_TEXT,
-                                );
-                              },
-                              bgColor: AppColor.TRANSPARENT,
-                              textColor: AppColor.RED_TEXT,
-                            ),
-                            DividerWidget(width: width),
+                            // DividerWidget(width: width),
+                            // ButtonIconWidget(
+                            //   width: width,
+                            //   height: 40,
+                            //   icon: Icons.remove_circle_outline_rounded,
+                            //   title: 'Xoá tài khoản',
+                            //   function: () {
+                            //     DialogWidget.instance.openBoxWebConfirm(
+                            //       title: 'Xác nhận xoá tài khoản',
+                            //       confirmText: 'Đồng ý',
+                            //       imageAsset: 'assets/images/ic-warning.png',
+                            //       description:
+                            //           'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
+                            //       confirmFunction: () async {
+                            //         Navigator.pop(context);
+                            //         String userId =
+                            //             SharePrefUtils.getProfile().userId;
+                            //         _userEditBloc
+                            //             .add(UserDeactiveEvent(userId: userId));
+                            //       },
+                            //       confirmColor: AppColor.RED_TEXT,
+                            //     );
+                            //   },
+                            //   bgColor: AppColor.TRANSPARENT,
+                            //   textColor: AppColor.RED_TEXT,
+                            // ),
+                            // DividerWidget(width: width),
                             const Padding(padding: EdgeInsets.only(top: 30)),
                           ],
                         ),

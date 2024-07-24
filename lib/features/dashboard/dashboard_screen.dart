@@ -47,6 +47,7 @@ import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/invoice_provider.dart';
 import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
@@ -318,6 +319,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                       return getBottomBar(
                         page.pageSelected,
                         onTap: (index) {
+                          SharePrefUtils.getProfile();
                           onTapPage(index);
                           page.updateIndex(index,
                               isOnTap: true, isHome: index == 2 ? true : false);
@@ -643,20 +645,22 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
 
     if (state.request == DashBoardType.GET_USER_SETTING) {
       final settingAccountDTO = SharePrefUtils.getAccountSetting();
+      final listBank =
+          Provider.of<InvoiceProvider>(context, listen: false).listBank;
       _provider.updateSettingDTO(settingAccountDTO);
       String themeVerLocal = SharePrefUtils.getThemeVersion();
       String themeSystem = state.appInfoDTO.themeVersion;
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
-      // if (!settingAccountDTO.notificationMobile) {
-      //   DialogWidget.instance.openNotificationMobile(context);
-      // }
+      if (!settingAccountDTO.notificationMobile && listBank!.isNotEmpty) {
+        DialogWidget.instance.openNotificationMobile(context);
+      }
       if (themeVerLocal != themeSystem || listLocal.isEmpty) {
         _bloc.add(GetListThemeEvent());
       } else {}
     }
-    if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
-      Navigator.of(context).pop();
-    }
+    // if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
+    //   Navigator.of(context).pop();
+    // }
     if (state.request == DashBoardType.LOGIN) {
       _provider.checkStateLogin(false);
       initialServices(isLogin: true);
@@ -771,7 +775,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     return Container(
       height: 72,
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
       decoration: BoxDecoration(
         color: AppColor.WHITE,

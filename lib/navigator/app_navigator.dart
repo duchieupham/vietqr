@@ -39,6 +39,7 @@ import 'package:vierqr/features/mobile_recharge/qr_mobile_recharge.dart';
 import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
+import 'package:vierqr/features/personal/views/user_info_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
@@ -86,6 +87,8 @@ class NavigationService {
         return _buildRoute(settings, const DashBoardScreen());
       case Routes.USER_EDIT:
         return _buildRoute(settings, const UserEditView());
+      case Routes.USER_INFO:
+        return _buildRoute(settings, const UserInfoView());
       case Routes.UPDATE_PASSWORD:
         return _buildRoute(settings, const UserUpdatePassword());
       case Routes.ADD_BANK_CARD:
