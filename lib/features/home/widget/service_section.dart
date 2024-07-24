@@ -286,14 +286,14 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
                 routeName: CustomInAppWebView.routeName);
           },
         ),
-        ItemService(
-          pathIcon: ImageConstant.email,
-          title: 'Xác thực email',
-          onTap: () async {
-            NavigatorUtils.navigatePage(context, VerifyEmailScreen(),
-                routeName: VerifyEmailScreen.routeName);
-          },
-        ),
+        // ItemService(
+        //   pathIcon: ImageConstant.email,
+        //   title: 'Xác thực email',
+        //   onTap: () async {
+        //     NavigatorUtils.navigatePage(context, VerifyEmailScreen(),
+        //         routeName: VerifyEmailScreen.routeName);
+        //   },
+        // ),
       ],
     );
   }
