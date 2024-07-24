@@ -37,7 +37,7 @@ class _UpdateNotWidgetState extends State<UpdateNoteWidget> {
           left: 0,
           right: 0,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.45,
+            height: 450,
             margin: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
             width: MediaQuery.of(context).size.width - 20,
             padding: const EdgeInsets.fromLTRB(20, 26, 20, 20),
@@ -50,7 +50,7 @@ class _UpdateNotWidgetState extends State<UpdateNoteWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(

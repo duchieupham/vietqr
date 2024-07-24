@@ -124,7 +124,6 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
         bgrColor: AppColor.TRANSPARENT,
         padding: EdgeInsets.zero,
         widget: FilterTransWidget(
-          onDateRangeSelect: _showCustomDateRangePicker,
           isFilerTime: true,
           filter: selectFilterTime,
         ));
@@ -314,7 +313,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                         borderSide: BorderSide(
                                             color: AppColor.BLUE_TEXT)),
                                     hintText: 'Tìm kiếm giao dịch',
-                                    keyboardAction: TextInputAction.next,
+                                    keyboardAction: TextInputAction.done,
                                     onSubmitted: (value) {
                                       _bloc.add(GetTransListEvent(
                                           bankId: widget.bankId,
@@ -700,8 +699,10 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
-            const XImage(
-              imagePath: 'assets/images/ic-trans-type.png',
+            XImage(
+              imagePath: item.transType == 'C'
+                  ? 'assets/images/ic-trans-type.png'
+                  : 'assets/images/ic-trans-debit.png',
               height: 30,
               width: 30,
               fit: BoxFit.cover,

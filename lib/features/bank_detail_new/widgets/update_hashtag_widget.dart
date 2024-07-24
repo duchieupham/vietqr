@@ -56,8 +56,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
             left: 0,
             right: 0,
             child: Container(
-              height: MediaQuery.of(context).size.height *
-                  (widget.transType == 'D' ? 0.5 : 0.4),
+              height: (widget.transType == 'D' ? 500 : 400),
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.fromLTRB(20, 26, 20, 20),
               decoration: const BoxDecoration(
@@ -171,7 +170,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                                           .gradientColor.brightBlueLinear,
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  const SizedBox(width: 8),
                                 ],
                               ),
                           ],
@@ -187,7 +186,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         gradient: VietQRTheme.gradientColor.lilyLinear),
-                    child: const Row(
+                    child: Row(
                       children: [
                         XImage(
                           imagePath: 'assets/images/ic-hashtag-3d.png',
@@ -198,7 +197,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                         Text(
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
-                          'Chúng tôi sẽ cập nhật thêm tính năng quản trị\ncác hastag của bạn trong tương lai gần.\nCùng chờ đón nhé!!!',
+                          'Chúng tôi sẽ cập nhật thêm tính năng quản trị\ncác hashtag của bạn trong tương lai gần.\nCùng chờ đón nhé!!!',
                           style: TextStyle(fontSize: 12),
                         )
                       ],
@@ -257,7 +256,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                     if ((index == 6)
                         ? (i == 8)
                         : (index == 3 ? (i == 5) : (i == 2)))
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                   Expanded(
                     child: InkWell(
                       onTap: () {
@@ -266,7 +265,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                       child: GradientBorderButton(
                         widget: Container(
                           height: 40,
-                          padding: const EdgeInsets.only(left: 4, right: 16),
+                          padding: const EdgeInsets.only(left: 4, right: 12),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -293,7 +292,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                   if ((index == 6)
                       ? (i == 6)
                       : ((index == 3) ? (i == 3) : (i == 0)))
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                   if (index == 2) const SizedBox(width: 30)
                 ],
               ),

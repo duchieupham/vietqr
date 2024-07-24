@@ -22,7 +22,7 @@ class _PopupBankWidgetState extends State<PopupBankWidget> with DialogHelper {
   void initState() {
     super.initState();
 
-    list = Provider.of<InvoiceProvider>(context, listen: false).listBank!;
+    list = [...Provider.of<InvoiceProvider>(context, listen: false).listBank!];
   }
 
   @override
@@ -69,8 +69,7 @@ class _PopupBankWidgetState extends State<PopupBankWidget> with DialogHelper {
             style: TextStyle(fontSize: 15),
           ),
           const SizedBox(height: 30),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.55,
+          Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.only(top: 0),
               itemBuilder: (context, index) {
@@ -78,7 +77,8 @@ class _PopupBankWidgetState extends State<PopupBankWidget> with DialogHelper {
               },
               itemCount: list.length,
             ),
-          )
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );

@@ -8,12 +8,11 @@ import 'package:vierqr/layouts/image/x_image.dart';
 class FilterTransWidget extends StatefulWidget {
   final FilterTrans? filter;
   final bool isFilerTime;
-  final Function()? onDateRangeSelect;
-  const FilterTransWidget(
-      {super.key,
-      this.filter,
-      required this.isFilerTime,
-      this.onDateRangeSelect});
+  const FilterTransWidget({
+    super.key,
+    this.filter,
+    required this.isFilerTime,
+  });
 
   @override
   State<FilterTransWidget> createState() => _FilterTransWidgetState();
@@ -149,9 +148,6 @@ class _FilterTransWidgetState extends State<FilterTransWidget> {
                             },
                             onTap: () {
                               if (widget.isFilerTime) {
-                                if (item.type == 3) {
-                                  Navigator.of(context).pop(item);
-                                }
                                 setState(() {
                                   selectedFilter = item;
                                 });
@@ -160,6 +156,7 @@ class _FilterTransWidgetState extends State<FilterTransWidget> {
                                   selectFilterTransType = item;
                                 });
                               }
+                              Navigator.of(context).pop(item);
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(vertical: 20),

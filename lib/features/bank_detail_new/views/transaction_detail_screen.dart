@@ -259,7 +259,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                               if (detail != null) _buildDetail(detail),
                               const SizedBox(height: 10),
                               VietQRButton.suggest(
-                                  margin: const EdgeInsets.only(right: 50),
+                                  margin: const EdgeInsets.only(right: 4),
                                   height: 30,
                                   onPressed: () {
                                     if (detail != null) {
@@ -511,7 +511,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 'Đính kèm ảnh giao dịch',
                 style: TextStyle(fontSize: 12),
               )),
-              if (imageSelect == null) ...[
+              if (listImage.isEmpty) ...[
                 VietQRButton.solid(
                   borderRadius: 50,
                   onPressed: () {
@@ -563,7 +563,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     );
                   },
                   child: Text(
-                    'giao_dich.png',
+                    'your_picture_name.png',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -576,8 +576,8 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 const SizedBox(width: 10),
                 VietQRButton.solid(
                   borderRadius: 50,
-                  onPressed: () {
-                    _downloadImage();
+                  onPressed: () async {
+                    await _downloadImage();
                   },
                   isDisabled: false,
                   width: 40,
@@ -646,7 +646,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   await DialogWidget.instance
                       .showModelBottomSheet(
                     widget: UpdateNoteWidget(
-                      text: detail.note,
+                      text: note,
                     ),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
@@ -775,25 +775,30 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
     final http.Response response = await http.get(Uri.parse(url));
     final dir = await getTemporaryDirectory();
     // Create an image name
-    var filename = '${dir.path}/image.png';
+    // var filename = '${dir.path}/image.png';
+    String filename =
+        await _getUniqueFileName(dir.path, 'your_picture_name.png');
     // Save to filesystem
     final file = File(filename);
     await file.writeAsBytes(response.bodyBytes);
-    // // Ask the user to save it
+    // Ask the user to save it
     final params = SaveFileDialogParams(sourceFilePath: file.path);
     final finalPath = await FlutterFileDialog.saveFile(params: params);
     print(finalPath);
-    // var imageId = await ImageDownloader.downloadImage(
-    //     "${getIt.get<AppConfig>().getBaseUrl}images/${result.first.imgId}");
-    // if (imageId == null) {
-    //   return;
-    // }
+  }
 
-    // // Below is a method of obtaining saved image information.
-    // var fileName = await ImageDownloader.findName(imageId);
-    // var path = await ImageDownloader.findPath(imageId);
-    // var size = await ImageDownloader.findByteSize(imageId);
-    // var mimeType = await ImageDownloader.findMimeType(imageId);
+  Future<String> _getUniqueFileName(String dir, String filename) async {
+    String baseName = path.basenameWithoutExtension(filename);
+    String extension = path.extension(filename);
+    String uniqueFilename = filename;
+    int counter = 1;
+
+    while (await File(path.join(dir, uniqueFilename)).exists()) {
+      uniqueFilename = '$baseName($counter)$extension';
+      counter++;
+    }
+
+    return path.join(dir, uniqueFilename);
   }
 
   Future<List<ImageDTO>> getImages(String id) async {
@@ -1020,9 +1025,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             text,
             style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
           ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 12),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Text(
+              textAlign: TextAlign.right,
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12),
+            ),
           )
         ],
       ),
@@ -1123,40 +1134,40 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 )
               : const SizedBox.shrink(),
           const SizedBox(width: 10),
-          if (detail.transType != 'D' && detail.status != 2) ...[
-            InkWell(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: const LinearGradient(
-                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)),
-                child: const XImage(imagePath: 'assets/images/ic-dowload.png'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    gradient: const LinearGradient(
-                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight)),
-                child:
-                    const XImage(imagePath: 'assets/images/ic-share-black.png'),
-              ),
-            ),
-          ]
+          // if (detail.transType != 'D' && detail.status != 2) ...[
+          //   InkWell(
+          //     onTap: () {},
+          //     child: Container(
+          //       padding: const EdgeInsets.all(4),
+          //       height: 40,
+          //       width: 40,
+          //       decoration: BoxDecoration(
+          //           borderRadius: BorderRadius.circular(100),
+          //           gradient: const LinearGradient(
+          //               colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+          //               begin: Alignment.centerLeft,
+          //               end: Alignment.centerRight)),
+          //       child: const XImage(imagePath: 'assets/images/ic-dowload.png'),
+          //     ),
+          //   ),
+          //   const SizedBox(width: 8),
+          //   InkWell(
+          //     onTap: () {},
+          //     child: Container(
+          //       padding: const EdgeInsets.all(4),
+          //       height: 40,
+          //       width: 40,
+          //       decoration: BoxDecoration(
+          //           borderRadius: BorderRadius.circular(100),
+          //           gradient: const LinearGradient(
+          //               colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+          //               begin: Alignment.centerLeft,
+          //               end: Alignment.centerRight)),
+          //       child:
+          //           const XImage(imagePath: 'assets/images/ic-share-black.png'),
+          //     ),
+          //   ),
+          // ]
         ],
       ),
     );

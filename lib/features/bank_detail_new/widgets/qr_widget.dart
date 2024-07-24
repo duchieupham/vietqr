@@ -159,7 +159,7 @@ class _QrWidgetState extends State<QrWidget> {
           ),
           const Spacer(),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60),
+            padding: const EdgeInsets.symmetric(horizontal: 46),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
