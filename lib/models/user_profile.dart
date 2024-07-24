@@ -4,6 +4,7 @@ class UserProfile {
   String middleName;
   String lastName;
   String birthDate;
+  String timeCreated;
   String nationalId;
   String oldNationalId;
   String nationalDate;
@@ -13,6 +14,9 @@ class UserProfile {
   String email;
   String imgId;
   String carrierTypeId;
+  bool verify;
+  int balance; // Added field
+  int score; // Added field
 
   UserProfile({
     this.userId = '',
@@ -20,6 +24,7 @@ class UserProfile {
     this.middleName = '',
     this.lastName = '',
     this.birthDate = '',
+    this.timeCreated = '',
     this.gender = 0,
     this.address = '',
     this.email = '',
@@ -28,6 +33,9 @@ class UserProfile {
     this.oldNationalId = '',
     this.nationalId = '',
     this.carrierTypeId = '',
+    this.verify = false,
+    this.balance = 0, // Initialize new field
+    this.score = 0, // Initialize new field
   });
 
   String get fullName => ('$lastName $middleName $firstName').trim();
@@ -39,6 +47,7 @@ class UserProfile {
       middleName: json['middleName'] ?? '',
       lastName: json['lastName'] ?? '',
       birthDate: json['birthDate'] ?? '',
+      timeCreated: json['timeCreated'] ?? '',
       gender: int.tryParse(json['gender'].toString()) ?? 0,
       address: json['address'] ?? '',
       email: json['email'] ?? '',
@@ -47,6 +56,10 @@ class UserProfile {
       oldNationalId: json['oldNationalId'] ?? '',
       nationalId: json['nationalId'] ?? '',
       carrierTypeId: json['carrierTypeId'] ?? '',
+      verify: json['verify'] ?? false,
+      balance:
+          int.tryParse(json['balance'].toString()) ?? 0, // Handle new field
+      score: int.tryParse(json['score'].toString()) ?? 0, // Handle new field
     );
   }
 
@@ -57,6 +70,7 @@ class UserProfile {
     data['middleName'] = middleName;
     data['lastName'] = lastName;
     data['birthDate'] = birthDate;
+    data['timeCreated'] = timeCreated;
     data['gender'] = gender;
     data['address'] = address;
     data['email'] = email;
@@ -65,6 +79,9 @@ class UserProfile {
     data['oldNationalId'] = oldNationalId;
     data['nationalDate'] = nationalDate;
     data['carrierTypeId'] = carrierTypeId;
+    data['verify'] = verify;
+    data['balance'] = balance; // Handle new field
+    data['score'] = score; // Handle new field
     return data;
   }
 
@@ -75,6 +92,7 @@ class UserProfile {
     data['"middleName"'] = (middleName == '') ? '""' : '"$middleName"';
     data['"lastName"'] = (lastName == '') ? '""' : '"$lastName"';
     data['"birthDate"'] = (birthDate == '') ? '""' : '"$birthDate"';
+    data['"timeCreated"'] = (timeCreated == '') ? '""' : '"$timeCreated"';
     data['"gender"'] = '"$gender"';
     data['"address"'] = (address == '') ? '""' : '"$address"';
     data['"email"'] = (email == '') ? '""' : '"$email"';
@@ -83,6 +101,11 @@ class UserProfile {
     data['"oldNationalId"'] = (oldNationalId == '') ? '""' : '"$oldNationalId"';
     data['"nationalId"'] = (nationalId == '') ? '""' : '"$nationalId"';
     data['"carrierTypeId"'] = (carrierTypeId == '') ? '""' : '"$carrierTypeId"';
+    data['"verify"'] =
+        (verify == false) ? '""' : '"$verify"'; // Handle new field
+    data['"balance"'] =
+        (balance == 0) ? '""' : '"$balance"'; // Handle new field
+    data['"score"'] = (score == 0) ? '""' : '"$score"'; // Handle new field
     return data;
   }
 }

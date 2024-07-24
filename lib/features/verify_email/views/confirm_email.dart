@@ -200,6 +200,10 @@ class _EmailInputPageState extends State<EmailInputPage> {
                       hintText: '',
                       inputType: TextInputType.emailAddress,
                       keyboardAction: TextInputAction.next,
+                      // onSubmitted: (value) {
+                      //   if(validateEmail(value))
+                      //   widget.onContinue();
+                      // },
                       onChange: (value) {
                         widget.emailController.text = value;
                       },

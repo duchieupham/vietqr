@@ -45,8 +45,8 @@ class _VerifyEmailSuccessScreenState extends State<VerifyEmailSuccessScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: XImage(
                       imagePath: 'assets/images/logo-email.png',
                       width: 80,
@@ -93,7 +93,7 @@ class _VerifyEmailSuccessScreenState extends State<VerifyEmailSuccessScreen> {
               children: [
                 Row(
                   children: [
-                    XImage(
+                    const XImage(
                       imagePath: 'assets/images/ic-suggest.png',
                       width: 30,
                     ),
@@ -112,9 +112,6 @@ class _VerifyEmailSuccessScreenState extends State<VerifyEmailSuccessScreen> {
                         'Gợi ý cho bạn',
                         style: TextStyle(
                           fontSize: 15,
-                          // decoration: TextDecoration.underline,
-                          // decorationColor: Colors.transparent,
-                          // decorationThickness: 2,
                           foreground: Paint()
                             ..shader = const LinearGradient(
                               colors: [
@@ -136,7 +133,8 @@ class _VerifyEmailSuccessScreenState extends State<VerifyEmailSuccessScreen> {
                   onTap: () {
                     // Navigator.pushReplacementNamed(
                     //     context, Routes.KEY_ACTIVE_FREE);
-                    NavigatorUtils.navigatePage(context, KeyActiveFreeScreen(),
+                    NavigatorUtils.navigatePage(
+                        context, const KeyActiveFreeScreen(),
                         routeName: KeyActiveFreeScreen.routeName);
                   },
                   child: Container(
@@ -178,7 +176,7 @@ class _VerifyEmailSuccessScreenState extends State<VerifyEmailSuccessScreen> {
                 const SizedBox(height: 12),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed(Routes.USER_EDIT);
+                    Navigator.of(context).pushNamed(Routes.USER_INFO);
                   },
                   child: Container(
                     width: 200,

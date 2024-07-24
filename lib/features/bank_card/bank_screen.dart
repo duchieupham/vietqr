@@ -30,9 +30,12 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/share_bdsd/share_bdsd_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
+import 'package:vierqr/features/verify_email/verify_email_screen.dart';
+import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -213,6 +216,9 @@ class _BankScreenState extends State<_BankScreen>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                 children: [
+                  const SizedBox(height: 20),
+                  const NotiVerifyEmailWidget(),
+                  const SizedBox(height: 20),
                   const ExtendAnnualFee(),
                   const BanksAuthenticated(),
                   const BanksUnAuthenticated(),

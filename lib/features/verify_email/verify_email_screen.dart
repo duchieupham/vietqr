@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
 import 'package:vierqr/features/verify_email/events/verify_email_event.dart';
 import 'package:vierqr/features/verify_email/states/verify_email_state.dart';
@@ -99,6 +101,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
           );
+          getIt.get<DashBoardBloc>().add(GetUserInformation());
+          SharePrefUtils.getProfile();
         }
         if (state is ConfirmOTPStateFailedState) {
           setState(() {
@@ -137,6 +141,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       ),
             leading: GestureDetector(
               onTap: () {
+                // if (_pageController.page == 1) {
+                //   _pageController.previousPage(
+                //     duration: const Duration(milliseconds: 300),
+                //     curve: Curves.easeInOut,
+                //   );
+                // } else if (_pageController.page == 0) {
+                //   Navigator.of(context).pop();
+                // }
                 Navigator.of(context).pop();
               },
               child: const Row(
@@ -193,6 +205,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   Map<String, dynamic> param = {
                     'otp': _otpController.text,
                     'userId': SharePrefUtils.getProfile().userId,
+                    'email': _emailController.text,
                   };
                   _bloc.add(ConfirmOTPEvent(param: param));
                   // _pageController.nextPage(
