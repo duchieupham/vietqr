@@ -130,7 +130,52 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                       children: [
                         _buildItem(0, listCredit),
                         const SizedBox(height: 16),
-                        _buildItem(2, listCredit),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            for (int i = 3; i < 5; i++)
+                              Row(
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pop(listCredit[i]);
+                                    },
+                                    child: GradientBorderButton(
+                                      widget: Container(
+                                        height: 40,
+                                        padding: const EdgeInsets.only(
+                                            left: 4, right: 16),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const XImage(
+                                              imagePath:
+                                                  'assets/images/ic-hastag.png',
+                                              height: 30,
+                                              width: 30,
+                                            ),
+                                            Text(
+                                              textAlign: TextAlign.center,
+                                              listCredit[i],
+                                              style:
+                                                  const TextStyle(fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      borderRadius: BorderRadius.circular(50),
+                                      borderWidth: 1,
+                                      gradient: VietQRTheme
+                                          .gradientColor.brightBlueLinear,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                ],
+                              ),
+                          ],
+                        )
                       ],
                     ))
                   ],

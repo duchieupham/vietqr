@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,12 +14,16 @@ import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
@@ -29,8 +35,10 @@ import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/trans_update/trans_update_screen.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
+import 'package:vierqr/features/transaction_detail/widgets/detail_image_view.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/image_dto.dart';
 import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
@@ -40,7 +48,7 @@ import 'package:path/path.dart' as path;
 import 'package:vierqr/models/transaction_log_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-
+import 'package:http/http.dart' as http;
 import '../../../models/bank_account_dto.dart';
 
 class TransactionDetailScreen extends StatefulWidget {
@@ -64,11 +72,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
   MerchantRole role = MerchantRole();
   List<TransactionLogDTO> transLogList = [];
-
+  List<ImageDTO> listImage = [];
   String note = '';
 
   void initData() async {
     _bloc.add(GetTransDetailEvent(id: widget.id, isLoading: true));
+    await getImages(widget.id).then(
+      (value) {
+        setState(() {
+          listImage = value;
+        });
+      },
+    );
     scrollController.addListener(
       () {
         isScrollNotifier.value = scrollController.offset == 0.0;
@@ -140,6 +155,14 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       File? compressedFile = FileUtils.instance.compressImage(file);
       await Future.delayed(const Duration(milliseconds: 200), () {
         if (compressedFile != null) {
+          uploadFile(compressedFile).then(
+            (value) {
+              if (value) {
+                getImages(widget.id);
+              }
+            },
+          );
+
           // widget.onChangeLogo!(compressedFile);
         }
       });
@@ -518,7 +541,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               ]
             ],
           ),
-          if (imageSelect != null) ...[
+          if (listImage.isNotEmpty) ...[
             const SizedBox(height: 15),
             const MySeparator(color: AppColor.GREY_DADADA),
             const SizedBox(height: 10),
@@ -526,12 +549,19 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               children: [
                 Expanded(
                     child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DetailImageView(image: listImage.first.imgId),
+                      ),
+                    );
+                  },
                   child: Text(
-                    path.basename(imageSelect!.path),
+                    'giao_dich.png',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 12,
                         decoration: TextDecoration.underline,
                         decorationColor: AppColor.BLUE_TEXT,
@@ -662,6 +692,65 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         ],
       ),
     );
+  }
+
+  Future<bool> uploadFile(File file) async {
+    try {
+      final Map<String, dynamic> data = {
+        'transactionId': widget.id,
+      };
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}transaction/image';
+      final List<http.MultipartFile> files = [];
+      final imageFile = await http.MultipartFile.fromPath('image', file.path);
+      files.add(imageFile);
+      final response = await BaseAPIClient.postMultipartAPI(
+        url: url,
+        fields: data,
+        files: files,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> updateHashtag(String hashTag, String transactionId) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['hashTag'] = hashTag;
+      param['transactionId'] = transactionId;
+
+      String url = '${getIt.get<AppConfig>().getBaseUrl}transaction/hash-tag';
+      final response = await BaseAPIClient.postAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<List<ImageDTO>> getImages(String id) async {
+    List<ImageDTO> result = [];
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}transaction/image/$id';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data.map<ImageDTO>((json) => ImageDTO.fromJson(json)).toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
   }
 
   Future<bool> _updateNote(Map<String, dynamic> body) async {
@@ -1060,7 +1149,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   ),
                 ),
               ),
-              if (detail != null)
+              if (detail != null && detail.hashTag.isEmpty)
                 VietQRButton.solid(
                   onPressed: () async {
                     await DialogWidget.instance
@@ -1075,7 +1164,15 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     )
                         .then(
                       (value) {
-                        print(value);
+                        updateHashtag(value, widget.id).then(
+                          (isSuccess) {
+                            if (isSuccess) {
+                              setState(() {
+                                detail.hashTag = value;
+                              });
+                            }
+                          },
+                        );
                       },
                     );
                   },
@@ -1097,6 +1194,60 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       height: 25,
                       fit: BoxFit.cover,
                     ),
+                  ),
+                )
+              else if (detail != null)
+                InkWell(
+                  onTap: () async {
+                    await DialogWidget.instance
+                        .showModelBottomSheet(
+                      widget: UpdateHashtagWidget(
+                        transType: detail.transType,
+                      ),
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      bgrColor: AppColor.TRANSPARENT,
+                      padding: EdgeInsets.zero,
+                    )
+                        .then(
+                      (value) {
+                        updateHashtag(value, widget.id).then(
+                          (isSuccess) {
+                            if (isSuccess) {
+                              setState(() {
+                                detail.hashTag = value;
+                              });
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                  child: GradientBorderButton(
+                    widget: Container(
+                      height: 40,
+                      // width: 100,
+                      padding: const EdgeInsets.only(left: 4, right: 16),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const XImage(
+                            imagePath: 'assets/images/ic-hastag.png',
+                            height: 30,
+                            width: 30,
+                          ),
+                          Text(
+                            textAlign: TextAlign.center,
+                            detail.hashTag,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    borderRadius: BorderRadius.circular(50),
+                    borderWidth: 1,
+                    gradient: VietQRTheme.gradientColor.brightBlueLinear,
                   ),
                 )
             ],

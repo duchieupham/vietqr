@@ -230,7 +230,8 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                 if (bt.imageFile != null) {
                   dialogExits();
                 } else {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pop();
+                  // Navigator.of(context).popUntil((route) => route.isFirst);
                 }
               },
               onCreate: widget.onCreate);
@@ -253,7 +254,8 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
             onTap: onGoHome,
             child: Container(
               height: 40,
-              padding: const EdgeInsets.only(left: 8, right: 20),
+              // padding: const EdgeInsets.only(left: 8, right: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: AppColor.WHITE,
@@ -261,13 +263,14 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/ic-tb-dashboard-selected.png',
-                    color: AppColor.BLUE_TEXT,
-                  ),
+                  // Image.asset(
+                  //   'assets/images/ic-tb-dashboard-selected.png',
+                  //   color: AppColor.BLUE_TEXT,
+                  // ),
                   Text(
-                    'Trang chủ',
+                    'Trở về',
                     style: TextStyle(
                       color: AppColor.BLUE_TEXT,
                       fontSize: 14,
