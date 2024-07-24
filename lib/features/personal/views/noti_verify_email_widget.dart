@@ -7,7 +7,8 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class NotiVerifyEmailWidget extends StatefulWidget {
-  const NotiVerifyEmailWidget({super.key});
+  final bool isVerify;
+  const NotiVerifyEmailWidget({super.key, required this.isVerify});
 
   @override
   State<NotiVerifyEmailWidget> createState() => _NotiVerifyEmailWidgetState();
@@ -15,8 +16,13 @@ class NotiVerifyEmailWidget extends StatefulWidget {
 
 class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SharePrefUtils.getProfile().verify == true
+    return widget.isVerify
         ? InkWell(
             onTap: () {
               NavigatorUtils.navigatePage(context, KeyActiveFreeScreen(),

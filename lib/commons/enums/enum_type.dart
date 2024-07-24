@@ -279,6 +279,7 @@ enum BankType {
   BANK,
   GET_BANK,
   GET_BANK_LOCAL,
+  VERIFY,
 }
 
 enum ConnectMedia {

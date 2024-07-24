@@ -17,6 +17,8 @@ class BankEvent extends Equatable {
 
 class BankCardEventGetList extends BankEvent {}
 
+class GetVerifyEmail extends BankEvent {}
+
 class GetListBankAccountTerminal extends BankEvent {
   final String userId;
   final String terminalId;

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
@@ -102,7 +104,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             curve: Curves.easeInOut,
           );
           getIt.get<DashBoardBloc>().add(GetUserInformation());
-          SharePrefUtils.getProfile();
+          getIt.get<BankBloc>().add(GetVerifyEmail());
+          // SharePrefUtils.getProfile();
         }
         if (state is ConfirmOTPStateFailedState) {
           setState(() {
