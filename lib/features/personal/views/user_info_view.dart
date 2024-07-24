@@ -371,10 +371,10 @@ class _UserInfoViewState extends State<UserInfoView> {
                                           boxShadow: [
                                             BoxShadow(
                                               color:
-                                                  Colors.grey.withOpacity(0.2),
-                                              spreadRadius: 5,
-                                              blurRadius: 9,
-                                              offset: Offset(0, 3),
+                                                  Colors.black.withOpacity(0.1),
+                                              spreadRadius: 8,
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 2),
                                             ),
                                           ],
                                         ),

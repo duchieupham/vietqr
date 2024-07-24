@@ -112,16 +112,13 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
           filter: selectFilterTransType,
         ));
 
-    setState(() {
-      selectFilterTransType = filterType;
-    });
     _bloc.add(SetTransType(type: filterType.type));
 
     return filterType;
   }
 
-  Future<void> getFilterTime() async {
-    final filterType = await DialogWidget.instance.showModelBottomSheet(
+  Future<FilterTrans> getFilterTime() async {
+    FilterTrans filterType = await DialogWidget.instance.showModelBottomSheet(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         bgrColor: AppColor.TRANSPARENT,
@@ -131,19 +128,15 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
           isFilerTime: true,
           filter: selectFilterTime,
         ));
-    if (filterType != null) {
-      setState(() {
-        selectFilterTime = filterType;
-      });
-      if (selectFilterTime.type != 3) {
-        _startDate = null;
-        _endDate = null;
-        _bloc.add(SetTransTimeType(filter: filterType));
-      } else {
-        _showCustomDateRangePicker();
-      }
+
+    if (filterType.type != 3) {
+      _startDate = null;
+      _endDate = null;
+      _bloc.add(SetTransTimeType(filter: filterType));
+    } else {
+      _showCustomDateRangePicker();
     }
-    // return selectFilterTime;
+    return filterType;
   }
 
   Future<void> _showCustomDateRangePicker() async {
@@ -176,7 +169,19 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
       _bloc.add(GetTransListEvent(
           bankId: widget.bankId, offset: 0, type: selectFilterTransType.type));
     } else {
-      getFilterTime();
+      getFilterTime().then(
+        (value) {
+          if (value.type != selectFilterTime.type) {
+            _bloc.add(GetTransListEvent(
+                bankId: widget.bankId,
+                offset: 0,
+                type: selectFilterTransType.type));
+          }
+          setState(() {
+            selectFilterTime = value;
+          });
+        },
+      );
       // setState(() {
       //   selectFilterTime = FilterTrans(title: '7 ngày gần đây', type: 0);
       // });
@@ -400,10 +405,16 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                 onTap: () {
                                   getFilterTransType().then(
                                     (value) {
-                                      _bloc.add(GetTransListEvent(
-                                          bankId: widget.bankId,
-                                          offset: 0,
-                                          type: value.type));
+                                      if (value.type !=
+                                          selectFilterTransType.type) {
+                                        _bloc.add(GetTransListEvent(
+                                            bankId: widget.bankId,
+                                            offset: 0,
+                                            type: value.type));
+                                      }
+                                      setState(() {
+                                        selectFilterTransType = value;
+                                      });
                                     },
                                   );
                                 },
@@ -446,10 +457,15 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                 onTap: () {
                                   getFilterTime().then(
                                     (value) {
-                                      _bloc.add(GetTransListEvent(
-                                          bankId: widget.bankId,
-                                          offset: 0,
-                                          type: selectFilterTransType.type));
+                                      if (value.type != selectFilterTime.type) {
+                                        _bloc.add(GetTransListEvent(
+                                            bankId: widget.bankId,
+                                            offset: 0,
+                                            type: selectFilterTransType.type));
+                                      }
+                                      setState(() {
+                                        selectFilterTime = value;
+                                      });
                                     },
                                   );
                                 },

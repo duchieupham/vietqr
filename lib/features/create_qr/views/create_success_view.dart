@@ -246,16 +246,16 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
     required Function() onCreate,
   }) {
     return Container(
-      decoration: BoxDecoration(color: AppColor.WHITE),
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      decoration: const BoxDecoration(color: AppColor.WHITE),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       child: Row(
         children: [
           GestureDetector(
             onTap: onGoHome,
             child: Container(
               height: 40,
-              // padding: const EdgeInsets.only(left: 8, right: 20),
-              padding: const EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(left: 8, right: 16),
+              // padding: const EdgeInsets.only(left: 20, right: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: AppColor.WHITE,
@@ -265,10 +265,16 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Icon(
+                    Icons.arrow_back_ios_new_outlined,
+                    color: AppColor.BLUE_TEXT,
+                    size: 20,
+                  ),
                   // Image.asset(
                   //   'assets/images/ic-tb-dashboard-selected.png',
                   //   color: AppColor.BLUE_TEXT,
                   // ),
+                  const SizedBox(width: 4),
                   Text(
                     'Trở về',
                     style: TextStyle(
