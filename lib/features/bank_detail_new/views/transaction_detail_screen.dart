@@ -156,9 +156,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       await Future.delayed(const Duration(milliseconds: 200), () {
         if (compressedFile != null) {
           uploadFile(compressedFile).then(
-            (value) {
+            (value) async {
               if (value) {
-                getImages(widget.id);
+                final result = await getImages(widget.id);
+                setState(() {
+                  listImage = result;
+                });
               }
             },
           );
@@ -585,19 +588,30 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 //   ),
                 // ),
                 // const SizedBox(width: 10),
-                // VietQRButton.solid(
-                //   borderRadius: 50,
-                //   onPressed: () {},
-                //   isDisabled: false,
-                //   width: 40,
-                //   size: VietQRButtonSize.medium,
-                //   child: const XImage(
-                //     imagePath: 'assets/images/ic-remove-black.png',
-                //     width: 30,
-                //     height: 30,
-                //     fit: BoxFit.cover,
-                //   ),
-                // ),
+                VietQRButton.solid(
+                  borderRadius: 50,
+                  onPressed: () {
+                    deleteImg(listImage.first.imgId).then(
+                      (value) {
+                        if (value) {
+                          setState(() {
+                            imageSelect = null;
+                            listImage = [];
+                          });
+                        }
+                      },
+                    );
+                  },
+                  isDisabled: false,
+                  width: 40,
+                  size: VietQRButtonSize.medium,
+                  child: const XImage(
+                    imagePath: 'assets/images/ic-remove-black.png',
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ],
             ),
           ]
@@ -724,6 +738,24 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
 
       String url = '${getIt.get<AppConfig>().getBaseUrl}transaction/hash-tag';
       final response = await BaseAPIClient.postAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool> deleteImg(String imgId) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['imgId'] = imgId;
+      param['transactionId'] = widget.id;
+      String url = '${getIt.get<AppConfig>().getBaseUrl}transaction/image';
+      final response = await BaseAPIClient.deleteAPI(
         body: param,
         url: url,
         type: AuthenticationType.SYSTEM,
