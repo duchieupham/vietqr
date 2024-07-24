@@ -30,9 +30,12 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/share_bdsd/share_bdsd_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
+import 'package:vierqr/features/verify_email/verify_email_screen.dart';
+import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -77,6 +80,8 @@ class _BankScreenState extends State<_BankScreen>
   String userId = SharePrefUtils.getProfile().userId;
 
   StreamSubscription? _subscription;
+
+  bool isVerify = false;
 
   initData({bool isRefresh = false}) {
     if (isRefresh) {
@@ -187,13 +192,16 @@ class _BankScreenState extends State<_BankScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocListener<BankBloc, BankState>(
+    return BlocConsumer<BankBloc, BankState>(
       bloc: _bloc,
       listener: (context, state) async {
         if (state.request == BankType.GET_BANK) {
           _saveImageTaskStreamReceiver(state.listBankTypeDTO);
         }
 
+        if (state.request == BankType.VERIFY) {
+          isVerify = SharePrefUtils.getProfile().verify;
+        }
         if (state.request == BankType.BANK) {
           Provider.of<AuthProvider>(context, listen: false)
               .updateBanks(state.listBanks);
@@ -203,29 +211,36 @@ class _BankScreenState extends State<_BankScreen>
           }
         }
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                children: [
-                  const ExtendAnnualFee(),
-                  const BanksAuthenticated(),
-                  const BanksUnAuthenticated(),
-                  _loading(),
-                  const BanksView(),
-                ],
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _refresh,
+                child: ListView(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  children: [
+                    const SizedBox(height: 20),
+                    NotiVerifyEmailWidget(
+                      isVerify: isVerify,
+                    ),
+                    const SizedBox(height: 20),
+                    const ExtendAnnualFee(),
+                    const BanksAuthenticated(),
+                    const BanksUnAuthenticated(),
+                    _loading(),
+                    const BanksView(),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 4),
-          const BottomSection(),
-        ],
-      ),
+            const SizedBox(height: 4),
+            const BottomSection(),
+          ],
+        );
+      },
     );
   }
 

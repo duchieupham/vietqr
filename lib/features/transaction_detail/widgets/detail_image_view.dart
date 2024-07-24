@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:path/path.dart' as path;
 
 class DetailImageView extends StatelessWidget {
   final String image;
@@ -20,20 +21,6 @@ class DetailImageView extends StatelessWidget {
             ),
             Row(
               children: [
-                const IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.clear,
-                    color: AppColor.TRANSPARENT,
-                  ),
-                ),
-                const Expanded(
-                  child: Text(
-                    '1/1',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColor.WHITE, fontSize: 16),
-                  ),
-                ),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -42,7 +29,24 @@ class DetailImageView extends StatelessWidget {
                     Icons.clear,
                     color: AppColor.WHITE,
                   ),
-                )
+                ),
+                Expanded(
+                  child: Text(
+                    path.basename(image),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: AppColor.WHITE, fontSize: 16),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                // IconButton(
+                //   onPressed: () {
+                //     Navigator.of(context).pop();
+                //   },
+                //   icon: const Icon(
+                //     Icons.clear,
+                //     color: AppColor.TRANSPARENT,
+                //   ),
+                // )
               ],
             )
           ],

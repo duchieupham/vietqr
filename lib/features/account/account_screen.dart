@@ -384,7 +384,7 @@ class _FeatureWidget extends StatelessWidget {
   }
 
   void onNaviAccount(BuildContext context) {
-    Navigator.of(context).pushNamed(Routes.USER_EDIT);
+    Navigator.of(context).pushNamed(Routes.USER_INFO);
   }
 
   void onNaviPassword(BuildContext context) {

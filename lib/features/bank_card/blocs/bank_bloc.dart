@@ -33,6 +33,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     on<LoadDataBankEvent>(_getListBankTypes);
     on<UpdateListBank>(_updateListBank);
     on<GetListBankAccountTerminal>(_getBankAccountTerminal);
+    on<GetVerifyEmail>(_verifyEmail);
   }
 
   final bankCardRepository = const BankCardRepository();
@@ -137,6 +138,12 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       emit(state.copyWith(
           status: BlocStatus.ERROR,
           msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
+    }
+  }
+
+  void _verifyEmail(BankEvent event, Emitter emit) async {
+    if (event is GetVerifyEmail) {
+      emit(state.copyWith(request: BankType.VERIFY));
     }
   }
 

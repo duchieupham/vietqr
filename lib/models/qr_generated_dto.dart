@@ -57,11 +57,11 @@ class QRGeneratedDTO {
       content: json['content'],
       qrCode: json['qrCode'],
       imgId: json['imgId'],
-      transactionId: json['transactionId'],
+      transactionId: json['transactionId'] ?? '',
       transactionRefId: json['transactionRefId'],
       existing: json['existing'],
       qrLink: json['qrLink'],
-      terminalCode: json['terminalCode'],
+      terminalCode: json['terminalCode'] ?? '',
     );
   }
 

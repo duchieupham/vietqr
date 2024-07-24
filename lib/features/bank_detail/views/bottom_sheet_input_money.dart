@@ -22,6 +22,13 @@ class BottomSheetInputMoney extends StatefulWidget {
 class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
   final _focusMoney = FocusNode();
   final _focusContent = FocusNode();
+  TextEditingController textEditingController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    textEditingController.text = widget.dto.amount;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +74,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                   const SizedBox(height: 32),
                   MTextFieldCustom(
                     isObscureText: false,
+                    controller: textEditingController,
                     maxLines: 1,
                     showBorder: true,
                     value: provider.money,
@@ -79,17 +87,16 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                     inputType: TextInputType.number,
                     keyboardAction: TextInputAction.next,
                     onChange: provider.updateMoney,
-                    suffixIcon: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
+                    suffixIconConstraints:
+                        const BoxConstraints(maxWidth: 40, minWidth: 40),
+                    suffixIcon: const Row(
                       children: [
-                        const Text(
+                        Text(
                           'VND',
                           style: TextStyle(
                               fontSize: 14, color: AppColor.BLACK_TEXT),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 5),
                       ],
                     ),
                     inputFormatter: [

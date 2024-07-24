@@ -27,6 +27,9 @@ class BankAccountDTO {
   int? validFeeFrom;
   int? validFeeTo;
   int? transCount;
+  String? keyActive;
+  int? timeActiveKey;
+  bool? activeKey;
 
   //thêm
   Color? bankColor;
@@ -64,6 +67,9 @@ class BankAccountDTO {
     this.validFeeFrom,
     this.validFeeTo,
     this.transCount,
+    this.activeKey = false,
+    this.keyActive = '',
+    this.timeActiveKey = 0,
   });
 
   setColor(value) {
@@ -95,6 +101,9 @@ class BankAccountDTO {
       validFeeFrom: json['validFeeFrom'],
       validFeeTo: json['validFeeTo'],
       transCount: json['transCount'],
+      keyActive: json['keyActive'] ?? '',
+      activeKey: json['activeKey'] ?? false,
+      timeActiveKey: json['timeActiveKey'] ?? 1,
     );
   }
 

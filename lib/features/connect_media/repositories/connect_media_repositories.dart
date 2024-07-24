@@ -36,28 +36,28 @@ class ConnectGgChatRepository extends BaseRepo {
         case TypeConnect.TELE:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/telegrams/update-chatId/$id';
-          param['chatId'] = url;
+          param['chatId'] = webhook;
 
           break;
         case TypeConnect.LARK:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/larks/update-webhook/$id';
-          param['webhook'] = url;
+          param['webhook'] = webhook;
           break;
         case TypeConnect.SLACK:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/slacks/update-webhook/$id';
-          param['webhook'] = url;
+          param['webhook'] = webhook;
           break;
         case TypeConnect.DISCORD:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/discords/update-webhook/$id';
-          param['webhook'] = url;
+          param['webhook'] = webhook;
           break;
         case TypeConnect.GG_SHEET:
           url =
               '${getIt.get<AppConfig>().getBaseUrl}service/google-sheets/update-webhook/$id';
-          param['webhook'] = url;
+          param['webhook'] = webhook;
           break;
         default:
       }

@@ -218,30 +218,30 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateIndex(int index, {bool isHome = false}) {
-    if (isHome) {
-      return;
-    }
-    _indexSelected = index;
-    notifyListeners();
-  }
-
-  // void updateIndex(int index, {bool isHome = false, bool isOnTap = false}) {
+  // void updateIndex(int index, {bool isHome = false}) {
   //   if (isHome) {
   //     return;
   //   }
-  //   if (isOnTap) {
-  //     _indexSelected = index;
-  //   } else {
-  //     if (index > 1) {
-  //       _indexSelected = index + 1;
-  //     } else {
-  //       _indexSelected = index;
-  //     }
-  //   }
-
+  //   _indexSelected = index;
   //   notifyListeners();
   // }
+
+  void updateIndex(int index, {bool isHome = false, bool isOnTap = false}) {
+    if (isHome) {
+      return;
+    }
+    if (isOnTap) {
+      _indexSelected = index;
+    } else {
+      if (index > 1) {
+        _indexSelected = index + 1;
+      } else {
+        _indexSelected = index;
+      }
+    }
+
+    notifyListeners();
+  }
 
   void updateKeepBright(bool keepValue) {
     settingDTO.keepScreenOn = keepValue;
