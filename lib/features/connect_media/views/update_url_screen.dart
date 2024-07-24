@@ -180,8 +180,10 @@ class _UpdateUrlScreenState extends State<UpdateUrlScreen> {
   Widget _bottom() {
     return InkWell(
       onTap: () {
-        _bloc
-            .add(CheckWebhookUrlEvent(url: controller.text, type: widget.type));
+        // _bloc
+        //     .add(CheckWebhookUrlEvent(url: controller.text, type: widget.type));
+        _bloc.add(UpdateUrlEvent(
+            type: widget.type, id: widget.id, url: controller.text));
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),

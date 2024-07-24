@@ -51,10 +51,10 @@ class _DialogEditViewState extends State<DialogEditView> {
       children: [
         Container(
           alignment: Alignment.centerRight,
-          padding: EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.only(right: 12),
           child: IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
           ),
         ),
         Padding(
@@ -69,7 +69,7 @@ class _DialogEditViewState extends State<DialogEditView> {
                   title: 'Ghi chú',
                   autoFocus: true,
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   hintText: 'Nhập ghi chú tại đây',
                   inputType: TextInputType.text,
                   keyboardAction: TextInputAction.next,
@@ -89,13 +89,13 @@ class _DialogEditViewState extends State<DialogEditView> {
             padding: const EdgeInsets.only(left: 24, right: 16, top: 8),
             child: Text(
               error,
-              style: TextStyle(color: AppColor.error700),
+              style: const TextStyle(color: AppColor.error700),
             ),
           ),
         const SizedBox(height: 30),
         MButtonWidget(
           title: 'Cập nhật ghi chú',
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           colorEnableBgr: AppColor.BLUE_TEXT,
           colorEnableText: AppColor.WHITE,
           colorDisableBgr: AppColor.gray,

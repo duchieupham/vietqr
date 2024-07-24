@@ -180,28 +180,28 @@ class TransactionRepository {
     return result;
   }
 
-  Future<List<BusinessTransactionDTO>> getTransactionByBranchId(
-      TransactionBranchInputDTO dto) async {
-    List<BusinessTransactionDTO> result = [];
-    try {
-      final String url = '${appConfig.getBaseUrl}transaction-branch';
-      final response = await BaseAPIClient.postAPI(
-        url: url,
-        body: dto.toJson(),
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        result = data
-            .map<BusinessTransactionDTO>(
-                (json) => BusinessTransactionDTO.fromJson(json))
-            .toList();
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-    }
-    return result;
-  }
+  // Future<List<BusinessTransactionDTO>> getTransactionByBranchId(
+  //     TransactionBranchInputDTO dto) async {
+  //   List<BusinessTransactionDTO> result = [];
+  //   try {
+  //     final String url = '${appConfig.getBaseUrl}transaction-branch';
+  //     final response = await BaseAPIClient.postAPI(
+  //       url: url,
+  //       body: dto.toJson(),
+  //       type: AuthenticationType.SYSTEM,
+  //     );
+  //     if (response.statusCode == 200) {
+  //       var data = jsonDecode(response.body);
+  //       result = data
+  //           .map<BusinessTransactionDTO>(
+  //               (json) => BusinessTransactionDTO.fromJson(json))
+  //           .toList();
+  //     }
+  //   } catch (e) {
+  //     LOG.error(e.toString());
+  //   }
+  //   return result;
+  // }
 
   Future<ResponseMessageDTO> updateNote(Map<String, dynamic> param) async {
     ResponseMessageDTO result =

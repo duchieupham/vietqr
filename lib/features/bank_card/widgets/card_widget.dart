@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
+import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -78,9 +79,10 @@ class CardWidget extends StatelessWidget {
           : () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => BankCardDetailScreen(bankId: e.id),
+                  builder: (context) =>
+                      BankCardDetailNewScreen(dto: e, bankId: e.id),
                   settings: const RouteSettings(
-                    name: Routes.BANK_CARD_DETAIL_VEW,
+                    name: Routes.BANK_CARD_DETAIL_NEW,
                   ),
                 ),
               );

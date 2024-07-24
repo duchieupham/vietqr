@@ -269,16 +269,19 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       inputType: TextInputType.number,
                                       keyboardAction: TextInputAction.next,
                                       onChange: provider.updateMoney,
-                                      suffixIcon: Row(
+                                      suffixIconConstraints:
+                                          const BoxConstraints(
+                                              maxWidth: 40, minWidth: 40),
+                                      suffixIcon: const Row(
                                         mainAxisSize: MainAxisSize.min,
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
-                                          const Text('VND',
+                                          Text('VND',
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   color: AppColor.BLACK_TEXT)),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: 8),
                                         ],
                                       ),
                                       inputFormatter: [

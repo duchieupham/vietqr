@@ -37,21 +37,21 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
     QrType(
         type: 2,
         icon: 'assets/images/ic-popup-bank-linked.png',
-        gradient: VietQRTheme.gradientColor.qr_link,
+        gradient: VietQRTheme.gradientColor.columbiaBlueLinear,
         name: 'Đường dẫn',
         separateWidget: const MySeparator(color: AppColor.GREY_DADADA),
         description: 'Mã QR chứa thông tin URL đến trang web'),
     QrType(
         type: 3,
         icon: 'assets/images/ic-vcard-green.png',
-        gradient: VietQRTheme.gradientColor.vcard,
+        gradient: VietQRTheme.gradientColor.cyanLinear,
         name: 'VCard',
         separateWidget: const MySeparator(color: AppColor.GREY_DADADA),
         description: 'Mã QR chứa thông tin danh bạ liên hệ'),
     QrType(
         type: 4,
         icon: 'assets/images/ic-other-qr.png',
-        gradient: VietQRTheme.gradientColor.other_qr,
+        gradient: VietQRTheme.gradientColor.pastelBlueLinear,
         name: 'Khác',
         separateWidget: const MySeparator(color: AppColor.GREY_DADADA),
         description: 'Mã QR chứa thông tin cấu hình tuỳ chọn'),
@@ -61,7 +61,7 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
     QrType(
         type: 5,
         icon: 'assets/images/ic-scan-content.png',
-        gradient: VietQRTheme.gradientColor.scan_qr,
+        gradient: VietQRTheme.gradientColor.lilyLinear,
         name: 'Quét mã QR',
         separateWidget: const SizedBox.shrink(),
         description: 'Quét mã QR để thêm mới'),

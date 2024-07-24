@@ -23,6 +23,7 @@ import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/scroll_indicator.dart';
+import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
@@ -272,7 +273,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         }
         return SafeArea(
           child: Scaffold(
-            floatingActionButton: _scrollToTopWidget(),
+            floatingActionButton:
+                ScrollToTopButton(onPressed: _scrollToTop, notifier: _notifier),
             backgroundColor: AppColor.WHITE,
             body: CustomScrollView(
               shrinkWrap: true,
@@ -717,48 +719,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 ),
               ),
             ));
-      },
-    );
-  }
-
-  Widget _scrollToTopWidget() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _notifier,
-      builder: (context, value, child) {
-        if (value == false) {
-          return const SizedBox.shrink();
-        }
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-          width: 50,
-          height: 50,
-          margin: const EdgeInsets.only(bottom: 40, right: 5),
-          child: FloatingActionButton(
-            backgroundColor: Colors.transparent,
-            elevation: 4,
-            onPressed: () {
-              _scrollToTop();
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50),
-              // side: BorderSide(color: Colors.red),
-            ),
-            child: Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: AppColor.WHITE,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: const Icon(
-                Icons.arrow_upward_outlined,
-                color: AppColor.BLACK,
-                size: 15,
-              ),
-            ),
-          ),
-        );
       },
     );
   }

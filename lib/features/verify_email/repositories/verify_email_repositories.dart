@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -13,8 +14,7 @@ class EmailRepository {
   Future<ResponseMessageDTO> sendOTP(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      const String url =
-          'https://dev.vietqr.org/vqr/api/sendMailWithAttachment';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}sendMailWithAttachment';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -34,7 +34,7 @@ class EmailRepository {
   Future<ResponseMessageDTO> confirmOTP(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      const String url = 'https://dev.vietqr.org/vqr/api/send-mail/confirm-otp';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}send-mail/confirm-otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -54,8 +54,8 @@ class EmailRepository {
   Future<KeyFreeDTO> getKeyFree(Map<String, dynamic> param) async {
     KeyFreeDTO result = KeyFreeDTO(keyActive: '', bankId: '', status: 0);
     try {
-      const String url =
-          'https://dev.vietqr.org/vqr/api/key-active-bank/generate-key/back-up';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}key-active-bank/generate-key/back-up';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,

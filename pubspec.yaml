@@ -44,7 +44,7 @@ dependencies:
   intl: ^0.19.0
   equatable: ^2.0.5
   provider: ^6.0.4
-  qr_flutter: ^4.0.0
+  qr_flutter: ^4.1.0
   crclib: ^3.0.0
   shared_preferences: ^2.0.15
   firebase_core: ^2.14.0
@@ -135,6 +135,7 @@ dependencies:
   pretty_qr_code: ^3.3.0
   auto_size_text: ^3.0.0
   readmore: ^3.0.0
+  table_calendar: ^3.1.2
 #  screen_brightness: ^0.2.2+1
 #  audioplayers: ^4.1.0
 dependency_overrides:
@@ -186,6 +187,7 @@ flutter:
     - assets/rives/
     - assets/images/
     - assets/images/bottom_bar/
+    - assets/images/bottom-bar-icons/
     - assets/environment/
 
   #   - images/a_dot_burr.jpeg

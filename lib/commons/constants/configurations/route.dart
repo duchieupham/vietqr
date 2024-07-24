@@ -23,7 +23,10 @@ class Routes {
   static const String QR_SHARE_VIEW = '/qrShare';
   static const String BUSINESS_INFORMATION_VIEW = '/businessInformation';
   static const String BANK_CARD_DETAIL_VEW = '/bankCardDetail';
+  static const String BANK_CARD_DETAIL_NEW = '/bankCardDetailNew';
   static const String TRANSACTION_HISTORY_VIEW = '/transactionHistoryView';
+  static const String TRANSACTION_DETAIL_VIEW = '/transactionDetailyView';
+
   static const String SCAN_QR_VIEW = '/scanQRView';
   static const String SEARCH_BANK = '/searchBank';
   static const String NOTIFICATION_VIEW = '/notification';
