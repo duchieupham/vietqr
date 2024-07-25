@@ -200,26 +200,11 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 if (start!.isAfter(DateTime.now())) {
                   start = DateTime.now();
                 }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
                 if (end != null && end!.isAfter(DateTime.now())) {
                   end = DateTime.now();
                 }
-=======
-                // if (end != null && end!.isAtSameMomentAs(DateTime.now())) {
-                //   end = DateTime.now();
-                // }
-                if (end != null && end!.isAfter(DateTime.now())) {
-                  end = DateTime.now();
-                }
-=======
-                if (end != null && end!.isAtSameMomentAs(DateTime.now())) {
-                  end = DateTime.now();
-                }
-                // if (end != null && end!.isAfter(DateTime.now())) {
-                //   end = DateTime.now();
-                // }
->>>>>>> 0ae8886893fadaa95ee05016644666847255c1da
+
                 // if (start == end) {
                 //   _startDate = start;
                 //   _endDate = end;
@@ -234,10 +219,6 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 //   _rangeSelectionMode = RangeSelectionMode.toggledOn;
                 // }
                 // _focusedDay = focusedDay;
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 0ae8886893fadaa95ee05016644666847255c1da
 
                 _startDate = start;
                 _endDate = end;
