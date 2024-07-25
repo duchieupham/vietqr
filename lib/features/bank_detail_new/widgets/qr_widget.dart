@@ -141,7 +141,7 @@ class _QrWidgetState extends State<QrWidget> {
               data: widget.dto.qrCode,
               size: 80,
               version: QrVersions.auto,
-              backgroundColor: AppColor.WHITE,
+              backgroundColor: AppColor.TRANSPARENT,
               errorCorrectionLevel: QrErrorCorrectLevel.M,
               embeddedImage:
                   const AssetImage('assets/images/ic-viet-qr-small.png'),

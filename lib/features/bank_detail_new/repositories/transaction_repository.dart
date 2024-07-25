@@ -16,36 +16,6 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class TransactionRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
-  void networkRequestIsolate(SendPort sendPort) async {
-    ReceivePort receivePort = ReceivePort();
-    sendPort.send(receivePort.sendPort);
-    List<TransactionItemDTO> list = [];
-    await for (var message in receivePort) {
-      final data = message[0];
-      final SendPort replyPort = message[1];
-
-      try {
-        String url = data['url'];
-        final response = await BaseAPIClient.getAPI(
-          url: url,
-          type: AuthenticationType.SYSTEM,
-        );
-
-        if (response.statusCode == 200) {
-          var data = jsonDecode(response.body);
-          list = data
-              .map<TransactionItemDTO>(
-                  (json) => TransactionItemDTO.fromJson(json))
-              .toList();
-        }
-
-        replyPort.send(list);
-      } catch (e) {
-        replyPort.send(list);
-      }
-    }
-  }
-
   Future<List<TransactionItemDTO>> getListTrans({
     required String bankId,
     required String value,
@@ -70,13 +40,6 @@ class TransactionRepository extends BaseRepo {
         list = await receivePort.first;
         isolate.kill(priority: Isolate.immediate);
       }
-      // if (response.statusCode == 200) {
-      //   var data = jsonDecode(response.body);
-      //   list = data
-      //       .map<TransactionItemDTO>(
-      //           (json) => TransactionItemDTO.fromJson(json))
-      //       .toList();
-      // }
     } catch (e) {
       LOG.error(e.toString());
     }

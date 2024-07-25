@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -1129,7 +1130,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           const SizedBox(width: 10),
           if (detail.transType != 'D' && detail.status != 2) ...[
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(Routes.SAVE_SHARE_TRANS_DETAIL, arguments: {
+                  'type': TypeImage.SAVE,
+                  'dto': detail,
+                });
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,
@@ -1145,7 +1152,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             ),
             const SizedBox(width: 8),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(Routes.SAVE_SHARE_TRANS_DETAIL, arguments: {
+                  'type': TypeImage.SHARE,
+                  'dto': detail,
+                });
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,
