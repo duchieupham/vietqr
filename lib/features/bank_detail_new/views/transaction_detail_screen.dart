@@ -1134,40 +1134,40 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 )
               : const SizedBox.shrink(),
           const SizedBox(width: 10),
-          // if (detail.transType != 'D' && detail.status != 2) ...[
-          //   InkWell(
-          //     onTap: () {},
-          //     child: Container(
-          //       padding: const EdgeInsets.all(4),
-          //       height: 40,
-          //       width: 40,
-          //       decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(100),
-          //           gradient: const LinearGradient(
-          //               colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
-          //               begin: Alignment.centerLeft,
-          //               end: Alignment.centerRight)),
-          //       child: const XImage(imagePath: 'assets/images/ic-dowload.png'),
-          //     ),
-          //   ),
-          //   const SizedBox(width: 8),
-          //   InkWell(
-          //     onTap: () {},
-          //     child: Container(
-          //       padding: const EdgeInsets.all(4),
-          //       height: 40,
-          //       width: 40,
-          //       decoration: BoxDecoration(
-          //           borderRadius: BorderRadius.circular(100),
-          //           gradient: const LinearGradient(
-          //               colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
-          //               begin: Alignment.centerLeft,
-          //               end: Alignment.centerRight)),
-          //       child:
-          //           const XImage(imagePath: 'assets/images/ic-share-black.png'),
-          //     ),
-          //   ),
-          // ]
+          if (detail.transType != 'D' && detail.status != 2) ...[
+            InkWell(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)),
+                child: const XImage(imagePath: 'assets/images/ic-dowload.png'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            InkWell(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)),
+                child:
+                    const XImage(imagePath: 'assets/images/ic-share-black.png'),
+              ),
+            ),
+          ]
         ],
       ),
     );

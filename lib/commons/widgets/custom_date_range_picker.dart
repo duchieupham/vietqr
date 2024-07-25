@@ -179,6 +179,14 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                     _rangeSelectionMode = RangeSelectionMode.toggledOn;
                   } else if (_rangeSelectionMode ==
                       RangeSelectionMode.toggledOn) {
+                    // if (isSameDay(_startDate, selectedDay)) {
+                    //   _endDate = selectedDay;
+                    //   _rangeEnd = selectedDay;
+                    //   _rangeSelectionMode = RangeSelectionMode.toggledOff;
+                    // } else {
+                    //   _endDate = selectedDay;
+                    //   _rangeEnd = selectedDay;
+                    // }
                     _endDate = selectedDay;
                     _rangeEnd = selectedDay;
                     _rangeSelectionMode = RangeSelectionMode.toggledOff;
@@ -192,9 +200,26 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 if (start!.isAfter(DateTime.now())) {
                   start = DateTime.now();
                 }
-                if (end != null && end!.isAfter(DateTime.now())) {
+                if (end != null && end!.isAtSameMomentAs(DateTime.now())) {
                   end = DateTime.now();
                 }
+                // if (end != null && end!.isAfter(DateTime.now())) {
+                //   end = DateTime.now();
+                // }
+                // if (start == end) {
+                //   _startDate = start;
+                //   _endDate = end;
+                //   _rangeStart = start;
+                //   _rangeEnd = end;
+                //   _rangeSelectionMode = RangeSelectionMode.toggledOff;
+                // } else {
+                //   _startDate = start;
+                //   _endDate = end;
+                //   _rangeStart = start;
+                //   _rangeEnd = end;
+                //   _rangeSelectionMode = RangeSelectionMode.toggledOn;
+                // }
+                // _focusedDay = focusedDay;
 
                 _startDate = start;
                 _endDate = end;
