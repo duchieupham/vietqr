@@ -8,7 +8,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
 class SettingBDSD extends StatefulWidget {
-  const SettingBDSD({Key? key}) : super(key: key);
+  const SettingBDSD({super.key});
 
   static String routeName = '/setting_bdsd';
 
@@ -43,30 +43,30 @@ class _SettingBDSDState extends State<SettingBDSD> {
         child: Consumer<SettingBDSDProvider>(
           builder: (context, provider, child) {
             return ListView(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               children: [
-                Text(
+                const Text(
                   'Cài đặt giọng nói',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 _buildBgItem(
                   customPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Giọng nói được kích hoạt khi nhận thông báo Biến động số dư trong ứng dụng VietQR',
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       Text(
                         provider.enableVoice ? 'Bật' : 'Tắt',
                         style:
-                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                            const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                       ),
                       Switch(
                         value: provider.enableVoice,
@@ -84,7 +84,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                   ),
                 ),
                 _buildBgNote(
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -224,8 +224,8 @@ class _SettingBDSDState extends State<SettingBDSD> {
   Widget _buildBgItem({required Widget child, EdgeInsets? customPadding}) {
     return Container(
       alignment: Alignment.centerLeft,
-      margin: EdgeInsets.only(top: 12),
-      padding: customPadding ?? EdgeInsets.all(16),
+      margin: const EdgeInsets.only(top: 12),
+      padding: customPadding ?? const EdgeInsets.all(16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
       child: child,
@@ -235,8 +235,8 @@ class _SettingBDSDState extends State<SettingBDSD> {
   Widget _buildBgNote({required Widget child}) {
     return Container(
       alignment: Alignment.centerLeft,
-      margin: EdgeInsets.only(top: 20),
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: AppColor.BLUE_TEXT.withOpacity(0.2)),
@@ -244,7 +244,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(
                 Icons.info_outline,

@@ -10,7 +10,7 @@ class InviteBDSDEvent extends Equatable {
 class GetRanDomCode extends InviteBDSDEvent {
   final bool isLoading;
 
-  GetRanDomCode({this.isLoading = false});
+  const GetRanDomCode({this.isLoading = false});
 
   @override
   List<Object?> get props => [isLoading];

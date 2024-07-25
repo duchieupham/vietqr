@@ -84,8 +84,8 @@ class _VietQrState extends State<VietQrNew> {
               version: QrVersions.auto,
               embeddedImage:
                   const AssetImage('assets/images/ic-viet-qr-small.png'),
-              embeddedImageStyle: QrEmbeddedImageStyle(
-                size: const Size(30, 30),
+              embeddedImageStyle: const QrEmbeddedImageStyle(
+                size: Size(30, 30),
               ),
             ),
           ),

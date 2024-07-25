@@ -11,10 +11,11 @@ import 'package:vierqr/models/store/merchant_dto.dart';
 
 class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
     with BaseManager {
+  @override
   final BuildContext context;
 
   CreateStoreBloc(this.context)
-      : super(CreateStoreState(banks: [], merchants: [])) {
+      : super(const CreateStoreState(banks: [], merchants: [])) {
     on<RandomCodeStoreEvent>(_getRandomCode);
     on<UpdateCodeStoreEvent>(_updateRandomCode);
     on<UpdateAddressStoreEvent>(_updateAddress);
@@ -24,7 +25,7 @@ class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
     on<CreateMerchantEvent>(_createMerchant);
   }
 
-  CreateStoreRepository repository = CreateStoreRepository();
+  CreateStoreRepository repository = const CreateStoreRepository();
 
   void _getRandomCode(CreateStoreEvent event, Emitter emit) async {
     try {
@@ -158,7 +159,7 @@ class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
 
   void _createNewGroup(CreateStoreEvent event, Emitter emit) async {
     ResponseMessageDTO responseMessageDTO =
-        ResponseMessageDTO(status: '', message: '');
+        const ResponseMessageDTO(status: '', message: '');
     try {
       if (event is CreateNewStoreEvent) {
         emit(state.copyWith(
@@ -187,7 +188,7 @@ class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
 
   void _createMerchant(CreateStoreEvent event, Emitter emit) async {
     ResponseMessageDTO responseMessageDTO =
-        ResponseMessageDTO(status: '', message: '');
+        const ResponseMessageDTO(status: '', message: '');
     try {
       if (event is CreateMerchantEvent) {
         emit(state.copyWith(

@@ -39,7 +39,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> connectBranch(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}bank-branch';
       final response = await BaseAPIClient.postAPI(
@@ -61,7 +61,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> removeMember(Map<String, dynamic> body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}member/remove';
       final response = await BaseAPIClient.deleteAPI(
@@ -83,7 +83,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> removeAllMember(Map<String, dynamic> body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}member/remove-all';
@@ -106,7 +106,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> addBankLark(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
@@ -129,7 +129,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> addBankTelegram(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
@@ -152,7 +152,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> removeBankTelegram(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
@@ -175,7 +175,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> removeBankLark(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
@@ -280,7 +280,7 @@ class ShareBDSDRepository {
   }
 
   Future<ResponseMessageDTO> shareBDSD(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}member';
       final response = await BaseAPIClient.postAPI(

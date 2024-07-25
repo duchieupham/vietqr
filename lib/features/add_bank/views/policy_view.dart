@@ -59,7 +59,7 @@ class _PolicyViewState extends State<PolicyView> {
                   alignment: Alignment.bottomCenter,
                   width: MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.all(20),
-                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15)),
@@ -76,7 +76,7 @@ class _PolicyViewState extends State<PolicyView> {
                                 fontWeight: FontWeight.bold,
                                 color: AppColor.BLACK,
                               ),
-                              child: Text(
+                              child: const Text(
                                 'Điều khoản dịch vụ',
                               ),
                             ),
@@ -247,7 +247,7 @@ class _PolicyViewState extends State<PolicyView> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(2.0),
                               ),
-                              side: MaterialStateBorderSide.resolveWith(
+                              side: WidgetStateBorderSide.resolveWith(
                                 (states) => const BorderSide(
                                   width: 1.0,
                                   color: AppColor.BLUE_TEXT,

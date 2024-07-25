@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/maintain_charge_create.dart';
-import 'package:vierqr/models/maintain_charge_dto.dart';
 
 import '../../../models/confirm_manitain_charge_dto.dart';
 

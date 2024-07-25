@@ -1,7 +1,5 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
@@ -21,7 +19,7 @@ class PopupGuideWidget extends StatefulWidget {
 }
 
 class _PopupGuideWidgetState extends State<PopupGuideWidget> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   int _currentPage = 0;
 
   @override
@@ -164,7 +162,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.close,
                   color: Colors.black,
                   size: 20,
@@ -193,7 +191,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
           height: 12,
         ),
         _buildBgItem(
-            Text(
+            const Text(
               'Tạo nhóm mới Telegram, hoặc nhóm quản trị của bạn',
               style: TextStyle(fontSize: 12),
             ),
@@ -212,10 +210,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: 'Sao chép thông tin ',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: 'chat id',
                           style: TextStyle(
@@ -231,13 +229,13 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                   height: 2,
                 ),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '(chat id ',
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColor.BLACK,
                         fontWeight: FontWeight.bold),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: 'của nhóm Telegram sẽ có định dạng ',
                           style: TextStyle(
@@ -261,17 +259,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 350,
             height: 350,
             child: Image.asset(
               "assets/images/intro1.png",
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
-          Container(
+          const SizedBox(
             width: double.infinity,
             height: 20,
             child: Text(
@@ -280,10 +278,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             ),
           ),
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: '- Chọn nút "..." > ',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: '"Setting"',
                     style:
@@ -297,17 +295,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 350,
           height: 350,
           child: Image.asset(
             "assets/images/step1.png",
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 50,
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 20,
           child: Text(
@@ -315,7 +313,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 30,
           child: Text(
@@ -334,21 +332,21 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 350,
             height: 350,
             child: Image.asset(
               "assets/images/intro2.png",
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: '- Chọn mục > ',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: '"Bot" > "Add Bot"',
                     style:
@@ -357,10 +355,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             ),
           ),
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: '- Thêm',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: ' "Custom Bot"',
                     style:
@@ -374,20 +372,20 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
-        Container(
+        SizedBox(
           width: 350,
           height: 350,
           child: Image.asset(
             "assets/images/step2.png",
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 30,
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 20,
           child: Text(
@@ -395,7 +393,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 30,
           child: Text(
@@ -414,25 +412,25 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 350,
             height: 350,
             child: Image.asset(
               "assets/images/intro3.png",
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
-          Text(
+          const Text(
             '- Đặt tên và mô tả cho Bot.',
             style: TextStyle(fontSize: 12),
           ),
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: '- Chọn',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: '"Add"',
                     style:
@@ -446,17 +444,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 350,
           height: 350,
           child: Image.asset(
             "assets/images/step3.png",
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 50,
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 20,
           child: Text(
@@ -464,7 +462,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 30,
           child: Text(
@@ -483,21 +481,21 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
+          SizedBox(
             width: 350,
             height: 350,
             child: Image.asset(
               "assets/images/intro4.png",
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: '- Chọn',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: ' "Coppy" ',
                     style:
@@ -511,10 +509,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             ),
           ),
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: '- Chọn',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: ' "Finish"',
                     style:
@@ -528,17 +526,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 350,
           height: 350,
           child: Image.asset(
             "assets/images/step4.png",
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 50,
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 20,
           child: Text(
@@ -546,7 +544,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 30,
           child: Text(
@@ -564,17 +562,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 350,
           height: 350,
           child: Image.asset(
             "assets/images/step5.png",
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 50,
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 20,
           child: Text(
@@ -582,7 +580,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 30,
           child: Text(
@@ -600,17 +598,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: 350,
           height: 350,
           child: Image.asset(
             "assets/images/step6.png",
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 50,
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 20,
           child: Text(
@@ -618,7 +616,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
           ),
         ),
-        Container(
+        const SizedBox(
           width: double.infinity,
           height: 45,
           child: Text(
@@ -730,7 +728,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             Text('Tiếp theo',
                 style: TextStyle(fontSize: 15, color: AppColor.WHITE)),
             Padding(
-              padding: const EdgeInsets.only(right: 10),
+              padding: EdgeInsets.only(right: 10),
               child: Icon(Icons.arrow_forward, color: AppColor.WHITE, size: 20),
             ),
           ],
@@ -744,13 +742,13 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             height: 50,
             width: MediaQuery.of(context).size.width * 0.4,
             isEnable: true,
-            margin: EdgeInsets.only(right: 10),
+            margin: const EdgeInsets.only(right: 10),
             colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
             colorEnableText: AppColor.BLUE_TEXT,
             title: 'Trở về',
             onTap: () {
               _pageController.previousPage(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut);
             },
           ),
@@ -776,13 +774,13 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             height: 50,
             width: MediaQuery.of(context).size.width * 0.4,
             isEnable: true,
-            margin: EdgeInsets.only(right: 10),
+            margin: const EdgeInsets.only(right: 10),
             colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
             colorEnableText: AppColor.BLUE_TEXT,
             title: 'Trở về',
             onTap: () {
               _pageController.previousPage(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut);
             },
           ),
@@ -796,17 +794,17 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             title: '',
             onTap: () {
               _pageController.nextPage(
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut);
             },
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(Icons.arrow_forward, color: AppColor.BLUE_TEXT, size: 20),
                 Text('Tiếp theo',
                     style: TextStyle(fontSize: 15, color: AppColor.WHITE)),
                 Padding(
-                  padding: const EdgeInsets.only(right: 10),
+                  padding: EdgeInsets.only(right: 10),
                   child: Icon(Icons.arrow_forward,
                       color: AppColor.WHITE, size: 15),
                 ),
@@ -823,10 +821,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
       children: [
         Expanded(
           child: RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: 'Chọn truy cập đường dẫn ',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: 't.me/vietqrbot',
                     style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT)),
@@ -849,7 +847,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               color: AppColor.GREY_BUTTON),
-          child: Icon(
+          child: const Icon(
             Icons.arrow_forward_ios,
             size: 12,
             color: AppColor.BLUE_TEXT,
@@ -863,7 +861,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Thêm 2 Bot dưới đây vào nhóm của bạn:',
           style: TextStyle(fontSize: 12),
         ),
@@ -893,10 +891,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                 width: 25,
                 height: 25,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
-              Text(
+              const Text(
                 '@vietqrbot',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
@@ -935,10 +933,10 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                 width: 25,
                 height: 25,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
-              Text(
+              const Text(
                 '@raw_data_bot',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
@@ -955,11 +953,11 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
           height: 12,
         ),
         RichText(
-          text: TextSpan(
+          text: const TextSpan(
             text:
                 'VietQR Bot sẽ gửi thông tin BĐSD về nhóm Telegram của bạn.\nRawDataBot sẽ giúp bạn lấy thông tin',
             style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-            children: const <TextSpan>[
+            children: <TextSpan>[
               TextSpan(
                   text: 'chat id',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
@@ -974,7 +972,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
     return Container(
       height: height,
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
       child: child,

@@ -15,9 +15,9 @@ class NavigatorUtils {
       context: context ?? navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return Dialog(
-          shape: RoundedRectangleBorder(
+          shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(16.0))),
-          insetPadding: EdgeInsets.symmetric(
+          insetPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 24,
           ),

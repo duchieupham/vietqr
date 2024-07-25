@@ -72,7 +72,7 @@ class _VietQrState extends State<VietQr> {
             : const AssetImage('assets/images/ic-viet-qr-small.png'),
         embeddedImageStyle: widget.isEmbeddedImage
             ? null
-            : QrEmbeddedImageStyle(size: const Size(30, 30)),
+            : const QrEmbeddedImageStyle(size: Size(30, 30)),
       );
     }
 
@@ -81,7 +81,7 @@ class _VietQrState extends State<VietQr> {
     return Container(
       width: width,
       margin: height < 750
-          ? EdgeInsets.symmetric(horizontal: 10)
+          ? const EdgeInsets.symmetric(horizontal: 10)
           : const EdgeInsets.symmetric(vertical: 8),
       padding: height < 750
           ? const EdgeInsets.only(bottom: 16, left: 30, right: 30)
@@ -131,8 +131,8 @@ class _VietQrState extends State<VietQr> {
                     version: QrVersions.auto,
                     embeddedImage:
                         const AssetImage('assets/images/ic-viet-qr-small.png'),
-                    embeddedImageStyle: QrEmbeddedImageStyle(
-                      size: const Size(30, 30),
+                    embeddedImageStyle: const QrEmbeddedImageStyle(
+                      size: Size(30, 30),
                     ),
                   ),
                 ),

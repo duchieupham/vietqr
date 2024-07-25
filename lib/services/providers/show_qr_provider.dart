@@ -6,14 +6,14 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 class ShowQRProvider with ChangeNotifier {
   String money = StringUtils.formatNumber(0);
 
-  String _transactionAmount = '0';
-  String _currencyFormatted = '0';
+  final String _transactionAmount = '0';
+  final String _currencyFormatted = '0';
 
-  bool _isQRGenerated = false;
+  final bool _isQRGenerated = false;
 
   //errors
-  bool _isAmountErr = false;
-  bool _isContentErr = false;
+  final bool _isAmountErr = false;
+  final bool _isContentErr = false;
 
   String? errorAmount;
 

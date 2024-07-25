@@ -38,7 +38,7 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          const Text(
             'Get Key',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -52,10 +52,10 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
                 borderRadius: BorderRadius.circular(4)),
             child: Row(
               children: [
-                Text('Số điện thoại: ', style: TextStyle(fontSize: 14)),
-                Text('${SharePrefUtils.getPhone()}',
+                const Text('Số điện thoại: ', style: TextStyle(fontSize: 14)),
+                Text(SharePrefUtils.getPhone(),
                     style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                        const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
@@ -96,8 +96,8 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
               ),
             ),
           const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Text(
               'Trường "URL" là đường dẫn trang web đăng ký nhận biến động số dư của đối tác.',
               style: TextStyle(fontSize: 14),
@@ -107,7 +107,7 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
           MButtonWidget(
             title: 'Kích hoạt',
             isEnable: true,
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             onTap: () => _onActivated(context),
           ),
           MButtonWidget(

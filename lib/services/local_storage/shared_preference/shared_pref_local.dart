@@ -8,6 +8,7 @@ class SharedPrefLocal<T> extends IStorageService<T> {
   SharedPrefLocal(key) : super(key);
 
   /// Nếu là obj thì trong obj phải có hàm toJson()
+  @override
   Future<void> set({required T data}) async {
     if (T == bool) {
       sharedPrefs.setBool(key, data as bool);
@@ -45,6 +46,7 @@ class SharedPrefLocal<T> extends IStorageService<T> {
     }
   }
 
+  @override
   Future<bool> remove() async {
     return sharedPrefs.remove(key);
   }

@@ -7,7 +7,7 @@ class CustomDateRangePicker extends StatefulWidget {
   final DateTime? initialStartDate;
   final DateTime? initialEndDate;
 
-  CustomDateRangePicker({this.initialStartDate, this.initialEndDate});
+  const CustomDateRangePicker({super.key, this.initialStartDate, this.initialEndDate});
 
   @override
   _CustomDateRangePickerState createState() => _CustomDateRangePickerState();
@@ -72,7 +72,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Chọn thời gian\nhiển thị giao dịch',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
               ),

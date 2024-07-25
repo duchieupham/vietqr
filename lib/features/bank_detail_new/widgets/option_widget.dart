@@ -9,7 +9,6 @@ import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 

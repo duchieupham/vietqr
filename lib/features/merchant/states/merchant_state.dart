@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 enum MerchantType {
@@ -27,7 +26,7 @@ class MerchantState extends Equatable {
   final String vaNumber;
   final ResponseMessageDTO responseDTO;
 
-  MerchantState({
+  const MerchantState({
     this.status = BlocStatus.NONE,
     this.msg,
     this.request = MerchantType.NONE,

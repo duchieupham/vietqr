@@ -41,7 +41,7 @@ class BottomSheetFilter extends StatelessWidget {
   final Function reset;
 
   const BottomSheetFilter({
-    Key? key,
+    super.key,
     required this.onApply,
     required this.terminals,
     required this.fromDate,
@@ -56,7 +56,7 @@ class BottomSheetFilter extends StatelessWidget {
     required this.filterTerminal,
     required this.terminalAcc,
     this.isOwner = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class BottomSheetFilter extends StatelessWidget {
                       const SizedBox(
                         width: 48,
                       ),
-                      Text(
+                      const Text(
                         'Bộ lọc giao dịch',
                         style: TextStyle(
                           fontSize: 18,
@@ -117,14 +117,14 @@ class BottomSheetFilter extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 if (!isOwner) ...[
-                  Text(
+                  const Text(
                     'Cửa hàng',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   _buildDropListTerminal(),
                   const SizedBox(height: 16),
                 ],
-                Text(
+                const Text(
                   'Lọc theo',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
@@ -133,8 +133,8 @@ class BottomSheetFilter extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Container(
-                        margin: EdgeInsets.only(top: 12),
-                        padding: EdgeInsets.only(left: 16, right: 12),
+                        margin: const EdgeInsets.only(top: 12),
+                        padding: const EdgeInsets.only(left: 16, right: 12),
                         height: 50,
                         decoration: BoxDecoration(
                             color: AppColor.WHITE,
@@ -212,7 +212,7 @@ class BottomSheetFilter extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 if (isOwner && provider.valueFilter.id == 4) ...[
-                  Text(
+                  const Text(
                     'Cửa hàng',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
@@ -292,7 +292,7 @@ class BottomSheetFilter extends StatelessWidget {
   Widget _buildDropListTerminal() =>
       Consumer<TransProvider>(builder: (context, provider, child) {
         return Container(
-          margin: EdgeInsets.only(top: 12),
+          margin: const EdgeInsets.only(top: 12),
           height: 50,
           decoration: BoxDecoration(
               color: AppColor.WHITE,
@@ -314,7 +314,7 @@ class BottomSheetFilter extends StatelessWidget {
                           value: isOwner
                               ? provider.keywordSearch
                               : provider.terminalAccountDTO.terminalName,
-                          styles: TextStyle(fontSize: 14),
+                          styles: const TextStyle(fontSize: 14),
                           textFieldType: TextfieldType.DEFAULT,
                           maxLength: 10,
                           contentPadding: EdgeInsets.zero,
@@ -377,8 +377,8 @@ class BottomSheetFilter extends StatelessWidget {
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(5)),
               ),
-              menuItemStyleData: MenuItemStyleData(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              menuItemStyleData: const MenuItemStyleData(
+                padding: EdgeInsets.symmetric(horizontal: 20),
               ),
             ),
           ),
@@ -404,8 +404,8 @@ class BottomSheetFilter extends StatelessWidget {
               children: [
                 Expanded(
                   child: Container(
-                    margin: EdgeInsets.only(top: 12),
-                    padding: EdgeInsets.only(left: 16, right: 12),
+                    margin: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(left: 16, right: 12),
                     height: 50,
                     decoration: BoxDecoration(
                         color: AppColor.WHITE,
@@ -484,7 +484,7 @@ class BottomSheetFilter extends StatelessWidget {
         return Container(
           height: 48,
           alignment: Alignment.center,
-          padding: EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: 4),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             border: Border.all(color: AppColor.GREY_BORDER),
@@ -516,22 +516,22 @@ class BottomSheetFilter extends StatelessWidget {
     return Consumer<TransProvider>(builder: (context, provider, child) {
       if (provider.valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {
         return Container(
-          margin: EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             color: AppColor.WHITE,
           ),
           child: Row(
             children: [
-              Expanded(
+              const Expanded(
                 child: Text(
                   'Trạng thái giao dịch',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(top: 4),
-                padding: EdgeInsets.only(left: 16, right: 12),
+                margin: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.only(left: 16, right: 12),
                 height: 50,
                 decoration: BoxDecoration(
                     color: AppColor.WHITE,

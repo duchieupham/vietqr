@@ -10,7 +10,7 @@ class CustomTextField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final bool isActive;
 
-  CustomTextField({
+  const CustomTextField({super.key, 
     required this.controller,
     required this.hintText,
     required this.labelText,

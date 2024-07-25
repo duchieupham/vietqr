@@ -62,7 +62,7 @@ mixin DialogHelper {
             padding: padding,
             width: width,
             height: height,
-            child: Column(),
+            child: const Column(),
           ),
         );
       },
@@ -96,7 +96,7 @@ mixin DialogHelper {
             } else {
               getIt
                   .get<DashBoardBloc>()
-                  .add(GetVersionAppEventDashboard(isCheckVer: true));
+                  .add(const GetVersionAppEventDashboard(isCheckVer: true));
             }
           },
         );

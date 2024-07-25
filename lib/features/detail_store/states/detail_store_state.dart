@@ -28,7 +28,7 @@ class DetailStoreState extends Equatable {
   final int page;
   final TransStoreDTO transDTO;
 
-  DetailStoreState({
+  const DetailStoreState({
     this.status = BlocStatus.NONE,
     this.request = DetailStoreType.NONE,
     this.msg,

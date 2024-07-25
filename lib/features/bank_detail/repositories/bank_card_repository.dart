@@ -5,7 +5,6 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
-import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -606,7 +605,7 @@ class BankCardRepository {
 
   Future<ResponseMessageDTO> requestRegisterBankAccount(
       Map<String, dynamic> param) async {
-    ResponseMessageDTO dto = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO dto = const ResponseMessageDTO(status: '', message: '');
 
     try {
       String url = '${EnvConfig.getBaseUrl()}account-bank-request';

@@ -15,7 +15,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/home/widget/item_service.dart';
-import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -65,7 +64,7 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
                 const SizedBox(
                   width: 15,
                 ),
-                Expanded(
+                const Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +76,7 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         height: 10,
                       ),
                       Text(
@@ -86,7 +85,7 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
                           fontSize: 13,
                         ),
                       ),
-                      const SizedBox(
+                      SizedBox(
                         height: 5,
                       ),
                       Text(
@@ -269,7 +268,7 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
           pathIcon: ImageConstant.shortcutNfc,
           title: 'VQR-ID Card',
           onTap: () async {
-            NavigatorUtils.navigatePage(context, VietQRIDCardView(),
+            NavigatorUtils.navigatePage(context, const VietQRIDCardView(),
                 routeName: VietQRIDCardView.routeName);
           },
         ),
@@ -322,7 +321,7 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
   }
 
   String getDeviceType() {
-    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    final data = MediaQueryData.fromView(WidgetsBinding.instance.window);
     return data.size.shortestSide < 600 ? 'phone' : 'tablet';
   }
 }

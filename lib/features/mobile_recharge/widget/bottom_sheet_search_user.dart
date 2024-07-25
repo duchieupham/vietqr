@@ -14,13 +14,12 @@ import '../../contact/states/contact_state.dart';
 class BottomSheetSearchUser extends StatelessWidget {
   final Function(ContactDTO) chooseContact;
 
-  const BottomSheetSearchUser({Key? key, required this.chooseContact})
-      : super(key: key);
+  const BottomSheetSearchUser({super.key, required this.chooseContact});
 
   @override
   Widget build(BuildContext context) {
-    late ContactBloc _bloc = BlocProvider.of(context);
-    _bloc.add(ContactEventGetListRecharge());
+    late ContactBloc bloc = BlocProvider.of(context);
+    bloc.add(ContactEventGetListRecharge());
     return Column(
       children: [
         Row(
@@ -29,7 +28,7 @@ class BottomSheetSearchUser extends StatelessWidget {
             const SizedBox(
               width: 32,
             ),
-            Text(
+            const Text(
               'Nạp tiền điện thoại',
               style: TextStyle(
                 fontSize: 16,
@@ -61,9 +60,9 @@ class BottomSheetSearchUser extends StatelessWidget {
             Provider.of<ContactProvider>(context, listen: false)
                 .updatePhoneNo(value);
             if (value.length >= 5) {
-              _bloc.add(SearchUser(value));
+              bloc.add(SearchUser(value));
             } else if (value.isEmpty) {
-              _bloc.add(ContactEventGetListRecharge());
+              bloc.add(ContactEventGetListRecharge());
             } else {
               List<ContactDTO> list = [];
               Provider.of<ContactProvider>(context, listen: false)
@@ -107,7 +106,7 @@ class BottomSheetSearchUser extends StatelessWidget {
                 if (provider.phoneNo.isNotEmpty) {
                   return _buildItemSave(context, dto: dto);
                 } else {
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }
               }
               return ListView.separated(
@@ -177,7 +176,7 @@ class BottomSheetSearchUser extends StatelessWidget {
             Container(
               width: 35,
               height: 35,
-              margin: EdgeInsets.only(top: 2),
+              margin: const EdgeInsets.only(top: 2),
               decoration: BoxDecoration(
                 color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(40),

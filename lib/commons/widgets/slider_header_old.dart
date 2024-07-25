@@ -12,14 +12,14 @@ class SliverHeaderOld extends StatelessWidget {
   final String accountBalance;
 
   const SliverHeaderOld({
-    Key? key,
+    super.key,
     required this.maxHeight,
     required this.minHeight,
     required this.title,
     required this.image,
     required this.bankAccountDTO,
     required this.accountBalance,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

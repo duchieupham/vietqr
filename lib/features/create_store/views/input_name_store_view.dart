@@ -41,7 +41,7 @@ class _InputNameStoreViewState extends State<InputNameStoreView> {
               'assets/images/logo-store-3D.png',
               height: 100,
             ),
-            Text(
+            const Text(
               'Tiếp theo, vui lòng cung cấp\ntên cửa hàng của bạn',
               style: TextStyle(
                 fontSize: 20,
@@ -64,7 +64,7 @@ class _InputNameStoreViewState extends State<InputNameStoreView> {
                 _value = value;
                 setState(() {});
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập tên cửa hàng ở đây',
                 hintStyle: TextStyle(
                   fontSize: 14,
@@ -88,7 +88,7 @@ class _InputNameStoreViewState extends State<InputNameStoreView> {
             Align(
               alignment: Alignment.centerRight,
               child: RichText(
-                text: TextSpan(
+                text: const TextSpan(
                   style: TextStyle(
                       fontSize: 14,
                       color: AppColor.BLACK,

@@ -35,7 +35,7 @@ class DetailGroupRepository {
 
   Future<ResponseMessageDTO> removeMemberGroup(
       Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}terminal-member/remove';
@@ -58,7 +58,7 @@ class DetailGroupRepository {
   }
 
   Future<ResponseMessageDTO> addMemberGroup(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal-member';
       final response = await BaseAPIClient.postAPI(
@@ -80,7 +80,7 @@ class DetailGroupRepository {
   }
 
   Future<ResponseMessageDTO> addBankToGroup(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}terminal/bank-account';
@@ -104,7 +104,7 @@ class DetailGroupRepository {
 
   Future<ResponseMessageDTO> removeBankToGroup(
       Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}terminal/bank-account';

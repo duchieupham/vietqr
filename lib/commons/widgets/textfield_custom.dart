@@ -45,7 +45,7 @@ class TextFieldCustom extends StatefulWidget {
   final InputBorder? inputBorder;
 
   const TextFieldCustom(
-      {Key? key,
+      {super.key,
       required this.hintText,
       this.controller,
       this.fillColor,
@@ -82,8 +82,7 @@ class TextFieldCustom extends StatefulWidget {
       this.contentPadding,
       this.inputBorder,
       this.readOnly = false,
-      this.titleSize})
-      : super(key: key);
+      this.titleSize});
 
   @override
   State<TextFieldCustom> createState() => _TextFieldWidgetState();

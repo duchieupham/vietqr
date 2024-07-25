@@ -70,14 +70,14 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                           horizontal: 6, vertical: 10),
                       child: Column(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 250,
                             child: Text(
                               'Đang kiểm tra',
                               textAlign: TextAlign.center,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500),
                             ),
                           ),

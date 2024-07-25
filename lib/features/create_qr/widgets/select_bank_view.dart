@@ -29,7 +29,7 @@ class SelectBankView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(color: AppColor.GREY_DADADA),
-              borderRadius: BorderRadius.all(Radius.circular(5)),
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
               color: AppColor.WHITE,
             ),
             child: Row(
@@ -75,9 +75,9 @@ class SelectBankView extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (isSelect) Icon(Icons.check, color: AppColor.BLUE_TEXT),
+                if (isSelect) const Icon(Icons.check, color: AppColor.BLUE_TEXT),
                 if (isShowIconDrop)
-                  Icon(
+                  const Icon(
                     Icons.keyboard_arrow_down_outlined,
                     color: AppColor.BLUE_TEXT,
                   ),

@@ -4,18 +4,16 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/models/user_profile.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class EmailInputPage extends StatefulWidget {
   final TextEditingController emailController;
   final VoidCallback onContinue;
 
-  EmailInputPage({
+  const EmailInputPage({
     required this.onContinue,
     required this.emailController,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<EmailInputPage> createState() => _EmailInputPageState();
@@ -178,7 +176,7 @@ class _EmailInputPageState extends State<EmailInputPage> {
               ),
               const SizedBox(height: 8),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +228,7 @@ class _EmailInputPageState extends State<EmailInputPage> {
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           _emailError!,
-                          style: TextStyle(color: Colors.red, fontSize: 11),
+                          style: const TextStyle(color: Colors.red, fontSize: 11),
                         ),
                       ),
                   ],

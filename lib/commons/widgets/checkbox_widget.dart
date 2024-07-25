@@ -8,12 +8,12 @@ class CheckBoxWidget extends StatelessWidget {
   final Color? color;
 
   const CheckBoxWidget({
-    Key? key,
+    super.key,
     required this.check,
     required this.size,
     required this.function,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

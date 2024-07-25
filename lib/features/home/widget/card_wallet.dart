@@ -165,7 +165,7 @@ class _CardWalletState extends State<CardWallet> {
   }
 
   Widget _buildItemAction(String pathIcon, String title, VoidCallback onTap,
-      {Color? color = null}) {
+      {Color? color}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(

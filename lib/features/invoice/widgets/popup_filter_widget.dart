@@ -1,7 +1,5 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -13,7 +11,6 @@ import 'package:vierqr/services/providers/invoice_provider.dart';
 import '../../../commons/utils/image_utils.dart';
 import '../../../commons/utils/navigator_utils.dart';
 import '../../../commons/widgets/dialog_pick_month.dart';
-import '../../../main.dart';
 import '../../../models/bank_account_dto.dart';
 import '../../add_bank/add_bank_screen.dart';
 import '../events/invoice_events.dart';
@@ -140,7 +137,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DefaultTextStyle(
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -153,7 +150,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                     ),
                     const SizedBox(height: 30),
                     if (!isBankList!) ...[
-                      DefaultTextStyle(
+                      const DefaultTextStyle(
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 15,
@@ -177,9 +174,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                 value: 0,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
+                                  child: const Text(
                                     'Chưa thanh toán',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -190,9 +187,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                 value: 1,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
+                                  child: const Text(
                                     'Đã thanh toán',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -230,7 +227,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      DefaultTextStyle(
+                      const DefaultTextStyle(
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 15,
@@ -254,9 +251,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                 value: 0,
                                 child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
+                                  child: const Text(
                                     'Tất cả',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -314,7 +311,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      DefaultTextStyle(
+                      const DefaultTextStyle(
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 15,
@@ -339,9 +336,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                       value: 9,
                                       child: Container(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(
+                                        child: const Text(
                                           'Tất cả',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -352,9 +349,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                       value: 1,
                                       child: Container(
                                         alignment: Alignment.centerLeft,
-                                        child: Text(
+                                        child: const Text(
                                           'Tháng',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w500,
                                           ),
@@ -417,9 +414,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                           value: 9,
                                           child: Container(
                                             alignment: Alignment.centerLeft,
-                                            child: Text(
+                                            child: const Text(
                                               'Tất cả',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -430,9 +427,9 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                           value: 1,
                                           child: Container(
                                             alignment: Alignment.centerLeft,
-                                            child: Text(
+                                            child: const Text(
                                               'Tháng',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -500,7 +497,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                     color: AppColor.BLUE_TEXT.withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: Text(
                                       'Xóa bộ lọc',
                                       style: TextStyle(
@@ -524,7 +521,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                     color: AppColor.BLUE_TEXT,
                                     borderRadius: BorderRadius.circular(5),
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: Text(
                                       'Áp dụng',
                                       style: TextStyle(
@@ -551,7 +548,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.close,
                   color: Colors.black,
                   size: 20,
@@ -565,7 +562,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
   }
 
   Widget _buildListBank(List<BankAccountDTO> bankList) {
-    return bankList.length != 0
+    return bankList.isNotEmpty
         ? Container(
             height: MediaQuery.of(context).size.height * 0.65,
             width: double.infinity,
@@ -576,7 +573,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    DefaultTextStyle(
+                    const DefaultTextStyle(
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 15,
@@ -603,7 +600,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               'Chọn',
                               style: TextStyle(
                                   fontSize: 12, color: AppColor.BLUE_TEXT),
@@ -621,12 +618,12 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                MySeparator(
+                const MySeparator(
                   color: AppColor.GREY_DADADA,
                 ),
                 Expanded(
                   child: ListView.separated(
-                      padding: EdgeInsets.all(0),
+                      padding: const EdgeInsets.all(0),
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
@@ -673,13 +670,13 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                         children: [
                                           Text(
                                             bankList[index].bankAccount,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
                                             bankList[index].userBankName,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 13,
                                             ),
                                             overflow: TextOverflow.ellipsis,
@@ -700,7 +697,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Chọn',
                                         style: TextStyle(
                                             fontSize: 12,
@@ -720,7 +717,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                           ),
                         );
                       },
-                      separatorBuilder: (context, index) => MySeparator(
+                      separatorBuilder: (context, index) => const MySeparator(
                             color: AppColor.GREY_DADADA,
                           ),
                       itemCount: bankList.length),
@@ -740,7 +737,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                   height: 50,
                 ),
                 const SizedBox(height: 20),
-                Text(
+                const Text(
                   'Có vẻ bạn chưa liên kết \ntài khoản ngân hàng nào!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -748,7 +745,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                 const SizedBox(height: 50),
                 GestureDetector(
                   onTap: () async {
-                    await NavigatorUtils.navigatePage(context, AddBankScreen(),
+                    await NavigatorUtils.navigatePage(context, const AddBankScreen(),
                         routeName: AddBankScreen.routeName);
                   },
                   child: Container(
@@ -761,7 +758,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Liên kết tài khoản ngay',
                           style: TextStyle(
                               fontSize: 12, color: AppColor.BLUE_TEXT),

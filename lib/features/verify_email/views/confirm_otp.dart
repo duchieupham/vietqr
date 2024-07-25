@@ -15,13 +15,13 @@ class OTPInputPage extends StatefulWidget {
   final bool confirmOTP;
 
   const OTPInputPage({
-    Key? key,
+    super.key,
     required this.onContinue,
     required this.sendOTP,
     required this.email,
     required this.otpController,
     required this.confirmOTP,
-  }) : super(key: key);
+  });
 
   @override
   State<OTPInputPage> createState() => _OTPInputPageState();

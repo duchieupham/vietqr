@@ -7,6 +7,8 @@ import 'package:vierqr/commons/utils/log.dart';
 class BottomSheetImage extends StatelessWidget {
   final imagePicker = ImagePicker();
 
+  BottomSheetImage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -57,7 +59,7 @@ class BottomSheetImage extends StatelessWidget {
             ),
             Text(
               title,
-              style: TextStyle(color: AppColor.BLUE_TEXT),
+              style: const TextStyle(color: AppColor.BLUE_TEXT),
             ),
           ],
         ),
@@ -82,7 +84,7 @@ class BottomSheetImage extends StatelessWidget {
       return pickedFile;
       // widget.onPhotoTaken(File(pickedFile.path));
     } catch (err) {
-      LOG.error("Camera Photo Err: " + err.toString());
+      LOG.error("Camera Photo Err: $err");
     }
   }
 }

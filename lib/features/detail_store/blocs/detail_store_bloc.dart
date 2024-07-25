@@ -14,15 +14,16 @@ import 'package:vierqr/models/trans_dto.dart';
 
 class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
     with BaseManager {
+  @override
   final BuildContext context;
   final String terminalId;
   final String terminalCode;
 
   DetailStoreBloc(this.context, {this.terminalId = '', this.terminalCode = ''})
       : super(DetailStoreState(
-            members: [],
+            members: const [],
             transDTO: TransStoreDTO(),
-            terminals: [],
+            terminals: const [],
             detailStore: DetailStoreDTO())) {
     on<GetTransStoreEvent>(_getTransStore);
     on<FetchTransStoreEvent>(_fetchTransStore);
@@ -42,7 +43,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
         emit(state.copyWith(
             status: BlocStatus.LOADING_PAGE, request: DetailStoreType.NONE));
         bool loadMore = true;
-        int _page = 1;
+        int page = 1;
 
         final result = await repository.getTransStore(
           terminalCode,
@@ -51,13 +52,13 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
           event.fromDate,
           event.toDate,
           event.type,
-          _page,
+          page,
         );
 
-        if (_page >= result.totalPage) {
+        if (page >= result.totalPage) {
           loadMore = false;
         } else {
-          _page = _page + 1;
+          page = page + 1;
         }
 
         emit(state.copyWith(
@@ -66,7 +67,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
           transDTO: result,
           isLoadMore: loadMore,
           isEmpty: result.totalElement <= 0,
-          page: _page,
+          page: page,
         ));
       }
     } catch (e) {
@@ -84,7 +85,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
         bool loadMore = state.isLoadMore;
         if (!loadMore) return;
 
-        int _page = state.page;
+        int page = state.page;
         List<TransDTO> list = [...state.transDTO.items];
 
         final result = await repository.getTransStore(
@@ -94,16 +95,16 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
           event.fromDate,
           event.toDate,
           event.type,
-          _page,
+          page,
         );
 
         list = [...list, ...result.items];
         result.items = [...list];
 
-        if (_page >= result.totalPage || result.items.length < 20) {
+        if (page >= result.totalPage || result.items.length < 20) {
           loadMore = false;
         } else {
-          _page = _page + 1;
+          page = page + 1;
         }
 
         emit(state.copyWith(
@@ -112,7 +113,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
           transDTO: result,
           isLoadMore: loadMore,
           isEmpty: result.totalElement <= 0,
-          page: _page,
+          page: page,
         ));
       }
     } catch (e) {
@@ -211,7 +212,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
 
   void _addMember(DetailStoreEvent event, Emitter emit) async {
     ResponseMessageDTO responseMessageDTO =
-        ResponseMessageDTO(status: '', message: '');
+        const ResponseMessageDTO(status: '', message: '');
     try {
       if (event is AddMemberGroup) {
         emit(state.copyWith(
@@ -244,7 +245,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
   }
 
   void _removeMember(DetailStoreEvent event, Emitter emit) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       if (event is RemoveMemberEvent) {
         emit(state.copyWith(

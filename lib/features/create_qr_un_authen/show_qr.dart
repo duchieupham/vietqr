@@ -25,8 +25,7 @@ class ShowQr extends StatefulWidget {
   final QRGeneratedDTO dto;
   final AppInfoDTO appInfo;
 
-  const ShowQr({Key? key, required this.dto, required this.appInfo})
-      : super(key: key);
+  const ShowQr({super.key, required this.dto, required this.appInfo});
 
   @override
   State<ShowQr> createState() => _ShowQrState();
@@ -149,7 +148,7 @@ class _ShowQrState extends State<ShowQr> {
                                   listen: false)
                               .bannerApp),
                           fit: BoxFit.cover)
-                      : DecorationImage(
+                      : const DecorationImage(
                           image: AssetImage('assets/images/bgr-header.png'),
                           fit: BoxFit.cover),
             ),
@@ -271,7 +270,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Trang chủ',
                           style: TextStyle(fontSize: 12),
                         )
@@ -297,7 +296,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Lưu ảnh',
                           style: TextStyle(fontSize: 12),
                         )
@@ -323,7 +322,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Sao chép',
                           style: TextStyle(fontSize: 12),
                         )
@@ -349,7 +348,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Chia sẻ',
                           style: TextStyle(fontSize: 12),
                         )

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
@@ -22,7 +19,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
       backgroundColor: Colors.white,
       bottomNavigationBar: _bottom(),
       body: CustomScrollView(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             pinned: true,
@@ -83,10 +80,10 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                           : 'Mã VietQR  hết hạn thanh toán',
                       textAlign: TextAlign.center,
                       style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                     ),
                     widget.type == 1
-                        ? Text(
+                        ? const Text(
                             'Hoá đơn thanh toán dịch vụ nhận biến động số dư hết hạn. Vui lòng chọn lại gói dịch vụ và tiến hành thanh toán.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -116,7 +113,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => DashBoardScreen(),
+                          builder: (context) => const DashBoardScreen(),
                         ));
                   },
                   child: Container(
@@ -127,7 +124,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                         // color: AppColor.BLUE_TEXT,
                         border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
                         borderRadius: BorderRadius.circular(5)),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Về trang chủ",
                         style:
@@ -137,7 +134,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                   ),
                 )
               : const SizedBox.shrink(),
-          widget.type == 1 ? SizedBox(height: 10) : const SizedBox.shrink(),
+          widget.type == 1 ? const SizedBox(height: 10) : const SizedBox.shrink(),
           InkWell(
             onTap: () {
               widget.type == 1
@@ -145,9 +142,8 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                   : Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DashBoardScreen(),
+                        builder: (context) => const DashBoardScreen(),
                       ));
-              ;
             },
             child: Container(
               padding: const EdgeInsets.only(left: 10, right: 10),
@@ -159,7 +155,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
               child: Center(
                 child: Text(
                   widget.type == 0 ? "Hoàn thành" : 'Chọn lại gói dịch vụ',
-                  style: TextStyle(fontSize: 13, color: Colors.white),
+                  style: const TextStyle(fontSize: 13, color: Colors.white),
                 ),
               ),
             ),

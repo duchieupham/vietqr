@@ -30,15 +30,15 @@ class HeaderStoreWidget extends StatelessWidget {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 text: TextSpan(
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontSize: 14,
                       color: AppColor.BLACK,
                       fontWeight: FontWeight.w400),
                   children: [
-                    TextSpan(text: 'Cửa hàng:\n'),
+                    const TextSpan(text: 'Cửa hàng:\n'),
                     TextSpan(
                       text: nameStore,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 15,
                           color: AppColor.BLACK,
                           fontWeight: FontWeight.w600),
@@ -51,7 +51,7 @@ class HeaderStoreWidget extends StatelessWidget {
         ),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -60,7 +60,7 @@ class HeaderStoreWidget extends StatelessWidget {
         if (desTitle != null) ...[
           Text(
             desTitle!,
-            style: TextStyle(color: AppColor.GREY_TEXT),
+            style: const TextStyle(color: AppColor.GREY_TEXT),
           ),
           const SizedBox(height: 12),
         ],

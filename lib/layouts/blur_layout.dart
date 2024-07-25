@@ -11,14 +11,14 @@ class BlurLayout extends StatelessWidget {
   final double? blur;
 
   const BlurLayout({
-    Key? key,
+    super.key,
     required this.width,
     required this.height,
     required this.child,
     this.borderRadius,
     this.opacity,
     this.blur,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

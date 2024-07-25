@@ -17,11 +17,13 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class NotificationScreen extends StatelessWidget {
   static String routeName = '/notification_screen';
 
+  const NotificationScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<NotificationBloc>(
       create: (BuildContext context) => NotificationBloc(context),
-      child: NotificationView(),
+      child: const NotificationView(),
     );
   }
 }
@@ -135,7 +137,7 @@ class _NotificationViewState extends State<NotificationView> {
                   ),
                 ),
               if (state is NotificationInitialState)
-                Center(child: CircularProgressIndicator())
+                const Center(child: CircularProgressIndicator())
             ],
           );
         },

@@ -181,9 +181,9 @@ class AuthProvider with ChangeNotifier {
 
   void updateSettingDTO(SettingAccountDTO value) async {
     settingDTO = value;
-    ThemeDTO? _local = await userRes.getSingleTheme();
+    ThemeDTO? local = await userRes.getSingleTheme();
 
-    if (_local == null || settingDTO.themeType != _local.type) {
+    if (local == null || settingDTO.themeType != local.type) {
       await onSaveThemToLocal();
     } else {
       bannerApp = await themeNotEvent.photoPath.getImageFile;

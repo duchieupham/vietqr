@@ -6,7 +6,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/features/merchant/merchant.dart';
 import 'package:vierqr/features/merchant/tab_merchant/tab_info_merchant.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 
 import '../../commons/utils/navigator_utils.dart';
 import '../create_order_merchant/create_oder.dart';
@@ -45,7 +44,7 @@ class _MerchantScreenState extends State<MerchantScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       backgroundColor: AppColor.WHITE,
       floatingActionButton: _createInvoiceButton(),
       body: BlocProvider<MerchantBloc>(
@@ -147,7 +146,7 @@ class _MerchantScreenState extends State<MerchantScreen> {
             color: AppColor.BLUE_TEXT,
             borderRadius: BorderRadius.circular(50),
           ),
-          child: Row(
+          child: const Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -156,7 +155,7 @@ class _MerchantScreenState extends State<MerchantScreen> {
                 color: AppColor.WHITE,
                 size: 15,
               ),
-              const SizedBox(width: 2),
+              SizedBox(width: 2),
               Text(
                 'Tạo hóa đơn',
                 style: TextStyle(

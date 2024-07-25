@@ -87,7 +87,7 @@ class StoreRepository {
   }
 
   Future<ResponseMessageDTO> createStore(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(

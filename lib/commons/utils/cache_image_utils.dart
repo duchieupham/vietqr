@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
@@ -10,11 +9,10 @@ class CacheImage extends StatelessWidget {
   final double radius;
   final BoxShape boxShape;
   const CacheImage(
-      {Key? key,
+      {super.key,
       required this.imageUrl,
       this.boxShape = BoxShape.rectangle,
-      this.radius = 10.0})
-      : super(key: key);
+      this.radius = 10.0});
 
   @override
   Widget build(BuildContext context) {

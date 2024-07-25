@@ -18,6 +18,8 @@ import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class VietQRIDCardView extends StatefulWidget {
+  const VietQRIDCardView({super.key});
+
   @override
   State<VietQRIDCardView> createState() => _VietQRIDCardViewState();
 
@@ -111,25 +113,25 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
     if (Platform.isIOS) {
       tech = FeliCa.from(tag);
       if (tech is FeliCa) {
-        card = '${tech.currentSystemCode.toHexString()}'.replaceAll(' ', '');
+        card = tech.currentSystemCode.toHexString().replaceAll(' ', '');
         return card;
       }
 
       tech = Iso15693.from(tag);
       if (tech is Iso15693) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
 
       tech = Iso7816.from(tag);
       if (tech is Iso7816) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
 
       tech = MiFare.from(tag);
       if (tech is MiFare) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
       tech = Ndef.from(tag);
@@ -139,39 +141,39 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
     } else if (Platform.isAndroid) {
       tech = IsoDep.from(tag);
       if (tech is NfcA) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
 
       tech = NfcA.from(tag);
       if (tech is NfcA) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
       tech = NfcB.from(tag);
       if (tech is NfcB) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
       tech = NfcF.from(tag);
       if (tech is NfcF) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
       tech = NfcV.from(tag);
       if (tech is NfcV) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
 
       tech = MifareClassic.from(tag);
       if (tech is MifareClassic) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
       tech = MifareUltralight.from(tag);
       if (tech is MifareUltralight) {
-        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        card = tech.identifier.toHexString().replaceAll(' ', '');
         return card;
       }
     }
@@ -353,17 +355,17 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MAppBar(
+      appBar: const MAppBar(
         title: 'VietQR ID Card',
       ),
       body: (cardDTO == null)
           ? const SizedBox.shrink()
           : Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
+                  SizedBox(
                     height: MediaQuery.of(context).size.height * 0.4,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -383,15 +385,15 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                   Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 12),
                   if (pageIndex == 0) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
                       child: Text(
                         'Liên kết thông tin VietQR ID của bạn với thẻ RFID hoặc thẻ NFC bằng cách đọc dữ liệu từ thẻ.',
                         textAlign: TextAlign.center,
@@ -422,7 +424,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                             child: Text(
                               'Chạm thẻ vào thiết bị đọc $cardTitle để thực hiện liên kết',
                               textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 14),
+                              style: const TextStyle(fontSize: 14),
                             ),
                           ),
                         ],
@@ -464,7 +466,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                 decoration: BoxDecoration(
                     color: AppColor.WHITE,
                     borderRadius: BorderRadius.circular(5)),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -511,7 +513,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                 decoration: BoxDecoration(
                     color: AppColor.WHITE,
                     borderRadius: BorderRadius.circular(5)),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -565,7 +567,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                   decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(5)),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -637,7 +639,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                   decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(5)),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -745,7 +747,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
           Text(
             cardScan,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
               color: AppColor.grey979797,
@@ -755,7 +757,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
           Text(
             errorText,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColor.error700,

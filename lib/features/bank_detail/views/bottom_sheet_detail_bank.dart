@@ -7,7 +7,7 @@ import 'package:vierqr/models/account_bank_detail_dto.dart';
 
 class BottomSheetDetail extends StatefulWidget {
   final AccountBankDetailDTO dto;
-  const BottomSheetDetail({Key? key, required this.dto}) : super(key: key);
+  const BottomSheetDetail({super.key, required this.dto});
 
   @override
   State<BottomSheetDetail> createState() => _BottomSheetAddUserBDSDState();
@@ -27,7 +27,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetDetail> {
               const SizedBox(
                 width: 32,
               ),
-              Expanded(
+              const Expanded(
                 child: Center(
                   child: Text(
                     'Thông tin tài khoản',
@@ -91,7 +91,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetDetail> {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
               ),
               const SizedBox(
                 height: 2,

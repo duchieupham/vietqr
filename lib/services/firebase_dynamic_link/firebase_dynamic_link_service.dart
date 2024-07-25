@@ -4,9 +4,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 import '../../commons/constants/configurations/route.dart';
 import '../../commons/utils/navigator_utils.dart';
-import '../../features/account/account_screen.dart';
 import '../../features/maintain_charge/views/dynamic_active_key_screen.dart';
-import '../../main.dart';
 import '../../navigator/app_navigator.dart';
 
 class DynamicLinkService {
@@ -38,8 +36,8 @@ class DynamicLinkService {
       final PendingDynamicLinkData? initialLink =
           await FirebaseDynamicLinks.instance.getInitialLink();
       if (initialLink == null) return;
-      final Uri? deepLink = initialLink.link;
-      handleNaviagtion(deepLink!);
+      final Uri deepLink = initialLink.link;
+      handleNaviagtion(deepLink);
     } catch (e) {
       // Error
     }

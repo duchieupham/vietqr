@@ -128,7 +128,7 @@ class _PopUpKeyFreeState extends State<PopUpKeyFree> {
                   Text(
                     // ' ${widget.keyDTO.keyActive}',
                     formatKey(widget.keyDTO.keyActive),
-                    style: TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 15),
                   ),
                   InkWell(
                     onTap: () {

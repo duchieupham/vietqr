@@ -11,7 +11,6 @@ import 'package:vierqr/features/create_order_merchant/respository/order_merchant
 import 'package:vierqr/features/merchant/responsitory/merchant_responsitory.dart';
 import 'package:vierqr/models/invoice_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
-import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class TabInfoMerchant extends StatefulWidget {
@@ -29,8 +28,8 @@ class TabInfoMerchant extends StatefulWidget {
 }
 
 class _TabInfoMerchantState extends State<TabInfoMerchant> {
-  final orderRepository = OrderMerchantRepository();
-  final merchantRepository = MerchantRepository();
+  final orderRepository = const OrderMerchantRepository();
+  final merchantRepository = const MerchantRepository();
   List<InvoiceDTO> listUnpaid = [];
   MerchantDTO? merchantDTO;
   bool isLoading = true;

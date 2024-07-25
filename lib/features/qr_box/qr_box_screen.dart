@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
@@ -38,7 +36,7 @@ class QRBoxScreen extends StatelessWidget {
 
 class _Screen extends StatefulWidget {
   final String certificate;
-  const _Screen({super.key, required this.certificate});
+  const _Screen({required this.certificate});
 
   @override
   State<_Screen> createState() => __ScreenState();
@@ -47,7 +45,7 @@ class _Screen extends StatefulWidget {
 class __ScreenState extends State<_Screen> {
   final TextEditingController controller = TextEditingController();
 
-  PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: 0);
   int currentPageIndex = 0;
 
   late QRBoxBloc _bloc;
@@ -99,7 +97,7 @@ class __ScreenState extends State<_Screen> {
         if (state.request == QR_Box.ACTIVE &&
             state.status == BlocStatus.SUCCESS) {
           _pageController.nextPage(
-              duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+              duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
         }
 
         if (state.request == QR_Box.ACTIVE &&
@@ -114,7 +112,7 @@ class __ScreenState extends State<_Screen> {
           resizeToAvoidBottomInset: false,
           bottomNavigationBar: _bottom(),
           body: CustomScrollView(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 pinned: false,
@@ -124,19 +122,19 @@ class __ScreenState extends State<_Screen> {
                     if (currentPageIndex == 3) {
                       _provider.terminalSelect(null);
                       _pageController.previousPage(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                       );
                     } else if (currentPageIndex == 2) {
                       _provider.terminalSelect(null);
                       _pageController.previousPage(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                       );
                     } else if (currentPageIndex == 1) {
                       _provider.merchantSelect(null);
                       _pageController.previousPage(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut,
                       );
                     } else {
@@ -145,14 +143,14 @@ class __ScreenState extends State<_Screen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.only(left: 8),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(
                           Icons.keyboard_arrow_left,
                           color: Colors.black,
                           size: 25,
                         ),
-                        const SizedBox(width: 2),
+                        SizedBox(width: 2),
                         Text(
                           "Trở về",
                           style: TextStyle(color: Colors.black, fontSize: 14),
@@ -184,7 +182,7 @@ class __ScreenState extends State<_Screen> {
                       });
                     },
                     controller: _pageController,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
                       _selectBankWidget(),
                       _merchantWidget(state),
@@ -230,12 +228,12 @@ class __ScreenState extends State<_Screen> {
             if (provider.listAuthBank.isNotEmpty)
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: ListView.separated(
                     separatorBuilder: (context, index) => const MySeparator(
                       color: AppColor.GREY_DADADA,
                     ),
-                    padding: EdgeInsets.only(top: 0, bottom: 50),
+                    padding: const EdgeInsets.only(top: 0, bottom: 50),
                     itemBuilder: (context, index) {
                       return ItemBankWidget(
                         index: index,
@@ -254,7 +252,7 @@ class __ScreenState extends State<_Screen> {
               Expanded(
                   child: Container(
                 padding: const EdgeInsets.only(left: 30),
-                child: Text(
+                child: const Text(
                   'Có vẻ bạn chưa liên kết\ntài khoản ngân hàng nào!',
                   style: TextStyle(fontSize: 20),
                 ),
@@ -292,7 +290,7 @@ class __ScreenState extends State<_Screen> {
             const SizedBox(height: 20),
             if (state.status == BlocStatus.LOADING &&
                 state.request == QR_Box.GET_MERCHANTS)
-              Expanded(
+              const Expanded(
                   child: Center(
                 child: CircularProgressIndicator(),
               ))
@@ -300,7 +298,7 @@ class __ScreenState extends State<_Screen> {
               value.listMerchant.isNotEmpty
                   ? Expanded(
                       child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: ListView.separated(
                           padding: const EdgeInsets.only(top: 0),
                           itemBuilder: (context, index) {
@@ -322,7 +320,7 @@ class __ScreenState extends State<_Screen> {
                   : Expanded(
                       child: Container(
                       padding: const EdgeInsets.only(left: 30, top: 10),
-                      child: Text(
+                      child: const Text(
                         'Có vẻ bạn chưa thêm\ndoanh nghiệp nào!',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -375,7 +373,7 @@ class __ScreenState extends State<_Screen> {
                     provider.filterTerminal(value);
                   },
                   decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 16),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 16),
                       hintText: 'Tìm kiếm cửa hàng',
                       hintStyle: TextStyle(
                           fontSize: 15, color: AppColor.BLACK.withOpacity(0.5)),
@@ -403,7 +401,7 @@ class __ScreenState extends State<_Screen> {
             const SizedBox(height: 10),
             if (state.status == BlocStatus.LOADING &&
                 state.request == QR_Box.GET_TERMINALS)
-              Expanded(
+              const Expanded(
                   child: Center(
                 child: CircularProgressIndicator(),
               ))
@@ -411,7 +409,7 @@ class __ScreenState extends State<_Screen> {
               provider.listTerminal.isNotEmpty
                   ? Expanded(
                       child: Container(
-                      padding: EdgeInsets.fromLTRB(30, 0, 30, 50),
+                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 50),
                       child: ListView.separated(
                           itemBuilder: (context, index) {
                             bool isSelect = provider.selectTerminal ==
@@ -439,7 +437,7 @@ class __ScreenState extends State<_Screen> {
                   : Expanded(
                       child: Container(
                       padding: const EdgeInsets.only(left: 30, top: 20),
-                      child: Text(
+                      child: const Text(
                         'Có vẻ bạn chưa thêm\ncửa hàng nào!',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -461,11 +459,11 @@ class __ScreenState extends State<_Screen> {
           children: [
             Container(
               padding: const EdgeInsets.only(left: 30, right: 30),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 60),
-                  const Text(
+                  SizedBox(height: 60),
+                  Text(
                     'Xác nhận thông tin\nkích hoạt QR Box ',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
@@ -483,12 +481,12 @@ class __ScreenState extends State<_Screen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'TK kích hoạt',
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
-                          style: TextStyle(fontSize: 15),
+                          style: const TextStyle(fontSize: 15),
                           '${provider.selectBank!.bankShortName} - ${provider.selectBank!.bankAccount}',
                         )
                       ],
@@ -500,13 +498,13 @@ class __ScreenState extends State<_Screen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Cửa hàng',
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
                           provider.selectTerminal!.terminalName,
-                          style: TextStyle(fontSize: 15),
+                          style: const TextStyle(fontSize: 15),
                         )
                       ],
                     ),
@@ -541,14 +539,14 @@ class __ScreenState extends State<_Screen> {
               const SizedBox(height: 4),
               Text(
                 'Kích hoạt QR Box\n${state.active!.boxCode} thành công\nvới STK ${state.active!.bankCode} - ${state.active!.bankAccount}',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
-              Text(
+              const Text(
                 'QR Box hỗ trợ nhận thông báo Biến động số dư ',
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
               ),
-              Row(
+              const Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -629,24 +627,24 @@ class __ScreenState extends State<_Screen> {
               onTap: () async {
                 switch (currentPageIndex) {
                   case 0:
-                    await NavigatorUtils.navigatePage(context, AddBankScreen(),
+                    await NavigatorUtils.navigatePage(context, const AddBankScreen(),
                         routeName: AddBankScreen.routeName);
                     break;
                   case 1:
                     await NavigatorUtils.navigatePage(
-                        context, CreateStoreScreen(),
+                        context, const CreateStoreScreen(),
                         routeName: CreateStoreScreen.routeName);
                     break;
                   case 2:
                     await NavigatorUtils.navigatePage(
-                        context, CreateStoreScreen(),
+                        context, const CreateStoreScreen(),
                         routeName: CreateStoreScreen.routeName);
                     break;
                   default:
                 }
               },
               title: '',
-              margin: EdgeInsets.symmetric(horizontal: 40),
+              margin: const EdgeInsets.symmetric(horizontal: 40),
               height: 50,
               isEnable: true,
               colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
@@ -656,13 +654,13 @@ class __ScreenState extends State<_Screen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.arrow_forward,
+                  const Icon(Icons.arrow_forward,
                       color: AppColor.TRANSPARENT, size: 20),
                   Text(empty,
                       style:
-                          TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT)),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
+                          const TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT)),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10),
                     child: Icon(Icons.arrow_forward,
                         color: AppColor.BLUE_TEXT, size: 20),
                   ),
@@ -682,7 +680,7 @@ class __ScreenState extends State<_Screen> {
                   case 0:
                     _bloc.add(GetMerchantEvent(bankId: value.selectBank!.id));
                     _pageController.nextPage(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut);
                     break;
                   case 1:
@@ -690,12 +688,12 @@ class __ScreenState extends State<_Screen> {
                         bankId: value.selectBank!.id,
                         merchantId: value.selectMerchant!.id));
                     _pageController.nextPage(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut);
                     break;
                   case 2:
                     _pageController.nextPage(
-                        duration: Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 200),
                         curve: Curves.easeInOut);
                     break;
                   case 3:
@@ -714,7 +712,7 @@ class __ScreenState extends State<_Screen> {
               }
             },
             title: '',
-            margin: EdgeInsets.symmetric(horizontal: 40),
+            margin: const EdgeInsets.symmetric(horizontal: 40),
             height: 50,
             isEnable: isEnable,
             colorDisableBgr: AppColor.GREY_BUTTON,

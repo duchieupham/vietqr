@@ -1,12 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:readmore/readmore.dart';
@@ -22,25 +16,19 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
-import 'package:vierqr/commons/widgets/scroll_indicator.dart';
 import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
-import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
-import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_private_screen.dart';
-import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
-import 'package:vierqr/models/qr_feed_folder_dto.dart';
-import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:rive/rive.dart' as rive;
@@ -766,9 +754,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
 // ignore: camel_case_types
 class _buildLoading extends StatelessWidget {
-  const _buildLoading({
-    super.key,
-  });
+  const _buildLoading();
 
   @override
   Widget build(BuildContext context) {
@@ -857,7 +843,7 @@ class _buildQRFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<List<Color>> _gradients = [
+    final List<List<Color>> gradients = [
       [const Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
       [const Color(0xFFBAFFBF), const Color(0xFFCFF4D2)],
       [const Color(0xFFFFC889), const Color(0xFFFFDCA2)],
@@ -997,7 +983,7 @@ class _buildQRFeed extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 gradient: LinearGradient(
-                  colors: _gradients[int.parse(dto.theme) - 1],
+                  colors: gradients[int.parse(dto.theme) - 1],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
                 ),

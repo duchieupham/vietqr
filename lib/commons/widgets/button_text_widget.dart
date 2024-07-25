@@ -8,13 +8,13 @@ class ButtonTextWidget extends StatelessWidget {
   final VoidCallback function;
 
   const ButtonTextWidget({
-    Key? key,
+    super.key,
     required this.width,
     required this.alignment,
     required this.text,
     required this.textColor,
     required this.function,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

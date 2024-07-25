@@ -356,7 +356,7 @@ class _ContactStateState extends State<_ContactState>
                                   TextButton(
                                     onPressed: _onUpdateContact,
                                     style: ButtonStyle(
-                                      overlayColor: MaterialStateProperty.all(
+                                      overlayColor: WidgetStateProperty.all(
                                           Colors.transparent),
                                     ),
                                     child: Container(
@@ -376,12 +376,12 @@ class _ContactStateState extends State<_ContactState>
                                   TextButton(
                                     onPressed: () {},
                                     style: ButtonStyle(
-                                      overlayColor: MaterialStateProperty.all(
+                                      overlayColor: WidgetStateProperty.all(
                                           Colors.transparent),
                                     ),
                                     child: Container(
                                       alignment: Alignment.centerRight,
-                                      child: Text(
+                                      child: const Text(
                                         'Đang cập nhật',
                                         style: TextStyle(
                                             fontSize: 12,
@@ -437,8 +437,8 @@ class _ContactStateState extends State<_ContactState>
                       ),
                     ),
                     if (state.isLoading)
-                      Expanded(
-                        child: const Center(
+                      const Expanded(
+                        child: Center(
                           child: SizedBox(
                             width: 30,
                             height: 30,
@@ -463,8 +463,9 @@ class _ContactStateState extends State<_ContactState>
                                 list: provider.listContactDTO,
                                 onChange: (value) {
                                   if (value.isNotEmpty) {
-                                    if (_debounce?.isActive ?? false)
+                                    if (_debounce?.isActive ?? false) {
                                       _debounce!.cancel();
+                                    }
                                     _debounce = Timer(
                                         const Duration(milliseconds: 300), () {
                                       _bloc.add(
@@ -765,7 +766,7 @@ class _ContactStateState extends State<_ContactState>
         child: Container(
           margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
           child: ListView(
-            physics: AlwaysScrollableScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
             children: List.generate(
               list.length,

@@ -1,10 +1,7 @@
 import 'dart:io';
 import 'package:vierqr/commons/helper/dialog_helper.dart';
-import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/models/user_profile.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,21 +14,16 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/features/account/theme_setting.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
-import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
@@ -212,7 +204,7 @@ class _AccountScreenState extends State<_AccountScreen>
               image: file.path.isNotEmpty
                   ? DecorationImage(
                       image: FileImage(file), fit: BoxFit.fitWidth)
-                  : DecorationImage(
+                  : const DecorationImage(
                       image: AssetImage('assets/images/bgr-header.png'),
                       fit: BoxFit.fitWidth)),
           child: Stack(
@@ -252,7 +244,7 @@ class _AvatarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width,
       child: Stack(
@@ -342,7 +334,7 @@ class _FeatureWidget extends StatelessWidget {
           radius: 15,
           bgrColor: AppColor.TRANSPARENT,
           isDismissible: true,
-          widget: MyQRBottomSheet(),
+          widget: const MyQRBottomSheet(),
         );
         break;
       case 1:
@@ -655,7 +647,7 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
                 const Divider(),
                 _buildItem(
                   onTap: () async {
-                    NavigatorUtils.navigatePage(context, VietQRIDCardView(),
+                    NavigatorUtils.navigatePage(context, const VietQRIDCardView(),
                         routeName: VietQRIDCardView.routeName);
                   },
                   urlImage: 'assets/images/ic-vietqr-id-setting.png',
@@ -672,7 +664,7 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
                   onTap: () async {
                     NavigatorUtils.navigatePage(
                       context,
-                      ThemeSettingView(),
+                      const ThemeSettingView(),
                       routeName: ThemeSettingView.routeName,
                     );
                   },
@@ -706,7 +698,7 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
           children: [
             Image.asset(urlImage, width: 30, height: 30),
             const SizedBox(width: 8),
-            Expanded(child: Text(title, style: TextStyle(fontSize: 14))),
+            Expanded(child: Text(title, style: const TextStyle(fontSize: 14))),
           ],
         ),
       ),
@@ -738,10 +730,10 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
         await Permission.bluetoothConnect.request();
       }
       await Permission.bluetooth.request().then((value) =>
-          NavigatorUtils.navigatePage(context, PrinterSettingScreen(),
+          NavigatorUtils.navigatePage(context, const PrinterSettingScreen(),
               routeName: PrinterSettingScreen.routeName));
     } else {
-      NavigatorUtils.navigatePage(context, PrinterSettingScreen(),
+      NavigatorUtils.navigatePage(context, const PrinterSettingScreen(),
           routeName: PrinterSettingScreen.routeName);
     }
   }

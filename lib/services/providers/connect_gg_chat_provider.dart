@@ -52,7 +52,7 @@ class ConnectMediaProvider extends ChangeNotifier {
   }
 
   List<String> getListId() {
-    Set<String> bankIdSet = Set<String>();
+    Set<String> bankIdSet = <String>{};
     final list = isFilter
         ? filterBanks.where((element) => element.value == true).toList()
         : listBank.where((element) => element.value == true).toList();

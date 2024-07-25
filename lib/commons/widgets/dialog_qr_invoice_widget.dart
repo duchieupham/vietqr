@@ -17,14 +17,14 @@ class _DialogQrInvoiceDetailWidgetState
     return Scaffold(
       body: SafeArea(
         child: Container(
-          constraints: BoxConstraints.expand(),
-          color: Color(0xFFFFFFFF),
+          constraints: const BoxConstraints.expand(),
+          color: const Color(0xFFFFFFFF),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Container(
-                  color: Color(0xFFFFFFFF),
+                  color: const Color(0xFFFFFFFF),
                   width: double.infinity,
                   height: double.infinity,
                   child: Column(
@@ -32,10 +32,10 @@ class _DialogQrInvoiceDetailWidgetState
                     children: [
                   IntrinsicHeight(
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0x99000000),
                       ),
-                      padding: EdgeInsets.only(left: 10, right: 10),
+                      padding: const EdgeInsets.only(left: 10, right: 10),
                       width: double.infinity,
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,8 +47,8 @@ class _DialogQrInvoiceDetailWidgetState
                                   color: AppColor.WHITE,
                                 ),
                                 padding:
-                                    EdgeInsets.only(top: 56),
-                                margin: EdgeInsets.only(top: 80),
+                                    const EdgeInsets.only(top: 56),
+                                margin: const EdgeInsets.only(top: 80),
                                 width: double.infinity,
                                 child: Column(
                                     crossAxisAlignment:
@@ -56,7 +56,7 @@ class _DialogQrInvoiceDetailWidgetState
                                     children: [
                                       IntrinsicHeight(
                                         child: Container(
-                                          margin: EdgeInsets.only(
+                                          margin: const EdgeInsets.only(
                                               bottom: 40,
                                               left: 20,
                                               right: 20),
@@ -68,8 +68,8 @@ class _DialogQrInvoiceDetailWidgetState
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                IntrinsicHeight(
-                                                  child: Container(
+                                                const IntrinsicHeight(
+                                                  child: SizedBox(
                                                     width: 304,
                                                     child: Text(
                                                       'Quét mã VietQR để\nthanh toán 7,020,000 VND\ncho hoá đơn VAFXXXXXXXXXX',
@@ -85,9 +85,9 @@ class _DialogQrInvoiceDetailWidgetState
                                                   },
                                                   child: Container(
                                                       margin:
-                                                          EdgeInsets.only(
+                                                          const EdgeInsets.only(
                                                               right: 20),
-                                                      child: Icon(
+                                                      child: const Icon(
                                                           Icons.close)),
                                                 ),
                                               ]),
@@ -95,9 +95,9 @@ class _DialogQrInvoiceDetailWidgetState
                                       ),
                                       IntrinsicHeight(
                                         child: Container(
-                                          padding: EdgeInsets.only(
+                                          padding: const EdgeInsets.only(
                                               left: 25, right: 25),
-                                          margin: EdgeInsets.only(
+                                          margin: const EdgeInsets.only(
                                               bottom: 34,
                                               left: 30,
                                               right: 30),
@@ -105,7 +105,7 @@ class _DialogQrInvoiceDetailWidgetState
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            image: DecorationImage(
+                                            image: const DecorationImage(
                                                 image: NetworkImage(
                                                     "https://i.imgur.com/1tMFzp8.png"),
                                                 fit: BoxFit.cover),
@@ -117,7 +117,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                 Expanded(
                                                   child: Container(
                                                       margin:
-                                                          EdgeInsets.only(
+                                                          const EdgeInsets.only(
                                                               top: 25),
                                                       height: 300,
                                                       width:
@@ -131,12 +131,12 @@ class _DialogQrInvoiceDetailWidgetState
                                         ),
                                       ),
                                       Container(
-                                        margin: EdgeInsets.only(
+                                        margin: const EdgeInsets.only(
                                             bottom: 126,
                                             left: 74,
                                             right: 74),
                                         width: double.infinity,
-                                        child: Text(
+                                        child: const Text(
                                           'Hoá đơn phí giao dịch\ntháng 02/2024',
                                           style: TextStyle(
                                             color: Color(0xFF000000),
@@ -146,7 +146,7 @@ class _DialogQrInvoiceDetailWidgetState
                                       ),
                                       IntrinsicHeight(
                                         child: Container(
-                                          margin: EdgeInsets.symmetric(
+                                          margin: const EdgeInsets.symmetric(
                                               horizontal: 30),
                                           width: double.infinity,
                                           child: Row(
@@ -159,7 +159,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                     decoration:
                                                         BoxDecoration(
                                                       border: Border.all(
-                                                        color: Color(
+                                                        color: const Color(
                                                             0xFF0A7AFF),
                                                         width: 1,
                                                       ),
@@ -167,9 +167,9 @@ class _DialogQrInvoiceDetailWidgetState
                                                           BorderRadius
                                                               .circular(5),
                                                       color:
-                                                          Color(0xFFFFFFFF),
+                                                          const Color(0xFFFFFFFF),
                                                     ),
-                                                    padding: EdgeInsets
+                                                    padding: const EdgeInsets
                                                         .symmetric(
                                                             vertical: 14),
                                                     width: 165,
@@ -179,7 +179,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                                 .center,
                                                         children: [
                                                           Container(
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .only(
                                                                       right:
                                                                           12),
@@ -191,7 +191,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                                 fit: BoxFit
                                                                     .fill,
                                                               )),
-                                                          IntrinsicHeight(
+                                                          const IntrinsicHeight(
                                                             child: Text(
                                                               'Lưu ảnh QR',
                                                               style:
@@ -211,7 +211,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                     decoration:
                                                         BoxDecoration(
                                                       border: Border.all(
-                                                        color: Color(
+                                                        color: const Color(
                                                             0xFF0A7AFF),
                                                         width: 1,
                                                       ),
@@ -219,9 +219,9 @@ class _DialogQrInvoiceDetailWidgetState
                                                           BorderRadius
                                                               .circular(5),
                                                       color:
-                                                          Color(0xFFFFFFFF),
+                                                          const Color(0xFFFFFFFF),
                                                     ),
-                                                    padding: EdgeInsets
+                                                    padding: const EdgeInsets
                                                         .symmetric(
                                                             vertical: 14),
                                                     width: 165,
@@ -231,7 +231,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                                 .center,
                                                         children: [
                                                           Container(
-                                                              margin: EdgeInsets
+                                                              margin: const EdgeInsets
                                                                   .only(
                                                                       right:
                                                                           10),
@@ -243,7 +243,7 @@ class _DialogQrInvoiceDetailWidgetState
                                                                 fit: BoxFit
                                                                     .fill,
                                                               )),
-                                                          IntrinsicHeight(
+                                                          const IntrinsicHeight(
                                                             child: Text(
                                                               'Chia sẻ mã QR',
                                                               style:

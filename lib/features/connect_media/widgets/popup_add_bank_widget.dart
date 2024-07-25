@@ -1,14 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
-import '../../../commons/utils/custom_button_switch.dart';
 import '../../../commons/utils/image_utils.dart';
 import '../../../commons/widgets/separator_widget.dart';
-import '../../../models/bank_account_dto.dart';
 import '../../../services/providers/connect_gg_chat_provider.dart';
 
 class PopupAddBankWidget extends StatefulWidget {
@@ -48,7 +44,7 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DefaultTextStyle(
+                    const DefaultTextStyle(
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 20,

@@ -6,10 +6,11 @@ import 'i_shared_local.dart';
 class SecureStorageService<T> extends IStorageService<T> {
   SecureStorageService(key) : super(key);
 
+  @override
   Future<void> set({
     required T data,
   }) async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     if (data is String) {
       return storage.write(
         key: key,
@@ -27,7 +28,7 @@ class SecureStorageService<T> extends IStorageService<T> {
   Future<List<T>?> getList({
     required T Function(Map<String, dynamic>) fromJson,
   }) async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     final dataStr = await storage.read(key: key);
     if (dataStr == null) {
       return null;
@@ -41,14 +42,16 @@ class SecureStorageService<T> extends IStorageService<T> {
     }
   }
 
+  @override
   Future<bool> remove() async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.delete(key: key);
     return true;
   }
 
+  @override
   Future<T?> getStorage({T Function(Map<String, dynamic> p1)? fromJson}) async {
-    final storage = new FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     final dataStr = await storage.read(key: key);
     if (dataStr == null) {
       return null;

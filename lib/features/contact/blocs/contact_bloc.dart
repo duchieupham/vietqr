@@ -15,7 +15,6 @@ import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/repostiroties/contact_repository.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -154,9 +153,9 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         data.addAll(result);
 
         if (event.isCompare) {
-          result.forEach((element) {
+          for (var element in result) {
             details.add(ContactDetailDTO());
-          });
+          }
         }
 
         for (ContactDTO dto in data) {
@@ -301,10 +300,10 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         List<ContactDetailDTO> details = [];
         values.addAll(state.listContactDTO);
 
-        values.forEach((element) {
+        for (var element in values) {
           element.setIsGet(false);
           details.add(ContactDetailDTO());
-        });
+        }
 
         if (values.isNotEmpty) {
           index = values.indexWhere((element) => element.id == event.id);
@@ -745,7 +744,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     String address = '';
     String website = '';
 
-    list.forEach((element) {
+    for (var element in list) {
       if (element.contains('FN;CHARSET=UTF-8')) {
         List<String> splits = element.split(':');
         name = splits.last;
@@ -781,7 +780,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           website = splits.last;
         }
       }
-    });
+    }
 
     VCardModel model = VCardModel(
       fullname: name,

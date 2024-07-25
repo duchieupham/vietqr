@@ -20,7 +20,7 @@ class TransSuccessView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MAppBar(title: 'Trở về', centerTitle: false, showBG: false),
+      appBar: const MAppBar(title: 'Trở về', centerTitle: false, showBG: false),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -35,7 +35,7 @@ class TransSuccessView extends StatelessWidget {
                   ? 'Thông tin đã yêu cầu được cập nhật'
                   : 'Thông tin đã được cập nhật',
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColor.BLACK, fontSize: 16),
+              style: const TextStyle(color: AppColor.BLACK, fontSize: 16),
             ),
             const SizedBox(height: 24),
             CustomPaint(

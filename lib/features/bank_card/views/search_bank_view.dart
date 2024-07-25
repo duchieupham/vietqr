@@ -1,4 +1,3 @@
-import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -227,7 +226,7 @@ class _SearchBankViewState extends State<SearchBankView> {
       _searchClearProvider.updateClearSearch(false);
     }
     //
-    if (searchController.text.length >= 1) {
+    if (searchController.text.isNotEmpty) {
       List<BankAccountDTO> resultBanks = [];
       if (banks.isNotEmpty) {
         for (int i = 0; i < banks.length; i++) {

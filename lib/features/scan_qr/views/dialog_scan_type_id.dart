@@ -36,8 +36,8 @@ class DialogScanTypeID extends StatelessWidget {
             builder: (key) {
               return Container(
                 margin: isSmall
-                    ? EdgeInsets.symmetric(horizontal: 40, vertical: 16)
-                    : EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    ? const EdgeInsets.symmetric(horizontal: 40, vertical: 16)
+                    : const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   gradient: getBgGradient(dto.colorType),
@@ -59,7 +59,7 @@ class DialogScanTypeID extends StatelessWidget {
                                   left: 20, right: 20, top: 15, bottom: 15)
                               : const EdgeInsets.only(
                                   left: 40, right: 40, top: 30, bottom: 30),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: AppColor.WHITE,
                           ),
                           child: VietQr(
@@ -81,7 +81,7 @@ class DialogScanTypeID extends StatelessWidget {
                                     image: ImageUtils.instance
                                         .getImageNetWork(dto.imgId)),
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(100)),
+                                    const BorderRadius.all(Radius.circular(100)),
                                 color: Colors.redAccent,
                               ),
                             ),
@@ -99,7 +99,7 @@ class DialogScanTypeID extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       dto.phone ?? '',
-                      style: TextStyle(color: AppColor.WHITE),
+                      style: const TextStyle(color: AppColor.WHITE),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -137,7 +137,7 @@ class DialogScanTypeID extends StatelessWidget {
                   fit: BoxFit.contain),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 8,
           ),
           Expanded(
@@ -153,7 +153,7 @@ class DialogScanTypeID extends StatelessWidget {
                 ),
                 Text(
                   typeQR.typeName,
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
@@ -166,55 +166,55 @@ class DialogScanTypeID extends StatelessWidget {
   Gradient getBgGradient(colorType) {
     switch (colorType) {
       case 0:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFF5FFFD8),
-            const Color(0xFF0A7AFF),
+            Color(0xFF5FFFD8),
+            Color(0xFF0A7AFF),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 1:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFF52FBFF),
-            const Color(0xFF06711B),
+            Color(0xFF52FBFF),
+            Color(0xFF06711B),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 2:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFFEECDFF),
-            const Color(0xFF49558A),
+            Color(0xFFEECDFF),
+            Color(0xFF49558A),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 3:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFFFBAE1F),
-            const Color(0xFFFC6A01),
+            Color(0xFFFBAE1F),
+            Color(0xFFFC6A01),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 4:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFFFF6DC6),
-            const Color(0xFFF8837A),
+            Color(0xFFFF6DC6),
+            Color(0xFFF8837A),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       default:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFF5FFFD8),
-            const Color(0xFF0A7AFF),
+            Color(0xFF5FFFD8),
+            Color(0xFF0A7AFF),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,

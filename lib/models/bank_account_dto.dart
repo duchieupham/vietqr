@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
 
 import 'bank_type_dto.dart';
 

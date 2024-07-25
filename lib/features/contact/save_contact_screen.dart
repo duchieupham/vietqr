@@ -221,7 +221,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                             child: MButtonWidget(
                               title: 'Hủy',
                               isEnable: provider.isEnableBTSave,
-                              margin: EdgeInsets.only(left: 20, bottom: 20),
+                              margin: const EdgeInsets.only(left: 20, bottom: 20),
                               colorEnableBgr:
                                   AppColor.BLUE_TEXT.withOpacity(0.4),
                               colorEnableText: AppColor.BLUE_TEXT,
@@ -237,7 +237,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                             child: MButtonWidget(
                               title: 'Lưu',
                               isEnable: provider.isEnableBTSave,
-                              margin: EdgeInsets.only(right: 20, bottom: 20),
+                              margin: const EdgeInsets.only(right: 20, bottom: 20),
                               colorEnableText: provider.isEnableBTSave
                                   ? AppColor.WHITE
                                   : AppColor.GREY_TEXT,
@@ -356,7 +356,7 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
                 const SizedBox(width: 10),
                 Text(
                   widget.nameController.text,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                 ),
               ],
             ),
@@ -399,7 +399,7 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           child: Text(
                             'Quyền riêng tư',
                             style: TextStyle(
@@ -423,14 +423,14 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Image.asset(
-                                    '${widget.model.url}',
+                                    widget.model.url,
                                     color: AppColor.BLACK,
                                     width: 20,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    '${widget.model.title}',
-                                    style: TextStyle(fontSize: 14),
+                                    widget.model.title,
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                   const Spacer(),
                                   const Icon(
@@ -455,7 +455,7 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
               isObscureText: false,
               maxLines: 5,
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               fillColor: AppColor.WHITE,
               controller: widget.suggestController,
               isRequired: false,
@@ -470,7 +470,7 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                const Text(
                   'Màu sắc thẻ QR',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
@@ -487,7 +487,7 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
                           child: Container(
                             width: 40,
                             height: 40,
-                            padding: EdgeInsets.all(2),
+                            padding: const EdgeInsets.all(2),
                             margin: const EdgeInsets.only(right: 16),
                             decoration: BoxDecoration(
                               border:
@@ -608,12 +608,12 @@ class _buildBankView extends StatelessWidget {
                 children: [
                   Text(
                     bankTypeDto?.bankCode ?? '',
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     dto?.bankAccount ?? '',
-                    style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
+                    style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
                   ),
                 ],
               ),
@@ -651,7 +651,7 @@ class _buildBankView extends StatelessWidget {
           TextFieldCustom(
             isObscureText: false,
             maxLines: 5,
-            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             fillColor: AppColor.WHITE,
             controller: suggestController,
             isRequired: false,
@@ -666,7 +666,7 @@ class _buildBankView extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              const Text(
                 'Màu sắc thẻ QR',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -683,7 +683,7 @@ class _buildBankView extends StatelessWidget {
                         child: Container(
                           width: 40,
                           height: 40,
-                          padding: EdgeInsets.all(2),
+                          padding: const EdgeInsets.all(2),
                           margin: const EdgeInsets.only(right: 16),
                           decoration: BoxDecoration(
                             border: int.parse(typeColor.trim()) == index
@@ -719,7 +719,7 @@ class _buildOtherView extends StatefulWidget {
   final double height;
   final ContactDataModel model;
 
-  _buildOtherView({
+  const _buildOtherView({
     required this.type,
     required this.nameController,
     required this.suggestController,
@@ -769,7 +769,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Logo QR giúp bạn tìm thẻ nhanh hơn',
                           style: TextStyle(
                               fontWeight: FontWeight.w400, fontSize: 12),
@@ -852,7 +852,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             child: Text(
                               'Quyền riêng tư',
                               style: TextStyle(
@@ -876,13 +876,13 @@ class _buildOtherViewState extends State<_buildOtherView> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Image.asset(
-                                      '${widget.model.url}',
+                                      widget.model.url,
                                       color: AppColor.BLACK,
                                       width: 28,
                                     ),
                                     Text(
-                                      '${widget.model.title}',
-                                      style: TextStyle(fontSize: 14),
+                                      widget.model.title,
+                                      style: const TextStyle(fontSize: 14),
                                     ),
                                     const Spacer(),
                                     const Icon(
@@ -907,7 +907,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
                 isObscureText: false,
                 maxLines: 5,
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                 fillColor: AppColor.WHITE,
                 controller: widget.suggestController,
                 isRequired: false,
@@ -922,7 +922,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
+                  const Text(
                     'Màu sắc thẻ QR',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
@@ -940,7 +940,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
                             child: Container(
                               width: 40,
                               height: 40,
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                               margin: const EdgeInsets.only(right: 16),
                               decoration: BoxDecoration(
                                 border: int.parse(widget.typeColor.trim()) ==
@@ -1005,7 +1005,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
 class BuildDropDownWidget extends StatefulWidget {
   final Function(ContactDataModel) onChange;
 
-  BuildDropDownWidget({required this.onChange});
+  const BuildDropDownWidget({super.key, required this.onChange});
 
   @override
   State<BuildDropDownWidget> createState() => _BuildDropDownWidgetState();
@@ -1062,7 +1062,7 @@ class _BuildDropDownWidgetState extends State<BuildDropDownWidget> {
                         horizontal: 16.0, vertical: 16.0),
                     decoration: BoxDecoration(
                       border: position != (list.length - 1)
-                          ? Border(
+                          ? const Border(
                               bottom: BorderSide(
                                   color: AppColor.GREY_BORDER, width: 0.5))
                           : null,
@@ -1070,7 +1070,7 @@ class _BuildDropDownWidgetState extends State<BuildDropDownWidget> {
                     child: Row(
                       children: [
                         Image.asset(
-                          '${list[position].url}',
+                          list[position].url,
                           color: AppColor.BLACK,
                           width: 20,
                         ),

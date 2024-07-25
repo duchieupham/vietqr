@@ -4,6 +4,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class NFCDialog extends StatefulWidget {
+  const NFCDialog({super.key});
+
   @override
   State<NFCDialog> createState() => _NFCDialogState();
 }
@@ -70,7 +72,7 @@ class _NFCDialogState extends State<NFCDialog> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (!isSuccess)
-                Text(
+                const Text(
                   'Sẵn sàng quét',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -80,7 +82,7 @@ class _NFCDialogState extends State<NFCDialog> {
                 ),
               const SizedBox(height: 12),
               if (isSuccess)
-                Icon(
+                const Icon(
                   Icons.check_circle_outline_outlined,
                   color: AppColor.BLUE_TEXT,
                   size: 100,
@@ -95,7 +97,7 @@ class _NFCDialogState extends State<NFCDialog> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: AppColor.BLACK_TEXT,
                     height: 1.4,

@@ -45,7 +45,7 @@ class UpdateListBank extends BankEvent {
   final BankAccountDTO dto;
   final UpdateBankType type; // 0: edit; 1: delete
 
-  UpdateListBank(this.dto, this.type);
+  const UpdateListBank(this.dto, this.type);
 
   @override
   List<Object?> get props => [dto];

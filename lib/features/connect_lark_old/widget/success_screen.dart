@@ -28,14 +28,14 @@ class ConnectLarkSuccess extends StatelessWidget {
           const SizedBox(
             height: 12,
           ),
-          Text(
+          const Text(
             'Kết nối thành công',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(
             height: 8,
           ),
-          Text(
+          const Text(
             'Cảm ơn quý khách đã sử dụng dịch vụ\nVietQR VN của chúng tôi',
             textAlign: TextAlign.center,
           ),

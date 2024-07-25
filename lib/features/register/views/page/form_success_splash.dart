@@ -1,13 +1,9 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:vierqr/features/personal/views/user_edit_view.dart';
-import 'package:vierqr/services/providers/user_edit_provider.dart';
 
 import '../../../../commons/constants/configurations/app_images.dart';
 import '../../../../commons/constants/configurations/theme.dart';
-import '../../../../layouts/m_button_widget.dart';
 
 class FormRegisterSuccessSplash extends StatefulWidget {
   // final Function() onEdit;
@@ -34,7 +30,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
   }
 
   void _startTimer() {
-    const oneSec = const Duration(seconds: 1);
+    const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
@@ -56,18 +52,19 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColor.WHITE,
       ),
-      child: Container(
+      child: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 90),
+              padding: const EdgeInsets.only(top: 90),
               child: Image.asset(
                 AppImages.icLogoVietQr,
                 width: 160,
@@ -84,7 +81,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
                 fit: BoxFit.fitWidth,
               ),
             ),
-            DefaultTextStyle(
+            const DefaultTextStyle(
               style: TextStyle(
                 color: AppColor.BLACK,
                 fontSize: 25,
@@ -95,7 +92,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 70,
             ),
             // Container(
@@ -128,18 +125,18 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
             Padding(
               padding: const EdgeInsets.only(bottom: 25),
               child: DefaultTextStyle(
-                style: TextStyle(fontSize: 15, color: AppColor.BLACK),
+                style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
                 child: RichText(
                   text: TextSpan(
                     text: 'Hệ thống tự động điều hướng sau ',
-                    style: TextStyle(fontSize: 15, color: AppColor.BLACK),
+                    style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
                     children: <TextSpan>[
                       TextSpan(
                         text: '$_start',
                         style:
-                            TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
+                            const TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: ' giây',
                         style: TextStyle(fontSize: 15, color: AppColor.BLACK),
                       ),

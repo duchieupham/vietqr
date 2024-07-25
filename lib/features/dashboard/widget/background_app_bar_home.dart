@@ -31,7 +31,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
 
   void _onNotification() async {
     _dashBoardBloc.add(NotifyUpdateStatusEvent());
-    NavigatorUtils.navigatePage(context, NotificationScreen(),
+    NavigatorUtils.navigatePage(context, const NotificationScreen(),
         routeName: NotificationScreen.routeName);
   }
 

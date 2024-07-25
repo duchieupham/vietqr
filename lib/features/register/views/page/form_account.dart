@@ -12,11 +12,10 @@ class FormAccount extends StatefulWidget {
   final Function(int) onEnterIntro;
 
   const FormAccount(
-      {Key? key,
+      {super.key,
       required this.phoneController,
       required this.isFocus,
-      required this.onEnterIntro})
-      : super(key: key);
+      required this.onEnterIntro});
 
   @override
   State<FormAccount> createState() => _FormAccountState();
@@ -32,7 +31,7 @@ class _FormAccountState extends State<FormAccount> {
         return SingleChildScrollView(
           child: Column(
             children: [
-              Align(
+              const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Số điện thoại*',
@@ -43,7 +42,7 @@ class _FormAccountState extends State<FormAccount> {
                 ),
               ),
               const SizedBox(height: 4),
-              Align(
+              const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Số điện thoại được dùng để đăng nhập vào hệ thống VietQR VN',
@@ -62,15 +61,15 @@ class _FormAccountState extends State<FormAccount> {
                 visible: provider.phoneErr,
                 child: Container(
                   alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.only(left: 5, top: 5, right: 30),
-                  child: Text(
+                  padding: const EdgeInsets.only(left: 5, top: 5, right: 30),
+                  child: const Text(
                     'Số điện thoại không đúng định dạng.',
                     style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
-              Text(
+              const Text(
                 'Đặt mật khẩu*',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -81,7 +80,7 @@ class _FormAccountState extends State<FormAccount> {
               const SizedBox(
                 height: 4,
               ),
-              Text(
+              const Text(
                 'Mật khẩu có độ dài 6 ký tự số, không bao gồm chữ và ký tự đặc biệt',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -117,7 +116,7 @@ class _FormAccountState extends State<FormAccount> {
                 ),
               ),
               const SizedBox(height: 40),
-              Text(
+              const Text(
                 'Xác nhận lại mật khẩu*',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -127,7 +126,7 @@ class _FormAccountState extends State<FormAccount> {
               const SizedBox(
                 height: 4,
               ),
-              Text(
+              const Text(
                 'Nhập lại mật khẩu ở trên để xác nhận',
                 textAlign: TextAlign.center,
                 style: TextStyle(

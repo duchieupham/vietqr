@@ -3,18 +3,13 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/create_order_merchant/create_oder.dart';
 import 'package:vierqr/features/create_order_merchant/respository/order_merchant_repository.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
-import 'package:vierqr/features/customer_va/widgets/customer_va_invoice_success_widget.dart';
 import 'package:vierqr/features/merchant/tab_merchant/order_detail_view.dart';
-import 'package:vierqr/models/customer_va_invoice_success_dto.dart';
 import 'package:vierqr/models/invoice_dto.dart';
-import 'package:vierqr/models/vietqr_va_request_dto.dart';
 
-import '../../customer_va/views/invoice_va_vietqr_view.dart';
 
 class TabOrderMerchant extends StatefulWidget {
   final String customerId;
@@ -26,7 +21,7 @@ class TabOrderMerchant extends StatefulWidget {
 }
 
 class _TabOrderMerchantState extends State<TabOrderMerchant> {
-  final orderRepository = OrderMerchantRepository();
+  final orderRepository = const OrderMerchantRepository();
   final CustomerVaRepository customerVaRepository =
       const CustomerVaRepository();
   ScrollController controller = ScrollController();
@@ -58,8 +53,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
   }
 
   void _onGetListOrder(
-      {bool loadMore = false,
-      bool isLoading = true,
+      {bool isLoading = true,
       bool isRefresh = false}) async {
     try {
       // if (!isLoadMore) return;
@@ -306,7 +300,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
               borderRadius: BorderRadius.circular(5),
               color: AppColor.WHITE,
               border: Border.all(
-                color: Color(0XFFDADADA),
+                color: const Color(0XFFDADADA),
               ),
             ),
             child: Row(

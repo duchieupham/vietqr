@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -47,7 +45,7 @@ class ItemBankWidget extends StatelessWidget {
                   // Placeholder for bank logo
                 ),
                 const SizedBox(width: 20),
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width - 175,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,11 +53,11 @@ class ItemBankWidget extends StatelessWidget {
                       Text(dto.bankAccount,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold)),
                       Text(
                         dto.userBankName,
-                        style: TextStyle(fontSize: 12),
+                        style: const TextStyle(fontSize: 12),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

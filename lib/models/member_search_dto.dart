@@ -20,7 +20,7 @@ class MemberSearchDto {
   });
 
   String get fullName =>
-      '${lastName ?? ''}' + ' ${middleName ?? ''} ' + '${firstName ?? ''}';
+      '${lastName ?? ''} ${middleName ?? ''} ${firstName ?? ''}';
 
   bool get isMe => id == SharePrefUtils.getProfile().userId;
 

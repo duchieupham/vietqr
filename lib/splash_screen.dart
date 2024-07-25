@@ -9,9 +9,9 @@ class SplashScreen extends StatefulWidget {
   static String routeName = '/splash_screen';
 
   const SplashScreen({
-    Key? key,
+    super.key,
     this.isFromLogin = false,
-  }) : super(key: key);
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -99,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       'assets/rives/loading_ani',
                       fit: BoxFit.contain,
                       antialiasing: false,
-                      animations: [Stringify.SUCCESS_ANI_INITIAL_STATE],
+                      animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
                       onInit: _onRiveInit,
                     ),
                   ),
@@ -121,13 +121,14 @@ class JumpingDotsProgressIndicator extends StatefulWidget {
   final double beginTweenValue = 0.0;
   final double endTweenValue = 8.0;
 
-  JumpingDotsProgressIndicator({
+  const JumpingDotsProgressIndicator({super.key, 
     this.numberOfDots = 3,
   });
 
+  @override
   _JumpingDotsProgressIndicatorState createState() =>
       _JumpingDotsProgressIndicatorState(
-        numberOfDots: this.numberOfDots,
+        numberOfDots: numberOfDots,
       );
 }
 
@@ -136,18 +137,19 @@ class _JumpingDotsProgressIndicatorState
   int numberOfDots;
   List<AnimationController> controllers = <AnimationController>[];
   List<Animation<double>> animations = <Animation<double>>[];
-  List<Widget> _widgets = <Widget>[];
+  final List<Widget> _widgets = <Widget>[];
 
   _JumpingDotsProgressIndicatorState({
     required this.numberOfDots,
   });
 
+  @override
   initState() {
     super.initState();
     for (int i = 0; i < numberOfDots; i++) {
 // adding controllers
       controllers.add(AnimationController(
-          duration: Duration(milliseconds: 250), vsync: this));
+          duration: const Duration(milliseconds: 250), vsync: this));
 // adding animation values
       animations.add(Tween(
               begin: widget.beginTweenValue, end: widget.endTweenValue)
@@ -164,7 +166,7 @@ class _JumpingDotsProgressIndicatorState
         }));
 // adding list of widgets
       _widgets.add(Padding(
-        padding: EdgeInsets.only(right: 1.0),
+        padding: const EdgeInsets.only(right: 1.0),
         child: JumpingDot(
           animation: animations[i],
         ),
@@ -174,11 +176,15 @@ class _JumpingDotsProgressIndicatorState
     controllers[0].forward();
   }
 
+  @override
   dispose() {
-    for (int i = 0; i < numberOfDots; i++) controllers[i].dispose();
+    for (int i = 0; i < numberOfDots; i++) {
+      controllers[i].dispose();
+    }
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 30.0,
@@ -193,14 +199,15 @@ class _JumpingDotsProgressIndicatorState
 class JumpingDot extends AnimatedWidget {
   final Animation<double> animation;
 
-  JumpingDot({Key? key, required this.animation})
-      : super(key: key, listenable: animation);
+  const JumpingDot({super.key, required this.animation})
+      : super(listenable: animation);
 
+  @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: animation.value,
       child: Container(
-        child: Icon(
+        child: const Icon(
           Icons.fiber_manual_record,
           size: 16,
           color: AppColor.BLUE_TEXT,

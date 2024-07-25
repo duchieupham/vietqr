@@ -25,7 +25,7 @@ class BuildVCardView extends StatefulWidget {
   final double height;
   final ContactDataModel model;
 
-  const BuildVCardView({
+  const BuildVCardView({super.key, 
     required this.type,
     required this.nameController,
     required this.suggestController,
@@ -83,7 +83,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
                 const SizedBox(width: 10),
                 Text(
                   widget.nameController.text,
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                 ),
               ],
             ),
@@ -126,7 +126,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
+                        const SizedBox(
                           child: Text(
                             'Quyền riêng tư',
                             style: TextStyle(
@@ -150,14 +150,14 @@ class _buildVietQRIDState extends State<BuildVCardView> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Image.asset(
-                                    '${widget.model.url}',
+                                    widget.model.url,
                                     color: AppColor.BLACK,
                                     width: 20,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
-                                    '${widget.model.title}',
-                                    style: TextStyle(fontSize: 14),
+                                    widget.model.title,
+                                    style: const TextStyle(fontSize: 14),
                                   ),
                                   const Spacer(),
                                   const Icon(
@@ -184,7 +184,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
               textFieldType: TextfieldType.LABEL,
               title: 'Số điện thoại',
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               controller: widget.phoneController,
               hintText: 'Nhập số điện thoại cho mã QR của bạn',
               inputType: TextInputType.text,
@@ -198,7 +198,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
               textFieldType: TextfieldType.LABEL,
               title: 'Email',
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               controller: widget.emailController,
               hintText: 'Nhập email cho mã QR của bạn',
               inputType: TextInputType.text,
@@ -212,7 +212,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
               textFieldType: TextfieldType.LABEL,
               title: 'Địa chỉ',
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               controller: widget.addressController,
               hintText: 'Nhập địa chỉ cho mã QR của bạn',
               inputType: TextInputType.text,
@@ -226,7 +226,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
               textFieldType: TextfieldType.LABEL,
               title: 'Website',
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               controller: widget.webController,
               hintText: 'Nhập website cho mã QR của bạn',
               inputType: TextInputType.text,
@@ -240,7 +240,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
               textFieldType: TextfieldType.LABEL,
               title: 'Công ty',
               contentPadding:
-                  EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               controller: widget.companyController,
               hintText: 'Nhập tên công ty cho mã QR của bạn',
               inputType: TextInputType.text,
@@ -252,7 +252,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
               isObscureText: false,
               maxLines: 5,
               contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               fillColor: AppColor.WHITE,
               controller: widget.suggestController,
               isRequired: false,
@@ -267,7 +267,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                const Text(
                   'Màu sắc thẻ QR',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
@@ -284,7 +284,7 @@ class _buildVietQRIDState extends State<BuildVCardView> {
                           child: Container(
                             width: 40,
                             height: 40,
-                            padding: EdgeInsets.all(2),
+                            padding: const EdgeInsets.all(2),
                             margin: const EdgeInsets.only(right: 16),
                             decoration: BoxDecoration(
                               border:

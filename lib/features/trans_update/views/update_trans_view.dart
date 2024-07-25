@@ -32,7 +32,7 @@ class UpdateTransView extends StatefulWidget {
 }
 
 class _UpdateTransViewState extends State<UpdateTransView> {
-  final bankCardRepository = BankCardRepository();
+  final bankCardRepository = const BankCardRepository();
   final transRepository = getIt.get<TransactionRepository>();
 
   final controller = TextEditingController();
@@ -127,7 +127,7 @@ class _UpdateTransViewState extends State<UpdateTransView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Cập nhật thông tin\ncửa hàng cho giao dịch',
                   style: TextStyle(
                     fontSize: 20,
@@ -139,7 +139,7 @@ class _UpdateTransViewState extends State<UpdateTransView> {
                 _buildInfo(),
                 const SizedBox(height: 24),
                 ...[
-                  Text(
+                  const Text(
                     'Danh sách cửa hàng',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -182,8 +182,8 @@ class _UpdateTransViewState extends State<UpdateTransView> {
                   else
                     Container(
                       alignment: Alignment.center,
-                      margin: EdgeInsets.only(top: 30),
-                      child: Text(
+                      margin: const EdgeInsets.only(top: 30),
+                      child: const Text(
                         'Danh sách trống',
                         style: TextStyle(
                           color: AppColor.BLACK,

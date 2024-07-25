@@ -118,7 +118,7 @@ class _KeyActiveFreeScreenState extends State<KeyActiveFreeScreen> {
                           ),
                         ),
                         child: ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
+                          shaderCallback: (bounds) => const LinearGradient(
                             colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
@@ -139,11 +139,11 @@ class _KeyActiveFreeScreenState extends State<KeyActiveFreeScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          XImage(
+                          const XImage(
                             imagePath: 'assets/images/ic-home-gradient.png',
                             width: 40,
                           ),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           ShaderMask(
                             shaderCallback: (bounds) => const LinearGradient(
                               colors: [
@@ -238,7 +238,7 @@ class _KeyActiveFreeScreenState extends State<KeyActiveFreeScreen> {
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Container(
+                  SizedBox(
                     width: 170,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

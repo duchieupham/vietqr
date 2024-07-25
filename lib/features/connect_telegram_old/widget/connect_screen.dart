@@ -84,7 +84,7 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ConnectTelegramSuccess()));
+                          builder: (context) => const ConnectTelegramSuccess()));
                 }
                 if (state is InsertTeleFailedState) {
                   Navigator.pop(context);

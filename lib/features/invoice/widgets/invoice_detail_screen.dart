@@ -1,27 +1,21 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/invoice/blocs/invoice_bloc.dart';
 import 'package:vierqr/features/invoice/events/invoice_events.dart';
-import 'package:vierqr/features/invoice/widgets/popup_invoice_success.dart';
 import 'package:vierqr/features/invoice/widgets/popup_invoice_widget.dart';
 import 'package:vierqr/models/invoice_detail_dto.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
-import '../../../commons/constants/configurations/stringify.dart';
 import '../../../commons/constants/configurations/theme.dart';
 import '../../../commons/utils/currency_utils.dart';
-import '../../../commons/utils/log.dart';
 import '../../../commons/utils/navigator_utils.dart';
 import '../../../commons/widgets/separator_widget.dart';
 import '../../../models/qr_generated_dto.dart';
-import '../../../services/local_notification/notification_service.dart';
 import '../../popup_bank/popup_bank_share.dart';
 import '../states/invoice_states.dart';
 
@@ -45,7 +39,7 @@ class InvoiceDetailScreen extends StatelessWidget {
 
 class _InvoiceDetailScreen extends StatefulWidget {
   final String invoiceId;
-  const _InvoiceDetailScreen({super.key, required this.invoiceId});
+  const _InvoiceDetailScreen({required this.invoiceId});
 
   @override
   State<_InvoiceDetailScreen> createState() => _InvoiceDetailScreenState();
@@ -154,14 +148,14 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
               },
               child: Container(
                 padding: const EdgeInsets.only(left: 8),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(
                       Icons.keyboard_arrow_left,
                       color: Colors.black,
                       size: 25,
                     ),
-                    const SizedBox(width: 2),
+                    SizedBox(width: 2),
                     Text(
                       "Trở về",
                       style: TextStyle(color: Colors.black, fontSize: 14),
@@ -186,17 +180,17 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
               <Widget>[
                 state.invoiceDetailDTO != null
                     ? Container(
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 30),
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
                         width: MediaQuery.of(context).size.width,
                         // height: MediaQuery.of(context).size.height,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
+                            SizedBox(
                               width: double.infinity,
                               child: Text(
                                 _data?.invoiceName ?? '',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppColor.BLACK,
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold,
@@ -233,16 +227,16 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                             const SizedBox(height: 30),
                             IntrinsicHeight(
                               child: Container(
-                                margin: EdgeInsets.only(bottom: 15),
+                                margin: const EdgeInsets.only(bottom: 15),
                                 width: double.infinity,
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: IntrinsicHeight(
                                         child: Container(
-                                          margin: EdgeInsets.only(right: 4),
+                                          margin: const EdgeInsets.only(right: 4),
                                           width: double.infinity,
-                                          child: Text(
+                                          child: const Text(
                                             'Trạng thái',
                                             style: TextStyle(
                                               color: AppColor.BLACK,
@@ -269,50 +263,50 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                                 ),
                               ),
                             ),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             _buildItem('Mã hoá đơn', _data!.billNumber!,
                                 FontWeight.normal),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             _buildItem(
                                 'Tài khoản',
                                 '${_data?.bankShortName} - ${_data?.bankAccount}',
                                 FontWeight.normal),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             _buildItem(
                                 'Tổng tiền hàng',
                                 '${CurrencyUtils.instance.getCurrencyFormatted(_data!.amount.toString())} VND',
                                 FontWeight.normal),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             _buildItem(
                                 'Tiền thuế GTGT (VAT)',
                                 '${_data?.vat?.toStringAsFixed(0)}% - ${CurrencyUtils.instance.getCurrencyFormatted(_data!.vatAmount.toString())} VND',
                                 FontWeight.normal),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             _buildItem(
                                 'Tổng tiền thanh toán',
                                 '${CurrencyUtils.instance.getCurrencyFormatted(_data!.totalAmount.toString())} VND',
                                 FontWeight.bold),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             _buildItem(
                                 'Thời gian TT', timePaid, FontWeight.normal),
-                            MySeparator(
+                            const MySeparator(
                               color: AppColor.GREY_DADADA,
                             ),
                             const SizedBox(height: 30),
                             Container(
-                              child: Text(
+                              child: const Text(
                                 'Danh mục hàng hoá, dịch vụ',
                                 style: TextStyle(
                                   color: AppColor.BLACK,
@@ -328,7 +322,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                                     e.quantity.toString(),
                                     e.itemAmount.toString(),
                                     e.totalItemAmount.toString()))
-                                .toList(),
+                                ,
                           ],
                         ),
                       )
@@ -349,18 +343,18 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
         children: [
           IntrinsicHeight(
             child: Container(
-              margin: EdgeInsets.only(bottom: 35),
+              margin: const EdgeInsets.only(bottom: 35),
               width: double.infinity,
               child: Row(
                 children: [
                   Expanded(
                     child: IntrinsicHeight(
                       child: Container(
-                        margin: EdgeInsets.only(right: 4),
+                        margin: const EdgeInsets.only(right: 4),
                         width: double.infinity,
                         child: Text(
                           invoiceItemName,
-                          style: TextStyle(color: AppColor.BLACK, fontSize: 15),
+                          style: const TextStyle(color: AppColor.BLACK, fontSize: 15),
                         ),
                       ),
                     ),
@@ -368,7 +362,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                   IntrinsicHeight(
                     child: Text(
                       '${CurrencyUtils.instance.getCurrencyFormatted(itemAmount.toString())} VND',
-                      style: TextStyle(color: AppColor.BLACK, fontSize: 15),
+                      style: const TextStyle(color: AppColor.BLACK, fontSize: 15),
                     ),
                   )
                 ],
@@ -377,7 +371,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
           ),
           IntrinsicHeight(
             child: Container(
-              margin: EdgeInsets.only(bottom: 16, left: 200),
+              margin: const EdgeInsets.only(bottom: 16, left: 200),
               width: double.infinity,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -385,20 +379,20 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                   IntrinsicHeight(
                     child: Text(
                       'x$quantity',
-                      style: TextStyle(color: AppColor.BLACK, fontSize: 15),
+                      style: const TextStyle(color: AppColor.BLACK, fontSize: 15),
                     ),
                   ),
                   IntrinsicHeight(
                     child: Text(
                       '${CurrencyUtils.instance.getCurrencyFormatted(totalItemAmount.toString())} VND',
-                      style: TextStyle(color: AppColor.BLACK, fontSize: 15),
+                      style: const TextStyle(color: AppColor.BLACK, fontSize: 15),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          MySeparator(),
+          const MySeparator(),
         ],
       ),
     );
@@ -408,18 +402,18 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
       String leftText, String rightText, FontWeight rightTextFontWeight) {
     return IntrinsicHeight(
       child: Container(
-        margin: EdgeInsets.only(bottom: 15, top: 15),
+        margin: const EdgeInsets.only(bottom: 15, top: 15),
         width: double.infinity,
         child: Row(
           children: [
             Expanded(
               child: IntrinsicHeight(
                 child: Container(
-                  margin: EdgeInsets.only(right: 4),
+                  margin: const EdgeInsets.only(right: 4),
                   width: double.infinity,
                   child: Text(
                     leftText,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColor.BLACK,
                       fontSize: 15,
                     ),
@@ -456,7 +450,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
           decoration: BoxDecoration(
               color: AppColor.BLUE_TEXT,
               borderRadius: BorderRadius.circular(5)),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(

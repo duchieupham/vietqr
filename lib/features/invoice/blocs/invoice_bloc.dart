@@ -1,6 +1,5 @@
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/invoice_detail_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
@@ -23,7 +22,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
     on<GetInvoiceList>(_getListInvoice);
     on<LoadMoreInvoice>(_loadMoreInvoice);
   }
-  InvoiceRepository _invoiceRepository = InvoiceRepository();
+  final InvoiceRepository _invoiceRepository = InvoiceRepository();
 
   Future<InvoiceDetailDTO?> getDetail(String id) async {
     try {

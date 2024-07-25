@@ -5,7 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class PinCodeInput extends StatelessWidget {
   const PinCodeInput({
-    Key? key,
+    super.key,
     this.onChanged,
     this.onCompleted,
     this.controller,
@@ -18,7 +18,7 @@ class PinCodeInput extends StatelessWidget {
     this.textStyle,
     this.length,
     this.size,
-  }) : super(key: key);
+  });
 
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onCompleted;

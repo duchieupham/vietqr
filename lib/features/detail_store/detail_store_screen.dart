@@ -68,7 +68,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
 
   DetailStoreDTO detailStoreDTO = DetailStoreDTO();
 
-  List<TabData> _tabs = [
+  final List<TabData> _tabs = [
     TabData(title: 'Thông tin', type: FlowTab.INFO),
     TabData(title: 'VietQR cửa hàng', type: FlowTab.STORE),
     TabData(title: 'Giao dịch', type: FlowTab.TRANS),
@@ -134,18 +134,19 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
       listener: (context, state) {
         if (state.request == DetailStoreType.GET_DETAIL) {
           detailStoreDTO = state.detailStore;
-          if (detailStoreDTO.isHideVietQR)
+          if (detailStoreDTO.isHideVietQR) {
             _tabs.removeAt(FlowTab.STORE.tabIndex);
+          }
           setState(() {});
         }
       },
       builder: (context, state) {
         if (state.status == BlocStatus.LOADING) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
@@ -203,7 +204,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
           padding: EdgeInsets.only(top: paddingTop + 12),
           alignment: Alignment.topCenter,
           decoration: isVietQRStore
-              ? BoxDecoration(
+              ? const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/bg-qr-vqr.png'),
                     fit: BoxFit.fitHeight,
@@ -213,7 +214,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
                   image: file.path.isNotEmpty
                       ? DecorationImage(
                           image: FileImage(file), fit: BoxFit.fitWidth)
-                      : DecorationImage(
+                      : const DecorationImage(
                           image: AssetImage('assets/images/bgr-header.png'),
                           fit: BoxFit.fitWidth)),
           child: Stack(
@@ -307,7 +308,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
     return GestureDetector(
       onTap: () => _onChangedPage(index),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -336,9 +337,9 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
   }
 
   void _onChangedPage(int page) {
-    TabData _value = _tabs[page];
+    TabData value = _tabs[page];
 
-    setState(() => tab = _value.type);
+    setState(() => tab = value.type);
     try {
       _controller.jumpToPage(page);
     } catch (e) {

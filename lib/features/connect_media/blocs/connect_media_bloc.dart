@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../commons/enums/enum_type.dart';
-import '../../../commons/mixin/base_manager.dart';
 import '../../../commons/utils/log.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
 import '../events/connect_media_evens.dart';

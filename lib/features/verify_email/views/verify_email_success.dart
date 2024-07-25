@@ -10,11 +10,11 @@ class VerifyEmailSuccessScreen extends StatefulWidget {
   final VoidCallback onContinue;
   final String email;
 
-  VerifyEmailSuccessScreen({
+  const VerifyEmailSuccessScreen({
     required this.onContinue,
     required this.email,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<VerifyEmailSuccessScreen> createState() =>

@@ -6,15 +6,10 @@ import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 
-import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/theme.dart';
-import '../../../commons/enums/enum_type.dart';
 import '../../../commons/utils/image_utils.dart';
-import '../../../commons/widgets/dialog_widget.dart';
 import '../../../commons/widgets/separator_widget.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
-import '../blocs/connect_media_bloc.dart';
-import '../states/connect_media_states.dart';
 
 class InfoMediaScreen extends StatelessWidget {
   final Function() onPopup;
@@ -137,7 +132,7 @@ class InfoMediaScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Thông tin kết nối',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
@@ -145,7 +140,7 @@ class InfoMediaScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Nền tảng kết nối:',
               style: TextStyle(fontSize: 15),
             ),
@@ -153,7 +148,7 @@ class InfoMediaScreen extends StatelessWidget {
               children: [
                 Text(
                   media,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
                 Image.asset(
@@ -195,7 +190,7 @@ class InfoMediaScreen extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Clipboard.setData(
-                        new ClipboardData(text: dto.chatId ?? ''));
+                        ClipboardData(text: dto.chatId ?? ''));
                   },
                   child: Align(
                     alignment: Alignment.centerRight,

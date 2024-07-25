@@ -11,7 +11,6 @@ import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/generate_qr/repositories/qr_repository.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/notify_trans_dto.dart';

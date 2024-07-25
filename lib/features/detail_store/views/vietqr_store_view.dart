@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
@@ -95,14 +93,8 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
           }
         },
         builder: (context, state) {
-          if (state.detailStore == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
           return SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
               child: Column(
@@ -132,7 +124,7 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                                       image: DecorationImage(
                                         image: ImageUtils.instance
                                             .getImageNetWork(
-                                                state.detailStore!.imgId),
+                                                state.detailStore.imgId),
                                       ),
                                     ),
                                   ),
@@ -140,7 +132,7 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                                     height: 40,
                                     padding: const EdgeInsets.only(
                                         left: 12, right: 10),
-                                    child: VerticalDashedLine(),
+                                    child: const VerticalDashedLine(),
                                   ),
                                   Expanded(
                                     child: Container(
@@ -153,20 +145,20 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            state.detailStore!.bankAccount,
+                                            state.detailStore.bankAccount,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 color: AppColor.BLACK,
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
-                                            state.detailStore!.userBankName
+                                            state.detailStore.userBankName
                                                 .toUpperCase(),
                                             maxLines: 3,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               color: AppColor.BLACK_TEXT,
                                               fontSize: 13,
                                             ),
@@ -180,12 +172,12 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                             ),
                           ),
                           const SizedBox(height: 12),
-                          VietQrNew(qrCode: state.detailStore!.qrCode),
+                          VietQrNew(qrCode: state.detailStore.qrCode),
                           const SizedBox(height: 16),
-                          Text('Mã VietQR nhận biến động số dư theo cửa hàng.',
+                          const Text('Mã VietQR nhận biến động số dư theo cửa hàng.',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: AppColor.WHITE)),
-                          Text(
+                          const Text(
                               'Nhận tiền từ mọi ngân hàng và ví điện tử có hỗ trợ VietQR.',
                               textAlign: TextAlign.center,
                               style: TextStyle(color: AppColor.WHITE)),
@@ -195,7 +187,7 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                   ),
                   const SizedBox(height: 20),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(12),

@@ -92,7 +92,7 @@ class _InputNameStoreViewState extends State<InputOTPView> {
                     _value = value;
                     setState(() {});
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Nhập mã OTP tại đây *',
                     hintStyle: TextStyle(
                       fontSize: 14,

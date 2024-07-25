@@ -1,9 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +10,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -30,8 +27,6 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
-import 'package:vierqr/models/qr_feed_detail_dto.dart';
-import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 enum TypeQr {
@@ -195,14 +190,14 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool _isButtonEnabled = false;
+    bool isButtonEnabled = false;
     Widget? widget;
     switch (_qrType) {
       case TypeQr.QR_LINK:
         if (_controller.text.isNotEmpty) {
-          _isButtonEnabled = true;
+          isButtonEnabled = true;
         } else {
-          _isButtonEnabled = false;
+          isButtonEnabled = false;
         }
         widget = _buildQr();
         break;
@@ -210,17 +205,17 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         if (stk.text.isNotEmpty &&
             userBankName.text.isNotEmpty &&
             selectedBank != null) {
-          _isButtonEnabled = true;
+          isButtonEnabled = true;
         } else {
-          _isButtonEnabled = false;
+          isButtonEnabled = false;
         }
         widget = _buildVietQr();
         break;
       case TypeQr.VCARD:
         if (phone.isNotEmpty && contactController.text.isNotEmpty) {
-          _isButtonEnabled = true;
+          isButtonEnabled = true;
         } else {
-          _isButtonEnabled = false;
+          isButtonEnabled = false;
         }
         widget = VcardWidget(
           sdtController: sdtController,
@@ -281,9 +276,9 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         break;
       case TypeQr.OTHER:
         if (_controller.text.isNotEmpty) {
-          _isButtonEnabled = true;
+          isButtonEnabled = true;
         } else {
-          _isButtonEnabled = false;
+          isButtonEnabled = false;
         }
         widget = _buildQr();
         break;
@@ -292,7 +287,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar: _bottomButton(_isButtonEnabled),
+      bottomNavigationBar: _bottomButton(isButtonEnabled),
       body: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         controller: _scrollController,

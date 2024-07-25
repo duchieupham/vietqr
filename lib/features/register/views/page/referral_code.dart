@@ -7,14 +7,14 @@ import '../../../../commons/constants/configurations/theme.dart';
 import '../../../../commons/widgets/textfield_custom.dart';
 
 class ReferralCode extends StatelessWidget {
-  const ReferralCode({Key? key}) : super(key: key);
+  const ReferralCode({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return Container(
-          padding: EdgeInsets.only(top: 150, left: 20, right: 20),
+          padding: const EdgeInsets.only(top: 150, left: 20, right: 20),
           alignment: Alignment.center,
           child: Column(
             children: [
@@ -26,7 +26,7 @@ class ReferralCode extends StatelessWidget {
                 title: 'Nhập thông tin\nngười giới thiệu cho bạn',
                 titleSize: 25,
                 hintText: 'Nhập mã giới thiệu ở đây',
-                contentPadding: EdgeInsets.symmetric(horizontal: 0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                 fontSize: 15,
                 controller: provider.introduceController,
                 inputType: TextInputType.text,

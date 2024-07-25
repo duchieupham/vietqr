@@ -5,8 +5,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail_new/repositories/transaction_repository.dart';
 import 'package:vierqr/features/bank_detail_new/states/transaction_state.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
-import 'package:vierqr/models/metadata_dto.dart';
-import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 
 import '../events/transaction_event.dart';

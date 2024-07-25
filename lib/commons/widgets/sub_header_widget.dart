@@ -7,8 +7,7 @@ class SubHeader extends StatelessWidget {
   final VoidCallback? callBackHome;
 
   const SubHeader(
-      {Key? key, required this.title, this.function, this.callBackHome})
-      : super(key: key);
+      {super.key, required this.title, this.function, this.callBackHome});
 
   @override
   Widget build(BuildContext context) {

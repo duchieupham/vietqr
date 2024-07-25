@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 class ModelBottomSheetView extends StatefulWidget {
   const ModelBottomSheetView({
-    Key? key,
+    super.key,
     this.titleStyles,
     this.contentStyles,
     required this.tvTitle,
@@ -18,7 +16,7 @@ class ModelBottomSheetView extends StatefulWidget {
     this.searchType,
     this.noData,
     required this.ctx,
-  }) : super(key: key);
+  });
 
   final TextStyle? titleStyles;
   final TextStyle? contentStyles;

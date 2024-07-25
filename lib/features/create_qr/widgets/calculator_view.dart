@@ -10,7 +10,7 @@ import 'custom_button.dart';
 class CalculatorScreen extends StatefulWidget {
   static String routeName = '/calculator_screen';
 
-  CalculatorScreen({Key? key}) : super(key: key);
+  const CalculatorScreen({super.key});
 
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
@@ -89,7 +89,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         color: AppColor.BLUE_TEXT.withOpacity(0.2),
                         textColor: AppColor.BLACK_TEXT,
                         text: buttons[index].text,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: AppColor.BLACK_TEXT,
                             fontSize: 24,
                             fontWeight: FontWeight.w500),
@@ -105,7 +105,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         color: AppColor.BLUE_TEXT.withOpacity(0.2),
                         textColor: AppColor.BLACK_TEXT,
                         text: buttons[index].text,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: AppColor.BLACK_TEXT,
                             fontSize: 24,
                             fontWeight: FontWeight.w500),
@@ -121,7 +121,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                         color: AppColor.BLUE_TEXT.withOpacity(0.2),
                         textColor: AppColor.BLACK_TEXT,
                         text: buttons[index].text,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: AppColor.BLACK_TEXT,
                             fontSize: 24,
                             fontWeight: FontWeight.w500),
@@ -211,7 +211,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     inputAfter = output;
 
-    if (inputAfter.length == 0) {
+    if (inputAfter.isEmpty) {
       return null;
     }
 
@@ -257,16 +257,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   _submit() {
     try {
-      if (inputAfter.length == 0 || double.parse(inputAfter) == 0) {
+      if (inputAfter.isEmpty || double.parse(inputAfter) == 0) {
         inputAfter = "";
         setState(() {});
         return null;
       }
       String userInputFC = inputBefore + math + inputAfter;
 
-      Parser p = new Parser();
+      Parser p = Parser();
       Expression exp = p.parse(userInputFC.replaceAll("x", "*"));
-      ContextModel cm = new ContextModel();
+      ContextModel cm = ContextModel();
       if (mounted) {
         setState(() {
           userOutput = exp.evaluate(EvaluationType.REAL, cm);
@@ -277,28 +277,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             List<String> listTextBefore = textDelete(inputBefore);
             List<String> listText = textDelete(inputAfter);
             if (listText.last.isNotEmpty) {
-              userInputFC = StringUtils.formatMoney(listTextBefore.first) +
-                  ',${listTextBefore.last}' +
-                  ' $math ' +
-                  StringUtils.formatMoney(listText.first) +
-                  ',${listText.last}';
+              userInputFC = '${StringUtils.formatMoney(listTextBefore.first)},${listTextBefore.last} $math ${StringUtils.formatMoney(listText.first)},${listText.last}';
             } else {
-              userInputFC = StringUtils.formatMoney(listTextBefore.first) +
-                  ',${listTextBefore.last}' +
-                  ' $math ' +
-                  StringUtils.formatMoney(listText.first);
+              userInputFC = '${StringUtils.formatMoney(listTextBefore.first)},${listTextBefore.last} $math ${StringUtils.formatMoney(listText.first)}';
             }
           } else {
             List<String> listText = textDelete(inputAfter);
             if (listText.last.isNotEmpty) {
-              userInputFC = StringUtils.formatMoney(inputBefore) +
-                  ' $math ' +
-                  StringUtils.formatMoney(listText.first) +
-                  ',${listText.last}';
+              userInputFC = '${StringUtils.formatMoney(inputBefore)} $math ${StringUtils.formatMoney(listText.first)},${listText.last}';
             } else {
-              userInputFC = StringUtils.formatMoney(inputBefore) +
-                  ' $math ' +
-                  StringUtils.formatMoney(listText.first);
+              userInputFC = '${StringUtils.formatMoney(inputBefore)} $math ${StringUtils.formatMoney(listText.first)}';
             }
           }
 

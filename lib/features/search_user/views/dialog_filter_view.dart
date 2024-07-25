@@ -30,7 +30,7 @@ class _DialogFilterViewState extends State<DialogFilterView> {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 200,
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             margin: const EdgeInsets.symmetric(horizontal: 60),
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
@@ -41,7 +41,7 @@ class _DialogFilterViewState extends State<DialogFilterView> {
               children: [
                 Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Tìm kiếm theo',
                         style: TextStyle(
@@ -50,7 +50,7 @@ class _DialogFilterViewState extends State<DialogFilterView> {
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context, type),
-                      child: Icon(Icons.close),
+                      child: const Icon(Icons.close),
                     )
                   ],
                 ),
@@ -59,7 +59,7 @@ class _DialogFilterViewState extends State<DialogFilterView> {
                   onTap: () => _onSelect(0),
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Số điện thoại',
                           style: TextStyle(fontWeight: FontWeight.w600),
@@ -87,7 +87,7 @@ class _DialogFilterViewState extends State<DialogFilterView> {
                   onTap: () => _onSelect(1),
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'Họ tên',
                           style: TextStyle(fontWeight: FontWeight.w600),

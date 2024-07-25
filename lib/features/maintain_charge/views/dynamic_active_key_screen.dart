@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -12,7 +10,6 @@ import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/route.dart';
 import '../../../commons/utils/image_utils.dart';
 import '../../../models/bank_account_dto.dart';
-import '../../../services/local_storage/shared_preference/shared_pref_utils.dart';
 import '../states/maintain_charge_state.dart';
 
 class DynamicActiveKeyScreen extends StatelessWidget {
@@ -70,7 +67,7 @@ class _ScreenState extends State<Screen> {
           resizeToAvoidBottomInset: false,
           bottomNavigationBar: _bottom(),
           body: CustomScrollView(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 pinned: false,
@@ -94,14 +91,14 @@ class _ScreenState extends State<Screen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.only(left: 8),
-                    child: Row(
+                    child: const Row(
                       children: [
                         Icon(
                           Icons.keyboard_arrow_left,
                           color: Colors.black,
                           size: 25,
                         ),
-                        const SizedBox(width: 2),
+                        SizedBox(width: 2),
                         Text(
                           "Trở về",
                           style: TextStyle(color: Colors.black, fontSize: 14),
@@ -122,7 +119,7 @@ class _ScreenState extends State<Screen> {
                 ],
               ),
               SliverToBoxAdapter(
-                child: Container(
+                child: SizedBox(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
                   // child: PageView(
@@ -159,7 +156,7 @@ class _ScreenState extends State<Screen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Xin chào, \nvui lòng chọn tài khoản\nngân hàng để kích hoạt\ndịch vụ phần mềm VietQR',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
@@ -173,7 +170,7 @@ class _ScreenState extends State<Screen> {
             ),
           ),
           const SizedBox(height: 49),
-          Center(
+          const Center(
             child: Text(
               'Có vẻ bạn chưa liên kết\ntài khoản ngân hàng nào!',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
@@ -190,8 +187,8 @@ class _ScreenState extends State<Screen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(30, 90, 30, 0),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(30, 90, 30, 0),
             child: Text(
               'Xin chào, \nvui lòng chọn tài khoản\nngân hàng để kích hoạt\ndịch vụ phần mềm VietQR',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -239,11 +236,11 @@ class _ScreenState extends State<Screen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(value.listBank![index].bankAccount,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold)),
                               Text(value.listBank![index].userBankName,
-                                  style: TextStyle(fontSize: 12)),
+                                  style: const TextStyle(fontSize: 12)),
                             ],
                           ),
                         ],
@@ -252,7 +249,7 @@ class _ScreenState extends State<Screen> {
                   );
                 },
                 separatorBuilder: (context, index) =>
-                    MySeparator(color: AppColor.GREY_DADADA),
+                    const MySeparator(color: AppColor.GREY_DADADA),
                 itemCount: value.listBank!.length),
           )
         ],
@@ -283,7 +280,7 @@ class _ScreenState extends State<Screen> {
                     color: AppColor.BLUE_TEXT.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(50),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Icon(Icons.arrow_forward,
@@ -294,7 +291,7 @@ class _ScreenState extends State<Screen> {
                             TextStyle(fontSize: 13, color: AppColor.BLUE_TEXT),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 10),
+                        padding: EdgeInsets.only(right: 10),
                         child: Icon(Icons.arrow_forward,
                             color: AppColor.BLUE_TEXT, size: 20),
                       ),
@@ -332,7 +329,7 @@ class _ScreenState extends State<Screen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(Icons.arrow_forward,
+                      const Icon(Icons.arrow_forward,
                           color: AppColor.TRANSPARENT, size: 20),
                       Text(
                         'Tiếp tục',

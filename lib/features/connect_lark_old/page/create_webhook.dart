@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class CreateWebhookPage extends StatelessWidget {
-  const CreateWebhookPage({Key? key}) : super(key: key);
+  const CreateWebhookPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +13,12 @@ class CreateWebhookPage extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Trong giao diện group chat của Lark:'),
+                const Text('Trong giao diện group chat của Lark:'),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '- Chọn nút "..." > ',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: '"Setting"',
                           style: TextStyle(
@@ -37,10 +37,10 @@ class CreateWebhookPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '- Chọn mục > ',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: '"Bot" > "Add Bot"',
                           style: TextStyle(
@@ -49,10 +49,10 @@ class CreateWebhookPage extends StatelessWidget {
                   ),
                 ),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '- Thêm',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: ' "Custom Bot"',
                           style: TextStyle(
@@ -70,15 +70,15 @@ class CreateWebhookPage extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   '- Đặt tên và mô tả cho Bot.',
                   style: TextStyle(fontSize: 12),
                 ),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '- Chọn',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: '"Add"',
                           style: TextStyle(
@@ -97,10 +97,10 @@ class CreateWebhookPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '- Chọn',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: ' "Coppy" ',
                           style: TextStyle(
@@ -114,10 +114,10 @@ class CreateWebhookPage extends StatelessWidget {
                   ),
                 ),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '- Chọn',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: ' "Finish"',
                           style: TextStyle(
@@ -133,10 +133,10 @@ class CreateWebhookPage extends StatelessWidget {
         ),
         _buildBgItem(
           RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: 'Khai báo',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: ' "Webhook Url" ',
                     style:
@@ -157,7 +157,7 @@ class CreateWebhookPage extends StatelessWidget {
   Widget _buildBgItem(Widget child, {String pathImageTutorial = ''}) {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
       child: Row(

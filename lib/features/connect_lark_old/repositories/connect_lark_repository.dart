@@ -13,7 +13,7 @@ class ConnectLarkRepository {
   const ConnectLarkRepository();
 
   Future<ResponseMessageDTO> insertLark(Map<String, dynamic> data) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}service/lark';
       final response = await BaseAPIClient.postAPI(
@@ -32,7 +32,7 @@ class ConnectLarkRepository {
   }
 
   Future<ResponseMessageDTO> sendFirstMessage(String webHook) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/lark/send-message?webhook=$webHook';
@@ -72,7 +72,7 @@ class ConnectLarkRepository {
   }
 
   Future<ResponseMessageDTO> remove(String idConnect) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/lark/remove?id=$idConnect';
@@ -92,7 +92,7 @@ class ConnectLarkRepository {
   }
 
   Future<ResponseMessageDTO> removeBankLark(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
@@ -115,7 +115,7 @@ class ConnectLarkRepository {
   }
 
   Future<ResponseMessageDTO> addBankLark(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';

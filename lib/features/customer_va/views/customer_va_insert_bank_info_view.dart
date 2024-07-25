@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +11,8 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 
-import '../../../commons/utils/image_utils.dart';
 
 class CustomerVaInsertBankInfoView extends StatefulWidget {
   const CustomerVaInsertBankInfoView({super.key});

@@ -1,19 +1,13 @@
-import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/format_price.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/invoice/states/invoice_states.dart';
@@ -45,7 +39,7 @@ class InvoiceScreen extends StatelessWidget {
 }
 
 class _Invoice extends StatefulWidget {
-  const _Invoice({super.key});
+  const _Invoice();
 
   @override
   State<_Invoice> createState() => __InvoiceState();
@@ -83,8 +77,8 @@ class __InvoiceState extends State<_Invoice> {
     scrollController!.addListener(() async {
       if (scrollController!.position.pixels ==
           scrollController!.position.maxScrollExtent) {
-        int total_page = (metadata!.total! / 20).ceil();
-        if (total_page > metadata!.page!) {
+        int totalPage = (metadata!.total! / 20).ceil();
+        if (totalPage > metadata!.page!) {
           _bloc.add(LoadMoreInvoice(
               status: _provider.invoiceStatus?.id,
               bankId: _provider.selectBank?.id ?? '',
@@ -109,52 +103,52 @@ class __InvoiceState extends State<_Invoice> {
   }
 
   void _onQrCreate(InvoiceStates state, int index) async {
-    InvoiceDetailDTO? _data =
+    InvoiceDetailDTO? data =
         await _bloc.getDetail(state.listInvoice![index].invoiceId!);
 
-    if (_data != null) {
+    if (data != null) {
       await showCupertinoModalPopup(
         context: context,
         builder: (context) => PopupQrCreate(
           onSave: () {
-            onSaveImage(context, _data);
+            onSaveImage(context, data);
           },
           onShare: () {
-            onShare(context, _data);
+            onShare(context, data);
           },
-          invoiceName: _data.invoiceName!,
-          totalAmount: _data.totalAmount.toString(),
-          billNumber: _data.billNumber!,
-          qr: _data.qrCode!,
+          invoiceName: data.invoiceName!,
+          totalAmount: data.totalAmount.toString(),
+          billNumber: data.billNumber!,
+          qr: data.qrCode!,
         ),
       );
     }
   }
 
-  void onShare(BuildContext context, InvoiceDetailDTO _data) {
+  void onShare(BuildContext context, InvoiceDetailDTO data) {
     QRGeneratedDTO dto = QRGeneratedDTO(
-      bankCode: _data.bankCode!,
-      bankName: _data.bankName!,
-      bankAccount: _data.bankAccount!,
-      userBankName: _data.userBankName!,
-      qrCode: _data.qrCode!,
+      bankCode: data.bankCode!,
+      bankName: data.bankName!,
+      bankAccount: data.bankAccount!,
+      userBankName: data.userBankName!,
+      qrCode: data.qrCode!,
       imgId: '',
-      amount: _data.totalAmount.toString(),
+      amount: data.totalAmount.toString(),
     );
     NavigatorUtils.navigatePage(
         context, PopupBankShare(dto: dto, type: TypeImage.SHARE),
         routeName: PopupBankShare.routeName);
   }
 
-  void onSaveImage(BuildContext context, InvoiceDetailDTO _data) {
+  void onSaveImage(BuildContext context, InvoiceDetailDTO data) {
     QRGeneratedDTO dto = QRGeneratedDTO(
-      bankCode: _data.bankCode!,
-      bankName: _data.bankName!,
-      bankAccount: _data.bankAccount!,
-      userBankName: _data.userBankName!,
-      qrCode: _data.qrCode!,
+      bankCode: data.bankCode!,
+      bankName: data.bankName!,
+      bankAccount: data.bankAccount!,
+      userBankName: data.userBankName!,
+      qrCode: data.qrCode!,
       imgId: '',
-      amount: _data.totalAmount.toString(),
+      amount: data.totalAmount.toString(),
     );
     NavigatorUtils.navigatePage(
         context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
@@ -166,7 +160,7 @@ class __InvoiceState extends State<_Invoice> {
       context: context,
       builder: (context) => PopupFilterWidget(
           bloc: _bloc,
-          bank: _provider.selectBank ?? null,
+          bank: _provider.selectBank,
           status: _provider.selectedStatus!,
           bankType: _provider.selectBankType!,
           isMonthSelect: _provider.isMonthSelect!,
@@ -189,7 +183,7 @@ class __InvoiceState extends State<_Invoice> {
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: true,
               body: CustomScrollView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     pinned: false,
@@ -201,14 +195,14 @@ class __InvoiceState extends State<_Invoice> {
                       },
                       child: Container(
                         padding: const EdgeInsets.only(left: 8),
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(
                               Icons.keyboard_arrow_left,
                               color: Colors.black,
                               size: 25,
                             ),
-                            const SizedBox(width: 2),
+                            SizedBox(width: 2),
                             Text(
                               "Trở về",
                               style:
@@ -257,7 +251,7 @@ class __InvoiceState extends State<_Invoice> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Danh sách hoá đơn',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -349,14 +343,14 @@ class __InvoiceState extends State<_Invoice> {
                   ? Text(
                       'Tháng ${provider.invoiceMonth?.month}/${provider.invoiceMonth?.year}',
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     )
                   : const SizedBox.shrink(),
               provider.selectBank != null
                   ? Text(
                       'TK ${provider.selectBank?.bankShortName} - ${provider.selectBank?.bankAccount}',
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     )
                   : const SizedBox.shrink(),
             ],
@@ -393,7 +387,7 @@ class __InvoiceState extends State<_Invoice> {
         return Container(
           padding: const EdgeInsets.only(top: 250),
           // height: MediaQuery.of(context).size.height,
-          child: Center(
+          child: const Center(
             child: Text('Chưa có hóa đơn nào'),
           ),
         );
@@ -438,7 +432,7 @@ class __InvoiceState extends State<_Invoice> {
                               width: 260,
                               child: Text(
                                 '${state.listInvoice?[index].invoiceName}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -446,7 +440,7 @@ class __InvoiceState extends State<_Invoice> {
                             ),
                             Text(
                               '${state.listInvoice?[index].bankShortName} - ${state.listInvoice?[index].bankAccount}',
-                              style: TextStyle(fontSize: 15),
+                              style: const TextStyle(fontSize: 15),
                             ),
                             if (state.listInvoice![index].fileAttachmentId !=
                                 '')
@@ -472,7 +466,7 @@ class __InvoiceState extends State<_Invoice> {
                       ],
                     ),
                   ),
-                  MySeparator(color: AppColor.GREY_DADADA),
+                  const MySeparator(color: AppColor.GREY_DADADA),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -511,7 +505,7 @@ class __InvoiceState extends State<_Invoice> {
                                           height: 15,
                                         ),
                                         const SizedBox(width: 4),
-                                        Text(
+                                        const Text(
                                           'QR thanh toán',
                                           style: TextStyle(
                                               fontSize: 14,
@@ -537,8 +531,8 @@ class __InvoiceState extends State<_Invoice> {
 
   Widget loadMoreIcon(InvoiceStates state) {
     if (state.status == BlocStatus.LOAD_MORE) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
+      return const Padding(
+        padding: EdgeInsets.all(8.0),
         child: Center(
           child: CircularProgressIndicator(),
         ),
@@ -552,7 +546,7 @@ class __InvoiceState extends State<_Invoice> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       height: MediaQuery.of(context).size.height,
       child: ListView.separated(
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         separatorBuilder: (context, index) => const SizedBox(height: 10),
         itemCount: 4,
         itemBuilder: (context, index) {
@@ -569,14 +563,14 @@ class __InvoiceState extends State<_Invoice> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ShimmerBlock(
                         width: 200,
                         height: 35,
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10),
                       ShimmerBlock(
                         width: 160,
                         height: 20,
@@ -584,11 +578,11 @@ class __InvoiceState extends State<_Invoice> {
                     ],
                   ),
                 ),
-                MySeparator(color: AppColor.GREY_DADADA),
+                const MySeparator(color: AppColor.GREY_DADADA),
                 Expanded(
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         ShimmerBlock(

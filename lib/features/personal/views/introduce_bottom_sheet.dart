@@ -105,8 +105,8 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                       ],
                     ),
                   ),
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Expanded(child: Divider()),
                       SizedBox(width: 4),
                       Text(
@@ -130,8 +130,8 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                       decoration: const BoxDecoration(
                           color: AppColor.BLUE_TEXT,
                           borderRadius: BorderRadius.all(Radius.circular(5))),
-                      child: Row(
-                        children: const [
+                      child: const Row(
+                        children: [
                           Icon(Icons.ios_share, color: Colors.white),
                           Expanded(
                             child: Text(

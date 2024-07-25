@@ -18,6 +18,8 @@ enum StoreStep {
 class CreateStoreScreen extends StatefulWidget {
   static String routeName = '/CreateStoreScreen';
 
+  const CreateStoreScreen({super.key});
+
   @override
   State<CreateStoreScreen> createState() => _CreateStoreScreenState();
 }
@@ -54,11 +56,11 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
   }
 
   Widget _buildBody() {
-    Widget _body = const SizedBox();
+    Widget body = const SizedBox();
 
     switch (step) {
       case StoreStep.INFO_MERCHANT:
-        _body = InfoMerchantView(
+        body = InfoMerchantView(
           onAddMerchant: () {
             setState(() {
               step = StoreStep.INPUT_NAME_MERCHANT;
@@ -72,26 +74,26 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
         );
         break;
       case StoreStep.INPUT_NAME_MERCHANT:
-        _body = InputCreateMerchantView(
+        body = InputCreateMerchantView(
           callBack: _onHandleCreateMerchant,
           storeName: _merchantName,
         );
         break;
       case StoreStep.ADD_MEMBER:
-        _body = ShareNotifyMemberView(
+        body = ShareNotifyMemberView(
           callBack: _onHandleMember,
           nameStore: _storeName,
           members: members,
         );
         break;
       case StoreStep.BANK_STORE:
-        _body = InputBankStoreView(
+        body = InputBankStoreView(
           callBack: _onHandleBankStore,
           nameStore: _storeName,
         );
         break;
       case StoreStep.CODE_STORE:
-        _body = InputCodeStoreView(
+        body = InputCodeStoreView(
           callBack: _onHandleCodeStore,
           nameStore: _storeName,
           codeStore: _storeCode,
@@ -99,7 +101,7 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
         );
         break;
       case StoreStep.INFO_STORE:
-        _body = InfoStoreView(
+        body = InfoStoreView(
           storeName: _storeName,
           storeCode: _storeCode,
           storeAddress: _storeAddress,
@@ -110,13 +112,13 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
         break;
 
       default:
-        _body = InputNameStoreView(
+        body = InputNameStoreView(
           callBack: _onHandleNameStore,
           storeName: _storeName,
         );
     }
 
-    return _body;
+    return body;
   }
 
   void _onHandleNameStore(String value) {

@@ -20,6 +20,7 @@ class GetTransStoreEvent extends DetailStoreEvent {
     this.type = 9,
   });
 
+  @override
   List<Object?> get props => [fromDate, toDate, subTerminalCode, value, type];
 }
 
@@ -38,6 +39,7 @@ class FetchTransStoreEvent extends DetailStoreEvent {
     this.type = 9,
   });
 
+  @override
   List<Object?> get props => [fromDate, toDate, subTerminalCode, value, type];
 }
 
@@ -47,6 +49,7 @@ class GetDetailStoreEvent extends DetailStoreEvent {
 
   GetDetailStoreEvent({this.fromDate = '', this.toDate = ''});
 
+  @override
   List<Object?> get props => [fromDate, toDate];
 }
 
@@ -55,12 +58,14 @@ class GetDetailQREvent extends DetailStoreEvent {}
 class GetMembersStoreEvent extends DetailStoreEvent {
   GetMembersStoreEvent();
 
+  @override
   List<Object?> get props => [];
 }
 
 class GetTerminalStoreEvent extends DetailStoreEvent {
   GetTerminalStoreEvent();
 
+  @override
   List<Object?> get props => [];
 }
 

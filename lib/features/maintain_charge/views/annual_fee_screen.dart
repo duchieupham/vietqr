@@ -1,9 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -11,7 +8,6 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
-import 'package:vierqr/features/maintain_charge/events/maintain_charge_events.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
@@ -20,7 +16,6 @@ import '../../../commons/utils/format_price.dart';
 import '../../../commons/utils/navigator_utils.dart';
 import '../../../models/qr_generated_dto.dart';
 import '../../popup_bank/popup_bank_share.dart';
-import 'active_success_screen.dart';
 
 class QrAnnualFeeScreen extends StatefulWidget {
   final int? amount;
@@ -158,7 +153,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  MySeparator(
+                  const MySeparator(
                     color: AppColor.GREY_DADADA,
                   ),
                   Container(
@@ -167,7 +162,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           "Mã VietQR hết hạn sau:",
                           style: TextStyle(fontSize: 15),
                         ),
@@ -183,7 +178,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                               return Center(
                                 child: Text(
                                   formatSecondsToTime(value as int),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                       color: AppColor.BLUE_TEXT),
@@ -195,7 +190,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       ],
                     ),
                   ),
-                  MySeparator(
+                  const MySeparator(
                     color: AppColor.GREY_DADADA,
                   ),
                 ],
@@ -210,14 +205,14 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
         },
         child: Container(
           padding: const EdgeInsets.only(left: 8),
-          child: Row(
+          child: const Row(
             children: [
               Icon(
                 Icons.keyboard_arrow_left,
                 color: Colors.black,
                 size: 25,
               ),
-              const SizedBox(width: 2),
+              SizedBox(width: 2),
               Text(
                 "Trở về",
                 style: TextStyle(color: Colors.black, fontSize: 14),
@@ -243,7 +238,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
     return SliverList(
       delegate: SliverChildListDelegate(<Widget>[
         Container(
-          padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
           width: MediaQuery.of(context).size.width,
           // height: MediaQuery.of(context).size.height,
           child: Column(
@@ -253,17 +248,17 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Dùng ứng dụng Ngân hàng",
                     style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     "và Ví điện tử có hỗ trợ mã VietQR",
                     style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "để thanh toán gói phí dịch vụ ${widget.duration} tháng",
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -272,7 +267,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 width: double.infinity,
                 height: 350,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
+                  image: const DecorationImage(
                       image: AssetImage('assets/images/bg-qr-vqr.png'),
                       fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10),
@@ -289,7 +284,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 240,
                           height: 240,
                           // color: AppColor.GREY_DADADA,
@@ -299,8 +294,8 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                             version: QrVersions.auto,
                             embeddedImage: const AssetImage(
                                 'assets/images/ic-viet-qr-small.png'),
-                            embeddedImageStyle: QrEmbeddedImageStyle(
-                              size: const Size(30, 30),
+                            embeddedImageStyle: const QrEmbeddedImageStyle(
+                              size: Size(30, 30),
                             ),
                           ),
                         ),
@@ -343,7 +338,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: AppColor.BLUE_TEXT)),
-                      child: Container(
+                      child: SizedBox(
                         height: 30,
                         child: Row(
                           // crossAxisAlignment: CrossAxisAlignment.center,
@@ -355,7 +350,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                               // height: 14,
                             ),
                             const SizedBox(width: 4),
-                            Text(
+                            const Text(
                               "Lưu ảnh QR",
                               style: TextStyle(
                                   color: AppColor.BLUE_TEXT, fontSize: 13),
@@ -376,7 +371,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: AppColor.BLUE_TEXT)),
-                      child: Container(
+                      child: SizedBox(
                         height: 30,
                         child: Row(
                           // crossAxisAlignment: CrossAxisAlignment.center,
@@ -389,7 +384,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                               // height: 14,
                             ),
                             const SizedBox(width: 4),
-                            Text(
+                            const Text(
                               "Chia sẻ QR",
                               style: TextStyle(
                                   color: AppColor.BLUE_TEXT, fontSize: 13),
@@ -402,7 +397,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 ],
               ),
               const SizedBox(height: 50),
-              Text(
+              const Text(
                 "Thông tin hoá đơn",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -412,7 +407,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Số tiền TT:",
                       style: TextStyle(fontSize: 15),
                     ),
@@ -420,12 +415,12 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       children: [
                         Text(
                           formatNumber(widget.amount),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15,
                               color: AppColor.ORANGE_DARK,
                               fontWeight: FontWeight.bold),
                         ),
-                        Text(
+                        const Text(
                           ' VND',
                           style: TextStyle(fontSize: 15),
                         ),
@@ -434,11 +429,11 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                   ],
                 ),
               ),
-              MySeparator(
+              const MySeparator(
                 color: AppColor.GREY_DADADA,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 16),
+              const Padding(
+                padding: EdgeInsets.only(top: 16, bottom: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -453,7 +448,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                   ],
                 ),
               ),
-              MySeparator(
+              const MySeparator(
                 color: AppColor.GREY_DADADA,
               ),
               Padding(
@@ -461,7 +456,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "TK kích hoạt:",
                       style: TextStyle(fontSize: 15),
                     ),
@@ -469,14 +464,14 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       builder: (context, value, child) {
                         return Text(
                           "${value.bankName} - ${value.bankAccount}",
-                          style: TextStyle(fontSize: 15),
+                          style: const TextStyle(fontSize: 15),
                         );
                       },
                     ),
                   ],
                 ),
               ),
-              MySeparator(
+              const MySeparator(
                 color: AppColor.GREY_DADADA,
               ),
               Padding(
@@ -484,18 +479,18 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Hoá đơn:",
                       style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       "${widget.billNumber}",
-                      style: TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
               ),
-              MySeparator(
+              const MySeparator(
                 color: AppColor.GREY_DADADA,
               ),
               Padding(
@@ -503,18 +498,18 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       "Thời hạn:",
                       style: TextStyle(fontSize: 15),
                     ),
                     Text(
                       "${widget.duration} tháng",
-                      style: TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
               ),
-              MySeparator(
+              const MySeparator(
                 color: AppColor.GREY_DADADA,
               ),
               Padding(
@@ -525,18 +520,18 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Từ ngày",
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
                           timestampToDate(widget.validFrom!),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                    Icon(
+                    const Icon(
                       Icons.arrow_forward,
                       color: AppColor.BLACK,
                       size: 16,
@@ -544,13 +539,13 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Đến ngày",
                           style: TextStyle(fontSize: 15),
                         ),
                         Text(
                           timestampToDate(widget.validTo!),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -566,7 +561,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 decoration: BoxDecoration(
                     color: AppColor.BLUE_TEXT.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(10)),
-                child: Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -577,7 +572,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                           color: AppColor.BLUE_TEXT,
                           size: 15,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         Text(
                           "Lưu ý về thanh toán dịch vụ",
                           style: TextStyle(
@@ -587,21 +582,21 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                         )
                       ],
                     ),
-                    const SizedBox(width: 15),
-                    Container(
+                    SizedBox(width: 15),
+                    SizedBox(
                       width: double.infinity,
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(top: 4),
+                            padding: EdgeInsets.only(top: 4),
                             child: Icon(
                               Icons.circle,
                               color: AppColor.BLACK,
                               size: 8,
                             ),
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [

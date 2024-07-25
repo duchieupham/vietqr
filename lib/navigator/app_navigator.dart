@@ -64,12 +64,8 @@ import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
-import 'package:vierqr/models/qr_feed_private_dto.dart';
-import 'package:vierqr/models/qr_folder_detail_dto.dart';
-import 'package:vierqr/models/qr_folder_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
-import 'package:vierqr/models/user_folder_dto.dart';
 import 'package:vierqr/splash_screen.dart';
 
 class NavigationService {
@@ -116,7 +112,7 @@ class NavigationService {
       case Routes.CONNECT_STEP_TELE_SCREEN:
         return _buildRoute(settings, const ConnectTeleStepScreen());
       case Routes.CONNECT_STEP_LARK_SCREEN:
-        return _buildRoute(settings, ConnectLarkStepScreen());
+        return _buildRoute(settings, const ConnectLarkStepScreen());
       case Routes.CONNECT_LARK:
         return _buildRoute(settings, const ConnectLarkScreen());
       case Routes.REPORT_SCREEN:

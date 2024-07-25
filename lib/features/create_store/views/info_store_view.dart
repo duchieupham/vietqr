@@ -78,7 +78,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              const Text(
                 'Thông tin cửa hàng của bạn\nđã chính xác chứ?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -134,7 +134,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
 
   Widget _buildItem(String title, String content, {bool isUnBorder = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 18),
+      padding: const EdgeInsets.symmetric(vertical: 18),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
@@ -152,7 +152,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
             content,
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
         ],
       ),

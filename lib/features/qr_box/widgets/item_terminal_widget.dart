@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
-import 'package:vierqr/services/providers/qr_box_provider.dart';
 
 class ItemTerminalWidget extends StatelessWidget {
   final Function(TerminalQRDTO) onSelect;
@@ -29,10 +25,10 @@ class ItemTerminalWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(dto.terminalName,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             Text(dto.terminalCode,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal)),
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.normal)),
           ],
         ),
       ),

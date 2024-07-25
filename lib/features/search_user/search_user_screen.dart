@@ -26,7 +26,7 @@ class SearchUserScreen extends StatefulWidget {
 class _SearchUserScreenState extends State<SearchUserScreen> {
   late SearchUserBloc bloc;
   final _searchController = TextEditingController();
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   Timer? _debounce;
   int type = 0;
 
@@ -80,7 +80,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Kết quả tìm kiếm',
                             style: TextStyle(fontWeight: FontWeight.w600),
                           ),
@@ -117,14 +117,14 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                           const SizedBox(
                             height: 12,
                           ),
-                          Text('Không tìm thấy người dùng'),
+                          const Text('Không tìm thấy người dùng'),
                           const SizedBox(
                             height: 48,
                           ),
                         ],
                       );
                     }
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   },
                 ),
               ),
@@ -169,7 +169,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                   hintText: type == 0
                       ? 'Tìm kiếm theo số điện thoại'
                       : 'Tìm kiếm theo tên',
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                   inputType:
                       type == 0 ? TextInputType.phone : TextInputType.text,
                   maxLength: type == 0 ? 10 : 200,
@@ -201,7 +201,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
       padding: const EdgeInsets.only(top: 16),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Text(
               'Chia sẻ thông báo giao dịch cho nhân viên cửa hàng',
               style: TextStyle(

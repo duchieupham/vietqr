@@ -7,8 +7,7 @@ import 'package:vierqr/services/providers/confirm_pass_provider.dart';
 
 class PopupConfirmPassword extends StatelessWidget {
   final Function(String) onConfirmSuccess;
-  PopupConfirmPassword({Key? key, required this.onConfirmSuccess})
-      : super(key: key);
+  PopupConfirmPassword({super.key, required this.onConfirmSuccess});
 
   final TextEditingController _passEditingController = TextEditingController();
   @override

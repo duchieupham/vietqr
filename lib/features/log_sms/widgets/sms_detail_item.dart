@@ -8,9 +8,9 @@ import 'package:vierqr/models/transaction_dto.dart';
 class SmsDetailItem extends StatelessWidget {
   final TransactionDTO transactionDTO;
   const SmsDetailItem({
-    Key? key,
+    super.key,
     required this.transactionDTO,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

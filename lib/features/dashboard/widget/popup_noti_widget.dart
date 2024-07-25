@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -8,7 +7,6 @@ import 'package:vierqr/features/dashboard/widget/popup_bank_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
-import '../../../layouts/m_button_widget.dart';
 
 class PopupNotiWidget extends StatefulWidget {
   const PopupNotiWidget({super.key});
@@ -89,9 +87,9 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: EdgeInsets.all(8),
                         child: Text(
                           'VietQR thông báo về việc áp dụng thu phí dịch vụ đối với các tính năng nhận Biến động số dư. Áp dụng cho các tài khoản ngân hàng đã tích hợp liên kết.\n\nPhí dịch vụ sẽ được áp dụng từ ngày 02/05/2024. Chúng tôi hy vọng Quý khách hàng có những trải nghiệm dịch vụ tốt nhất mà VietQR mang lại.',
                           style: TextStyle(
@@ -108,14 +106,14 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Mức giá áp dụng',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: AppColor.GREY_TEXT,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
                                 colors: [
@@ -143,14 +141,14 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
                                 ),
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Khách hàng cá nhân',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: AppColor.GREY_TEXT,
                               ),
                             ),
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
                                 colors: [
@@ -178,7 +176,7 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
                                 ),
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Khách hàng doanh nghiệp',
                               style: TextStyle(
                                 fontSize: 12,
@@ -368,13 +366,13 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
                 Navigator.of(context).pop();
                 DialogWidget.instance.showModelBottomSheet(
                     borderRadius: BorderRadius.circular(16),
-                    widget: PopupBankWidget());
+                    widget: const PopupBankWidget());
                 // Navigator.of(context).pop();
               } else {
                 Navigator.of(context).pop();
                 DialogWidget.instance.showModelBottomSheet(
                     borderRadius: BorderRadius.circular(16),
-                    widget: PopupBankWidget());
+                    widget: const PopupBankWidget());
               }
               // Navigator.of(context).pop();
               // DialogWidget.instance.showModelBottomSheet(
@@ -388,11 +386,11 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                         colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight)),
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Đăng ký dịch vụ phần mềm VietQR ngay!',
                     style: TextStyle(fontSize: 13, color: AppColor.WHITE),

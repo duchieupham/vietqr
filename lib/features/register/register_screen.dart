@@ -10,21 +10,17 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
-import 'package:vierqr/features/register/views/page/form_account.dart';
 import 'package:vierqr/features/register/views/page/form_confirm_password.dart';
 import 'package:vierqr/features/register/views/page/form_password.dart';
 import 'package:vierqr/features/register/views/page/form_phone.dart';
 import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/register/views/page/referral_code.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
-import '../../commons/utils/navigator_utils.dart';
 import '../../layouts/register_app_bar.dart';
 import '../../services/providers/pin_provider.dart';
-import '../personal/views/user_edit_view.dart';
 import 'views/verify_otp_screen.dart';
 
 class Register extends StatelessWidget {
@@ -155,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => FormRegisterSuccessSplash(
+                    builder: (context) => const FormRegisterSuccessSplash(
                         // onEdit: () {
                         //   Navigator.push(
                         //     context,
@@ -171,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // },
                         )),
               );
-              Future.delayed(Duration(seconds: 3), () {
+              Future.delayed(const Duration(seconds: 3), () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
                 backToPreviousPage(context, true);
@@ -220,7 +216,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             )
                           : const SizedBox.shrink(),
                       provider.page == 1
-                          ? ReferralCode()
+                          ? const ReferralCode()
                           : const SizedBox.shrink(),
                       provider.page == 2
                           ? FormPassword(
@@ -254,27 +250,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return (PlatformUtils.instance.checkResize(width))
         ? const SizedBox()
         : Consumer<RegisterProvider>(
-            builder: (context, _provider, child) {
-              if (_provider.page == 0) {
+            builder: (context, provider, child) {
+              if (provider.page == 0) {
                 return _buildButtonSubmitFormPhone(
                     height,
-                    () => {
-                          provider.updatePage(2),
+                    () {
+                          provider.updatePage(2);
                           widget.pageController.animateToPage(2,
                               duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease)
+                              curve: Curves.ease);
                         });
               }
-              if (_provider.page == 2) {
+              if (provider.page == 2) {
                 return _buildButtonSubmitFormPassword(
                     heights,
-                    () => {
+                    () {
                           Provider.of<PinProvider>(context, listen: false)
-                              .reset(),
-                          provider.updatePage(3),
+                              .reset();
+                          provider.updatePage(3);
                           widget.pageController.animateToPage(3,
                               duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease),
+                              curve: Curves.ease);
                         });
               }
 
@@ -283,10 +279,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (_provider.page == 1) ...[
+                    if (provider.page == 1) ...[
                       _buildButtonSubmit(context, heights),
                     ],
-                    if (_provider.page == 3) ...[
+                    if (provider.page == 3) ...[
                       _buildButtonSubmitFormConfirmPassword(height),
                     ],
                     // if (_provider.page == 2) ...[
@@ -301,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     //                 curve: Curves.ease),
                     //           }),
                     // ],
-                    if (!_provider.isShowButton)
+                    if (!provider.isShowButton)
                       SizedBox(height: viewInsets.bottom),
                     const SizedBox(height: 10),
                   ],
@@ -386,7 +382,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 title: 'Bỏ qua',
                 isEnable: true,
                 height: 50,
-                margin: EdgeInsets.only(bottom: 15, left: 40, right: 40),
+                margin: const EdgeInsets.only(bottom: 15, left: 40, right: 40),
                 colorEnableBgr: AppColor.WHITE,
                 colorEnableText: AppColor.BLUE_TEXT,
                 border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
@@ -403,7 +399,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: MButtonWidget(
                 title: 'Đăng ký',
                 isEnable: provider.isEnableButton(),
-                margin: EdgeInsets.only(bottom: 2, left: 40, right: 40),
+                margin: const EdgeInsets.only(bottom: 2, left: 40, right: 40),
                 height: 50,
                 onTap: () async {
                   onRegister(provider, height);

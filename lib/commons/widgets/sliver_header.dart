@@ -11,14 +11,14 @@ class SliverHeader extends StatelessWidget {
   final String businessName;
 
   const SliverHeader({
-    Key? key,
+    super.key,
     required this.maxHeight,
     required this.minHeight,
     required this.heroId,
     required this.coverImgId,
     required this.imgId,
     required this.businessName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

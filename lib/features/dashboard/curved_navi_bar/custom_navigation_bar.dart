@@ -57,7 +57,7 @@ class CurvedNavigationBar extends StatefulWidget {
   final Stream<int> stream;
 
   CurvedNavigationBar({
-    Key? key,
+    super.key,
     required this.items,
     this.indexPaint = -1,
     this.indexPage = -1,
@@ -76,8 +76,7 @@ class CurvedNavigationBar extends StatefulWidget {
         assert(0 <= indexPaint && indexPaint < items.length),
         letIndexChange = letIndexChange ?? ((_) => true),
         height = height ?? (Platform.isAndroid ? 70.0 : 80.0),
-        hasLabel = items.any((item) => item.label != null),
-        super(key: key);
+        hasLabel = items.any((item) => item.label != null);
 
   @override
   CurvedNavigationBarState createState() => CurvedNavigationBarState();

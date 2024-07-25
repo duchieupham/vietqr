@@ -8,6 +8,8 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 class NFCWidget extends StatefulWidget {
+  const NFCWidget({super.key});
+
   @override
   State<NFCWidget> createState() => _NFCWidgetState();
 }
@@ -29,7 +31,7 @@ class _NFCWidgetState extends State<NFCWidget> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              const Text(
                 'Nạp tiền điện thoại',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -42,8 +44,8 @@ class _NFCWidgetState extends State<NFCWidget> {
               Consumer<AuthProvider>(
                 builder: (context, provider, child) {
                   return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 30),
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                    margin: const EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     decoration: BoxDecoration(
                       color: AppColor.greyF0F0F0,
                       borderRadius: BorderRadius.circular(10),
@@ -51,23 +53,23 @@ class _NFCWidgetState extends State<NFCWidget> {
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 15,
                           color: AppColor.grey979797,
                           fontWeight: FontWeight.w500,
                         ),
                         children: [
-                          TextSpan(text: 'Số dư: '),
+                          const TextSpan(text: 'Số dư: '),
                           TextSpan(
                             text:
-                                '${CurrencyUtils.instance.getCurrencyFormatted(provider.introduceDTO?.amount ?? '0')}',
-                            style: TextStyle(
+                                CurrencyUtils.instance.getCurrencyFormatted(provider.introduceDTO?.amount ?? '0'),
+                            style: const TextStyle(
                               fontSize: 18,
                               color: AppColor.BLUE_TEXT,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: ' VQR',
                             style: TextStyle(
                               fontSize: 18,
@@ -89,7 +91,7 @@ class _NFCWidgetState extends State<NFCWidget> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     color: AppColor.BLACK_TEXT,
                     height: 1.4,

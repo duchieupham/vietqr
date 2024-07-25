@@ -93,7 +93,7 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                             hintText: 'Nhập Căn cước công dân/Mã số thuế *',
                             inputType: TextInputType.number,
                             keyboardAction: TextInputAction.next,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText: 'Nhập Căn cước công dân/Mã số thuế *',
                               hintStyle: TextStyle(
                                 fontSize: 14,
@@ -119,8 +119,7 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                             },
                           ),
                           const SizedBox(height: 8),
-                          if (SharePrefUtils.getProfile().nationalId != null &&
-                              SharePrefUtils.getProfile()
+                          if (SharePrefUtils.getProfile()
                                   .nationalId
                                   .trim()
                                   .isNotEmpty)
@@ -140,7 +139,7 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                                 ),
                                 child: Text(
                                   SharePrefUtils.getProfile().nationalId,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     color: AppColor.BLUE_TEXT,
                                   ),
@@ -149,7 +148,7 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                             ),
                           const SizedBox(height: 12),
                           RichText(
-                            text: TextSpan(
+                            text: const TextSpan(
                               style: TextStyle(
                                   color: AppColor.GREY_TEXT, fontSize: 12),
                               children: [
@@ -180,7 +179,7 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                           hintText: 'Nhập số điện thoại xác thực *',
                           inputType: TextInputType.phone,
                           keyboardAction: TextInputAction.next,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             hintText: 'Nhập số điện thoại xác thực *',
                             hintStyle: TextStyle(
                               fontSize: 14,
@@ -218,7 +217,7 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                             ),
                             child: Text(
                               SharePrefUtils.getPhone(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 color: AppColor.BLUE_TEXT,
                               ),

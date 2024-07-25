@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class AddVietQrPage extends StatelessWidget {
-  const AddVietQrPage({Key? key}) : super(key: key);
+  const AddVietQrPage({super.key});
 
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(
@@ -33,7 +33,7 @@ class AddVietQrPage extends StatelessWidget {
           height: 12,
         ),
         _buildBgItem(
-            Text(
+            const Text(
               'Tạo nhóm mới Telegram, hoặc nhóm quản trị của bạn',
               style: TextStyle(fontSize: 12),
             ),
@@ -52,10 +52,10 @@ class AddVietQrPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: 'Sao chép thông tin ',
                     style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: 'chat id',
                           style: TextStyle(
@@ -71,13 +71,13 @@ class AddVietQrPage extends StatelessWidget {
                   height: 2,
                 ),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: '(chat id ',
                     style: TextStyle(
                         fontSize: 12,
                         color: AppColor.BLACK,
                         fontWeight: FontWeight.bold),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: 'của nhóm Telegram sẽ có định dạng ',
                           style: TextStyle(
@@ -104,10 +104,10 @@ class AddVietQrPage extends StatelessWidget {
       children: [
         Expanded(
           child: RichText(
-            text: TextSpan(
+            text: const TextSpan(
               text: 'Chọn truy cập đường dẫn ',
               style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-              children: const <TextSpan>[
+              children: <TextSpan>[
                 TextSpan(
                     text: 't.me/vietqrbot',
                     style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT)),
@@ -130,7 +130,7 @@ class AddVietQrPage extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               color: AppColor.GREY_BUTTON),
-          child: Icon(
+          child: const Icon(
             Icons.arrow_forward_ios,
             size: 12,
             color: AppColor.BLUE_TEXT,
@@ -144,7 +144,7 @@ class AddVietQrPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Thêm 2 Bot dưới đây vào nhóm của bạn:',
           style: TextStyle(fontSize: 12),
         ),
@@ -174,10 +174,10 @@ class AddVietQrPage extends StatelessWidget {
                 width: 25,
                 height: 25,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
-              Text(
+              const Text(
                 '@vietqrbot',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
@@ -216,10 +216,10 @@ class AddVietQrPage extends StatelessWidget {
                 width: 25,
                 height: 25,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12,
               ),
-              Text(
+              const Text(
                 '@raw_data_bot',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
               ),
@@ -236,11 +236,11 @@ class AddVietQrPage extends StatelessWidget {
           height: 12,
         ),
         RichText(
-          text: TextSpan(
+          text: const TextSpan(
             text:
                 'VietQR Bot sẽ gửi thông tin BĐSD về nhóm Telegram của bạn.\nRawDataBot sẽ giúp bạn lấy thông tin',
             style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-            children: const <TextSpan>[
+            children: <TextSpan>[
               TextSpan(
                   text: 'chat id',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
@@ -255,7 +255,7 @@ class AddVietQrPage extends StatelessWidget {
     return Container(
       height: height,
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
       child: child,

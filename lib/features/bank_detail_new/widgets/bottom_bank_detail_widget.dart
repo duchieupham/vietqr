@@ -5,20 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
-import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/states/transaction_state.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/qr_bank_detail.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 
 class BottomBarWidget extends StatefulWidget {
   final double width;

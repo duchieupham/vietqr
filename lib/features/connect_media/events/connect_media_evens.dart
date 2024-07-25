@@ -150,7 +150,7 @@ class AddBankMediaEvent extends ConnectMediaEvent {
   final String? webhookId;
   final List<String>? listBankId;
 
-  AddBankMediaEvent({
+  const AddBankMediaEvent({
     this.webhookId,
     this.listBankId,
     required this.type,
@@ -166,7 +166,7 @@ class RemoveMediaEvent extends ConnectMediaEvent {
   final String? webhookId;
   final String? bankId;
 
-  RemoveMediaEvent({
+  const RemoveMediaEvent({
     this.webhookId,
     this.bankId,
     required this.type,
@@ -217,7 +217,7 @@ class DeleteWebhookEvent extends ConnectMediaEvent {
 
   final String? id;
 
-  DeleteWebhookEvent({
+  const DeleteWebhookEvent({
     this.id,
     required this.type,
   });

@@ -27,7 +27,7 @@ class ShareBDSDState extends Equatable {
   final bool isEmpty;
   final int offset;
 
-  ShareBDSDState({
+  const ShareBDSDState({
     this.status = BlocStatus.NONE,
     this.msg,
     this.request = ShareBDSDType.NONE,

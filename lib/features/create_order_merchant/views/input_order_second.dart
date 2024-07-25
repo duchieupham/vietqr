@@ -27,12 +27,12 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
   List<OrderData> list = [];
 
   String total() {
-    int _total = 0;
+    int total = 0;
     for (var e in list) {
-      _total += int.parse(e.amount.isNotEmpty ? e.amount : '0');
+      total += int.parse(e.amount.isNotEmpty ? e.amount : '0');
     }
 
-    _value = _total.toString();
+    _value = total.toString();
     setState(() {});
 
     return CurrencyUtils.instance.getCurrencyFormatted(_value);
@@ -58,7 +58,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Tiếp theo, vui lòng nhập\ncác danh mục hàng hoá, dịch vụ\ncủa hoá đơn.',
                   style: TextStyle(
                     fontSize: 20,
@@ -78,7 +78,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                 GestureDetector(
                   onTap: _onAddCategory,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                     decoration: BoxDecoration(
                       // border: Border.all(
                       //     color: AppColor.GREY_TEXT.withOpacity(0.3)),
@@ -91,7 +91,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                         Image.asset('assets/images/ic-invoice-blue.png',
                             width: 30),
                         const SizedBox(width: 10),
-                        Text(
+                        const Text(
                           'Thêm mới danh mục',
                           style: TextStyle(color: AppColor.BLUE_TEXT),
                         ),
@@ -110,7 +110,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
             child: Container(
               height: 90,
               padding: const EdgeInsets.symmetric(horizontal: 30),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColor.WHITE,
                 border: Border(
                   top: BorderSide(color: Color(0xFFDADADA), width: 1),
@@ -126,19 +126,19 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Thành tiền:'),
+                          const Text('Thành tiền:'),
                           RichText(
                             text: TextSpan(
-                              style: TextStyle(color: AppColor.BLACK),
+                              style: const TextStyle(color: AppColor.BLACK),
                               children: [
                                 TextSpan(
                                   text: total(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: AppColor.ORANGE_DARK,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20),
                                 ),
-                                TextSpan(
+                                const TextSpan(
                                   text: ' VND',
                                   style: TextStyle(
                                       color: AppColor.BLACK, fontSize: 20),
@@ -155,7 +155,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                     height: 40,
                     isEnable: list.isNotEmpty,
                     colorDisableBgr: AppColor.GREY_VIEW,
-                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
                     margin: const EdgeInsets.all(0),
                     onTap: () => widget.callBack.call(list),
                   ),
@@ -194,10 +194,10 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
         Container(
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          margin: EdgeInsets.only(bottom: 15),
+          margin: const EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
             border: Border.all(
-              color: Color(0xFFDADADA),
+              color: const Color(0xFFDADADA),
               width: 1,
             ),
             borderRadius: BorderRadius.circular(8),
@@ -205,7 +205,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Danh mục:',
                 style: TextStyle(
                   fontSize: 13,
@@ -215,7 +215,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                 dto.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
               const SizedBox(
                 height: 5,
@@ -224,19 +224,19 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                 dto.des,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 15),
+                style: const TextStyle(fontSize: 15),
               ),
               const SizedBox(
                 height: 10,
               ),
-              Divider(
+              const Divider(
                 color: Color(0XFFDADADA),
               ),
               SizedBox(
                 height: 35,
                 child: Row(
                   children: [
-                    Text('Đơn giá:'),
+                    const Text('Đơn giá:'),
                     const SizedBox(
                       width: 20,
                     ),
@@ -249,18 +249,18 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                     const SizedBox(
                       width: 5,
                     ),
-                    Text('VND')
+                    const Text('VND')
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color(0XFFDADADA),
               ),
               SizedBox(
                 height: 35,
                 child: Row(
                   children: [
-                    Text('Số lượng:'),
+                    const Text('Số lượng:'),
                     const SizedBox(
                       width: 20,
                     ),
@@ -273,14 +273,14 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 color: Color(0XFFDADADA),
               ),
               SizedBox(
                 height: 35,
                 child: Row(
                   children: [
-                    Text('Thành tiền:'),
+                    const Text('Thành tiền:'),
                     const SizedBox(
                       width: 20,
                     ),
@@ -297,7 +297,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                     const SizedBox(
                       width: 5,
                     ),
-                    Text('VND')
+                    const Text('VND')
                   ],
                 ),
               ),

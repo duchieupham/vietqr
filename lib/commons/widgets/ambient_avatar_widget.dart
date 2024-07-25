@@ -22,7 +22,7 @@ class AmbientAvatarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (onlyImage) {
-      return Container(
+      return SizedBox(
         width: size,
         height: size,
         // decoration: BoxDecoration(

@@ -6,10 +6,10 @@ class VerticalDashedLine extends StatelessWidget {
   final double height;
 
   const VerticalDashedLine({
-    Key? key,
+    super.key,
     this.color = AppColor.GREY_DADADA,
     required this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

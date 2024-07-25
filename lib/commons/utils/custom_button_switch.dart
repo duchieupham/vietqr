@@ -6,7 +6,7 @@ class CustomCupertinoSwitch extends StatefulWidget {
   final bool value;
   final Function(bool) onChanged;
 
-  CustomCupertinoSwitch({required this.value, required this.onChanged});
+  const CustomCupertinoSwitch({super.key, required this.value, required this.onChanged});
 
   @override
   _CustomCupertinoSwitchState createState() => _CustomCupertinoSwitchState();

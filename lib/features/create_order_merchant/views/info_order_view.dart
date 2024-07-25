@@ -27,8 +27,8 @@ class InfoOrderView extends StatefulWidget {
 }
 
 class _InfoOrderViewState extends State<InfoOrderView> {
-  CreateStoreRepository repository = CreateStoreRepository();
-  OrderMerchantRepository orderRepository = OrderMerchantRepository();
+  CreateStoreRepository repository = const CreateStoreRepository();
+  OrderMerchantRepository orderRepository = const OrderMerchantRepository();
   String _code = '';
   String _value = '';
 
@@ -80,12 +80,12 @@ class _InfoOrderViewState extends State<InfoOrderView> {
   }
 
   String total(List<OrderData> list) {
-    int _total = 0;
+    int total = 0;
     for (var e in list) {
-      _total += int.parse(e.amount.isNotEmpty ? e.amount : '0');
+      total += int.parse(e.amount.isNotEmpty ? e.amount : '0');
     }
 
-    _value = _total.toString();
+    _value = total.toString();
     setState(() {});
 
     return CurrencyUtils.instance.getCurrencyFormatted(_value);
@@ -102,7 +102,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Thông tin hoá đơn của bạn\nđã chính xác chứ?',
                     style: TextStyle(
                       fontSize: 20,
@@ -126,7 +126,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                         const SizedBox(
                           height: 30,
                         ),
-                        Text(
+                        const Text(
                           'Danh mục hàng hoá, dịch vụ',
                           style: TextStyle(
                             fontSize: 18,
@@ -162,9 +162,9 @@ class _InfoOrderViewState extends State<InfoOrderView> {
   Widget _buildItemCategory(OrderData dto, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0XFFFFFFFF), width: 1),
+        border: Border.all(color: const Color(0XFFFFFFFF), width: 1),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
@@ -174,10 +174,10 @@ class _InfoOrderViewState extends State<InfoOrderView> {
               children: [
                 Expanded(
                   child: Text(
-                    (index + 1).toString() + '. ' + dto.name,
+                    '${index + 1}. ${dto.name}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -191,14 +191,14 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                 const SizedBox(
                   width: 5,
                 ),
-                Text('VND'),
+                const Text('VND'),
               ],
             ),
           ),
           const SizedBox(
             height: 10,
           ),
-          Divider(
+          const Divider(
             color: Color(0xFFDADADA),
             height: 1,
           ),
@@ -214,7 +214,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                     textAlign: TextAlign.right,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColor.GREY_TEXT,
                     ),
                   ),
@@ -224,7 +224,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                 ),
                 Text(
                   CurrencyUtils.instance.getCurrencyFormatted(dto.amount),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColor.ORANGE_DARK,
                     fontWeight: FontWeight.w500,
                   ),
@@ -232,7 +232,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                 const SizedBox(
                   width: 5,
                 ),
-                Text('VND'),
+                const Text('VND'),
               ],
             ),
           ),
@@ -244,11 +244,11 @@ class _InfoOrderViewState extends State<InfoOrderView> {
   Widget _buildItem(String title, String content,
       {bool isUnBorder = false, Color? textColor}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
-            : Border(
+            : const Border(
                 bottom: BorderSide(color: Color(0XFFDADADA), width: 1),
               ),
       ),

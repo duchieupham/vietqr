@@ -19,11 +19,13 @@ import '../events/connect_lark_event.dart';
 import '../states/conect_lark_state.dart';
 
 class ConnectLarkStepScreen extends StatelessWidget {
+  const ConnectLarkStepScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => ConnectLarkProvider(),
-        child: _ConnectLarkStepScreen());
+        child: const _ConnectLarkStepScreen());
   }
 }
 

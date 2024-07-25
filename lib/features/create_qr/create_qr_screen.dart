@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:vierqr/models/store/detail_store_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -239,7 +238,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ...[
-                                  Text(
+                                  const Text(
                                     'Tài khoản ngân hàng',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
@@ -366,20 +365,20 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                     child: Row(
                                       children: [
                                         if (!_provider.isExtra) ...[
-                                          Icon(
+                                          const Icon(
                                               Icons
                                                   .keyboard_arrow_down_outlined,
                                               color: AppColor.BLUE_TEXT),
-                                          Text(
+                                          const Text(
                                             'Tuỳ chọn thêm',
                                             style: TextStyle(
                                                 color: AppColor.BLUE_TEXT,
                                                 fontSize: 15),
                                           ),
                                         ] else ...[
-                                          Icon(Icons.keyboard_arrow_up_outlined,
+                                          const Icon(Icons.keyboard_arrow_up_outlined,
                                               color: AppColor.BLUE_TEXT),
-                                          Text(
+                                          const Text(
                                             'Đóng tuỳ chọn',
                                             style: TextStyle(
                                                 color: AppColor.BLUE_TEXT,
@@ -411,7 +410,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                           onChange: provider.updateOrderCode,
                                         ),
                                         const SizedBox(height: 30),
-                                        Text(
+                                        const Text(
                                           'Phân loại giao dịch',
                                           style: TextStyle(
                                               fontSize: 15,
@@ -434,7 +433,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                       provider.updateisQrBox();
                                                     },
                                                   ),
-                                                  Text('Cửa hàng'),
+                                                  const Text('Cửa hàng'),
                                                 ],
                                               ),
                                               Row(
@@ -450,7 +449,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                       print(value);
                                                     },
                                                   ),
-                                                  Text('QR Box'),
+                                                  const Text('QR Box'),
                                                 ],
                                               ),
                                             ],
@@ -502,8 +501,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           ),
                         ),
                         Container(
-                          decoration: BoxDecoration(color: AppColor.WHITE),
-                          padding: EdgeInsets.symmetric(
+                          decoration: const BoxDecoration(color: AppColor.WHITE),
+                          padding: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 20),
                           child: Column(
                             children: [
@@ -602,7 +601,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     ),
                     enableList
                         ? Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
                             child: _buildDropList(
                                 state.listBanks, state.bankAccountDTO),
@@ -652,8 +651,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          Center(
-            child: const Text(
+          const Center(
+            child: Text(
               ' 1 tệp đính kèm',
               style: TextStyle(fontSize: 15),
             ),
@@ -701,7 +700,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   Widget _buildDropList(
           List<BankAccountDTO> list, BankAccountDTO? bankAccountDTO) =>
-      Container(
+      SizedBox(
         height: MediaQuery.of(context).size.height * 0.6,
         child: SingleChildScrollView(
           child: Column(
@@ -791,7 +790,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           ),
                           const Spacer(),
                           if (item.terminalCode.isEmpty)
-                            Icon(Icons.expand_more),
+                            const Icon(Icons.expand_more),
                         ],
                       ),
                     ),
@@ -827,11 +826,11 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           ),
           dropdownStyleData: DropdownStyleData(
             width: MediaQuery.of(context).size.width - 40,
-            offset: Offset(0, 50),
+            offset: const Offset(0, 50),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
           ),
-          menuItemStyleData: MenuItemStyleData(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          menuItemStyleData: const MenuItemStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 20),
           ),
         ),
       );
@@ -888,18 +887,18 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           ),
           dropdownStyleData: DropdownStyleData(
             width: MediaQuery.of(context).size.width - 40,
-            offset: Offset(0, 50),
+            offset: const Offset(0, 50),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
           ),
-          menuItemStyleData: MenuItemStyleData(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          menuItemStyleData: const MenuItemStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 20),
           ),
         ),
       );
 
   void _onUpdateMoney() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final data = await NavigatorUtils.navigatePage(context, CalculatorScreen(),
+    final data = await NavigatorUtils.navigatePage(context, const CalculatorScreen(),
         routeName: CalculatorScreen.routeName);
 
     if (data != null && data is String) {

@@ -21,10 +21,10 @@ class BottomSheetAddUserBDSD extends StatefulWidget {
   final String terminalId;
 
   const BottomSheetAddUserBDSD({
-    Key? key,
+    super.key,
     required this.terminalId,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   @override
   State<BottomSheetAddUserBDSD> createState() => _BottomSheetAddUserBDSDState();
@@ -75,7 +75,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                   const SizedBox(
                     width: 32,
                   ),
-                  Text(
+                  const Text(
                     'Chia sẻ BĐSD',
                     style: TextStyle(
                       fontSize: 16,
@@ -101,7 +101,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
             Consumer<AddUserBDSDProvider>(builder: (context, provider, child) {
               return Row(
                 children: [
-                  Text(
+                  const Text(
                     'Lọc theo',
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
@@ -240,7 +240,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Kết quả tìm kiếm',
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
@@ -268,14 +268,14 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       const SizedBox(
                         height: 12,
                       ),
-                      Text('Không tìm thấy người dùng'),
+                      const Text('Không tìm thấy người dùng'),
                       const SizedBox(
                         height: 48,
                       ),
                     ],
                   );
                 } else {
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }
               },
             ))
@@ -291,7 +291,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
       onTap: onTap,
       child: Container(
         width: 110,
-        padding: EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         alignment: Alignment.center,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
@@ -329,7 +329,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 ? Container(
                     width: 54,
                     height: 54,
-                    margin: EdgeInsets.only(top: 2),
+                    margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       image: DecorationImage(
@@ -340,10 +340,10 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 : Container(
                     width: 54,
                     height: 54,
-                    margin: EdgeInsets.only(top: 2),
+                    margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      image: DecorationImage(
+                      image: const DecorationImage(
                           image: AssetImage('assets/images/ic-avatar.png')),
                     ),
                   ),
@@ -360,7 +360,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 60,
                             child: Text(
                               'Họ tên:',
@@ -373,7 +373,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.start,
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: const TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
@@ -384,7 +384,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 60,
                             child: Text(
                               'SĐT:',
@@ -394,7 +394,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                           Expanded(
                             child: Text(dto.phoneNo ?? '',
                                 textAlign: TextAlign.start,
-                                style: TextStyle(fontWeight: FontWeight.w600)),
+                                style: const TextStyle(fontWeight: FontWeight.w600)),
                           ),
                         ],
                       )
@@ -404,7 +404,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 const SizedBox(width: 16),
                 if (state.status == BlocStatus.LOADING_SHARE &&
                     state.userIdSelect == dto.id)
-                  Expanded(
+                  const Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(left: 20),
                       child: UnconstrainedBox(
@@ -434,10 +434,10 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                             fontSize: 12,
                             borderRadius: 5,
                           )
-                        : SizedBox(
+                        : const SizedBox(
                             width: 80,
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 10),
+                              padding: EdgeInsets.only(top: 10),
                               child: Row(
                                 children: [
                                   Text(
@@ -445,7 +445,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                                     textAlign: TextAlign.end,
                                     style: TextStyle(color: AppColor.BLUE_TEXT),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 4,
                                   ),
                                   Icon(

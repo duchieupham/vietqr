@@ -7,7 +7,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_login.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';

@@ -45,7 +45,7 @@ class VietQRInterceptor extends InterceptorsWrapper {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     // debugPrint('>>>>> onError: ${err.response.toString()}');
     // debugPrint('>>>>> onError: ${err.type.toString()}');
     return super.onError(err, handler);
@@ -67,9 +67,9 @@ class VietQRInterceptor extends InterceptorsWrapper {
           response: response,
         );
       default:
-        throw DioError(
+        throw DioException(
           requestOptions: response.requestOptions,
-          type: DioErrorType.unknown,
+          type: DioExceptionType.unknown,
           response: response,
         );
     }

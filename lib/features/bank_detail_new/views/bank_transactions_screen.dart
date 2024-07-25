@@ -1,6 +1,4 @@
-import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,10 +8,8 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/custom_date_range_picker.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/repositories/transaction_repository.dart';
 import 'package:vierqr/features/bank_detail_new/views/transaction_detail_screen.dart';
@@ -31,7 +27,6 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 import '../events/transaction_event.dart';
 import '../states/transaction_state.dart';
-import '../widgets/index.dart';
 import '../widgets/trans_info_widget.dart';
 
 class BankTransactionsScreen extends StatefulWidget {

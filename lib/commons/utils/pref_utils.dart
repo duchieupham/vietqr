@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/local_storage/hive_local/local_storage.dart';

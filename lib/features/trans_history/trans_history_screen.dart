@@ -148,13 +148,13 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Danh sách giao dịch',
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               if (!isOwner)
-                                Text(
+                                const Text(
                                   'Hiển thị các giao dịch thuộc cửa hàng của bạn.',
                                   style: TextStyle(
                                       fontSize: 12, color: AppColor.GREY_TEXT),
@@ -185,7 +185,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     Consumer<TransProvider>(builder: (context, provider, _) {
                       return Row(
                         children: [
-                          Text(
+                          const Text(
                             'Lọc theo:',
                             style: TextStyle(
                                 fontSize: 12, color: AppColor.GREY_TEXT),
@@ -246,10 +246,10 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     }),
                     const SizedBox(height: 12),
                     if (state.status == BlocStatus.LOADING)
-                      Expanded(
+                      const Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 100),
-                          child: const Center(
+                          padding: EdgeInsets.only(bottom: 100),
+                          child: Center(
                             child: CircularProgressIndicator(
                               color: AppColor.BLUE_TEXT,
                             ),
@@ -280,7 +280,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                             },
                             child: SingleChildScrollView(
                               controller: provider.scrollControllerList,
-                              physics: AlwaysScrollableScrollPhysics(),
+                              physics: const AlwaysScrollableScrollPhysics(),
                               child: Column(
                                 children: [
                                   if (state.isEmpty)
@@ -305,7 +305,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                           dto: listTransaction[index],
                                         );
                                       },
-                                    ).toList(),
+                                    ),
                                   if (state.isLoadMore)
                                     const UnconstrainedBox(
                                       child: SizedBox(
@@ -502,14 +502,14 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
 
   Widget _buildFilterWith(String title) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColor.BLUE_TEXT.withOpacity(0.3),
       ),
       child: Text(
         title,
-        style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+        style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
       ),
     );
   }

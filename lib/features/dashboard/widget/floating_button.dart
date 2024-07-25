@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MyFloatingButton extends StatefulWidget {
+  const MyFloatingButton({super.key});
+
   @override
   _MyFloatingButtonState createState() => _MyFloatingButtonState();
 }
@@ -16,7 +18,7 @@ class _MyFloatingButtonState extends State<MyFloatingButton> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15)),
                   context: context,
-                  builder: (context) => BottomSheetWidget());
+                  builder: (context) => const BottomSheetWidget());
 
               _showButton(false);
 

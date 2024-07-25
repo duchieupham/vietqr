@@ -13,10 +13,7 @@ import 'package:vierqr/commons/utils/sms_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
-import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 import '../../features/dashboard/widget/popup_noti_widget.dart';
@@ -97,7 +94,7 @@ class DialogWidget {
     BuildContext? context,
   ) {
     DialogWidget.instance.showModelBottomSheet(
-        borderRadius: BorderRadius.circular(16), widget: PopupNotiWidget());
+        borderRadius: BorderRadius.circular(16), widget: const PopupNotiWidget());
     // context ??= NavigationService.context;
     // return showDialog(
     //     context: context!,
@@ -154,7 +151,7 @@ class DialogWidget {
                       color: AppColor.BLUE_TEXT,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    child: Center(
+                    child: const Center(
                       child: Text(
                         "Hoàn thành",
                         style: TextStyle(fontSize: 13, color: Colors.white),
@@ -747,10 +744,10 @@ class DialogWidget {
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Column(
+                        child: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
                             CircularProgressIndicator(
                               color: AppColor.BLUE_TEXT,
                             ),
@@ -781,7 +778,7 @@ class DialogWidget {
                               color: AppColor.BLUE_TEXT,
                             ),
                             if (msg.isNotEmpty) ...[
-                              Padding(padding: EdgeInsets.only(top: 30)),
+                              const Padding(padding: EdgeInsets.only(top: 30)),
                               Text(
                                 msg,
                                 textAlign: TextAlign.center,
@@ -1166,9 +1163,7 @@ class DialogWidget {
                         ),
                       ),
                     if (buttonColumn == null) const Spacer(),
-                    buttonColumn != null
-                        ? buttonColumn
-                        : Container(
+                    buttonColumn ?? Container(
                             margin: const EdgeInsets.only(
                                 left: 12, right: 12, top: 30, bottom: 16),
                             child: Row(

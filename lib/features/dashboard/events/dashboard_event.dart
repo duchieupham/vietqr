@@ -48,7 +48,7 @@ class GetVersionAppEventDashboard extends DashBoardEvent {
   final bool isCheckVer;
   final bool isExist;
 
-  GetVersionAppEventDashboard({
+  const GetVersionAppEventDashboard({
     this.isCheckVer = false,
     this.isExist = false,
   });
@@ -94,7 +94,7 @@ class UpdateThemeEvent extends DashBoardEvent {
 class UpdateKeepBrightEvent extends DashBoardEvent {
   final bool keepValue;
 
-  UpdateKeepBrightEvent(this.keepValue);
+  const UpdateKeepBrightEvent(this.keepValue);
 
   @override
   List<Object?> get props => [keepValue];

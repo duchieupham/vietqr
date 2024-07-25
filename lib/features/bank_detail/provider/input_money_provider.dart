@@ -17,13 +17,13 @@ class InputMoneyProvider with ChangeNotifier {
     qrBankDetail = AppDataHelper.instance.qrDetailBanks;
 
     if (qrBankDetail.isNotEmpty) {
-      qrBankDetail.forEach((qrBankDetail) {
+      for (var qrBankDetail in qrBankDetail) {
         if (qrBankDetail.bankAccount == bankAccount) {
           content = qrBankDetail.content;
           int data = int.parse(qrBankDetail.money.replaceAll(',', ''));
           money = StringUtils.formatNumber(data);
         }
-      });
+      }
     }
   }
 

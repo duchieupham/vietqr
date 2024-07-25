@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
@@ -186,7 +185,7 @@ class _UpdateHashtagWidgetState extends State<UpdateHashtagWidget> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         gradient: VietQRTheme.gradientColor.lilyLinear),
-                    child: Row(
+                    child: const Row(
                       children: [
                         XImage(
                           imagePath: 'assets/images/ic-hashtag-3d.png',

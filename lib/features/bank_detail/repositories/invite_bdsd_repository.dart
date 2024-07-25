@@ -33,7 +33,7 @@ class InviteBDSDRepository {
   }
 
   Future<ResponseMessageDTO> createNewGroup(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(
@@ -55,7 +55,7 @@ class InviteBDSDRepository {
   }
 
   Future<ResponseMessageDTO> removeGroup(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/remove';
       final response = await BaseAPIClient.deleteAPI(
@@ -77,7 +77,7 @@ class InviteBDSDRepository {
   }
 
   Future<ResponseMessageDTO> updateGroup(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/update';
       final response = await BaseAPIClient.postAPI(

@@ -1,8 +1,6 @@
 import 'package:clipboard/clipboard.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -183,7 +181,7 @@ class _QrWidgetState extends State<QrWidget> {
                               fit: BoxFit.cover),
                         ),
                       )
-                    : Container(
+                    : SizedBox(
                         width: 40,
                         height: 40,
                         child: Image.asset(

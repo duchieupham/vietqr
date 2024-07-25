@@ -17,7 +17,7 @@ class PopupBankShare extends StatefulWidget {
   final QRGeneratedDTO dto;
   final TypeImage type;
 
-  PopupBankShare({super.key, required this.dto, required this.type});
+  const PopupBankShare({super.key, required this.dto, required this.type});
 
   @override
   State<PopupBankShare> createState() => _PopupBankShareState();
@@ -86,7 +86,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
               return Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/bg-qr-vqr.png'),
                     fit: BoxFit.fitHeight,
@@ -127,7 +127,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                       height: 40,
                                       padding: const EdgeInsets.only(
                                           left: 12, right: 10),
-                                      child: VerticalDashedLine(),
+                                      child: const VerticalDashedLine(),
                                     ),
                                     Expanded(
                                       child: Container(
@@ -221,7 +221,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                         widget.dto.content,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
@@ -233,7 +233,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                         ],
                       ),
                     ),
-                    Center(
+                    const Center(
                       child: Text('BY VIETQR VN',
                           style:
                               TextStyle(color: AppColor.WHITE, fontSize: 16)),
@@ -250,7 +250,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
               onPressed: () {},
               icon: Icon(Icons.close,
                   color: AppColor.WHITE, size: small ? 28 : 36),
-              padding: EdgeInsets.only(left: 16),
+              padding: const EdgeInsets.only(left: 16),
               constraints: const BoxConstraints(),
             ),
           ),

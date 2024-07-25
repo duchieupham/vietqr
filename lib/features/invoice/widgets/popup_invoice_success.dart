@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
@@ -42,7 +40,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               Image.asset(AppImages.icSuccessInGreen, height: 200),
-              DefaultTextStyle(
+              const DefaultTextStyle(
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 22,
@@ -56,7 +54,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DefaultTextStyle(
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -65,7 +63,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
                       billNumber,
                     ),
                   ),
-                  DefaultTextStyle(
+                  const DefaultTextStyle(
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 22,
@@ -80,7 +78,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  DefaultTextStyle(
+                  const DefaultTextStyle(
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 22,
@@ -91,7 +89,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
                     ),
                   ),
                   DefaultTextStyle(
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColor.GREEN,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -104,13 +102,13 @@ class PopupInvoiceSuccess extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               DefaultTextStyle(
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 15,
                   fontWeight: FontWeight.normal,
                 ),
                 child: Text(
-                  'Thời gian TT: ${formattedDate}',
+                  'Thời gian TT: $formattedDate',
                 ),
               ),
             ],
@@ -136,7 +134,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
                   color: AppColor.BLUE_TEXT,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: Center(
+                child: const Center(
                   child: DefaultTextStyle(
                     textAlign: TextAlign.center,
                     style: TextStyle(

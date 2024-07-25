@@ -25,9 +25,8 @@ class StatisticalScreen extends StatelessWidget {
   final TerminalDto? terminalDto;
   final AccountBankDetailDTO? bankDetailDTO;
 
-  StatisticalScreen(
-      {Key? key, required this.bankId, this.terminalDto, this.bankDetailDTO})
-      : super(key: key);
+  const StatisticalScreen(
+      {super.key, required this.bankId, this.terminalDto, this.bankDetailDTO});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +58,7 @@ class StatisticalScreen extends StatelessWidget {
 class Statistical extends StatefulWidget {
   final AccountBankDetailDTO? bankDetailDTO;
 
-  Statistical({Key? key, this.bankDetailDTO}) : super(key: key);
+  const Statistical({super.key, this.bankDetailDTO});
 
   @override
   State<Statistical> createState() => _StatisticalState();
@@ -71,8 +70,8 @@ class _StatisticalState extends State<Statistical> {
   late StatisticBloc _bloc;
   late StatisticProvider _provider;
 
-  DateFormat _dateFormat = DateFormat('yyyy-MM');
-  DateFormat _dateFormatDay = DateFormat('yyyy-MM-dd HH:mm:ss');
+  final DateFormat _dateFormat = DateFormat('yyyy-MM');
+  final DateFormat _dateFormatDay = DateFormat('yyyy-MM-dd HH:mm:ss');
 
   DateTime _fromDate(DateTime now) {
     DateTime fromDate = DateTime(now.year, now.month, now.day);
@@ -135,14 +134,14 @@ class _StatisticalState extends State<Statistical> {
                               alignment: Alignment.center,
                               child: Column(
                                 children: [
-                                  Text('Biểu đồ thống kê giao dịch',
+                                  const Text('Biểu đồ thống kê giao dịch',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18)),
                                   Text(_terminalTitleName(provider),
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18)),
                                   Text(
@@ -150,7 +149,7 @@ class _StatisticalState extends State<Statistical> {
                                         ? provider.getParentTimeDay
                                         : provider.getDateParent,
                                     textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 12),
+                                    style: const TextStyle(fontSize: 12),
                                   ),
                                 ],
                               ),
@@ -187,9 +186,9 @@ class _StatisticalState extends State<Statistical> {
                             child: Container(
                               height: 340,
                               color: Colors.grey.withOpacity(0.3),
-                              margin: EdgeInsets.only(left: 40),
+                              margin: const EdgeInsets.only(left: 40),
                               alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
+                              child: const CircularProgressIndicator(),
                             ),
                           )
                         ],
@@ -234,7 +233,7 @@ class _StatisticalState extends State<Statistical> {
                       Center(
                           child: Container(
                               height: 1, width: 30, color: AppColor.GREEN)),
-                      Positioned.fill(
+                      const Positioned.fill(
                         child: Row(
                           children: [
                             Expanded(child: SizedBox()),
@@ -248,9 +247,9 @@ class _StatisticalState extends State<Statistical> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text('Giao dịch đến', style: TextStyle(fontSize: 11)),
+                const Text('Giao dịch đến', style: TextStyle(fontSize: 11)),
                 const SizedBox(width: 24),
-                Container(
+                SizedBox(
                   height: 8,
                   width: 30,
                   child: Stack(
@@ -258,7 +257,7 @@ class _StatisticalState extends State<Statistical> {
                       Center(
                           child: Container(
                               height: 1, width: 30, color: AppColor.RED_TEXT)),
-                      Positioned.fill(
+                      const Positioned.fill(
                         child: Row(
                           children: [
                             Expanded(child: SizedBox()),
@@ -272,7 +271,7 @@ class _StatisticalState extends State<Statistical> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text('Giao dịch đi', style: TextStyle(fontSize: 11)),
+                const Text('Giao dịch đi', style: TextStyle(fontSize: 11)),
               ],
             ),
             const SizedBox(height: 24),
@@ -290,7 +289,7 @@ class _StatisticalState extends State<Statistical> {
                             provider.typeTimeDay
                                 ? provider.getParentTimeDay
                                 : provider.getDateParent,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
                           const Spacer(),
@@ -321,7 +320,7 @@ class _StatisticalState extends State<Statistical> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('TK ngân hàng', style: TextStyle(fontSize: 12)),
+                        const Text('TK ngân hàng', style: TextStyle(fontSize: 12)),
                         const SizedBox(height: 4),
                         Row(
                           children: [
@@ -344,23 +343,23 @@ class _StatisticalState extends State<Statistical> {
                                   Text(widget.bankDetailDTO?.bankAccount ?? '',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w600)),
                                   Text(
-                                      '${widget.bankDetailDTO?.userBankName ?? ''}'
+                                      (widget.bankDetailDTO?.userBankName ?? '')
                                           .toUpperCase(),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(fontSize: 11)),
+                                      style: const TextStyle(fontSize: 11)),
                                 ],
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 4),
-                        Text('${_terminalName(provider)}',
-                            style: TextStyle(
+                        Text(_terminalName(provider),
+                            style: const TextStyle(
                                 fontSize: 11, color: AppColor.GREY_TEXT))
                       ],
                     ),
@@ -418,11 +417,11 @@ class _StatisticalState extends State<Statistical> {
     if (provider.isOwner &&
         provider.terminalResponseDTO.id.isEmpty &&
         provider.codeSearch != provider.terminalResponseDTO.code) {
-      return '${provider.keySearch}';
+      return provider.keySearch;
     } else if ((provider.isOwner &&
             provider.terminalResponseDTO.id.isNotEmpty) ||
         (!provider.isOwner && provider.terminalResponseDTO.id.isNotEmpty)) {
-      return '${provider.terminalResponseDTO.name}';
+      return provider.terminalResponseDTO.name;
     } else {
       return 'Tất cả';
     }
@@ -440,7 +439,7 @@ class _StatisticalState extends State<Statistical> {
       children: [
         Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
         ),
         const SizedBox(height: 4),
         Row(
@@ -539,14 +538,14 @@ class _StatisticalState extends State<Statistical> {
             terminalCode = codeSearch;
           }
           int type = provider.statisticStatusData.type;
-          DateTime _date = type == 0 ? timeDay : dateTime;
+          DateTime date = type == 0 ? timeDay : dateTime;
 
           String fromDate = type == 0
-              ? _dateFormatDay.format(_fromDate(_date))
-              : _dateFormat.format(_date);
+              ? _dateFormatDay.format(_fromDate(date))
+              : _dateFormat.format(date);
           String endDate = type == 0
-              ? _dateFormatDay.format(_endDate(_date))
-              : _dateFormat.format(_date);
+              ? _dateFormatDay.format(_endDate(date))
+              : _dateFormat.format(date);
 
           _bloc.add(StatisticEventGetData(
             terminalCode: terminalCode,

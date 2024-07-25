@@ -38,7 +38,7 @@ class FCMService {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
           DialogWidget.instance.showModelBottomSheet(
-            padding: EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
             height: 500,
             widget: PopupTopUpSuccess(
               dto: TopUpSuccessDTO.fromJson(message.data),
@@ -51,7 +51,7 @@ class FCMService {
           if (message.data['paymentMethod'] == "1") {
             DialogWidget.instance.showModelBottomSheet(
               padding:
-                  EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+                  const EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
               height: 500,
               widget: PopupTopUpSuccess(
                 dto: TopUpSuccessDTO.fromJson(message.data),

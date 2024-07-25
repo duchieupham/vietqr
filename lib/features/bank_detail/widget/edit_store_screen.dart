@@ -30,7 +30,7 @@ class EditStoreScreen extends StatefulWidget {
   final DetailStoreDTO? detailStoreDTO;
 
   const EditStoreScreen(
-      {this.terminalId = '', this.isUpdate = false, this.detailStoreDTO});
+      {super.key, this.terminalId = '', this.isUpdate = false, this.detailStoreDTO});
 
   @override
   State<EditStoreScreen> createState() => _ShareBDSDInviteState();
@@ -64,7 +64,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
 
   initData() {
     if (widget.isUpdate) return;
-    _bloc.add(GetRanDomCode());
+    _bloc.add(const GetRanDomCode());
   }
 
   Future<void> onRefresh() async {
@@ -87,8 +87,9 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               child: BlocConsumer<InviteBDSDBloc, InviteBDSDState>(
                 listener: (context, state) {
                   if (state is InviteBDSDLoadingState) {
-                    if (state.isLoading)
+                    if (state.isLoading) {
                       DialogWidget.instance.openLoadingDialog();
+                    }
                   }
                   if (state is InviteBDSDGetRandomCodeSuccessState) {
                     if (state.isLoading) Navigator.pop(context);
@@ -175,7 +176,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                             const SizedBox(
                               height: 20,
                             ),
-                            Text(
+                            const Text(
                               'Thông tin cửa hàng',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
@@ -195,8 +196,8 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                             Consumer<ShareBDSDInviteProvider>(
                                 builder: (context, provider, _) {
                               return Container(
-                                margin: EdgeInsets.only(top: 12),
-                                padding: EdgeInsets.only(left: 8),
+                                margin: const EdgeInsets.only(top: 12),
+                                padding: const EdgeInsets.only(left: 8),
                                 decoration: BoxDecoration(
                                     color: AppColor.WHITE,
                                     borderRadius: BorderRadius.circular(5)),
@@ -206,7 +207,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                   inputFormatters: [
                                     LengthLimitingTextInputFormatter(50),
                                   ],
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                       hintText: 'Nhập tên cửa hàng',
                                       contentPadding: EdgeInsets.symmetric(
                                           vertical: 8, horizontal: 12),
@@ -235,8 +236,8 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                   child: Consumer<ShareBDSDInviteProvider>(
                                     builder: (context, provider, _) {
                                       return Container(
-                                        margin: EdgeInsets.only(top: 12),
-                                        padding: EdgeInsets.only(left: 8),
+                                        margin: const EdgeInsets.only(top: 12),
+                                        padding: const EdgeInsets.only(left: 8),
                                         decoration: BoxDecoration(
                                             color: AppColor.grey979797
                                                 .withOpacity(0.25),
@@ -250,7 +251,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                             LengthLimitingTextInputFormatter(
                                                 10),
                                           ],
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                             hintText: 'Nhập mã cửa hàng',
                                             contentPadding:
                                                 EdgeInsets.symmetric(
@@ -273,7 +274,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                         height: 46,
                                         borderRadius: 5,
                                         fontSize: 12,
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 12),
                                         text: 'Tạo ngẫu nhiên',
                                         textColor: AppColor.BLUE_TEXT,
@@ -282,7 +283,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                         function: () {
                                           FocusScope.of(context).unfocus();
                                           _bloc.add(
-                                              GetRanDomCode(isLoading: true));
+                                              const GetRanDomCode(isLoading: true));
                                         }),
                                   ),
                                 ],
@@ -298,15 +299,15 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                             Consumer<ShareBDSDInviteProvider>(
                               builder: (context, provider, _) {
                                 return Container(
-                                  margin: EdgeInsets.only(top: 12),
-                                  padding: EdgeInsets.only(left: 8),
+                                  margin: const EdgeInsets.only(top: 12),
+                                  padding: const EdgeInsets.only(left: 8),
                                   decoration: BoxDecoration(
                                       color: AppColor.WHITE,
                                       borderRadius: BorderRadius.circular(5)),
                                   child: TextField(
                                     controller: addressController,
                                     onChanged: provider.onChangedAddress,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                         hintText: 'Nhập địa chỉ cửa hàng',
                                         contentPadding: EdgeInsets.symmetric(
                                             vertical: 4, horizontal: 12),
@@ -321,7 +322,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                               height: 30,
                             ),
                             if (widget.isUpdate) ...[
-                              Text(
+                              const Text(
                                 'Cài đặt',
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
@@ -339,7 +340,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                   _bloc.add(RemoveGroup(param: param));
                                 },
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
+                                  padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 8),
                                   decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(6),
@@ -353,13 +354,13 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                       const SizedBox(
                                         width: 8,
                                       ),
-                                      Expanded(
+                                      const Expanded(
                                           child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text('Xóa cửa hàng'),
-                                          const SizedBox(
+                                          SizedBox(
                                             height: 2,
                                           ),
                                           Text(
@@ -449,7 +450,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
           ),
           Row(
             children: [
-              Expanded(
+              const Expanded(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -472,7 +473,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                   await DialogWidget.instance.showModelBottomSheet(
                     isDismissible: true,
                     height: MediaQuery.of(context).size.height * 0.6,
-                    margin: EdgeInsets.only(
+                    margin: const EdgeInsets.only(
                         left: 10, right: 10, bottom: 10, top: 40),
                     borderRadius: BorderRadius.circular(16),
                     widget: BottomSheetAddUserBDSD(
@@ -502,7 +503,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                   );
                 },
                 textSize: 11,
-                contentPadding: EdgeInsets.only(left: 4, right: 12),
+                contentPadding: const EdgeInsets.only(left: 4, right: 12),
                 bgColor: AppColor.BLUE_TEXT,
                 textColor: AppColor.WHITE,
                 pathIcon: 'assets/images/ic-add-member-white.png',
@@ -516,7 +517,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               return _buildItemMember(e, (userId) {
                 provider.removeByUserId(userId);
               });
-            }).toList(),
+            }),
           ]
         ],
       );
@@ -529,7 +530,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
         children: [
           Row(
             children: [
-              Expanded(
+              const Expanded(
                   child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -551,9 +552,9 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                   FocusScope.of(context).unfocus();
                   await DialogWidget.instance.showModelBottomSheet(
                     isDismissible: true,
-                    padding: EdgeInsets.only(left: 12, right: 12, bottom: 32),
+                    padding: const EdgeInsets.only(left: 12, right: 12, bottom: 32),
                     height: MediaQuery.of(context).size.height * 0.8,
-                    margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                    margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                     borderRadius: BorderRadius.circular(16),
                     widget: BottomSheetAddBankBDSD(
                       onSelect: (bankAccount) async {
@@ -579,7 +580,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                   );
                 },
                 textSize: 11,
-                contentPadding: EdgeInsets.only(left: 8, right: 12),
+                contentPadding: const EdgeInsets.only(left: 8, right: 12),
                 bgColor: AppColor.BLUE_TEXT,
                 textColor: AppColor.WHITE,
                 pathIcon: 'assets/images/ic-add-card-white.png',
@@ -594,7 +595,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               return _buildItemBank(e, (bankId) {
                 provider.removeByBankID(bankId);
               });
-            }).toList(),
+            }),
           ]
         ],
       );
@@ -603,7 +604,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
 
   Widget _buildItemBank(BankAccountTerminal dto, Function(String) remove) {
     return Container(
-      margin: EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
       child: Row(
@@ -639,11 +640,11 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
             children: [
               Text(
                 dto.bankAccount,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
                 dto.userBankName,
-                style: TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 12),
               )
             ],
           )),
@@ -651,8 +652,8 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
             onTap: () {
               remove(dto.bankId);
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12),
+            child: const Padding(
+              padding: EdgeInsets.only(right: 12),
               child: Icon(
                 Icons.remove_circle_outline,
                 size: 18,
@@ -668,7 +669,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
   Widget _buildItemMember(MemberSearchDto dto, Function(String) remove) {
     return Container(
       height: 54,
-      margin: EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
       child: Row(
@@ -680,7 +681,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               ? Container(
                   width: 30,
                   height: 30,
-                  margin: EdgeInsets.only(top: 2),
+                  margin: const EdgeInsets.only(top: 2),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     image: DecorationImage(
@@ -691,10 +692,10 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               : Container(
                   width: 30,
                   height: 30,
-                  margin: EdgeInsets.only(top: 2),
+                  margin: const EdgeInsets.only(top: 2),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
+                    image: const DecorationImage(
                         image: AssetImage('assets/images/ic-avatar.png')),
                   ),
                 ),
@@ -708,11 +709,11 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
             children: [
               Text(
                 dto.fullName,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
                 dto.phoneNo ?? '',
-                style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
               )
             ],
           )),
@@ -720,8 +721,8 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
             onTap: () {
               remove(dto.id ?? '');
             },
-            child: Padding(
-              padding: const EdgeInsets.only(right: 12),
+            child: const Padding(
+              padding: EdgeInsets.only(right: 12),
               child: Icon(
                 Icons.remove_circle_outline,
                 size: 18,
@@ -737,7 +738,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
   Widget _buildItemAdmin() {
     return Container(
       height: 54,
-      margin: EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
       child: Row(
@@ -749,7 +750,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               ? Container(
                   width: 30,
                   height: 30,
-                  margin: EdgeInsets.only(top: 2),
+                  margin: const EdgeInsets.only(top: 2),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     image: DecorationImage(
@@ -761,10 +762,10 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
               : Container(
                   width: 30,
                   height: 30,
-                  margin: EdgeInsets.only(top: 2),
+                  margin: const EdgeInsets.only(top: 2),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
+                    image: const DecorationImage(
                         image: AssetImage('assets/images/ic-avatar.png')),
                   ),
                 ),
@@ -778,21 +779,21 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
             children: [
               Text(
                 SharePrefUtils.getProfile().fullName,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
                 SharePrefUtils.getPhone(),
-                style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
               )
             ],
           )),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            margin: EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            margin: const EdgeInsets.only(right: 12),
             decoration: BoxDecoration(
                 color: AppColor.BLUE_TEXT.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(30)),
-            child: Text(
+            child: const Text(
               'Admin',
               style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
             ),

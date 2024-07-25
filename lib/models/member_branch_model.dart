@@ -35,7 +35,7 @@ class MemberBranchModel {
   }
 
   String get fullName =>
-      '${lastName ?? ''}' + ' ${middleName ?? ''} ' + '${firstName ?? ''}';
+      '${lastName ?? ''} ${middleName ?? ''} ${firstName ?? ''}';
 
   factory MemberBranchModel.fromJson(Map<String, dynamic> json) {
     return MemberBranchModel(

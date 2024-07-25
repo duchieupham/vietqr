@@ -1,4 +1,3 @@
-import 'package:dudv_base/dudv_base.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';

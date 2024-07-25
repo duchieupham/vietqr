@@ -93,7 +93,7 @@ class TransProvider with ChangeNotifier {
   bool get isInput => _isInput;
   final merchantRepository = getIt.get<TransactionRepository>();
   final scrollControllerList = ScrollController();
-  int _currentPage = 0;
+  final int _currentPage = 0;
 
   int get currentPage => _currentPage;
   List<BankAccountDTO> bankAccounts = [];
@@ -472,9 +472,7 @@ class TransProvider with ChangeNotifier {
   }
 
   void onSearch(Function(TransactionInputDTO) onSearchTrans) {
-    if (_toDate == null) {
-      _toDate = DateTime.now();
-    }
+    _toDate ??= DateTime.now();
 
     if (_formDate.millisecondsSinceEpoch <= _toDate!.millisecondsSinceEpoch) {
       updateOffset(0);

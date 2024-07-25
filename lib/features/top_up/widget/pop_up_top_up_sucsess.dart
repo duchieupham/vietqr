@@ -11,7 +11,7 @@ import '../../../commons/widgets/divider_widget.dart';
 class PopupTopUpSuccess extends StatelessWidget {
   final TopUpSuccessDTO dto;
 
-  const PopupTopUpSuccess({Key? key, required this.dto}) : super(key: key);
+  const PopupTopUpSuccess({super.key, required this.dto});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class PopupTopUpSuccess extends StatelessWidget {
             ),
             Text(
               dto.paymentType == '0' ? 'Dịch vụ VietQR' : 'Nạp tiền điện thoại',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -58,7 +58,7 @@ class PopupTopUpSuccess extends StatelessWidget {
         const SizedBox(
           height: 4,
         ),
-        Align(
+        const Align(
           alignment: Alignment.center,
           child: Text(
             'Nạp tiền thành công',
@@ -76,7 +76,7 @@ class PopupTopUpSuccess extends StatelessWidget {
               dto.paymentType == '0'
                   ? 'Nạp tiền dịch vụ VietQR'
                   : 'Nạp tiền điện thoại',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -97,7 +97,7 @@ class PopupTopUpSuccess extends StatelessWidget {
             const Spacer(),
             Text(
               dto.phoneNo,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -116,7 +116,7 @@ class PopupTopUpSuccess extends StatelessWidget {
             const Spacer(),
             Text(
               dto.billNumber,
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -135,7 +135,7 @@ class PopupTopUpSuccess extends StatelessWidget {
             const Spacer(),
             Text(
               TimeUtils.instance.formatTimeDateFromInt(int.parse(dto.time)),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),

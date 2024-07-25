@@ -12,9 +12,8 @@ class CustomerVaHeaderWidget extends StatelessWidget
   final Size preferredSize;
 
   const CustomerVaHeaderWidget({
-    Key? key,
-  })  : preferredSize = const Size.fromHeight(60),
-        super(key: key);
+    super.key,
+  })  : preferredSize = const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {

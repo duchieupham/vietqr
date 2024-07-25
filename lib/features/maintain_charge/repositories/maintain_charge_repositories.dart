@@ -135,10 +135,11 @@ class MaintainChargeRepositories {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        if (data != null)
+        if (data != null) {
           result = data.map<AnnualFeeDTO>((json) {
             return AnnualFeeDTO.fromJson(json);
           }).toList();
+        }
       }
     } catch (e) {
       LOG.error(e.toString());

@@ -4,7 +4,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -263,7 +262,7 @@ class CardWidget extends StatelessWidget {
                             children: [
                               Text(
                                 '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 12, color: AppColor.WHITE),
                               ),
                               const Row(
@@ -408,7 +407,7 @@ class CardWidget extends StatelessWidget {
                                     children: [
                                       Text(
                                         '${5 - (e.transCount ?? 0)}/5 GD miễn phí',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 12,
                                             color: AppColor.WHITE),
                                       ),

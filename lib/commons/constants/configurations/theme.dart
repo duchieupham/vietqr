@@ -250,7 +250,7 @@ class DefaultThemeData {
       scaffoldBackgroundColor: AppColor.BLACK,
       colorScheme: const ColorScheme.dark(primary: AppColor.GREEN),
       canvasColor: AppColor.GREY_HIGHLIGHT,
-      buttonTheme: ButtonThemeData(
+      buttonTheme: const ButtonThemeData(
         buttonColor: AppColor.GREY_VIEW,
       ),
       primaryColor: AppColor.BLACK,
@@ -306,7 +306,7 @@ class DefaultThemeData {
       scaffoldBackgroundColor: AppColor.GREY_BG,
       colorScheme: const ColorScheme.light(primary: AppColor.BLUE_TEXT),
       canvasColor: AppColor.GREY_BG,
-      buttonTheme: ButtonThemeData(
+      buttonTheme: const ButtonThemeData(
         buttonColor: AppColor.GREY_VIEW,
       ),
       primaryColor: AppColor.WHITE,

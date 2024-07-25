@@ -7,7 +7,6 @@ import 'package:vierqr/commons/utils/month_calculator.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_pick_date.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
@@ -32,7 +31,7 @@ class BottomSheetStatistical extends StatefulWidget {
   final bool isOwner;
   final Function() reset;
 
-  BottomSheetStatistical({
+  const BottomSheetStatistical({
     super.key,
     required this.listTerminal,
     required this.onApply,
@@ -139,7 +138,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               'Cửa hàng',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -168,7 +167,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                               value: widget.isOwner
                                   ? provider.keySearch
                                   : provider.terminalResponseDTO.name,
-                              styles: TextStyle(fontSize: 14),
+                              styles: const TextStyle(fontSize: 14),
                               textFieldType: TextfieldType.DEFAULT,
                               maxLength: 10,
                               contentPadding: EdgeInsets.zero,
@@ -230,8 +229,8 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(5)),
                   ),
-                  menuItemStyleData: MenuItemStyleData(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  menuItemStyleData: const MenuItemStyleData(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
                   ),
                 ),
               ),
@@ -245,7 +244,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               'Lọc theo',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
@@ -272,7 +271,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                               enable: false,
                               fillColor: AppColor.WHITE,
                               value: provider.statisticStatusData.name,
-                              styles: TextStyle(fontSize: 14),
+                              styles: const TextStyle(fontSize: 14),
                               textFieldType: TextfieldType.DEFAULT,
                               maxLength: 10,
                               contentPadding: EdgeInsets.zero,
@@ -332,8 +331,8 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(5)),
                   ),
-                  menuItemStyleData: MenuItemStyleData(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  menuItemStyleData: const MenuItemStyleData(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
                   ),
                 ),
               ),
@@ -349,7 +348,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
         children: [
           Text(
             'Thời gian (${provider.statisticStatusData.type == 0 ? 'ngày' : 'tháng'})',
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           InkWell(
@@ -357,7 +356,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                 ? _onPickMonth(provider)
                 : _onPickDay(provider),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               height: 50,
               decoration: BoxDecoration(
                   color: AppColor.WHITE,
@@ -399,7 +398,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
           const SizedBox(
             width: 48,
           ),
-          Text(
+          const Text(
             'Bộ lọc thống kê',
             style: TextStyle(
               fontSize: 18,

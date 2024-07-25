@@ -27,14 +27,14 @@ class DialogScanLogin extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          const Text(
             'Đăng nhập web',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           Image.asset('assets/images/ic-login-web-popup.png'),
           const SizedBox(height: 24),
-          Text(
+          const Text(
             'Đăng nhập vào Web VietQR VN',
             style: TextStyle(fontSize: 16),
           ),
@@ -42,7 +42,7 @@ class DialogScanLogin extends StatelessWidget {
           MButtonWidget(
             title: 'Đăng nhập',
             isEnable: true,
-            margin: EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 20),
             onTap: () => _onLoginWeb(context),
           ),
           MButtonWidget(

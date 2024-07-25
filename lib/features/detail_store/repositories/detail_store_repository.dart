@@ -96,7 +96,7 @@ class DetailStoreRepository {
   }
 
   Future<ResponseMessageDTO> addMemberGroup(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal-member';
       final response = await BaseAPIClient.postAPI(
@@ -166,7 +166,7 @@ class DetailStoreRepository {
   }
 
   Future<ResponseMessageDTO> removeMember(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}terminal-member/remove';

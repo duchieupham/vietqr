@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomerVaInsertProvider with ChangeNotifier {
-  String _bidvLogoUrl = 'https://dev.vietqr.org/vqr/images/bidv.png';
+  final String _bidvLogoUrl = 'https://dev.vietqr.org/vqr/images/bidv.png';
   bool _isMerchantNameErr = false;
   bool _isBankAccountErr = false;
   bool _isUserBankNameErr = false;

@@ -174,7 +174,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
                   const SizedBox(
                     width: 48,
                   ),
-                  Text(
+                  const Text(
                     'Bộ lọc giao dịch',
                     style: TextStyle(
                       fontSize: 18,
@@ -196,7 +196,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
             ),
             const SizedBox(height: 20),
             if (terminals.isNotEmpty) ...[
-              Text(
+              const Text(
                 'Máy QR box',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
@@ -300,7 +300,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
       children: [
         Text(
           title ?? 'Đến ngày',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 6),
         InkWell(
@@ -387,7 +387,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
     return Container(
       height: 44,
       margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: EdgeInsets.only(top: 2),
+      padding: const EdgeInsets.only(top: 2),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
@@ -520,7 +520,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
 
   Widget _buildDropListTerminal() {
     return Container(
-      margin: EdgeInsets.only(top: 12),
+      margin: const EdgeInsets.only(top: 12),
       height: 44,
       decoration: BoxDecoration(
           color: AppColor.WHITE,
@@ -538,7 +538,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         item.subTerminalName,
-                        style: TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ),
                   ),
@@ -592,8 +592,8 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
           dropdownStyleData: DropdownStyleData(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
           ),
-          menuItemStyleData: MenuItemStyleData(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          menuItemStyleData: const MenuItemStyleData(
+            padding: EdgeInsets.symmetric(horizontal: 20),
           ),
         ),
       ),

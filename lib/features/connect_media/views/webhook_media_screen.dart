@@ -1,24 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
-import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_media/widgets/popup_confirm_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
-import '../../../commons/enums/enum_type.dart';
 import '../../../commons/utils/image_utils.dart';
 import '../../../commons/widgets/separator_widget.dart';
 import '../../../services/providers/connect_gg_chat_provider.dart';
-import '../blocs/connect_media_bloc.dart';
-import '../states/connect_media_states.dart';
 
 class WebhookMediaScreen extends StatefulWidget {
   final TypeConnect type;
@@ -74,7 +66,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height,
       child: PageView(
         controller: widget.controller,
@@ -492,17 +484,17 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                 // Placeholder for bank logo
               ),
               const SizedBox(width: 10),
-              Container(
+              SizedBox(
                 width: 170,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(dto.bank!.bankAccount,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold)),
                     Text(dto.bank!.userBankName,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12)),
+                        style: const TextStyle(fontSize: 12)),
                   ],
                 ),
               ),

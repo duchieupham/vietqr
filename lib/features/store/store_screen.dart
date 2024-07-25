@@ -91,15 +91,17 @@ class _StoreScreenState extends State<StoreScreen>
           }
         },
         builder: (context, state) {
-          if (_loading)
-            return Center(
+          if (_loading) {
+            return const Center(
               child: CircularProgressIndicator(),
             );
+          }
 
-          if (state.isEmpty)
+          if (state.isEmpty) {
             return SuggestCreateStoreView(
               onRefresh: _onRefresh,
             );
+          }
           return InfoStoreView(
             totalStoreDTO: state.totalStoreDTO,
             merchants: state.merchants,

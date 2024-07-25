@@ -3,11 +3,10 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class PopupDetailFolder extends StatefulWidget {
   final QrFeedFolderDTO dto;
-  const PopupDetailFolder({Key? key, required this.dto}) : super(key: key);
+  const PopupDetailFolder({super.key, required this.dto});
 
   @override
   State<PopupDetailFolder> createState() => _PopupDetailFolderState();
@@ -121,7 +120,7 @@ class _PopupDetailFolderState extends State<PopupDetailFolder> {
       {required String title,
       required String value,
       required bool expandHeight}) {
-    return Container(
+    return SizedBox(
       height: expandHeight ? 160 : 50,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

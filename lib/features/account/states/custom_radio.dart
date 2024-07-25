@@ -8,12 +8,12 @@ class CustomRadio extends StatefulWidget {
   final bool isDisable;
 
   const CustomRadio({
-    Key? key,
+    super.key,
     required this.value,
     required this.groupValue,
     required this.onChanged,
     this.isDisable = false,
-  }) : super(key: key);
+  });
 
   @override
   _CustomRadioState createState() => _CustomRadioState();
