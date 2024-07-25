@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
-import AVFoundation // Thêm import AVFoundation
+//Config voice
+// import AVFoundation // Thêm import AVFoundation
 
 // This is required for calling FlutterLocalNotificationsPlugin.setPluginRegistrantCallback method.
 import flutter_local_notifications
@@ -45,14 +46,14 @@ import flutter_local_notifications
                 result(FlutterMethodNotImplemented)
             }
         }
-        
+        //Config voice
         // Thiết lập AVAudioSession để phát âm thanh ngay cả khi ở chế độ im lặng
-        do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
-            try AVAudioSession.sharedInstance().setActive(true)
-        } catch {
-            print("Failed to set audio session category: \(error)")
-        }
+        // do {
+        //     try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+        //     try AVAudioSession.sharedInstance().setActive(true)
+        // } catch {
+        //     print("Failed to set audio session category: \(error)")
+        // }
         
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)

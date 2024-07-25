@@ -87,6 +87,7 @@ class _BankScreenState extends State<_BankScreen>
     if (isRefresh) {
       getIt.get<DashBoardBloc>().add(GetPointEvent());
     }
+
     _bloc.add(BankCardEventGetList());
     _bloc.add(LoadDataBankEvent());
   }
@@ -96,6 +97,7 @@ class _BankScreenState extends State<_BankScreen>
     super.initState();
 
     handleMessageOnBackground();
+    isVerify = SharePrefUtils.getProfile().verify;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
@@ -205,6 +207,7 @@ class _BankScreenState extends State<_BankScreen>
         if (state.request == BankType.BANK) {
           Provider.of<AuthProvider>(context, listen: false)
               .updateBanks(state.listBanks);
+          isVerify = SharePrefUtils.getProfile().verify;
 
           if (scrollController.hasClients) {
             scrollController.jumpTo(0);

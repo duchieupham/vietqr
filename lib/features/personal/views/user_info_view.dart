@@ -916,40 +916,60 @@ class _UserInfoViewState extends State<UserInfoView> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
                                                 width: 80,
-                                                child: Text('Email')),
-                                            Text(_emailController.text),
-                                          ],
+                                                child: Text('Email'),
+                                              ),
+                                              Expanded(
+                                                child: Text(
+                                                  _emailController.text,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  softWrap: false,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         SharePrefUtils.getProfile().verify ==
                                                 true
-                                            ? ClipOval(
-                                                child: Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  color: AppColor.GREEN
-                                                      .withOpacity(0.3),
-                                                  child: Icon(
-                                                    Icons.check,
-                                                    size: 15,
-                                                  ),
-                                                ),
-                                              )
-                                            : InkWell(
-                                                onTap: () {
-                                                  'haha';
-                                                },
+                                            ? Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8),
                                                 child: ClipOval(
                                                   child: Container(
                                                     height: 30,
                                                     width: 30,
-                                                    color: AppColor.ORANGE
+                                                    color: AppColor.GREEN
                                                         .withOpacity(0.3),
-                                                    child: Center(
-                                                        child: Text('?')),
+                                                    child: Icon(
+                                                      Icons.check,
+                                                      size: 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            : Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 8),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    'haha';
+                                                  },
+                                                  child: ClipOval(
+                                                    child: Container(
+                                                      height: 30,
+                                                      width: 30,
+                                                      color: AppColor.ORANGE
+                                                          .withOpacity(0.3),
+                                                      child: Center(
+                                                        child: Text('?'),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1579,11 +1599,14 @@ class _UserInfoViewState extends State<UserInfoView> {
           child: Center(
             child: Row(
               children: [
-                Row(
-                  children: [
-                    SizedBox(width: 80, child: Text(title)),
-                    Text(data),
-                  ],
+                SizedBox(width: 80, child: Text(title)),
+                Expanded(
+                  child: Text(
+                    data.isNotEmpty ? data : '-',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: false,
+                  ),
                 ),
               ],
             ),
