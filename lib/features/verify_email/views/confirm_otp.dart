@@ -30,7 +30,7 @@ class OTPInputPage extends StatefulWidget {
 
 class _OTPInputPageState extends State<OTPInputPage> {
   late Timer _timer;
-  int _remainingSeconds = 60; // 10 minutes in seconds
+  int _remainingSeconds = 600; // 10 minutes in seconds
   bool _isTimerExpired = false;
   final FocusNode passFocus = FocusNode();
   bool isFocus = true;
@@ -82,7 +82,7 @@ class _OTPInputPageState extends State<OTPInputPage> {
   void _resetTimer() {
     if (mounted) {
       setState(() {
-        _remainingSeconds = 60; // Reset to 10 minutes
+        _remainingSeconds = 600; // Reset to 10 minutes
         _isTimerExpired = false;
       });
     }
