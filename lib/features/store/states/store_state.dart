@@ -23,7 +23,7 @@ class StoreState extends Equatable {
   final List<MerchantDTO> merchants;
   final int offset;
 
-  StoreState({
+  const StoreState({
     this.status = BlocStatus.NONE,
     this.msg,
     this.request = StoreType.NONE,

@@ -55,7 +55,7 @@ class BankState extends Equatable {
       request: request ?? this.request,
       typeQR: typeQR ?? this.typeQR,
       msg: msg ?? this.msg,
-      listBankAccountTerminal: listBankTerminal ?? this.listBankAccountTerminal,
+      listBankAccountTerminal: listBankTerminal ?? listBankAccountTerminal,
       barCode: barCode ?? this.barCode,
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,

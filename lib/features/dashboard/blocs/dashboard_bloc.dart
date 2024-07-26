@@ -33,7 +33,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
 
   DashBoardBloc(this.context, this.loginRepository)
       : super(DashBoardState(
-            themes: [], listBanks: [], appInfoDTO: AppInfoDTO())) {
+            themes: const [], listBanks: const [], appInfoDTO: AppInfoDTO())) {
     on<TokenEventCheckValid>(_checkValidToken);
     on<DashBoardLoginEvent>(_login);
 
@@ -357,7 +357,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       }
     } catch (e) {
       LOG.error(e.toString());
-      final dto = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      const dto = ResponseMessageDTO(status: 'FAILED', message: 'E05');
       emit(state.copyWith(
         msg: ErrorUtils.instance.getErrorMessage(dto.message),
         status: BlocStatus.NONE,
@@ -387,7 +387,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         }
       }
     } catch (e) {
-      final res = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      const res = ResponseMessageDTO(status: 'FAILED', message: 'E05');
       emit(state.copyWith(
           msg: ErrorUtils.instance.getErrorMessage(res.message),
           request: DashBoardType.ERROR));

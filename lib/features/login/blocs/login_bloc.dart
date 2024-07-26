@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
-import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
-import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../dashboard/blocs/auth_provider.dart';

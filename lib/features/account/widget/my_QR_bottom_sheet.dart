@@ -13,7 +13,7 @@ import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class MyQRBottomSheet extends StatefulWidget {
-  MyQRBottomSheet({Key? key}) : super(key: key);
+  const MyQRBottomSheet({super.key});
 
   @override
   State<MyQRBottomSheet> createState() => _MyQRBottomSheetState();
@@ -46,8 +46,8 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
               builder: (key) {
                 return Container(
                   margin: isSmall
-                      ? EdgeInsets.symmetric(horizontal: 40, vertical: 16)
-                      : EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      ? const EdgeInsets.symmetric(horizontal: 40, vertical: 16)
+                      : const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     gradient: getBgGradient(colorType),
@@ -71,7 +71,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                                     left: 20, right: 20, top: 15, bottom: 15)
                                 : const EdgeInsets.only(
                                     left: 40, right: 40, top: 30, bottom: 30),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               color: AppColor.WHITE,
                             ),
                             child: VietQr(
@@ -94,7 +94,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                                               SharePrefUtils.getProfile()
                                                   .imgId)),
                                   borderRadius:
-                                      BorderRadius.all(Radius.circular(100)),
+                                      const BorderRadius.all(Radius.circular(100)),
                                 ),
                               ),
                             ),
@@ -127,8 +127,8 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Row(
                     children: [
-                      Icon(Icons.clear, color: AppColor.TRANSPARENT, size: 20),
-                      Expanded(
+                      const Icon(Icons.clear, color: AppColor.TRANSPARENT, size: 20),
+                      const Expanded(
                         child: Text(
                           'My QR',
                           textAlign: TextAlign.center,
@@ -140,7 +140,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.clear,
                           color: AppColor.GREY_TEXT,
                           size: 20,
@@ -150,7 +150,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Text(
+                const Text(
                   'Cùng chia sẻ mã QR của bạn',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
@@ -244,7 +244,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                   fit: BoxFit.contain),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 8,
           ),
           Expanded(
@@ -260,7 +260,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                 ),
                 Text(
                   typeQR.typeName,
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),
@@ -273,55 +273,55 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
   Gradient getBgGradient(colorType) {
     switch (colorType) {
       case 0:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFF5FFFD8),
-            const Color(0xFF0A7AFF),
+            Color(0xFF5FFFD8),
+            Color(0xFF0A7AFF),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 1:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFF52FBFF),
-            const Color(0xFF06711B),
+            Color(0xFF52FBFF),
+            Color(0xFF06711B),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 2:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFFEECDFF),
-            const Color(0xFF49558A),
+            Color(0xFFEECDFF),
+            Color(0xFF49558A),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 3:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFFFBAE1F),
-            const Color(0xFFFC6A01),
+            Color(0xFFFBAE1F),
+            Color(0xFFFC6A01),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       case 4:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFFFF6DC6),
-            const Color(0xFFF8837A),
+            Color(0xFFFF6DC6),
+            Color(0xFFF8837A),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         );
       default:
-        return LinearGradient(
+        return const LinearGradient(
           colors: [
-            const Color(0xFF5FFFD8),
-            const Color(0xFF0A7AFF),
+            Color(0xFF5FFFD8),
+            Color(0xFF0A7AFF),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -348,7 +348,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
         Text(
           model.title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 15),
+          style: const TextStyle(fontSize: 15),
         ),
       ],
     );

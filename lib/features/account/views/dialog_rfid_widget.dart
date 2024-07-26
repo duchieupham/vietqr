@@ -50,7 +50,7 @@ class _NFCDialogState extends State<RFIDDialog> {
               'error': errorText,
             });
           });
-          return null;
+          return;
         }
 
         if (widget.data != null) {

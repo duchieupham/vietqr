@@ -11,15 +11,11 @@ class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {
   final Connectivity connectivity;
 
   NetworkBloc({required this.connectivity})
-      : super(NetworkNone(isInternet: false)) {
+      : super(const NetworkNone(isInternet: false)) {
     on<NetworkObserve>(_observe);
     on<NetworkNotify>(_notifyStatus);
   }
 
-  @override
-  Future<void> close() {
-    return super.close();
-  }
 
   void _observe(event, emit) {
     connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
@@ -31,8 +27,8 @@ class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {
     } else if (event.result == TypeInternet.CONNECT) {
       //sau khi có kết nối => hiện thông báo => sau 3 giây chuyển status thành none để tắt
       emit(NetworkSuccess(state: state, isInternet: event.isInternet));
-      await Future.delayed(Duration(seconds: 3)).then((v) {
-        this.add(NetworkNotify(
+      await Future.delayed(const Duration(seconds: 3)).then((v) {
+        add(NetworkNotify(
           result: TypeInternet.NONE,
           isInternet: true,
         ));
@@ -46,7 +42,7 @@ class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {
     if (result == ConnectivityResult.none) {
       final result2 = await connectivity.checkConnectivity();
       if (result2 == ConnectivityResult.none) {
-        this.add(NetworkNotify(
+        add(NetworkNotify(
           result: TypeInternet.DISCONNECT,
           isInternet: true,
         ));
@@ -62,18 +58,18 @@ class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        this.add(NetworkNotify(
+        add(NetworkNotify(
           result: TypeInternet.CONNECT,
           isInternet: false,
         ));
       } else {
-        this.add(NetworkNotify(
+        add(NetworkNotify(
           result: TypeInternet.DISCONNECT,
           isInternet: true,
         ));
       }
     } on SocketException catch (_) {
-      this.add(NetworkNotify(
+      add(NetworkNotify(
         result: TypeInternet.DISCONNECT,
         isInternet: true,
       ));

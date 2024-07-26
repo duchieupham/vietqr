@@ -66,31 +66,31 @@ class InvoiceDetailDTO {
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
-        items!.add(new Items.fromJson(v));
+        items!.add(Items.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['invoiceId'] = this.invoiceId;
-    data['billNumber'] = this.billNumber;
-    data['invoiceNumber'] = this.invoiceNumber;
-    data['invoiceName'] = this.invoiceName;
-    data['timeCreated'] = this.timeCreated;
-    data['timePaid'] = this.timePaid;
-    data['status'] = this.status;
-    data['vatAmount'] = this.vatAmount;
-    data['amount'] = this.amount;
-    data['vat'] = this.vat;
-    data['bankId'] = this.bankId;
-    data['bankAccount'] = this.bankAccount;
-    data['bankShortName'] = this.bankShortName;
-    data['qrCode'] = this.qrCode;
-    data['totalAmount'] = this.totalAmount;
-    data['fileAttachmentId'] = this.fileAttachmentId;
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['invoiceId'] = invoiceId;
+    data['billNumber'] = billNumber;
+    data['invoiceNumber'] = invoiceNumber;
+    data['invoiceName'] = invoiceName;
+    data['timeCreated'] = timeCreated;
+    data['timePaid'] = timePaid;
+    data['status'] = status;
+    data['vatAmount'] = vatAmount;
+    data['amount'] = amount;
+    data['vat'] = vat;
+    data['bankId'] = bankId;
+    data['bankAccount'] = bankAccount;
+    data['bankShortName'] = bankShortName;
+    data['qrCode'] = qrCode;
+    data['totalAmount'] = totalAmount;
+    data['fileAttachmentId'] = fileAttachmentId;
+    if (items != null) {
+      data['items'] = items!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -119,12 +119,12 @@ class Items {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['invoiceItemId'] = this.invoiceItemId;
-    data['invoiceItemName'] = this.invoiceItemName;
-    data['quantity'] = this.quantity;
-    data['itemAmount'] = this.itemAmount;
-    data['totalItemAmount'] = this.totalItemAmount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['invoiceItemId'] = invoiceItemId;
+    data['invoiceItemName'] = invoiceItemName;
+    data['quantity'] = quantity;
+    data['itemAmount'] = itemAmount;
+    data['totalItemAmount'] = totalItemAmount;
     return data;
   }
 }

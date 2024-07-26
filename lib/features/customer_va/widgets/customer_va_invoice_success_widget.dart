@@ -8,7 +8,7 @@ import 'package:vierqr/models/customer_va_invoice_success_dto.dart';
 class CustomerVaInvoiceSuccessWidget extends StatelessWidget {
   final CustomerVaInvoiceSuccessDTO dto;
 
-  const CustomerVaInvoiceSuccessWidget({required this.dto});
+  const CustomerVaInvoiceSuccessWidget({super.key, required this.dto});
 
   @override
   Widget build(BuildContext context) {

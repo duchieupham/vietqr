@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/count_down_minus_second.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';

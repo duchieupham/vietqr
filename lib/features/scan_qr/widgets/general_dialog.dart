@@ -4,6 +4,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class GeneralDialog extends StatelessWidget {
+  const GeneralDialog({super.key});
+
   _handleOnPressedCallback(BuildContext context, Function? onPressed) {
     if (onPressed == null) {
       Navigator.of(
@@ -18,7 +20,7 @@ class GeneralDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 16,
       ),
@@ -35,7 +37,7 @@ class GeneralDialog extends StatelessWidget {
                     Navigator.of(context).pop(true);
                   });
                 },
-                child: Text(
+                child: const Text(
                   'Lúc khác',
                   style: TextStyle(color: AppColor.BLUE_TEXT),
                 ),
@@ -49,7 +51,7 @@ class GeneralDialog extends StatelessWidget {
             height: 167,
           ),
           const SizedBox(height: 24),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(
               bottom: 16,
               left: 0,
@@ -63,7 +65,7 @@ class GeneralDialog extends StatelessWidget {
           ),
           RichText(
             textAlign: TextAlign.center,
-            text: TextSpan(
+            text: const TextSpan(
               style: TextStyle(
                 color: AppColor.BLACK_TEXT,
               ),
@@ -88,7 +90,7 @@ class GeneralDialog extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SizedBox(
             width: 250,
             child: MButtonWidget(

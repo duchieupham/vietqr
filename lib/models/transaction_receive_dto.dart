@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 
 class TransactionReceiveDTO {

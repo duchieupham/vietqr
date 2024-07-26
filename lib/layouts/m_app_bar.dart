@@ -17,7 +17,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool centerTitle;
 
   const MAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.isLeading = true,
@@ -25,8 +25,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.callBackHome,
     this.showBG = true,
     this.centerTitle = true,
-  })  : preferredSize = const Size.fromHeight(60),
-        super(key: key);
+  })  : preferredSize = const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +39,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                         image: NetworkImage(url), fit: BoxFit.cover)
                     : DecorationImage(
                         image: FileImage(page.bannerApp), fit: BoxFit.cover))
-            : BoxDecoration(),
+            : const BoxDecoration(),
         child: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
@@ -84,7 +83,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                               .popUntil((route) => route.isFirst);
                         }
                       : callBackHome,
-                  child: Container(
+                  child: SizedBox(
                     width: 96,
                     height: 56,
                     // margin: const EdgeInsets.only(right: 20),

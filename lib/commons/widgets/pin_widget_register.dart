@@ -66,7 +66,7 @@ class PinWidgetRegister extends StatelessWidget {
         ),
         Positioned(
           top: 0,
-          child: Container(
+          child: SizedBox(
             width: width,
             height: pinSize + 5,
             child: TextField(

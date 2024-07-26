@@ -229,7 +229,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            SizedBox(
+                                            const SizedBox(
                                               child: Text(
                                                 'Quyền riêng tư',
                                                 style: TextStyle(
@@ -260,14 +260,14 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                                         if (model!
                                                             .url.isNotEmpty)
                                                           Image.asset(
-                                                              '${model?.url ?? ''}',
+                                                              model?.url ?? '',
                                                               color: AppColor
                                                                   .BLACK,
                                                               width: 20),
                                                       const SizedBox(width: 8),
                                                       Text(
-                                                        '${model?.title ?? ''}',
-                                                        style: TextStyle(
+                                                        model?.title ?? '',
+                                                        style: const TextStyle(
                                                             fontSize: 14),
                                                       ),
                                                       const Spacer(),
@@ -296,7 +296,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                   fillColor: AppColor.WHITE,
                                   textFieldType: TextfieldType.LABEL,
                                   title: 'Số điện thoại',
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),
                                   controller: phoneController,
                                   hintText:
@@ -311,7 +311,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                   fillColor: AppColor.WHITE,
                                   textFieldType: TextfieldType.LABEL,
                                   title: 'Email',
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),
                                   controller: emailController,
                                   hintText: 'Nhập email cho mã QR của bạn',
@@ -325,7 +325,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                   fillColor: AppColor.WHITE,
                                   textFieldType: TextfieldType.LABEL,
                                   title: 'Địa chỉ',
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),
                                   controller: addressController,
                                   hintText: 'Nhập địa chỉ cho mã QR của bạn',
@@ -339,7 +339,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                   fillColor: AppColor.WHITE,
                                   textFieldType: TextfieldType.LABEL,
                                   title: 'Website',
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),
                                   controller: webController,
                                   hintText: 'Nhập website cho mã QR của bạn',
@@ -353,7 +353,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                   fillColor: AppColor.WHITE,
                                   textFieldType: TextfieldType.LABEL,
                                   title: 'Công ty',
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),
                                   controller: companyController,
                                   hintText:
@@ -370,7 +370,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                 fillColor: AppColor.WHITE,
                                 textFieldType: TextfieldType.LABEL,
                                 title: 'Mô tả QR',
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 12, horizontal: 16),
                                 controller: suggestController,
                                 hintText: 'Nhập mô tả cho mã QR của bạn',
@@ -390,7 +390,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                             });
                           }),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
                           child: GestureDetector(
                             onTap: () {
                               DialogWidget.instance.openMsgDialog(
@@ -405,21 +405,21 @@ class _ContactEditViewState extends State<_ContactEditView> {
                               );
                             },
                             child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 20),
-                              padding: EdgeInsets.symmetric(
+                              margin: const EdgeInsets.symmetric(horizontal: 20),
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 color: AppColor.WHITE,
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
+                              child: const Row(
                                 children: [
                                   Icon(
                                     Icons.delete_outline,
                                     color: AppColor.RED_TEXT,
                                     size: 18,
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 4,
                                   ),
                                   Text(
@@ -465,7 +465,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 28),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
                 child: Row(
                   children: [
                     Expanded(
@@ -558,7 +558,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Màu sắc thẻ QR',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -572,8 +572,8 @@ class _ContactEditViewState extends State<_ContactEditView> {
                   colorType(e.type);
                 },
                 child: Container(
-                  margin: EdgeInsets.only(right: 12),
-                  padding: EdgeInsets.all(3),
+                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -675,10 +675,10 @@ class _ContactEditViewState extends State<_ContactEditView> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Logo QR giúp bạn tìm thẻ nhanh hơn',
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: AppColor.GREY_TEXT),
+              style: TextStyle(color: AppColor.GREY_TEXT),
             ),
             const SizedBox(height: 4),
             MButtonWidget(

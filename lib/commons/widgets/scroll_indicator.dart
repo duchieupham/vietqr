@@ -7,8 +7,8 @@ class ScrollIndicator extends StatefulWidget {
   final double width, height, indicatorWidth;
   final Decoration decoration, indicatorDecoration;
   final AlignmentGeometry alignment;
-  ScrollIndicator(
-      {required this.scrollController,
+  const ScrollIndicator(
+      {super.key, required this.scrollController,
       this.width = 100,
       this.height = 10,
       this.indicatorWidth = 20,

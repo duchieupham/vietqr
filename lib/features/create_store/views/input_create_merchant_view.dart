@@ -65,7 +65,7 @@ class _InputCreateMerchantViewState extends State<InputCreateMerchantView> {
                   'assets/images/ic-merchant-3D.png',
                   height: 100,
                 ),
-                Text(
+                const Text(
                   'Đầu tiên, vui lòng chọn\ndoanh nghiệp của bạn',
                   style: TextStyle(
                     fontSize: 20,
@@ -74,7 +74,7 @@ class _InputCreateMerchantViewState extends State<InputCreateMerchantView> {
                 ),
                 const SizedBox(height: 8),
                 RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     style: TextStyle(color: AppColor.GREY_TEXT),
                     children: [
                       TextSpan(text: 'Một doanh nghiệp có nhiều cửa hàng.')
@@ -98,7 +98,7 @@ class _InputCreateMerchantViewState extends State<InputCreateMerchantView> {
                     _value = value;
                     setState(() {});
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Nhập tên doanh nghiệp ở đây',
                     hintStyle: TextStyle(
                       fontSize: 14,
@@ -122,7 +122,7 @@ class _InputCreateMerchantViewState extends State<InputCreateMerchantView> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                       style: TextStyle(
                           fontSize: 14,
                           color: AppColor.BLACK,

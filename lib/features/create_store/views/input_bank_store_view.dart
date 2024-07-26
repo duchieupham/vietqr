@@ -52,7 +52,7 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
                   ),
                   const SizedBox(height: 16),
                   if (state.status == BlocStatus.LOADING_PAGE)
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -75,7 +75,7 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
                         ),
                       )
                     else if (state.isEmpty) ...[
-                      Text(
+                      const Text(
                         'Có vẻ như bạn chưa\nliên kết tài khoản ngân hàng!',
                         style: TextStyle(fontSize: 20),
                       ),
@@ -85,7 +85,7 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
                             vertical: 20, horizontal: 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             colors: [
                               Color(0xFFFFF3DF),
                               Color(0xFFFFE1C9),
@@ -95,7 +95,7 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Expanded(
+                            const Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -105,7 +105,7 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: 16),
                                   Text(
                                     'Liên kết tài khoản ngân hàng để nhận và quản lý các thông tin giao dịch của bạn.',
                                     style: TextStyle(
@@ -143,8 +143,8 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
       onTap: () => widget.callBack.call(dto),
       child: Container(
         margin: const EdgeInsets.only(bottom: 24),
-        padding: EdgeInsets.only(bottom: 24),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.only(bottom: 24),
+        decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AppColor.grey979797, width: 0.5),
           ),
@@ -154,7 +154,7 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
             Container(
               width: 80,
               height: 40,
-              padding: EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.symmetric(vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 border: Border.all(color: AppColor.grey979797),
@@ -178,13 +178,13 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
                     dto.bankAccount,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   Text(
                     dto.userBankName.toUpperCase().trim(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 15),
                   )
                 ],
               ),

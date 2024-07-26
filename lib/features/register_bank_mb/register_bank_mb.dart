@@ -11,7 +11,7 @@ class RegisterBankMB extends StatefulWidget {
 class _RegisterBankMBState extends State<RegisterBankMB> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       appBar: MAppBar(title: 'Mở Tk ngân hàng'),
     );
   }

@@ -24,7 +24,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   TransHistoryBloc(this.context, this.transactionRepository, this.bankId,
       this.terminalAccountList)
       : super(TransHistoryState(
-            list: [],
+            list: const [],
             // terminalDto: terminalDto,
             terminalAccountList: terminalAccountList)) {
     // on<TransactionEventGetDetail>(_getDetail);

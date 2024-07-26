@@ -61,7 +61,7 @@ class CreateFolderScreen extends StatefulWidget {
 }
 
 class _CreateFolderScreenState extends State<CreateFolderScreen> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   final TextEditingController _folderNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
@@ -187,7 +187,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         .expand((folder) => folder.listQr!)
         .where((item) => item.hasChecked)
         .map((item) => item.id)
-        .toList() as List<String>;
+        .toList();
     return listString;
   }
 
@@ -363,7 +363,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
             backgroundColor: AppColor.WHITE,
             resizeToAvoidBottomInset: _currentPageIndex == 0 ? true : false,
             bottomNavigationBar: _bottomButton(isEnable),
-            body: Container(
+            body: SizedBox(
               // padding: const EdgeInsets.symmetric(horizontal: 20),
               width: MediaQuery.of(context).size.width,
               child: Column(
@@ -950,7 +950,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(2.0),
                 ),
-                side: MaterialStateBorderSide.resolveWith(
+                side: WidgetStateBorderSide.resolveWith(
                   (states) => const BorderSide(
                     width: 1.0,
                     color: AppColor.GREY_DADADA,
@@ -1067,7 +1067,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(2.0),
                 ),
-                side: MaterialStateBorderSide.resolveWith(
+                side: WidgetStateBorderSide.resolveWith(
                   (states) => const BorderSide(
                     width: 1.0,
                     color: AppColor.GREY_DADADA,
@@ -1637,7 +1637,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                             ),
                           );
                         } else {
-                          return SizedBox
+                          return const SizedBox
                               .shrink(); // or any other widget like Container with height: 0
                         }
                       },

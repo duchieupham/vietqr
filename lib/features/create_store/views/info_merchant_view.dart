@@ -49,7 +49,7 @@ class _InfoMerchantViewState extends State<InfoMerchantView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Image.asset('assets/images/ic-merchant-3D.png', height: 100),
-              Text(
+              const Text(
                 'Đầu tiên, vui lòng chọn\ndoanh nghiệp của bạn',
                 style: TextStyle(
                   fontSize: 20,
@@ -58,7 +58,7 @@ class _InfoMerchantViewState extends State<InfoMerchantView> {
               ),
               const SizedBox(height: 12),
               RichText(
-                text: TextSpan(
+                text: const TextSpan(
                   style: TextStyle(color: AppColor.GREY_TEXT),
                   children: [
                     TextSpan(text: 'Một doanh nghiệp có nhiều cửa hàng.\n'),
@@ -93,7 +93,7 @@ class _InfoMerchantViewState extends State<InfoMerchantView> {
                             return _buildItemBank(dto);
                           }),
                           if (state.isLoadMore)
-                            Center(
+                            const Center(
                               child: SizedBox(
                                 width: 24,
                                 height: 24,
@@ -118,8 +118,8 @@ class _InfoMerchantViewState extends State<InfoMerchantView> {
       onTap: () => widget.callBack.call(dto.id),
       child: Container(
         margin: const EdgeInsets.only(bottom: 24),
-        padding: EdgeInsets.only(bottom: 24),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.only(bottom: 24),
+        decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(color: AppColor.grey979797, width: 0.5),
           ),
@@ -135,13 +135,13 @@ class _InfoMerchantViewState extends State<InfoMerchantView> {
                     dto.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   Text(
                     '${dto.totalTerminals} cửa hàng',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 15),
                   )
                 ],
               ),

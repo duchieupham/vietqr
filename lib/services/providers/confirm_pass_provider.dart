@@ -3,7 +3,6 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/mobile_recharge/repositories/mobile_recharge_repository.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 

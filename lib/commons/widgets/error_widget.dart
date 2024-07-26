@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 
-import '../../services/providers/pin_provider.dart';
 import '../constants/configurations/numeral.dart';
 import '../constants/configurations/theme.dart';
 
@@ -41,7 +37,7 @@ class ErrorDialogWidget extends StatelessWidget {
                 Text(
                   // "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
                   title,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
                 Container(
@@ -71,7 +67,7 @@ class ErrorDialogWidget extends StatelessWidget {
                         child: Text(
                           text,
                           style:
-                              TextStyle(fontSize: 13, color: AppColor.RED_TEXT),
+                              const TextStyle(fontSize: 13, color: AppColor.RED_TEXT),
                         ),
                       )
                     : const SizedBox.shrink(),
@@ -82,7 +78,7 @@ class ErrorDialogWidget extends StatelessWidget {
               right: 0,
               child: GestureDetector(
                 onTap: onClose,
-                child: Icon(
+                child: const Icon(
                   Icons.close,
                   color: Colors.black,
                   size: 20,

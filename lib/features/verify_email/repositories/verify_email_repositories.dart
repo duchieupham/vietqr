@@ -12,7 +12,7 @@ class EmailRepository {
   const EmailRepository();
 
   Future<ResponseMessageDTO> sendOTP(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}sendMailWithAttachment';
       final response = await BaseAPIClient.postAPI(
@@ -32,7 +32,7 @@ class EmailRepository {
   }
 
   Future<ResponseMessageDTO> confirmOTP(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}send-mail/confirm-otp';
       final response = await BaseAPIClient.postAPI(

@@ -3,11 +3,11 @@ import 'package:vierqr/models/qr_bank_detail.dart';
 class AppDataHelper {
   AppDataHelper._privateConstructor();
 
-  static AppDataHelper _instance = AppDataHelper._privateConstructor();
+  static final AppDataHelper _instance = AppDataHelper._privateConstructor();
 
   static AppDataHelper get instance => _instance;
 
-  List<QRDetailBank> _qrDetailBanks = [];
+  final List<QRDetailBank> _qrDetailBanks = [];
   List<QRDetailBank> get qrDetailBanks => _qrDetailBanks;
 
   addListQRDetailBank(QRDetailBank value) async {
@@ -26,31 +26,31 @@ class AppDataHelper {
 
   bool checkExitsQRDetailBank(QRDetailBank qr) {
     bool value = false;
-    _qrDetailBanks.forEach((element) {
+    for (var element in _qrDetailBanks) {
       if (element.bankAccount == qr.bankAccount) {
         value = true;
       }
-    });
+    }
     return value;
   }
 
   bool checkExitsBankAccount(String bankAccount) {
     bool value = false;
-    _qrDetailBanks.forEach((element) {
+    for (var element in _qrDetailBanks) {
       if (element.bankAccount == bankAccount) {
         value = true;
       }
-    });
+    }
     return value;
   }
 
   QRDetailBank getQrcodeByBankAccount(String bankAccount) {
     QRDetailBank value = QRDetailBank();
-    _qrDetailBanks.forEach((element) {
+    for (var element in _qrDetailBanks) {
       if (element.bankAccount == bankAccount) {
         value = element;
       }
-    });
+    }
     return value;
   }
 

@@ -4,13 +4,15 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/button/m_button_icon_widget.dart';
 
 class NotPerUpdateTransView extends StatelessWidget {
+  const NotPerUpdateTransView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.asset(AppImages.icTimeOutTrans, width: 120),
-        Text(
+        const Text(
           'Bạn không có quyền\ncập nhật thông tin cửa hàng\ncho giao dịch này.',
           style: TextStyle(
             fontSize: 20,

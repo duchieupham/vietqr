@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
       if (!mounted) return;
     });
 
-    _bloc.add(GetFreeToken());
+    _bloc.add(const GetFreeToken());
   }
 
   @override
@@ -401,7 +401,7 @@ extension _LoginScreenFunction on _LoginScreenState {
             context,
             isHideClose: true,
             onCheckUpdate: () {
-              _bloc.add(GetFreeToken(isCheckVer: true));
+              _bloc.add(const GetFreeToken(isCheckVer: true));
             },
           );
           // showDialog(
@@ -643,7 +643,7 @@ extension _LoginScreenFunction on _LoginScreenState {
   void onLoginCard() async {
     if (Platform.isAndroid) {
       final data =
-          await DialogWidget.instance.openDialogIntroduce(child: NFCDialog());
+          await DialogWidget.instance.openDialogIntroduce(child: const NFCDialog());
       if (data != null && data is NfcTag) {
         Future.delayed(const Duration(milliseconds: 500), () {
           String cardNumber = readTagToKey(data, '');

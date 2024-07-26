@@ -5,7 +5,7 @@ import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/services/providers/connect_lark_provider.dart';
 
 class SettingLarkPage extends StatefulWidget {
-  const SettingLarkPage({Key? key}) : super(key: key);
+  const SettingLarkPage({super.key});
 
   @override
   State<SettingLarkPage> createState() => _SettingLarkPageState();
@@ -52,7 +52,7 @@ class _SettingLarkPageState extends State<SettingLarkPage>
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Webhook Address',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -72,11 +72,11 @@ class _SettingLarkPageState extends State<SettingLarkPage>
             onChange: provider.updateWebHook,
           ),
           if (provider.errorWebhook)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
               child: Text(
                 'Webhook Address không đúng định dạng',
-                style: const TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
+                style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
               ),
             ),
           if (provider.clipboardText.isNotEmpty)
@@ -89,7 +89,7 @@ class _SettingLarkPageState extends State<SettingLarkPage>
                 provider.clearClipBoardData();
               },
               child: Container(
-                margin: EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: 8),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),

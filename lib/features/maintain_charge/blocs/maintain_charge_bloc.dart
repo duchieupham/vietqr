@@ -16,14 +16,13 @@ import '../../../services/providers/maintain_charge_provider.dart';
 import '../../../services/providers/pin_provider.dart';
 import '../states/maintain_charge_state.dart';
 import '../views/annual_fee_screen.dart';
-import '../views/confirm_active_key_screen.dart';
 
 class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
     with BaseManager {
   @override
   final BuildContext context;
 
-  MaintainChargeBloc(this.context) : super(MaintainChargeState()) {
+  MaintainChargeBloc(this.context) : super(const MaintainChargeState()) {
     on<MaintainChargeEvent>(_chargeMaintain);
     on<ConfirmMaintainChargeEvent>(_confirmMaintainCharge);
     on<GetAnnualFeeListEvent>(_getAnnualFeeList);
@@ -214,7 +213,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => ActiveSuccessScreen(type: 0),
+                builder: (context) => const ActiveSuccessScreen(type: 0),
               ));
         } else {
           emit(state.copyWith(

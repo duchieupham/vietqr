@@ -46,7 +46,7 @@ class RemoveTeleConnect extends ConnectTelegramEvent {
 class RemoveBankTelegramEvent extends ConnectTelegramEvent {
   final Map<String, dynamic> body;
 
-  RemoveBankTelegramEvent(this.body);
+  const RemoveBankTelegramEvent(this.body);
 
   @override
   List<Object?> get props => [body];
@@ -55,7 +55,7 @@ class RemoveBankTelegramEvent extends ConnectTelegramEvent {
 class AddBankTelegramEvent extends ConnectTelegramEvent {
   final Map<String, dynamic> body;
 
-  AddBankTelegramEvent(this.body);
+  const AddBankTelegramEvent(this.body);
 
   @override
   List<Object?> get props => [body];

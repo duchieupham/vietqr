@@ -193,7 +193,7 @@ class _TransStoreViewState extends State<TransStoreView>
       child: BlocConsumer<DetailStoreBloc, DetailStoreState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Column(
@@ -204,13 +204,13 @@ class _TransStoreViewState extends State<TransStoreView>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Danh sách giao dịch',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           if (isOwner)
-                            Text(
+                            const Text(
                               'Hiển thị các giao dịch thuộc cửa hàng của bạn.',
                               style: TextStyle(
                                   fontSize: 12, color: AppColor.GREY_TEXT),
@@ -235,7 +235,7 @@ class _TransStoreViewState extends State<TransStoreView>
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Text(
+                    const Text(
                       'Lọc theo:',
                       style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
@@ -249,16 +249,16 @@ class _TransStoreViewState extends State<TransStoreView>
                                 'Cửa hàng: ${widget.detailStoreDTO.terminalName}'),
                             _buildFilterWith('Thời gian: $timeValue'),
                             if (typeFilter == 1)
-                              _buildFilterWith('Mã giao dịch: ${_searchKey}'),
+                              _buildFilterWith('Mã giao dịch: $_searchKey'),
                             if (typeFilter == 3)
-                              _buildFilterWith('Nội dung: ${_searchKey}'),
+                              _buildFilterWith('Nội dung: $_searchKey'),
                             if (typeFilter == 5)
                               _buildFilterWith(
-                                  'Trạng thái: ${_filterByStatus}'),
+                                  'Trạng thái: $_filterByStatus'),
                             if (typeFilter == 2)
-                              _buildFilterWith('Mã đơn hàng: ${_searchKey}'),
+                              _buildFilterWith('Mã đơn hàng: $_searchKey'),
                             if (typeFilter == 4)
-                              _buildFilterWith('Mã điểm bán: ${_searchKey}'),
+                              _buildFilterWith('Mã điểm bán: $_searchKey'),
                           ],
                         ),
                       ),
@@ -267,10 +267,10 @@ class _TransStoreViewState extends State<TransStoreView>
                 ),
                 const SizedBox(height: 12),
                 if (state.status == BlocStatus.LOADING_PAGE)
-                  Expanded(
+                  const Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 100),
-                      child: const Center(
+                      padding: EdgeInsets.only(bottom: 100),
+                      child: Center(
                         child: CircularProgressIndicator(
                           color: AppColor.BLUE_TEXT,
                         ),
@@ -283,7 +283,7 @@ class _TransStoreViewState extends State<TransStoreView>
                       onRefresh: _onRefresh,
                       child: SingleChildScrollView(
                         controller: _controller,
-                        physics: AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         child: Column(
                           children: [
                             if (state.isEmpty)
@@ -306,7 +306,7 @@ class _TransStoreViewState extends State<TransStoreView>
                                     dto: state.transDTO.items[index],
                                   );
                                 },
-                              ).toList(),
+                              ),
                             if (state.isLoadMore)
                               const UnconstrainedBox(
                                 child: SizedBox(
@@ -346,7 +346,7 @@ class _TransStoreViewState extends State<TransStoreView>
 
   Widget _buildFilterWith(String title) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       margin: const EdgeInsets.only(right: 4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -354,7 +354,7 @@ class _TransStoreViewState extends State<TransStoreView>
       ),
       child: Text(
         title,
-        style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+        style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
       ),
     );
   }

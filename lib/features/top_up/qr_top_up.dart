@@ -274,13 +274,13 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
             ],
           ),
           const SizedBox(height: 16),
-          Row(
+          const Row(
             children: [
-              const Text(
+              Text(
                 'Dịch vụ',
                 style: TextStyle(fontSize: 12),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 'Nạp tiền dịch vụ VietQR',
                 style: TextStyle(fontSize: 12),
@@ -373,8 +373,8 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.info_outline, color: AppColor.BLUE_TEXT),
               SizedBox(width: 4),
               Expanded(
@@ -492,7 +492,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 '- ',
                 style: TextStyle(
                   fontSize: 13,
@@ -502,14 +502,14 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
               ),
               Expanded(
                 child: RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: 'Vui lòng không chỉnh sửa ',
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColor.BLACK,
                       height: 1.4,
                     ),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: 'số tiền ',
                           style: TextStyle(fontWeight: FontWeight.bold)),

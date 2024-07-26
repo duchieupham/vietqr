@@ -90,7 +90,7 @@ class CheckExitsPhoneEvent extends LoginEvent {
 class GetFreeToken extends LoginEvent {
   final bool isCheckVer;
 
-  GetFreeToken({this.isCheckVer = false});
+  const GetFreeToken({this.isCheckVer = false});
 
   @override
   List<Object?> get props => [isCheckVer];
@@ -101,7 +101,7 @@ class UpdateEvent extends LoginEvent {}
 class GetVersionAppEvent extends LoginEvent {
   final bool isCheckVer;
 
-  GetVersionAppEvent({this.isCheckVer = false});
+  const GetVersionAppEvent({this.isCheckVer = false});
 
   @override
   List<Object?> get props => [isCheckVer];

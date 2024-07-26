@@ -140,7 +140,7 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
 
 class GradientText extends StatelessWidget {
   const GradientText(
-    this.text, {
+    this.text, {super.key, 
     required this.gradient,
     this.style,
   });

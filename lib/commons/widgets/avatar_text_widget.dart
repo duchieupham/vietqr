@@ -6,10 +6,10 @@ class AvatarTextWidget extends StatelessWidget {
   final String text;
 
   const AvatarTextWidget({
-    Key? key,
+    super.key,
     required this.size,
     required this.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

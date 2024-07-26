@@ -13,7 +13,7 @@ class ConnectTelegramRepository {
   const ConnectTelegramRepository();
 
   Future<ResponseMessageDTO> insertTele(Map<String, dynamic> data) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram';
       final response = await BaseAPIClient.postAPI(
@@ -32,7 +32,7 @@ class ConnectTelegramRepository {
   }
 
   Future<ResponseMessageDTO> sendFirstMessage(String chatId) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/telegram/send-message?chatId=$chatId';
@@ -72,7 +72,7 @@ class ConnectTelegramRepository {
   }
 
   Future<ResponseMessageDTO> remove(String chatId) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/telegram/remove?id=$chatId';
@@ -92,7 +92,7 @@ class ConnectTelegramRepository {
   }
 
   Future<ResponseMessageDTO> removeBankTelegram(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
@@ -115,7 +115,7 @@ class ConnectTelegramRepository {
   }
 
   Future<ResponseMessageDTO> addBankTelegram(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';

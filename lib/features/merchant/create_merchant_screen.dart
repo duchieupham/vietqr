@@ -34,7 +34,7 @@ class _CreateStoreScreenState extends State<CreateMerchantScreen> {
   String _national = '';
   String vaNumber = '';
   String _merchantId = '';
-  ResponseMessageDTO responseMDTO = ResponseMessageDTO(status: '', message: '');
+  ResponseMessageDTO responseMDTO = const ResponseMessageDTO(status: '', message: '');
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _CreateStoreScreenState extends State<CreateMerchantScreen> {
   }
 
   Widget _buildBody() {
-    Widget _body = const SizedBox();
+    Widget body = const SizedBox();
 
     switch (step) {
       case CreateMerchantType.INFO_CONFIRM:
@@ -62,7 +62,7 @@ class _CreateStoreScreenState extends State<CreateMerchantScreen> {
           'bankCode': widget.bankDetail.bankCode,
           'userBankName': widget.bankDetail.userBankName,
         };
-        _body = InfoConfirmView(
+        body = InfoConfirmView(
           callBack: _onHandleInputConfirm,
           nameStore: _merchantName,
           phone: _phone,
@@ -71,7 +71,7 @@ class _CreateStoreScreenState extends State<CreateMerchantScreen> {
         );
         break;
       case CreateMerchantType.INPUT_OTP:
-        _body = InputOTPView(
+        body = InputOTPView(
           callBack: _onHandleInputOTP,
           phone: _phone,
           national: _national,
@@ -92,17 +92,17 @@ class _CreateStoreScreenState extends State<CreateMerchantScreen> {
           'vaNumber': vaNumber,
           'bankShortName': widget.bankDetail.bankShortName,
         };
-        _body = InsertMerchantView(param: param);
+        body = InsertMerchantView(param: param);
         break;
 
       default:
-        _body = InputNameMerchantView(
+        body = InputNameMerchantView(
           callBack: _onHandleInputName,
           storeName: _merchantName,
         );
     }
 
-    return _body;
+    return body;
   }
 
   void _onHandleInputName(String value) {
@@ -111,7 +111,7 @@ class _CreateStoreScreenState extends State<CreateMerchantScreen> {
       _merchantName = value;
       _phone = '';
       _national = '';
-      responseMDTO = ResponseMessageDTO(status: '', message: '');
+      responseMDTO = const ResponseMessageDTO(status: '', message: '');
     });
   }
 

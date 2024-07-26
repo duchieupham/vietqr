@@ -7,12 +7,12 @@ import '../../models/response_message_dto.dart';
 class MediaHelper {
   MediaHelper._privateConstructor();
 
-  static MediaHelper _instance = MediaHelper._privateConstructor();
+  static final MediaHelper _instance = MediaHelper._privateConstructor();
 
   static MediaHelper get instance => _instance;
 
-  AudioPlayer _player = AudioPlayer();
-  HomeRepository homeRepository = HomeRepository();
+  final AudioPlayer _player = AudioPlayer();
+  HomeRepository homeRepository = const HomeRepository();
 
   playAudio(Map<String, dynamic> data) async {
     Map<String, dynamic> param = {};

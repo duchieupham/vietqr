@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/models/store/merchant_dto.dart';
-import 'package:vierqr/models/terminal_qr_dto.dart';
-import 'package:vierqr/services/providers/qr_box_provider.dart';
 
 class ItemMerchantWidget extends StatelessWidget {
   final Function(MerchantDTO) onSelect;
@@ -30,10 +25,10 @@ class ItemMerchantWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(dto.name,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             const SizedBox(height: 4),
             Text('${dto.totalTerminals.toString()} cửa hàng',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal)),
+                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.normal)),
           ],
         ),
       ),

@@ -1,11 +1,8 @@
-import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
@@ -22,19 +19,14 @@ import '../../commons/constants/configurations/route.dart';
 import '../../commons/constants/configurations/stringify.dart';
 import '../../commons/utils/encrypt_utils.dart';
 import '../../commons/utils/format_price.dart';
-import '../../commons/utils/log.dart';
-import '../../commons/utils/navigator_utils.dart';
 import '../../commons/widgets/dialog_widget.dart';
-import '../../layouts/m_app_bar.dart';
 import '../../models/annual_fee_dto.dart';
 import '../../models/maintain_charge_create.dart';
 import '../../models/user_repository.dart';
 import '../../services/local_notification/notification_service.dart';
 import '../../services/local_storage/shared_preference/shared_pref_utils.dart';
 import '../../services/providers/maintain_charge_provider.dart';
-import '../dashboard/dashboard_screen.dart';
 import 'events/maintain_charge_events.dart';
-import 'views/annual_fee_screen.dart';
 
 class MaintainChargeScreen extends StatefulWidget {
   final String? activeKey;
@@ -142,7 +134,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
       (match) => '${match.group(0)} - ',
     );
 
-    if (input.endsWith(' - ') && input.length > 0) {
+    if (input.endsWith(' - ') && input.isNotEmpty) {
       final lastNonDashIndex = input.lastIndexOf(RegExp(r'[^ -]'));
       if (lastNonDashIndex != -1) {
         input = input.substring(0, lastNonDashIndex + 1);
@@ -258,7 +250,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
               resizeToAvoidBottomInset: true,
               bottomNavigationBar: widget.type == 1 ? _bottom(state) : null,
               body: CustomScrollView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     pinned: false,
@@ -272,14 +264,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       },
                       child: Container(
                         padding: const EdgeInsets.only(left: 8),
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(
                               Icons.keyboard_arrow_left,
                               color: Colors.black,
                               size: 25,
                             ),
-                            const SizedBox(width: 2),
+                            SizedBox(width: 2),
                             Text(
                               "Trở về",
                               style:
@@ -302,7 +294,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   ),
                   if (widget.type == 0)
                     SliverToBoxAdapter(
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
                         child: Column(
@@ -335,7 +327,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           return const SizedBox.shrink();
         }
         return Container(
-          padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+          padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
           width: MediaQuery.of(context).size.width,
           // height: MediaQuery.of(context).size.height,
           child: Column(
@@ -347,32 +339,32 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         "Chọn gói phí kích hoạt ",
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
-                      Text(
+                      const Text(
                         "dịch vụ phần mềm VietQR",
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "TK ${value.bankName} - ${value.bankAccount}",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ],
                   );
                 },
               ),
-              SizedBox(height: 10),
-              Container(
+              const SizedBox(height: 10),
+              SizedBox(
                 height: MediaQuery.of(context).size.height * 0.5,
                 child: GridView.builder(
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: value.listAnnualFee.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 30,
                     mainAxisExtent: 155,
@@ -419,7 +411,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                       children: [
                                         Text(
                                           "${value.listAnnualFee[index].duration}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 22,
                                             color: AppColor.BLACK,
@@ -428,7 +420,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                         const SizedBox(
                                           width: 4,
                                         ),
-                                        Text(
+                                        const Text(
                                           "tháng",
                                           style: TextStyle(
                                             fontSize: 18,
@@ -457,7 +449,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                               AppColor.BLACK.withOpacity(0.3)),
                                     ),
                                     const SizedBox(height: 10),
-                                    Text(
+                                    const Text(
                                       'VAT 8%',
                                       style: TextStyle(
                                           fontSize: 12,
@@ -478,13 +470,13 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                         const EdgeInsets.fromLTRB(15, 2, 15, 2),
                                     height: 30,
                                     decoration: BoxDecoration(
-                                      color: Color(0xFF209493),
+                                      color: const Color(0xFF209493),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     child: Center(
                                       child: Text(
                                         "${value.listAnnualFee[index].description}",
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: AppColor.WHITE,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 12,
@@ -509,7 +501,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
 
   Widget _activeKeyWidget() {
     return Container(
-      padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height * 0.7,
       child: Column(
@@ -521,23 +513,23 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Nhập mã kích hoạt",
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                  Text(
+                  const Text(
                     "dịch vụ phần mềm VietQR",
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     "TK ${value.bankName} - ${value.bankAccount}",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ],
               );
             },
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           TextFormField(
             focusNode: node,
             textInputAction: TextInputAction.next,
@@ -578,7 +570,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 hintText: 'Nhập mã ở đây',
                 hintStyle: TextStyle(
                     fontSize: 15, color: AppColor.BLACK.withOpacity(0.5)),
-                focusedBorder: UnderlineInputBorder(
+                focusedBorder: const UnderlineInputBorder(
                     borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
                 enabledBorder: UnderlineInputBorder(
                     borderSide:
@@ -601,7 +593,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 )),
           ),
           const SizedBox(height: 20),
-          Container(
+          SizedBox(
             width: double.infinity,
             child: Text(
               errorMsg.isNotEmpty ? errorMsg : "Đoạn mã chứa 12 ký tự.",
@@ -642,7 +634,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(),
+                    const SizedBox(),
                     Text(
                       "Tiếp tục",
                       style: TextStyle(
@@ -663,12 +655,12 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
               ),
             ),
           )
-        : Container(
+        : SizedBox(
             height: MediaQuery.of(context).size.height * 0.12,
             // margin: const EdgeInsets.only(bottom: 80),
             child: Column(
               children: [
-                MySeparator(
+                const MySeparator(
                   color: AppColor.GREY_DADADA,
                 ),
                 Container(
@@ -680,7 +672,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             "Tổng tiền",
                             style: TextStyle(fontSize: 15),
                           ),
@@ -691,14 +683,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                 selectFeeAmount != 0
                                     ? formatNumber(selectFeeAmount)
                                     : '0',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: AppColor.BLUE_TEXT,
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              Text(
+                              const Text(
                                 "VND",
                                 style: TextStyle(fontSize: 15),
                               ),
@@ -706,7 +698,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                               selectFeeAmount != 0
                                   ? InkWell(
                                       onTap: _onOpenPopup,
-                                      child: Icon(
+                                      child: const Icon(
                                         Icons.info_outline,
                                         color: AppColor.BLUE_TEXT,
                                       ),

@@ -30,16 +30,16 @@ class DialogNFC extends StatelessWidget {
                 height: 80,
               ),
               const Padding(padding: EdgeInsets.only(top: 10)),
-              Text(
+              const Text(
                 'Không thể liên kết',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const Padding(padding: EdgeInsets.only(top: 10)),
-              SizedBox(
+              const SizedBox(
                 width: 250,
                 height: 60,
                 child: Text(
@@ -47,7 +47,7 @@ class DialogNFC extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                   ),
                 ),

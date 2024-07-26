@@ -8,9 +8,9 @@ import 'package:vierqr/models/transaction_bank_dto.dart';
 class TransactionBankItem extends StatelessWidget {
   final TransactionBankDTO transactionDTO;
   const TransactionBankItem({
-    Key? key,
+    super.key,
     required this.transactionDTO,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

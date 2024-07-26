@@ -19,11 +19,11 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
   final bool hideRemove;
 
   const BottomSheetDetailBankBDSD({
-    Key? key,
+    super.key,
     required this.dto,
     required this.onDelete,
     this.hideRemove = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
               const SizedBox(
                 width: 36,
               ),
-              Text(
+              const Text(
                 'Tài khoản chia sẻ',
                 style: TextStyle(
                   fontSize: 16,
@@ -66,15 +66,15 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
           const SizedBox(
             height: 8,
           ),
-          Text(
+          const Text(
             'Mã VietQR nhận biến động số dư theo nhóm.\nNhận tiền từ mọi ngân hàng và ví điện tử có hỗ trợ VietQR.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: BoxDecoration(
-                image: DecorationImage(
+                image: const DecorationImage(
                     image: AssetImage('assets/images/bg-qr-vqr.png'),
                     fit: BoxFit.cover),
                 borderRadius: BorderRadius.circular(14)),
@@ -82,10 +82,10 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Container(
                   height: 60,
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     color: AppColor.GREY_BG,
@@ -106,7 +106,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Container(
+                      const SizedBox(
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
@@ -140,7 +140,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Container(
+                      const SizedBox(
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
@@ -163,13 +163,13 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(16)),
                   child: Column(
                     children: [
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -181,8 +181,8 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                                 version: QrVersions.auto,
                                 embeddedImage: const AssetImage(
                                     'assets/images/ic-viet-qr-small.png'),
-                                embeddedImageStyle: QrEmbeddedImageStyle(
-                                  size: const Size(30, 30),
+                                embeddedImageStyle: const QrEmbeddedImageStyle(
+                                  size: Size(30, 30),
                                 ),
                               ),
                             ),
@@ -203,7 +203,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
                     ],
@@ -312,7 +312,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
         decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(color: AppColor.grey979797.withOpacity(0.4)),

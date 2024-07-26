@@ -43,7 +43,7 @@ class TransHistoryState extends Equatable {
       msg: msg ?? this.msg,
       list: list ?? this.list,
       // terminalDto: terminalDto ?? this.terminalDto,
-      terminalAccountList: terminalAccountDto ?? this.terminalAccountList,
+      terminalAccountList: terminalAccountDto ?? terminalAccountList,
       isLoadMore: isLoadMore ?? this.isLoadMore,
       isEmpty: isEmpty ?? this.isEmpty,
       offset: offset ?? this.offset,

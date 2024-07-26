@@ -82,7 +82,7 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                                         showBorder: true,
                                         enable: false,
                                         value: state.codeStore,
-                                        styles: TextStyle(
+                                        styles: const TextStyle(
                                             color: AppColor.GREY_TEXT),
                                         fillColor: Colors.grey.withOpacity(0.2),
                                         textFieldType: TextfieldType.LABEL,
@@ -109,7 +109,7 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                                                   BorderRadius.circular(100),
                                               color: AppColor.BLUE_TEXT
                                                   .withOpacity(0.35)),
-                                          child: Icon(Icons.edit,
+                                          child: const Icon(Icons.edit,
                                               color: AppColor.BLUE_TEXT),
                                         ),
                                       ),
@@ -119,7 +119,7 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                               ),
                               const SizedBox(height: 12),
                               RichText(
-                                text: TextSpan(
+                                text: const TextSpan(
                                   style: TextStyle(
                                       color: AppColor.GREY_TEXT, fontSize: 15),
                                   children: [

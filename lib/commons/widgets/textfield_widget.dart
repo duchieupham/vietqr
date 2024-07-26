@@ -26,7 +26,7 @@ class TextFieldWidget extends StatelessWidget {
   final Function(PointerDownEvent)? onTapOutside;
 
   const TextFieldWidget({
-    Key? key,
+    super.key,
     this.width,
     required this.hintText,
     required this.controller,
@@ -48,7 +48,7 @@ class TextFieldWidget extends StatelessWidget {
     this.onTapOutside,
     this.enable,
     this.height = 60,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

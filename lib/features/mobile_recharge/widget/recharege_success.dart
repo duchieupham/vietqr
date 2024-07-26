@@ -9,8 +9,7 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 class RechargeSuccess extends StatefulWidget {
   final String money;
   final String phoneNo;
-  const RechargeSuccess({Key? key, required this.money, required this.phoneNo})
-      : super(key: key);
+  const RechargeSuccess({super.key, required this.money, required this.phoneNo});
 
   @override
   State<RechargeSuccess> createState() => _RechargeSuccessState();

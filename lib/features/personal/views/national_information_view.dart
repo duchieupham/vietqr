@@ -197,9 +197,9 @@ class NationalInformationView extends StatelessWidget {
                             ),
                           );
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Icon(
                               Icons.person_outline_rounded,
                               color: AppColor.WHITE,

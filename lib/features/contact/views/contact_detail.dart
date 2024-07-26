@@ -259,7 +259,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                   items: List.generate(state.listContactDTO.length, (index) {
                     ContactDetailDTO dto = state.listContactDetail[index];
                     return ListView(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       children: [
                         if (state.status == BlocStatus.LOADING)
@@ -361,7 +361,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                         : dto.type == 4
                             ? 'VCard'
                             : 'Thẻ khác',
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 12,
                         color: AppColor.WHITE,
                         fontWeight: FontWeight.w500,
@@ -382,13 +382,13 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
       children: [
         IconButton(
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.clear),
+          icon: const Icon(Icons.clear),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(maxWidth: 40, minWidth: 38),
         ),
         GestureDetector(
           onTap: () {},
-          child: Container(
+          child: SizedBox(
             width: 60,
             height: 40,
             child: Image.asset(
@@ -450,20 +450,20 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                       },
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 10),
-                          Text(
+                          const Text(
                             'Mô tả QR',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           Container(
                             width: double.infinity,
                             height: height < 750 ? null : 80,
-                            margin: EdgeInsets.symmetric(vertical: 8),
-                            padding: EdgeInsets.symmetric(
+                            margin: const EdgeInsets.symmetric(vertical: 8),
+                            padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
                                 color: AppColor.WHITE,
@@ -498,7 +498,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                                   left: 50, right: 50, top: 8, bottom: 8)
                               : const EdgeInsets.only(
                                   left: 50, right: 50, top: 20, bottom: 20),
-                          decoration: BoxDecoration(color: AppColor.WHITE),
+                          decoration: const BoxDecoration(color: AppColor.WHITE),
                           child: Stack(
                             children: [
                               VietQr(
@@ -540,17 +540,17 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  _buildItem('Số điện thoại', '${dto.phoneNo}'),
+                                  _buildItem('Số điện thoại', dto.phoneNo),
                                   _buildItem('Email',
-                                      '${dto.email.isNotEmpty ? dto.email : ''}'),
+                                      dto.email.isNotEmpty ? dto.email : ''),
                                   _buildItem('Địa chỉ',
-                                      '${dto.address.isNotEmpty ? dto.address : ''}'),
+                                      dto.address.isNotEmpty ? dto.address : ''),
                                   _buildItem('Công ty',
-                                      '${dto.company.isNotEmpty ? dto.company : ''}'),
+                                      dto.company.isNotEmpty ? dto.company : ''),
                                   _buildItem('Website',
-                                      '${dto.website.isNotEmpty ? dto.website : ''}'),
+                                      dto.website.isNotEmpty ? dto.website : ''),
                                   _buildItem('Ghi chú',
-                                      '${dto.additionalData.isNotEmpty ? dto.additionalData : ''}'),
+                                      dto.additionalData.isNotEmpty ? dto.additionalData : ''),
                                   const SizedBox(height: 20),
                                 ],
                               ),
@@ -558,11 +558,11 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                           )
                         else ...[
                           _buildItem('Ghi chú',
-                              '${dto.additionalData.isNotEmpty ? dto.additionalData : ''}'),
+                              dto.additionalData.isNotEmpty ? dto.additionalData : ''),
                           if (dto.type == 3 && dto.value.contains('https')) ...[
                             _buildItem('Đường dẫn',
-                                '${dto.value.isNotEmpty ? dto.value : ''}',
-                                style: TextStyle(
+                                dto.value.isNotEmpty ? dto.value : '',
+                                style: const TextStyle(
                                   color: Colors.lightBlueAccent,
                                   decoration: TextDecoration.underline,
                                 ), onTap: () async {
@@ -587,7 +587,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
           left: 0,
           right: 0,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: _buildAppBar(),
           ),
         ),
@@ -715,7 +715,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                   children: [
                     Image.asset('assets/images/ic-slide-updown.png'),
                     const SizedBox(height: 30),
-                    Text(
+                    const Text(
                       'Trượt lên và xuống để xem thẻ QR khác',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -745,7 +745,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
         Container(
           padding: EdgeInsets.symmetric(
               horizontal: 20, vertical: height < 750 ? 9 : 14),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border.symmetric(
               horizontal: BorderSide(width: 0.5, color: AppColor.WHITE),
             ),

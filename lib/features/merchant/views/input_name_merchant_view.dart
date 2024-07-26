@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/features/merchant/widgets/header_merchant_widget.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 
@@ -40,7 +39,7 @@ class _InputNameStoreViewState extends State<InputNameMerchantView> {
             'assets/images/logo-business-3D.png',
             height: 100,
           ),
-          Text(
+          const Text(
             'Đầu tiên, vui lòng cung cấp\ntên đại lý của bạn',
             style: TextStyle(
               fontSize: 20,
@@ -64,7 +63,7 @@ class _InputNameStoreViewState extends State<InputNameMerchantView> {
               _value = value;
               setState(() {});
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Nhập tên đại lý ở đây',
               hintStyle: TextStyle(
                 fontSize: 14,
@@ -88,7 +87,7 @@ class _InputNameStoreViewState extends State<InputNameMerchantView> {
           Align(
             alignment: Alignment.centerLeft,
             child: RichText(
-              text: TextSpan(
+              text: const TextSpan(
                 style: TextStyle(
                     fontSize: 14,
                     color: AppColor.BLACK,

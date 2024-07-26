@@ -21,7 +21,7 @@ class _TransUpdateScreenState extends State<TransUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MAppBar(title: 'Trở về', centerTitle: false, showBG: false),
+      appBar: const MAppBar(title: 'Trở về', centerTitle: false, showBG: false),
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: Padding(
@@ -37,6 +37,6 @@ class _TransUpdateScreenState extends State<TransUpdateScreen> {
     } else if (widget.role.isRequestTrans) {
       return UpdateTransView(dto: widget.dto, role: widget.role);
     }
-    return NotPerUpdateTransView();
+    return const NotPerUpdateTransView();
   }
 }

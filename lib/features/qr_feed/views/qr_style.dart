@@ -1,31 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
-import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrStyle extends StatefulWidget {
@@ -51,12 +44,12 @@ class QrStyle extends StatefulWidget {
 class _QrStyleState extends State<QrStyle> {
   bool _isPersonalSelected = true;
   bool _isLogoAdded = false;
-  bool _isQrLink = true;
+  final bool _isQrLink = true;
   int _charCount = 0;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   // int  = 1;
-  ValueNotifier<int> _selectedValue = ValueNotifier<int>(1);
+  final ValueNotifier<int> _selectedValue = ValueNotifier<int>(1);
 
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
   final imagePicker = ImagePicker();

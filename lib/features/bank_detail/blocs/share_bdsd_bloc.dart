@@ -19,16 +19,17 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 
 class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     with BaseManager {
+  @override
   final BuildContext context;
 
   ShareBDSDBloc(this.context)
       : super(
           ShareBDSDState(
-            listBusinessAvailDTO: [],
-            listMember: [],
-            listTelegram: [],
-            listLark: [],
-            listMemberSearch: [],
+            listBusinessAvailDTO: const [],
+            listMember: const [],
+            listTelegram: const [],
+            listLark: const [],
+            listMemberSearch: const [],
             listTerminal: TerminalDto(terminals: []),
           ),
         ) {
@@ -51,10 +52,10 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     on<FetchTerminasBDSDPageEvent>(_fetchMyListGroup);
   }
 
-  ShareBDSDRepository repository = ShareBDSDRepository();
+  ShareBDSDRepository repository = const ShareBDSDRepository();
 
-  ConnectLarkRepository larkRepository = ConnectLarkRepository();
-  ConnectTelegramRepository telegramRepository = ConnectTelegramRepository();
+  ConnectLarkRepository larkRepository = const ConnectLarkRepository();
+  ConnectTelegramRepository telegramRepository = const ConnectTelegramRepository();
 
   void _getBusinessAvailDTO(ShareBDSDEvent event, Emitter emit) async {
     try {

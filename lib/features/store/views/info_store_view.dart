@@ -90,7 +90,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
   }
 
   Widget _buildDropListTerminal() {
-    return Container(
+    return SizedBox(
       height: 44,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<MerchantDTO>(
@@ -105,7 +105,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                       child: Text(
                         item.name,
                         maxLines: 2,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           overflow: TextOverflow.ellipsis,
@@ -184,7 +184,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                 if (title != null)
                   Text(
                     title,
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 Wrap(
                   children: [
@@ -196,7 +196,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                             fontSize: 12),
                       ),
                     if (contentColor == null)
-                      Text(
+                      const Text(
                         ' VND',
                         style:
                             TextStyle(color: AppColor.GREY_TEXT, fontSize: 12),
@@ -219,7 +219,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
   }
 
   void _onCreateStore() async {
-    await NavigatorUtils.navigatePage(context, CreateStoreScreen(),
+    await NavigatorUtils.navigatePage(context, const CreateStoreScreen(),
         routeName: CreateStoreScreen.routeName);
     widget.onRefresh();
   }
@@ -342,16 +342,17 @@ class _InfoStoreViewState extends State<InfoStoreView> {
   }
 
   Widget _buildListStore() {
-    if (widget.stores.isEmpty)
+    if (widget.stores.isEmpty) {
       return Center(
         child: Container(
-          margin: EdgeInsets.only(top: 60),
-          child: Text(
+          margin: const EdgeInsets.only(top: 60),
+          child: const Text(
             'Danh sách cửa hàng đang trống',
             textAlign: TextAlign.center,
           ),
         ),
       );
+    }
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       margin: const EdgeInsets.only(top: 16, bottom: 16),
@@ -363,14 +364,14 @@ class _InfoStoreViewState extends State<InfoStoreView> {
         children: [
           Row(
             children: [
-              Text(
+              const Text(
                 'Danh sách cửa hàng',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Text(
                 '${widget.totalStoreDTO?.totalTerminal ?? 0} cửa hàng',
-                style: TextStyle(color: AppColor.GREY_TEXT),
+                style: const TextStyle(color: AppColor.GREY_TEXT),
               ),
             ],
           ),
@@ -442,7 +443,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                       const SizedBox(height: 16),
                       RichText(
                         text: TextSpan(
-                          style: TextStyle(color: Colors.black, fontSize: 11),
+                          style: const TextStyle(color: Colors.black, fontSize: 11),
                           children: [
                             TextSpan(
                               text: '${dto.totalTrans ?? 0} giao dịch\n',
@@ -450,14 +451,14 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                             TextSpan(
                               text: CurrencyUtils.instance.getCurrencyFormatted(
                                   (dto.totalAmount ?? 0).toString()),
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: AppColor.BLUE_TEXT, fontSize: 14),
                             ),
-                            TextSpan(
+                            const TextSpan(
                               text: ' VND\n',
                               style: TextStyle(color: AppColor.GREY_TEXT),
                             ),
-                            TextSpan(
+                            const TextSpan(
                               text: 'Doanh thu',
                               style: TextStyle(
                                   color: AppColor.GREY_TEXT, fontSize: 11),
@@ -468,7 +469,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                       const SizedBox(height: 12),
                       RichText(
                         text: TextSpan(
-                          style: TextStyle(color: Colors.black, fontSize: 11),
+                          style: const TextStyle(color: Colors.black, fontSize: 11),
                           children: [
                             TextSpan(
                               text: (dto.ratePreviousDate ?? 0) >= 0
@@ -480,7 +481,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                                       : AppColor.RED_EC1010,
                                   fontSize: 14),
                             ),
-                            TextSpan(
+                            const TextSpan(
                               text: 'So với hôm qua',
                               style: TextStyle(
                                   color: AppColor.GREY_TEXT, fontSize: 11),

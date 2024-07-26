@@ -49,14 +49,14 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
               },
               child: Container(
                 padding: const EdgeInsets.only(left: 8),
-                child: Row(
+                child: const Row(
                   children: [
                     Icon(
                       Icons.keyboard_arrow_left,
                       color: Colors.black,
                       size: 25,
                     ),
-                    const SizedBox(width: 2),
+                    SizedBox(width: 2),
                     Text(
                       "Trở về",
                       style: TextStyle(color: Colors.black, fontSize: 14),
@@ -79,14 +79,14 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(<Widget>[
               Container(
-                padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                    Text(
+                    const Text(
                       "Xác nhận thông tin kích hoạt \ndịch vụ phần mềm VietQR",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -97,7 +97,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "TK kích hoạt:",
                             style: TextStyle(fontSize: 15),
                           ),
@@ -111,14 +111,14 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                               }
                               return Text(
                                 text,
-                                style: TextStyle(fontSize: 15),
+                                style: const TextStyle(fontSize: 15),
                               );
                             },
                           ),
                         ],
                       ),
                     ),
-                    MySeparator(
+                    const MySeparator(
                       color: AppColor.GREY_DADADA,
                     ),
                     Padding(
@@ -126,18 +126,18 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Mã:",
                             style: TextStyle(fontSize: 15),
                           ),
                           Text(
                             dto.key ?? '',
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ],
                       ),
                     ),
-                    MySeparator(
+                    const MySeparator(
                       color: AppColor.GREY_DADADA,
                     ),
                     Padding(
@@ -145,18 +145,18 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             "Thời hạn mã:",
                             style: TextStyle(fontSize: 15),
                           ),
                           Text(
                             "${dto.duration.toString()} tháng",
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ],
                       ),
                     ),
-                    MySeparator(
+                    const MySeparator(
                       color: AppColor.GREY_DADADA,
                     ),
                     Padding(
@@ -167,18 +167,18 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Từ ngày",
                                 style: TextStyle(fontSize: 15),
                               ),
                               Text(
                                 timestampToDate(dto.validFrom!),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                             ],
                           ),
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward,
                             color: AppColor.BLACK,
                             size: 16,
@@ -186,13 +186,13 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Đến ngày",
                                 style: TextStyle(fontSize: 15),
                               ),
                               Text(
                                 timestampToDate(dto.validTo!),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),
                             ],
@@ -241,7 +241,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: AppColor.BLUE_TEXT,
                     borderRadius: BorderRadius.circular(5)),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(),

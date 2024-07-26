@@ -34,7 +34,7 @@ class CustomerVaRepository {
         result = ResponseMessageDTO.fromJson(data);
       }
     } catch (e) {
-      LOG.error('checkExistedBankAccountVa: ERROR: ' + e.toString());
+      LOG.error('checkExistedBankAccountVa: ERROR: $e');
     }
     return result;
   }
@@ -59,7 +59,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error('getCustomerVasByUserId: ERROR: ' + e.toString());
+      LOG.error('getCustomerVasByUserId: ERROR: $e');
     }
     return result;
   }
@@ -100,7 +100,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error('confirmCustomerVaOTP: ' + e.toString());
+      LOG.error('confirmCustomerVaOTP: $e');
     }
     return result;
   }
@@ -125,7 +125,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error('unRegisterCustomerVa: ERROR: ' + e.toString());
+      LOG.error('unRegisterCustomerVa: ERROR: $e');
     }
     return result;
   }
@@ -145,7 +145,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error('insertCustomerVa: ERROR:' + e.toString());
+      LOG.error('insertCustomerVa: ERROR:$e');
     }
     return result;
   }
@@ -165,7 +165,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error('insertCustomerVa: ERROR:' + e.toString());
+      LOG.error('insertCustomerVa: ERROR:$e');
     }
     return result;
   }

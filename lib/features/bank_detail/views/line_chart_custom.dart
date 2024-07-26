@@ -12,11 +12,10 @@ class LineChartCustom extends StatefulWidget {
   final int type;
 
   const LineChartCustom(
-      {Key? key,
+      {super.key,
       required this.listData,
       required this.listSeparate,
-      required this.type})
-      : super(key: key);
+      required this.type});
 
   @override
   State<LineChartCustom> createState() => _LineChartCustomState();
@@ -27,7 +26,7 @@ class _LineChartCustomState extends State<LineChartCustom> {
 
   int getDaysInMonth(int year, int month) {
     DateTime firstDayOfNextMonth = DateTime(year, month + 1, 1);
-    DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+    DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(const Duration(days: 1));
 
     return lastDayOfMonth.day;
   }
@@ -64,13 +63,13 @@ class _LineChartCustomState extends State<LineChartCustom> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 400,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Số tiền\n(VND)',
             style: TextStyle(fontSize: 10),
           ),
@@ -84,7 +83,7 @@ class _LineChartCustomState extends State<LineChartCustom> {
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SfCartesianChart(
                           enableAxisAnimation: true,
-                          primaryXAxis: CategoryAxis(isInversed: false),
+                          primaryXAxis: const CategoryAxis(isInversed: false),
                           primaryYAxis: NumericAxis(
                               labelFormat: '{value}$currencyUnit',
                               labelAlignment: LabelAlignment.center),
@@ -98,7 +97,7 @@ class _LineChartCustomState extends State<LineChartCustom> {
                                 return (dto.totalCashIn / conversionRate);
                               },
                               color: AppColor.GREEN,
-                              markerSettings: MarkerSettings(
+                              markerSettings: const MarkerSettings(
                                 isVisible: true,
                                 height: 3,
                                 width: 3,
@@ -110,7 +109,7 @@ class _LineChartCustomState extends State<LineChartCustom> {
                                 xValueMapper: (ResponseStatisticDTO dto, _) =>
                                     dto.getDayFromMonth(),
                                 color: AppColor.RED_TEXT,
-                                markerSettings: MarkerSettings(
+                                markerSettings: const MarkerSettings(
                                   isVisible: true,
                                   height: 3,
                                   width: 3,
@@ -127,7 +126,7 @@ class _LineChartCustomState extends State<LineChartCustom> {
                         child: Text(
                           'Thời gian\n(${widget.type == 0 ? 'Giờ' : 'Ngày'})',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 8),
+                          style: const TextStyle(fontSize: 8),
                         ),
                       )
                     ],

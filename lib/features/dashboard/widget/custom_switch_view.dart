@@ -5,7 +5,7 @@ class CustomSwitch extends StatefulWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
 
-  CustomSwitch({required this.value, required this.onChanged});
+  const CustomSwitch({super.key, required this.value, required this.onChanged});
 
   @override
   _CustomSwitchState createState() => _CustomSwitchState();
@@ -26,7 +26,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
           color: widget.value ? AppColor.BLUE_TEXT : Colors.grey,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 3.0),
+          padding: const EdgeInsets.symmetric(horizontal: 3.0),
           child: Row(
             mainAxisAlignment:
                 widget.value ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -34,7 +34,7 @@ class _CustomSwitchState extends State<CustomSwitch> {
               Container(
                 width: 24.0,
                 height: 24.0,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
                 ),

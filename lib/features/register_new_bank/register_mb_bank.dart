@@ -56,7 +56,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      appBar: MAppBar(
+      appBar: const MAppBar(
         title: 'Mở TK ngân hàng',
       ),
       body: BlocProvider<AddBankBloc>(
@@ -90,7 +90,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
                     child: ListView(
                       controller: scrollController,
                       padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                          const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                       children: [
                         const Text(
                           'Ngân hàng thụ hưởng*',
@@ -153,7 +153,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
                                         'Chọn ngân hàng thụ hưởng',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                     ),
@@ -205,7 +205,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
                                     provider.typeAccount.tile,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                     ),

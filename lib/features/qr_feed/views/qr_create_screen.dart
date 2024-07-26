@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
@@ -23,7 +20,7 @@ class QrCreateScreen extends StatefulWidget {
 }
 
 class _QrCreateScreenState extends State<QrCreateScreen> {
-  PageController _pageController = PageController(initialPage: 0);
+  final PageController _pageController = PageController(initialPage: 0);
   ViewType _viewType = ViewType.GRID;
 
   final List<QrType> _qrType = [

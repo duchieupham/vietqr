@@ -67,7 +67,7 @@ class ConnectTelegramScreen extends StatelessWidget {
             },
             builder: (context, state) {
               if (state is GetInfoLoadingState) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               if (list.isEmpty) {
                 return _buildBlankWidget(context);
@@ -79,7 +79,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                     height: 20,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 16, right: 16, bottom: 20),
+                    padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
                     child: InkWell(
                       onTap: () {
                         DialogWidget.instance.openMsgDialog(
@@ -96,7 +96,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                       },
                       child: Container(
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                             color: AppColor.RED_TEXT.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(8)),
@@ -104,12 +104,12 @@ class ConnectTelegramScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              padding: EdgeInsets.all(2),
+                              padding: const EdgeInsets.all(2),
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       width: 1, color: AppColor.RED_TEXT),
                                   borderRadius: BorderRadius.circular(20)),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.delete,
                                 color: AppColor.RED_TEXT,
                                 size: 14,
@@ -118,7 +118,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                             const SizedBox(
                               width: 8,
                             ),
-                            Text(
+                            const Text(
                               'Huỷ kết nối Telegram',
                               style: TextStyle(
                                 fontSize: 12,
@@ -141,12 +141,12 @@ class ConnectTelegramScreen extends StatelessWidget {
 
   Widget _buildListChatTele(List<InfoTeleDTO> list) {
     return ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         itemBuilder: (context, index) {
           return _buildItemChatTele(list[index], context);
         },
         separatorBuilder: (context, index) {
-          return SizedBox(
+          return const SizedBox(
             height: 20,
           );
         },
@@ -158,7 +158,7 @@ class ConnectTelegramScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Thông tin kết nối',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
@@ -179,12 +179,12 @@ class ConnectTelegramScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    Text(
+                    const Text(
                       'Nền tảng kết nối:',
                       style: TextStyle(color: AppColor.GREY_TEXT),
                     ),
                     const Spacer(),
-                    Text(
+                    const Text(
                       'Telegram',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
@@ -213,14 +213,14 @@ class ConnectTelegramScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    Text(
+                    const Text(
                       'Thông tin kết nối:',
                       style: TextStyle(color: AppColor.GREY_TEXT),
                     ),
                     const Spacer(),
                     Text(
                       dto.chatId,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -255,7 +255,7 @@ class ConnectTelegramScreen extends StatelessWidget {
             child: Container(
               width: 100,
               height: 30,
-              padding: EdgeInsets.only(left: 12, right: 8),
+              padding: const EdgeInsets.only(left: 12, right: 8),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   color: AppColor.WHITE),
@@ -265,7 +265,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                     'assets/images/ic_copy.png',
                     height: 24,
                   ),
-                  Text(
+                  const Text(
                     'Sao chép',
                     style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                   )
@@ -277,14 +277,14 @@ class ConnectTelegramScreen extends StatelessWidget {
         const SizedBox(
           height: 20,
         ),
-        Text(
+        const Text(
           'Danh sách TK ngân hàng',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(
           height: 4,
         ),
-        Text(
+        const Text(
             'Tài khoản ngân hàng được chia sẻ thông tin biến động số dư qua Telegram',
             style: TextStyle(
               fontSize: 12,
@@ -301,9 +301,9 @@ class ConnectTelegramScreen extends StatelessWidget {
             function: () async {
               await DialogWidget.instance.showModelBottomSheet(
                 isDismissible: true,
-                padding: EdgeInsets.only(left: 12, right: 12, bottom: 32),
+                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 32),
                 height: MediaQuery.of(context).size.height * 0.8,
-                margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
                 borderRadius: BorderRadius.circular(16),
                 widget: BottomSheetAddBankAccount(
                   onSelect: (bankAccount) async {
@@ -337,7 +337,7 @@ class ConnectTelegramScreen extends StatelessWidget {
         ),
         ...dto.banks.map((bank) {
           return Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5), color: AppColor.WHITE),
             margin: const EdgeInsets.only(bottom: 8),
@@ -398,7 +398,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                         },
                       );
                     },
-                    child: Icon(
+                    child: const Icon(
                       Icons.remove_circle_outline,
                       color: AppColor.RED_TEXT,
                       size: 18,
@@ -406,7 +406,7 @@ class ConnectTelegramScreen extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
         const SizedBox(
           height: 8,
         ),
@@ -428,14 +428,14 @@ class ConnectTelegramScreen extends StatelessWidget {
           const SizedBox(
             height: 12,
           ),
-          Text(
+          const Text(
             'Telegram',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(
             height: 8,
           ),
-          Text(
+          const Text(
             'Nhận thông tin Biến động số dư qua Telegram khi quý khách thực hiện kết nối. An tâm về vấn đề an toàn thông tin - dữ liệu của Telegram mang lại.',
             textAlign: TextAlign.center,
           ),

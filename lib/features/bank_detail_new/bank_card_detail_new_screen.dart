@@ -1,34 +1,16 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/helper/app_data_helper.dart';
-import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
-import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/page/statistical_page.dart';
-import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/events/transaction_event.dart';
 import 'package:vierqr/features/bank_detail_new/views/detail_bank_card_screen.dart';
-import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/main.dart';
-import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/qr_bank_detail.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/terminal_response_dto.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/account_bank_detail_provider.dart';
 
 import 'views/bank_transactions_screen.dart';

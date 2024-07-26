@@ -21,7 +21,6 @@ import 'package:vierqr/features/popup_bank/blocs/popup_bank_bloc.dart';
 import 'package:vierqr/features/popup_bank/events/popup_bank_event.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
 import 'package:vierqr/features/popup_bank/states/popup_bank_state.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -56,7 +55,7 @@ class _PopupBankScreen extends StatefulWidget {
   final BankAccountDTO dto;
   final int index;
 
-  _PopupBankScreen({required this.tag, required this.dto, required this.index});
+  const _PopupBankScreen({required this.tag, required this.dto, required this.index});
 
   @override
   State<_PopupBankScreen> createState() => _PopupBankScreenState();
@@ -64,7 +63,7 @@ class _PopupBankScreen extends StatefulWidget {
 
 class _PopupBankScreenState extends State<_PopupBankScreen> {
   late PopupBankBloc bloc;
-  final bankCardRepository = BankCardRepository();
+  final bankCardRepository = const BankCardRepository();
   final otpController = TextEditingController();
 
   final globalKey = GlobalKey();
@@ -184,7 +183,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 40,
                                       child: VerticalDashedLine(),
                                     ),
@@ -222,7 +221,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 40,
                                       child: VerticalDashedLine(),
                                     ),

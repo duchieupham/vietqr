@@ -4,11 +4,11 @@ import 'package:vierqr/features/register_new_bank/provider/register_new_bank_pro
 
 class BottomSheetTypeAccount extends StatelessWidget {
   const BottomSheetTypeAccount({
-    Key? key,
+    super.key,
     required this.list,
     required this.onChange,
     required this.initData,
-  }) : super(key: key);
+  });
 
   final List<AccountType> list;
   final AccountType initData;
@@ -40,7 +40,7 @@ class BottomSheetTypeAccount extends StatelessWidget {
                 const SizedBox(
                   width: 32,
                 ),
-                Expanded(
+                const Expanded(
                     child: Center(
                         child: Text(
                   'Loại tài khoản',
@@ -50,7 +50,7 @@ class BottomSheetTypeAccount extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.close,
                     size: 20,
                   ),
@@ -75,8 +75,8 @@ class BottomSheetTypeAccount extends StatelessWidget {
                           children: [
                             Expanded(child: Text(list[index].tile)),
                             if (initData.type == list[index].type)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20),
+                              const Padding(
+                                padding: EdgeInsets.only(right: 20),
                                 child: Icon(
                                   Icons.check,
                                   size: 18,

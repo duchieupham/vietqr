@@ -9,7 +9,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';

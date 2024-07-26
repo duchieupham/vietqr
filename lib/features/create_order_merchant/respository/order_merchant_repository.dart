@@ -14,7 +14,7 @@ class OrderMerchantRepository {
 
   //get detail
   Future<ResponseMessageDTO> createOrder(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
 
     try {
       final String url =
@@ -28,7 +28,7 @@ class OrderMerchantRepository {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
       } else {
-        result = ResponseMessageDTO(
+        result = const ResponseMessageDTO(
             status: Stringify.RESPONSE_STATUS_FAILED, message: 'E05');
       }
     } catch (e) {
@@ -77,7 +77,7 @@ class OrderMerchantRepository {
   }
 
   Future<ResponseMessageDTO> removeOrder(String billId) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
           '${getIt.get<AppConfig>().getBaseUrl}customer-va/invoice/remove?billId=$billId';
@@ -90,12 +90,12 @@ class OrderMerchantRepository {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
       } else {
-        result = ResponseMessageDTO(
+        result = const ResponseMessageDTO(
             status: Stringify.RESPONSE_STATUS_FAILED, message: 'E05');
       }
     } catch (e) {
       LOG.error(e.toString());
-      result = ResponseMessageDTO(
+      result = const ResponseMessageDTO(
           status: Stringify.RESPONSE_STATUS_FAILED, message: 'E05');
     }
     return result;

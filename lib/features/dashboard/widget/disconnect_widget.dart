@@ -13,17 +13,17 @@ class DisconnectWidget extends StatelessWidget {
       duration: const Duration(milliseconds: 350),
       child: type == TypeInternet.CONNECT
           ? Container(
-              padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: AppColor.BLACK_DARK.withOpacity(0.95)),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(
                     Icons.wifi,
                     color: AppColor.GREEN,
                   ),
-                  const SizedBox(width: 10),
+                  SizedBox(width: 10),
                   Text(
                     'Đã có kết nối internet',
                     style: TextStyle(color: AppColor.WHITE),
@@ -33,17 +33,17 @@ class DisconnectWidget extends StatelessWidget {
             )
           : type == TypeInternet.DISCONNECT
               ? Container(
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: AppColor.BLACK_DARK.withOpacity(0.95)),
-                  child: Row(
+                  child: const Row(
                     children: [
                       Icon(
                         Icons.wifi_off,
                         color: AppColor.error700,
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Text(
                         'Mất kết nối internet',
                         style: TextStyle(color: AppColor.WHITE),

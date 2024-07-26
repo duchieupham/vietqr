@@ -13,7 +13,7 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 class BottomSheetInputMoney extends StatefulWidget {
   final QRGeneratedDTO dto;
 
-  const BottomSheetInputMoney({Key? key, required this.dto}) : super(key: key);
+  const BottomSheetInputMoney({super.key, required this.dto});
 
   @override
   State<BottomSheetInputMoney> createState() => _BottomSheetAddUserBDSDState();
@@ -48,7 +48,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                         const SizedBox(
                           width: 32,
                         ),
-                        Expanded(
+                        const Expanded(
                           child: Center(
                             child: Text(
                               'Tùy chỉnh số tiền',

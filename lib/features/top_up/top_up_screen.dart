@@ -225,10 +225,10 @@ class TopUpScreen extends StatelessWidget {
               inputType: TextInputType.number,
               keyboardAction: TextInputAction.next,
               onChange: provider.updateMoney,
-              suffixIcon: Column(
+              suffixIcon: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
+                children: [
                   Text(
                     'VQR',
                     style: TextStyle(fontSize: 14, color: AppColor.gray),
@@ -272,8 +272,8 @@ class TopUpScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.info_outline, color: AppColor.BLUE_TEXT),
               SizedBox(width: 4),
               Expanded(
@@ -491,11 +491,11 @@ class TopUpScreen extends StatelessWidget {
           const SizedBox(
             width: 12,
           ),
-          Expanded(
+          const Expanded(
               child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Mã VietQR VN',
                 style: TextStyle(fontSize: 15),

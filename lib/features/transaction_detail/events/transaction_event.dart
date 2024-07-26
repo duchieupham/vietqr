@@ -73,7 +73,7 @@ class TransEventQRRegenerate extends TransactionEvent {
 class UpdateNoteEvent extends TransactionEvent {
   final Map<String, dynamic> param;
 
-  UpdateNoteEvent(this.param);
+  const UpdateNoteEvent(this.param);
 
   @override
   List<Object?> get props => [param];

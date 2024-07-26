@@ -19,34 +19,32 @@ class DetailImageView extends StatelessWidget {
             PhotoView(
               imageProvider: ImageUtils.instance.getImageNetworkCache(image),
             ),
-            Row(
+            Column(
               children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(
-                    Icons.clear,
-                    color: AppColor.WHITE,
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.clear,
+                        color: AppColor.WHITE,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      // path.basename(image),
+                      'your_image_name.png',
+                      textAlign: TextAlign.center,
+                      style:
+                          const TextStyle(color: AppColor.WHITE, fontSize: 16),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Text(
-                    path.basename(image),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColor.WHITE, fontSize: 16),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.of(context).pop();
-                //   },
-                //   icon: const Icon(
-                //     Icons.clear,
-                //     color: AppColor.TRANSPARENT,
-                //   ),
-                // )
+                const SizedBox(height: 20),
+                const Divider(color: AppColor.WHITE),
               ],
             )
           ],

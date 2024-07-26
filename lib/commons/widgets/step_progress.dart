@@ -10,8 +10,8 @@ class StepProgressView extends StatelessWidget {
   final Color _inactiveColor = AppColor.GREY_TEXT;
   final double lineWidth = 2.0;
 
-  StepProgressView(
-      {Key? key,
+  const StepProgressView(
+      {super.key,
       required int curStep,
       required List<String> titles,
       required double width,
@@ -20,12 +20,12 @@ class StepProgressView extends StatelessWidget {
         _curStep = curStep,
         _width = width,
         _activeColor = color,
-        assert(width > 0),
-        super(key: key);
+        assert(width > 0);
 
+  @override
   Widget build(BuildContext context) {
-    return Container(
-        width: this._width,
+    return SizedBox(
+        width: _width,
         child: Column(
           children: <Widget>[
             Padding(
@@ -34,7 +34,7 @@ class StepProgressView extends StatelessWidget {
                 children: _iconViews(),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
             Row(
@@ -57,11 +57,11 @@ class StepProgressView extends StatelessWidget {
         Container(
           width: 28.0,
           height: 28.0,
-          padding: EdgeInsets.all(0),
+          padding: const EdgeInsets.all(0),
           alignment: Alignment.center,
-          decoration: new BoxDecoration(
+          decoration: BoxDecoration(
               /* color: circleColor,*/
-              borderRadius: new BorderRadius.all(new Radius.circular(22.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(22.0)),
               color: circleColor),
           child: Text(
             '${i + 1}',

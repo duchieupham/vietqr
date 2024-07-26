@@ -97,7 +97,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
     await DialogWidget.instance.showModelBottomSheet(
       isDismissible: true,
       height: MediaQuery.of(context).size.height * 0.6,
-      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
+      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
       borderRadius: BorderRadius.circular(16),
       widget: SearchUserScreen(
         listMember: addedMembers,
@@ -188,7 +188,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                     child: Text(
                       dto.terminalName,
                       maxLines: 2,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           overflow: TextOverflow.ellipsis,
                           fontSize: 16),
@@ -215,7 +215,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
               Text(
                 dto.terminalCode,
                 maxLines: 1,
-                style: TextStyle(
+                style: const TextStyle(
                     overflow: TextOverflow.ellipsis, color: AppColor.GREY_TEXT),
               ),
             ],
@@ -263,7 +263,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   child: Text(
                     dto.terminalAddress,
                     maxLines: 1,
-                    style: TextStyle(overflow: TextOverflow.ellipsis),
+                    style: const TextStyle(overflow: TextOverflow.ellipsis),
                   ),
                 )
               ],
@@ -281,7 +281,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 child: Text(
                   '${dto.bankShortName} - ${dto.bankAccount}',
                   maxLines: 2,
-                  style: TextStyle(overflow: TextOverflow.ellipsis),
+                  style: const TextStyle(overflow: TextOverflow.ellipsis),
                 ),
               )
             ],
@@ -294,7 +294,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 child: Text(
                   '$totalMember thành viên',
                   maxLines: 1,
-                  style: TextStyle(overflow: TextOverflow.ellipsis),
+                  style: const TextStyle(overflow: TextOverflow.ellipsis),
                 ),
               )
             ],
@@ -313,7 +313,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [
                   Color(0xFFE9B71D),
                   Color(0xFFFFE79F),
@@ -332,7 +332,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
+                const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -341,7 +341,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 8),
                       Text(
                         'Hiển thị mã VietQR cửa hàng và nhận thông báo thanh toán ngày trên thiết bị.',
                         style: TextStyle(fontSize: 14, color: AppColor.BLACK),
@@ -357,7 +357,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
           const SizedBox(height: 16),
           Row(
             children: [
-              Text(
+              const Text(
                 'Danh sách thiết bị QR Box',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
@@ -374,7 +374,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 child: Row(
                   children: [
                     Text('${dto.totalSubTerminal}',
-                        style: TextStyle(color: AppColor.BLUE_TEXT)),
+                        style: const TextStyle(color: AppColor.BLUE_TEXT)),
                     Image.asset('assets/images/ic-terminal-blue.png', width: 25)
                   ],
                 ),
@@ -382,7 +382,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
             ],
           ),
           const SizedBox(height: 12),
-          Container(
+          SizedBox(
             height: 195,
             child: PageView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -408,8 +408,8 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   ),
                 );
               }
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.0),
                 child: Icon(Icons.circle_outlined, size: 12),
               );
             }),
@@ -442,7 +442,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                     Text(
                       sub.subTerminalName,
                       maxLines: 1,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         overflow: TextOverflow.ellipsis,
                         fontSize: 16,
@@ -458,7 +458,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                           child: Text(
                             sub.subTerminalAddress,
                             maxLines: 1,
-                            style: TextStyle(
+                            style: const TextStyle(
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -483,19 +483,19 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 ],
               ),
               const SizedBox(width: 8),
-              Text('-'),
+              const Text('-'),
               const SizedBox(width: 8),
               Row(
                 children: [
                   Text(
                     CurrencyUtils.instance
                         .getCurrencyFormatted((sub.totalAmount).toString()),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppColor.BLUE_TEXT,
                     ),
                   ),
-                  Text(' VND doanh thu'),
+                  const Text(' VND doanh thu'),
                 ],
               ),
             ],
@@ -528,7 +528,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
           children: [
             Row(
               children: [
-                Text(
+                const Text(
                   'Danh sách nhân viên',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -546,7 +546,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   child: Row(
                     children: [
                       Text('${members.length}',
-                          style: TextStyle(color: AppColor.BLUE_TEXT)),
+                          style: const TextStyle(color: AppColor.BLUE_TEXT)),
                       Image.asset('assets/images/ic-member-bdsd-blue.png',
                           width: 25)
                     ],
@@ -565,13 +565,13 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 child: Container(
                   // height: 25,
                   // width: 120,
-                  padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
+                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: AppColor.WHITE,
                       border:
                           Border.all(color: AppColor.BLUE_TEXT, width: 0.8)),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     // mainAxisSize: MainAxisSize.min,
                     children: [
@@ -605,7 +605,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
+        const Text(
           'Chức năng',
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
@@ -681,13 +681,13 @@ class _DetailStoreViewState extends State<DetailStoreView>
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
                   maxLines: 2,
-                  style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                  style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
               ],
             ),
@@ -727,7 +727,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 if (title != null)
                   Text(
                     title,
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 Wrap(
                   children: [
@@ -739,7 +739,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                             fontSize: 12),
                       ),
                     if (contentColor == null)
-                      Text(
+                      const Text(
                         ' VND',
                         style:
                             TextStyle(color: AppColor.GREY_TEXT, fontSize: 12),
@@ -750,7 +750,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   Text(
                     des,
                     maxLines: 2,
-                    style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 10),
+                    style: const TextStyle(color: AppColor.GREY_TEXT, fontSize: 10),
                   )
               ],
             ),
@@ -764,7 +764,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
     return GestureDetector(
       child: Container(
         height: 54,
-        margin: EdgeInsets.only(top: 12),
+        margin: const EdgeInsets.only(top: 12),
         decoration: BoxDecoration(
             color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
         child: Row(
@@ -774,7 +774,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 ? Container(
                     width: 30,
                     height: 30,
-                    margin: EdgeInsets.only(top: 2),
+                    margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       image: DecorationImage(
@@ -785,10 +785,10 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 : Container(
                     width: 30,
                     height: 30,
-                    margin: EdgeInsets.only(top: 2),
+                    margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      image: DecorationImage(
+                      image: const DecorationImage(
                           image: AssetImage('assets/images/ic-avatar.png')),
                     ),
                   ),
@@ -802,24 +802,24 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 children: [
                   Text(
                     dto.fullName.trim(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(
                     dto.phoneNo,
-                    style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                    style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                   )
                 ],
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              margin: EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                   color: AppColor.BLUE_TEXT.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(30)),
               child: Text(
                 dto.role,
-                style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+                style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
               ),
             ),
             if (isRemove && !dto.isOwner)
@@ -829,8 +829,8 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   addedMembers.removeWhere((element) => element.id == dto.id);
                   setState(() {});
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 12),
                   child: Icon(
                     Icons.remove_circle_outline,
                     size: 18,

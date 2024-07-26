@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/invoice_detail_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
-import '../../../models/bank_account_dto.dart';
 import '../../../models/invoice_fee_dto.dart';
 import '../../../models/metadata_dto.dart';
 

@@ -124,7 +124,7 @@ class _PopupBankWidgetState extends State<PopupBankWidget> with DialogHelper {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Container(
+                    SizedBox(
                       width: 170,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

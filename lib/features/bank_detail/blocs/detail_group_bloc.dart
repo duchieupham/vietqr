@@ -38,7 +38,7 @@ void _getDetail(DetailGroupEvent event, Emitter emit) async {
 
 void _removeMember(DetailGroupEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is RemoveMemberGroup) {
       emit(DetailGroupLoadingState());
@@ -62,7 +62,7 @@ void _removeMember(DetailGroupEvent event, Emitter emit) async {
 
 void _addMember(DetailGroupEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is AddMemberGroup) {
       emit(DetailGroupLoadingState());
@@ -85,7 +85,7 @@ void _addMember(DetailGroupEvent event, Emitter emit) async {
 
 void _addBankToGroupMember(DetailGroupEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is AddBankToGroup) {
       emit(DetailGroupLoadingState());
@@ -106,7 +106,7 @@ void _addBankToGroupMember(DetailGroupEvent event, Emitter emit) async {
 
 void _removeBankToGroupMember(DetailGroupEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is RemoveBankToGroup) {
       emit(DetailGroupLoadingState());

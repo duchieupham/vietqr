@@ -7,13 +7,13 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   bool get enableVoice => _enableVoice;
 
-  List<String> _bankIds = [];
+  final List<String> _bankIds = [];
 
   List<String> get bankIds => _bankIds;
 
   initData() async {
     SettingAccountDTO settingAccountDTO =
-        await SharePrefUtils.getAccountSetting();
+        SharePrefUtils.getAccountSetting();
     _enableVoice = settingAccountDTO.voiceMobile;
     notifyListeners();
   }

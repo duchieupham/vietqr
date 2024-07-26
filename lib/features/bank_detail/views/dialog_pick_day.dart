@@ -74,7 +74,7 @@ class _TerminalTimeViewState extends State<DialogPickDay> {
                 widget.updateFromDate(fromDate!);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 height: 50,
                 decoration: BoxDecoration(
                     color: AppColor.WHITE,
@@ -134,7 +134,7 @@ class _TerminalTimeViewState extends State<DialogPickDay> {
               },
               child: Container(
                 height: 50,
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                     color: AppColor.WHITE,
                     border: Border.all(

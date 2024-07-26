@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/detail_group_dto.dart';
-import 'package:vierqr/models/member_search_dto.dart';
 
 enum SearchUserType {
   NONE,
@@ -22,7 +21,7 @@ class SearchUserState extends Equatable {
   final bool isLoading;
   final bool isEmpty;
 
-  SearchUserState({
+  const SearchUserState({
     this.status = BlocStatus.NONE,
     this.msg,
     this.request = SearchUserType.NONE,

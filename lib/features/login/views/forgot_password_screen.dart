@@ -11,7 +11,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/data/remotes/auth_api.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
@@ -74,7 +73,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           return Scaffold(
             body: Column(
               children: [
-                Container(
+                SizedBox(
                   height: 200,
                   child: Stack(
                     children: [
@@ -100,7 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                                   listen: false)
                                               .bannerApp),
                                       fit: BoxFit.cover)
-                                  : DecorationImage(
+                                  : const DecorationImage(
                                       image: AssetImage(
                                           'assets/images/bgr-header.png'),
                                       fit: BoxFit.cover),
@@ -132,7 +131,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               children: [
                                 GestureDetector(
                                   onTap: () => Navigator.pop(context),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.arrow_back_ios,
                                     size: 20,
                                   ),
@@ -191,7 +190,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
+                const Text(
                   'Quên mật khẩu',
                   style: TextStyle(
                     fontSize: 18,
@@ -200,7 +199,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 ),
                 const SizedBox(height: 30),
                 if (step == 1) ...[
-                  Text(
+                  const Text(
                     'Đặt mật khẩu*',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -211,7 +210,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   const SizedBox(
                     height: 4,
                   ),
-                  Text(
+                  const Text(
                     'Mật khẩu có độ dài 6 ký tự số, không bao gồm chữ và ký tự đặc biệt',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -246,7 +245,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Text(
+                  const Text(
                     'Xác nhận lại mật khẩu*',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -256,7 +255,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   const SizedBox(
                     height: 4,
                   ),
-                  Text(
+                  const Text(
                     'Nhập lại mật khẩu ở trên để xác nhận',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -291,13 +290,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'Nhập mã OTP từ MB gửi về số điện thoại ',
                           style: TextStyle(fontSize: 15, color: AppColor.BLACK),
                         ),
                         TextSpan(
-                          text: '${widget.phone}',
-                          style: TextStyle(
+                          text: widget.phone,
+                          style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: AppColor.BLACK),
@@ -458,7 +457,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             children: [
               Row(
                 children: [
-                  Expanded(child: const SizedBox()),
+                  const Expanded(child: SizedBox()),
                   Container(
                     alignment: Alignment.center,
                     height: 30,
@@ -466,7 +465,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     decoration: BoxDecoration(
                         color: AppColor.BLUE_TEXT,
                         borderRadius: BorderRadius.circular(100)),
-                    child: Text(
+                    child: const Text(
                       '1',
                       style: TextStyle(color: AppColor.WHITE),
                     ),
@@ -482,7 +481,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               const SizedBox(height: 12),
               Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'Xác thực OTP',
                   style: TextStyle(fontSize: 12),
                 ),
@@ -518,13 +517,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               : AppColor.BLACK_TEXT.withOpacity(0.6)),
                     ),
                   ),
-                  Expanded(child: const SizedBox()),
+                  const Expanded(child: SizedBox()),
                 ],
               ),
               const SizedBox(height: 12),
               Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'Nhập mật khẩu mới',
                   style: TextStyle(fontSize: 12),
                 ),

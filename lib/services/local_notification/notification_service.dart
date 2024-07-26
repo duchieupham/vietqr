@@ -1,12 +1,9 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
-import 'package:vierqr/main.dart';
 
 import '../../navigator/app_navigator.dart';
 

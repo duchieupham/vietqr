@@ -9,8 +9,7 @@ import 'package:vierqr/models/statistical_dto.dart';
 class StatisticalLineChart extends StatelessWidget {
   final List<ResponseStatisticDTO> listData;
 
-  const StatisticalLineChart({Key? key, required this.listData})
-      : super(key: key);
+  const StatisticalLineChart({super.key, required this.listData});
 
   LineChartData get sampleData1 => LineChartData(
       gridData: griData,
@@ -86,10 +85,10 @@ class StatisticalLineChart extends StatelessWidget {
 
   FlTitlesData get titlesData => FlTitlesData(
       bottomTitles: AxisTitles(sideTitles: getBottomTitles),
-      rightTitles: AxisTitles(
+      rightTitles: const AxisTitles(
         sideTitles: SideTitles(showTitles: false),
       ),
-      topTitles: AxisTitles(
+      topTitles: const AxisTitles(
         sideTitles: SideTitles(showTitles: false),
       ),
       leftTitles: AxisTitles(sideTitles: leftTitles));
@@ -232,7 +231,7 @@ class StatisticalLineChart extends StatelessWidget {
       color: AppColor.GREEN,
       barWidth: 2,
       isStrokeCapRound: true,
-      dotData: FlDotData(show: false),
+      dotData: const FlDotData(show: false),
       belowBarData: BarAreaData(show: false),
       spots: getListFlSpot1());
 
@@ -254,7 +253,7 @@ class StatisticalLineChart extends StatelessWidget {
     return month.toDouble();
   }
 
-  FlGridData get griData => FlGridData(show: true);
+  FlGridData get griData => const FlGridData(show: true);
 
   @override
   Widget build(BuildContext context) {

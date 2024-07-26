@@ -118,7 +118,7 @@ class _BottomSheetAddBankBDSDState extends State<BottomSheetAddBankBDSD> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        SizedBox(
+                        const SizedBox(
                           height: 53,
                           child: VerticalDashedLine(),
                         ),

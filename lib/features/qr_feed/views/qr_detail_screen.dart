@@ -1,13 +1,10 @@
 import 'dart:async';
 
 import 'package:clipboard/clipboard.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
@@ -15,24 +12,19 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
-import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/features/qr_feed/widgets/pop_up_qr_detail_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
-import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrDetailScreen extends StatefulWidget {
@@ -1085,12 +1077,12 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                           ),
                         ),
                       )
-                    : ClipOval(
-                        child: Container(
+                    : const ClipOval(
+                        child: SizedBox(
                           width: 30,
                           height: 30,
                           child:
-                              const XImage(imagePath: ImageConstant.icAvatar),
+                              XImage(imagePath: ImageConstant.icAvatar),
                         ),
                       ),
                 const SizedBox(width: 10),
@@ -1290,7 +1282,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               ),
             ],
           ),
-          content: Container(
+          content: SizedBox(
             height: 200, // Increase the height of the dialog
             child: Column(
               children: [

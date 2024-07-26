@@ -2,7 +2,6 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -19,8 +18,6 @@ import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_input_money.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
-import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
-import 'package:vierqr/features/bank_detail_new/widgets/bank_detail_appbar.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/option_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/qr_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
@@ -33,7 +30,6 @@ import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/account_bank_detail_provider.dart';
 
@@ -48,7 +44,7 @@ class DetailBankCardScreen extends StatefulWidget {
   final Function(bool) onScroll;
   final GlobalKey globalKey;
 
-  DetailBankCardScreen({
+  const DetailBankCardScreen({
     super.key,
     required this.bankId,
     required this.selectedIndex,
@@ -99,14 +95,12 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
         if (_animatedBarKey.currentContext != null) {
           final RenderBox renderBox =
               _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
-          if (renderBox != null) {
-            final position = renderBox.localToGlobal(Offset.zero);
-            final scrollPosition = scrollController.position;
-            isScrollToChart.value = position.dy >= scrollPosition.pixels &&
-                position.dy <=
-                    scrollPosition.pixels + scrollPosition.viewportDimension;
-          }
-        }
+          final position = renderBox.localToGlobal(Offset.zero);
+          final scrollPosition = scrollController.position;
+          isScrollToChart.value = position.dy >= scrollPosition.pixels &&
+              position.dy <=
+                  scrollPosition.pixels + scrollPosition.viewportDimension;
+                }
       },
     );
     bankCardBloc

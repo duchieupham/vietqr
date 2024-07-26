@@ -20,7 +20,7 @@ class TransWalletBloc extends Bloc<TransWalletEvent, TransWalletState>
     on<TransactionWalletEventFetch>(_fetchTransactions);
   }
   TransactionWalletRepository transactionWalletRepository =
-      TransactionWalletRepository();
+      const TransactionWalletRepository();
 
   void _getTransactions(TransWalletEvent event, Emitter emit) async {
     try {

@@ -80,7 +80,7 @@ class AccountMemberDTO {
     this.existed = 0,
   });
 
-  String get fullName => '${lastName} ${middleName} ${firstName}'.trim();
+  String get fullName => '$lastName $middleName $firstName'.trim();
 
   bool get isMe => id == SharePrefUtils.getProfile().userId;
 

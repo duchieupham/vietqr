@@ -16,7 +16,7 @@ import 'package:vierqr/models/theme_dto.dart';
 import 'states/custom_radio.dart';
 
 class ThemeSettingView extends StatefulWidget {
-  ThemeSettingView({super.key});
+  const ThemeSettingView({super.key});
 
   static String routeName = '/theme_setting';
 
@@ -210,7 +210,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Sự kiện'),
-                                    const SizedBox(height: 4),
+                                    SizedBox(height: 4),
                                     Text(
                                       'Chủ đề sự kiện đang được diễn ra.',
                                       style: TextStyle(

@@ -26,6 +26,7 @@ class Routes {
   static const String BANK_CARD_DETAIL_NEW = '/bankCardDetailNew';
   static const String TRANSACTION_HISTORY_VIEW = '/transactionHistoryView';
   static const String TRANSACTION_DETAIL_VIEW = '/transactionDetailyView';
+  static const String SAVE_SHARE_TRANS_DETAIL = '/save_share_trans_detail';
 
   static const String SCAN_QR_VIEW = '/scanQRView';
   static const String SEARCH_BANK = '/searchBank';

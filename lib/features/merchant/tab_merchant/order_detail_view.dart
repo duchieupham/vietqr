@@ -20,7 +20,7 @@ class OrderDetailView extends StatefulWidget {
 }
 
 class _OrderDetailViewState extends State<OrderDetailView> {
-  final orderRepository = OrderMerchantRepository();
+  final orderRepository = const OrderMerchantRepository();
   bool isLoading = true;
   InvoiceDTO dto = InvoiceDTO();
 
@@ -78,19 +78,19 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       backgroundColor: AppColor.WHITE,
       bottomNavigationBar: _bottom(),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : RefreshIndicator(
                 onRefresh: _onRefresh,
                 child: ListView(
                   shrinkWrap: true,
-                  physics: AlwaysScrollableScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   children: [
@@ -99,7 +99,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                     ),
                     Text(
                       dto.name ?? '',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -126,7 +126,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                       const SizedBox(
                         height: 30,
                       ),
-                      Text(
+                      const Text(
                         'Danh mục hàng hoá, dịch vụ',
                         style: TextStyle(
                           fontSize: 18,
@@ -184,7 +184,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                           height: MediaQuery.of(context).size.height * 0.9,
                         );
                       },
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
@@ -192,7 +192,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                             size: 15,
                             color: AppColor.WHITE,
                           ),
-                          const SizedBox(width: 5),
+                          SizedBox(width: 5),
                           Text(
                             'QR thanh toán',
                             style: TextStyle(color: AppColor.WHITE),
@@ -223,7 +223,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                           color: AppColor.RED_EC1010,
                         ),
                         const SizedBox(width: 5),
-                        Text(
+                        const Text(
                           'Huỷ TT',
                           style: TextStyle(color: AppColor.RED_EC1010),
                         ),
@@ -240,9 +240,9 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   Widget _buildItemCategory(Item dto, int index, {bool isSuccess = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
-      margin: EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0XFFFFFFFF), width: 1),
+        border: Border.all(color: const Color(0XFFFFFFFF), width: 1),
         borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
@@ -252,10 +252,10 @@ class _OrderDetailViewState extends State<OrderDetailView> {
               children: [
                 Expanded(
                   child: Text(
-                    (index + 1).toString() + '. ' + (dto.name ?? ''),
+                    '${index + 1}. ${dto.name ?? ''}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -270,14 +270,14 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 const SizedBox(
                   width: 5,
                 ),
-                Text('VND'),
+                const Text('VND'),
               ],
             ),
           ),
           const SizedBox(
             height: 10,
           ),
-          Divider(
+          const Divider(
             color: Color(0xFFDADADA),
             height: 1,
           ),
@@ -293,7 +293,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                     textAlign: TextAlign.right,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColor.GREY_TEXT,
                     ),
                   ),
@@ -312,7 +312,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 const SizedBox(
                   width: 5,
                 ),
-                Text('VND'),
+                const Text('VND'),
               ],
             ),
           ),
@@ -324,11 +324,11 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   Widget _buildItem(String title, String content,
       {bool isUnBorder = false, Color? textColor, double? textSized}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
-            : Border(
+            : const Border(
                 bottom: BorderSide(color: Color(0XFFDADADA), width: 1),
               ),
       ),

@@ -12,12 +12,11 @@ class FormPhone extends StatefulWidget {
   final Function(int) onEnterIntro;
 
   const FormPhone(
-      {Key? key,
+      {super.key,
       required this.pageController,
       required this.phoneController,
       required this.isFocus,
-      required this.onEnterIntro})
-      : super(key: key);
+      required this.onEnterIntro});
 
   @override
   State<FormPhone> createState() => _FormPhoneState();
@@ -32,12 +31,12 @@ class _FormPhoneState extends State<FormPhone> {
           child: Column(
             children: [
               Container(
-                margin: EdgeInsets.only(
+                margin: const EdgeInsets.only(
                   bottom: 20,
                   top: 100,
                 ),
                 width: double.infinity,
-                child: Text(
+                child: const Text(
                   'Xin chào, vui lòng nhập\nSố điện thoại để đăng ký\ntài khoản VietQR VN',
                   style: TextStyle(
                     color: Color(0xFF000000),
@@ -70,8 +69,8 @@ class _FormPhoneState extends State<FormPhone> {
                 visible: provider.phoneErr,
                 child: Container(
                   alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: const Text(
                     'Số điện thoại không đúng định dạng.',
                     style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
                   ),

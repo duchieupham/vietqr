@@ -12,13 +12,14 @@ import 'package:vierqr/models/detail_group_dto.dart';
 
 class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState>
     with BaseManager {
+  @override
   final BuildContext context;
   final List<AccountMemberDTO> listInit;
 
   SearchUserBloc(this.context, this.listInit)
       : super(
           SearchUserState(
-            members: [],
+            members: const [],
             insertMembers: [...listInit],
           ),
         ) {
@@ -27,10 +28,10 @@ class SearchUserBloc extends Bloc<SearchUserEvent, SearchUserState>
     on<SearchMemberEvent>(_searchMember);
   }
 
-  ShareBDSDRepository repository = ShareBDSDRepository();
+  ShareBDSDRepository repository = const ShareBDSDRepository();
 
-  ConnectLarkRepository larkRepository = ConnectLarkRepository();
-  ConnectTelegramRepository telegramRepository = ConnectTelegramRepository();
+  ConnectLarkRepository larkRepository = const ConnectLarkRepository();
+  ConnectTelegramRepository telegramRepository = const ConnectTelegramRepository();
 
   void _searchMember(SearchUserEvent event, Emitter emit) async {
     try {

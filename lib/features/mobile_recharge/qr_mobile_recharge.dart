@@ -255,13 +255,13 @@ class _QRMobileRechargeScreenState extends State<QRMobileRechargeScreen>
             ],
           ),
           const SizedBox(height: 16),
-          Row(
+          const Row(
             children: [
-              const Text(
+              Text(
                 'Dịch vụ',
                 style: TextStyle(fontSize: 12),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 'Nạp tiền điện thoại',
                 style: TextStyle(fontSize: 12),
@@ -367,8 +367,8 @@ class _QRMobileRechargeScreenState extends State<QRMobileRechargeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.info_outline, color: AppColor.BLUE_TEXT),
               SizedBox(width: 4),
               Expanded(
@@ -387,7 +387,7 @@ class _QRMobileRechargeScreenState extends State<QRMobileRechargeScreen>
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 '- ',
                 style: TextStyle(
                   fontSize: 13,
@@ -397,14 +397,14 @@ class _QRMobileRechargeScreenState extends State<QRMobileRechargeScreen>
               ),
               Expanded(
                 child: RichText(
-                  text: TextSpan(
+                  text: const TextSpan(
                     text: 'Vui lòng không chỉnh sửa ',
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColor.BLACK,
                       height: 1.4,
                     ),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
                           text: 'số tiền ',
                           style: TextStyle(fontWeight: FontWeight.bold)),

@@ -5,7 +5,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -153,7 +152,7 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
                 flex: 4,
                 child: Text(
                   dto.value!,
-                  style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+                  style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -253,7 +252,7 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
                   },
                   child: Text(
                     dto.value!,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColor.BLUE_TEXT,
                       decoration: TextDecoration.underline,
@@ -381,7 +380,7 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
                 style: const TextStyle(fontSize: 12),
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               flex: 3,
               child: Text(

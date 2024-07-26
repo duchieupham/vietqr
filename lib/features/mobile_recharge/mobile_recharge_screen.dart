@@ -339,14 +339,14 @@ class MobileRechargeScreen extends StatelessWidget {
                   Container(
                     width: 45,
                     height: 45,
-                    padding: EdgeInsets.all(6),
+                    padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
                           width: 0.5,
                           color: AppColor.GREY_BORDER),
                     ),
-                    child: CircularProgressIndicator(),
+                    child: const CircularProgressIndicator(),
                   )
                 else if (imgId.isNotEmpty)
                   GestureDetector(
@@ -428,10 +428,10 @@ class MobileRechargeScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     DialogWidget.instance.showModelBottomSheet(
-                      padding: EdgeInsets.only(
+                      padding: const EdgeInsets.only(
                           left: 12, right: 12, bottom: 32, top: 12),
                       height: 500,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(16),
                           topRight: Radius.circular(16)),
                       widget: BlocProvider<ContactBloc>(
@@ -449,7 +449,7 @@ class MobileRechargeScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                         color: AppColor.GREY_BUTTON,
                         borderRadius: BorderRadius.circular(20)),
@@ -695,12 +695,12 @@ class MobileRechargeScreen extends StatelessWidget {
                       height: 20,
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                       flex: 4,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             'Mã VietQR VN',
                             style: TextStyle(fontSize: 15),
@@ -763,12 +763,12 @@ class MobileRechargeScreen extends StatelessWidget {
                       height: 20,
                     ),
                   ),
-                  Expanded(
+                  const Expanded(
                       flex: 4,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             'VQR',
                             style: TextStyle(fontSize: 15),

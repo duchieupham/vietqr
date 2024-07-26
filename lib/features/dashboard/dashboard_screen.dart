@@ -30,7 +30,6 @@ import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/isolate_stream.dart';
-import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
@@ -58,7 +57,6 @@ import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
 import '../bank_card/blocs/bank_bloc.dart';
 import '../maintain_charge/views/dynamic_active_key_screen.dart';
-import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'widget/disconnect_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -702,7 +700,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     //check lỗi hệ thống
     if (state.request == DashBoardType.TOKEN) {
       if (state.typeToken == TokenType.Valid) {
-        _bloc.add(GetVersionAppEventDashboard());
+        _bloc.add(const GetVersionAppEventDashboard());
         _updateFcmToken(widget.isFromLogin);
       } else {
         _provider.updateRenderUI();

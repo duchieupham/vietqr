@@ -38,7 +38,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
-                  BackgroundAppBarLogin(),
+                  const BackgroundAppBarLogin(),
                   Positioned(
                     top: 40,
                     child: Align(

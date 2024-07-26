@@ -9,6 +9,8 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class MyQrScreen extends StatefulWidget {
+  const MyQrScreen({super.key});
+
   @override
   State<MyQrScreen> createState() => _MyQrScreenState();
 }
@@ -28,7 +30,7 @@ class _MyQrScreenState extends State<MyQrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MAppBar(title: 'My QR'),
+      appBar: const MAppBar(title: 'My QR'),
       body: Column(
         children: [
           const SizedBox(height: 30),

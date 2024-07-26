@@ -62,7 +62,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
         GestureDetector(
           onTap: _onInsertMember,
           child: Container(
-            padding: EdgeInsets.fromLTRB(12, 4, 20, 4),
+            padding: const EdgeInsets.fromLTRB(12, 4, 20, 4),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25),
               color: AppColor.BLUE_TEXT.withOpacity(0.35),
@@ -75,7 +75,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
                   height: 30,
                   color: AppColor.BLUE_TEXT,
                 ),
-                Text(
+                const Text(
                   'Thêm thành viên',
                   style: TextStyle(color: AppColor.BLUE_TEXT),
                 )
@@ -91,7 +91,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
                   children: [
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           'Danh sách nhân viên',
                           style: TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 15),
@@ -107,7 +107,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
                             children: [
                               Text(
                                 '${_members.length}',
-                                style: TextStyle(color: AppColor.BLUE_TEXT),
+                                style: const TextStyle(color: AppColor.BLUE_TEXT),
                               ),
                               Image.asset(
                                 'assets/images/ic-member-bdsd-blue.png',
@@ -151,7 +151,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
     await DialogWidget.instance.showModelBottomSheet(
       isDismissible: true,
       height: MediaQuery.of(context).size.height * 0.6,
-      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
+      margin: const EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
       borderRadius: BorderRadius.circular(16),
       widget: SearchUserScreen(
         listMember: _members,
@@ -170,7 +170,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
     return GestureDetector(
       child: Container(
         height: 60,
-        margin: EdgeInsets.only(top: 12),
+        margin: const EdgeInsets.only(top: 12),
         decoration: BoxDecoration(
             color: AppColor.WHITE,
             borderRadius: BorderRadius.circular(8),
@@ -189,7 +189,7 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
                     ? DecorationImage(
                         image: ImageUtils.instance.getImageNetWork(dto.imgId),
                         fit: BoxFit.cover)
-                    : DecorationImage(
+                    : const DecorationImage(
                         image: AssetImage('assets/images/ic-avatar.png')),
               ),
             ),
@@ -203,25 +203,25 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
                     dto.fullName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                   Text(
                     dto.phoneNo,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 15),
+                    style: const TextStyle(fontSize: 15),
                   )
                 ],
               ),
             ),
             if (dto.isOwner)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                margin: EdgeInsets.only(right: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
                     color: AppColor.BLUE_TEXT.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(30)),
-                child: Text(
+                child: const Text(
                   'Quản lý',
                   style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
                 ),
@@ -232,8 +232,8 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
                   _members.remove(dto);
                   updateState();
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 12),
+                child: const Padding(
+                  padding: EdgeInsets.only(right: 12),
                   child: Icon(
                     Icons.remove_circle_outline,
                     size: 18,

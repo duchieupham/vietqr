@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -89,7 +88,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
+                              const Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
@@ -182,7 +181,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                       )
                                     ])),
                                 const SizedBox(height: 2),
-                                Text(
+                                const Text(
                                   '12,049 GD đến (+)',
                                   style: TextStyle(
                                       fontSize: 10,
@@ -208,7 +207,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                       )
                                     ])),
                                 const SizedBox(height: 2),
-                                Text(
+                                const Text(
                                   '1,023 GD đi (-)',
                                   style: TextStyle(
                                       fontSize: 10,
@@ -217,7 +216,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                 ),
                               ],
                             ),
-                            Column(
+                            const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
@@ -227,7 +226,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                       size: 16,
                                       color: AppColor.GREEN,
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: 10),
                                     Text(
                                       'Giao dịch đến (+)',
                                       style: TextStyle(
@@ -237,7 +236,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10),
                                 Row(
                                   children: [
                                     Icon(
@@ -245,7 +244,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                       size: 16,
                                       color: AppColor.RED_TEXT,
                                     ),
-                                    const SizedBox(width: 10),
+                                    SizedBox(width: 10),
                                     Text(
                                       'Giao dịch đến (-)',
                                       style: TextStyle(
@@ -264,7 +263,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                   ),
                   const SizedBox(height: 25),
                   RichText(
-                    text: TextSpan(
+                    text: const TextSpan(
                         text: 'Còn ',
                         style: TextStyle(fontSize: 12, color: AppColor.BLACK),
                         children: [
@@ -350,10 +349,10 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                               ),
                             );
                           },
-                          separatorBuilder: (context, index) => Padding(
+                          separatorBuilder: (context, index) => const Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: const MySeparator(
+                                    EdgeInsets.symmetric(horizontal: 10),
+                                child: MySeparator(
                                   color: AppColor.GREY_DADADA,
                                 ),
                               ),

@@ -7,7 +7,6 @@ import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/merchant/merchant.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class InsertMerchantView extends StatefulWidget {
   final Map<String, dynamic> param;
@@ -65,7 +64,7 @@ class _InfoStoreViewState extends State<InsertMerchantView> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              const Text(
                 'Thông tin đại lý của bạn\nđã chính xác chứ?',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -109,7 +108,7 @@ class _InfoStoreViewState extends State<InsertMerchantView> {
 
   Widget _buildItem(String title, String content, {bool isUnBorder = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 18),
+      padding: const EdgeInsets.symmetric(vertical: 18),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
@@ -127,7 +126,7 @@ class _InfoStoreViewState extends State<InsertMerchantView> {
             content,
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
-            style: TextStyle(fontSize: 18),
+            style: const TextStyle(fontSize: 18),
           ),
         ],
       ),

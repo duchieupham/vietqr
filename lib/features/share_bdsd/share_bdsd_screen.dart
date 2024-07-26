@@ -111,7 +111,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   'Sắp xếp theo',
                                   style: TextStyle(
                                       fontSize: 14,
@@ -119,9 +119,9 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                 ),
                                 Expanded(
                                   child: Container(
-                                    margin: EdgeInsets.only(left: 12),
+                                    margin: const EdgeInsets.only(left: 12),
                                     padding:
-                                        EdgeInsets.only(left: 16, right: 12),
+                                        const EdgeInsets.only(left: 16, right: 12),
                                     height: 40,
                                     decoration: BoxDecoration(
                                         color: AppColor.WHITE,
@@ -177,8 +177,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                 ),
                               ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
                               child: Divider(
                                 color: AppColor.GREY_TEXT,
                               ),
@@ -202,7 +202,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Expanded(
+                                              const Expanded(
                                                 child: Text(
                                                   'Danh sách cửa hàng',
                                                   style: TextStyle(
@@ -214,7 +214,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                                 width: 8,
                                               ),
                                               Container(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     right: 8, left: 12),
                                                 decoration: BoxDecoration(
                                                     color: AppColor.BLUE_TEXT
@@ -226,7 +226,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                                   children: [
                                                     Text(
                                                       '${terminalDto.totalTerminals}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: AppColor
                                                               .BLUE_TEXT,
                                                           fontSize: 12),
@@ -245,7 +245,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Expanded(
+                                              const Expanded(
                                                 child: Text(
                                                   'Danh sách tài khoản',
                                                   style: TextStyle(
@@ -257,7 +257,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                                 width: 8,
                                               ),
                                               Container(
-                                                padding: EdgeInsets.only(
+                                                padding: const EdgeInsets.only(
                                                     right: 8, left: 12),
                                                 decoration: BoxDecoration(
                                                     color: AppColor.BLUE_TEXT
@@ -269,7 +269,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                                   children: [
                                                     Text(
                                                       '${bankTerminalDto.totalBankShares}',
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           color: AppColor
                                                               .BLUE_TEXT,
                                                           fontSize: 12),
@@ -285,7 +285,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                           ),
                                         _buildList(provider),
                                         if (state.isLoadMore)
-                                          Center(
+                                          const Center(
                                             child: SizedBox(
                                                 width: 20,
                                                 height: 20,
@@ -304,7 +304,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                           child: GestureDetector(
                             onTap: () async {
                               await NavigatorUtils.navigatePage(
-                                  context, CreateStoreScreen(),
+                                  context, const CreateStoreScreen(),
                                   routeName: CreateStoreScreen.routeName);
                               _bloc.add(GetTerminalsBDSDScreenEvent(
                                   userID: SharePrefUtils.getProfile().userId,
@@ -314,7 +314,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                             },
                             child: Container(
                               height: 40,
-                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
                                 color: AppColor.BLUE_TEXT,
@@ -326,7 +326,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                     height: 26,
                                     color: Colors.white,
                                   ),
-                                  Text(
+                                  const Text(
                                     'Thêm cửa hàng',
                                     style: TextStyle(
                                         fontSize: 12, color: AppColor.WHITE),
@@ -356,7 +356,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
             ),
             ...terminalDto.terminals.map((e) {
               return _buildItemGroup(e, provider.getTypeFilter());
-            }).toList(),
+            }),
           ],
         );
       } else {
@@ -374,7 +374,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
               const SizedBox(
                 height: 12,
               ),
-              Text('Chưa có nhóm nào.'),
+              const Text('Chưa có nhóm nào.'),
             ],
           ),
         );
@@ -388,7 +388,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
             ),
             ...bankTerminalDto.bankShares.map((e) {
               return _buildItemBank(e);
-            }).toList(),
+            }),
           ],
         );
       } else {
@@ -406,7 +406,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
               const SizedBox(
                 height: 12,
               ),
-              Text('Chưa có nhóm tài khoản ngân hàng nào.'),
+              const Text('Chưa có nhóm tài khoản ngân hàng nào.'),
             ],
           ),
         );
@@ -418,7 +418,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
     return Center(
       child: UnconstrainedBox(
         child: Container(
-          padding: EdgeInsets.all(4),
+          padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColor.BLUE_TEXT)),
@@ -443,7 +443,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: isSelect
@@ -480,8 +480,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
         );
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        margin: EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
             color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
         child: Column(
@@ -497,7 +497,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Cửa hàng:',
                         style:
                             TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
@@ -505,7 +505,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                       Text(
                         dto.name,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 15),
+                        style: const TextStyle(fontSize: 15),
                       )
                     ],
                   ),
@@ -513,7 +513,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Thành viên:',
                       style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
@@ -521,7 +521,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                       children: [
                         Text(
                           dto.totalMembers.toString(),
-                          style: TextStyle(fontSize: 15),
+                          style: const TextStyle(fontSize: 15),
                         ),
                         Image.asset(
                           'assets/images/ic-member-black.png',
@@ -531,10 +531,10 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                     )
                   ],
                 ),
-                SizedBox(width: 60),
+                const SizedBox(width: 60),
                 GestureDetector(
                   onTap: () => _onDetailStore(dto.id, dto.code, dto.name),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_forward,
                     color: AppColor.BLUE_TEXT,
                     size: 18,
@@ -542,14 +542,14 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                 )
               ],
             ),
-            Text(
+            const Text(
               'Tài khoản chia sẻ:',
               style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
             ),
             const SizedBox(height: 4),
             ...dto.banks.map((e) {
               return _buildShareBankItem(e);
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -558,8 +558,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
 
   Widget _buildItemBank(BankShareResponseDTO dto) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      margin: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
       child: Column(
@@ -571,7 +571,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 'Tài khoản chia sẻ:',
                 style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
               ),
@@ -606,13 +606,13 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
           const SizedBox(
             height: 16,
           ),
-          Text(
+          const Text(
             'Cửa hàng:',
             style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
           ),
           ...dto.terminals.map((e) {
             return _buildTerminalBank(e, e.id != dto.terminals.last.id);
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -622,7 +622,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
     return GestureDetector(
       onTap: () => _onDetailStore(dto.id, dto.terminalCode, dto.terminalName),
       child: Container(
-        padding: EdgeInsets.only(bottom: 12, top: 12),
+        padding: const EdgeInsets.only(bottom: 12, top: 12),
         decoration: BoxDecoration(
             border: Border(
                 bottom: BorderSide(
@@ -635,14 +635,14 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
               child: Text(
                 dto.terminalName,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 15),
+                style: const TextStyle(fontSize: 15),
               ),
             ),
             Row(
               children: [
                 Text(
                   dto.totalMembers.toString(),
-                  style: TextStyle(fontSize: 15),
+                  style: const TextStyle(fontSize: 15),
                 ),
                 Image.asset(
                   'assets/images/ic-member-black.png',
@@ -650,13 +650,13 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                 )
               ],
             ),
-            SizedBox(
+            const SizedBox(
               width: 12,
             ),
             GestureDetector(
               onTap: () =>
                   _onDetailStore(dto.id, dto.terminalCode, dto.terminalName),
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_forward,
                 color: AppColor.BLUE_TEXT,
                 size: 18,

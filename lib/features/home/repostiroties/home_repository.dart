@@ -104,7 +104,7 @@ class HomeRepository {
 
   Future<ResponseMessageDTO> voiceTransaction(
       Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}voice/transaction';
       final response = await BaseAPIClient.postAPI(

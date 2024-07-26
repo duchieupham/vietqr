@@ -3,11 +3,11 @@ import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/member_search_dto.dart';
 
 class ShareBDSDInviteProvider with ChangeNotifier {
-  List<BankAccountTerminal> _bankAccounts = [];
+  final List<BankAccountTerminal> _bankAccounts = [];
 
   List<BankAccountTerminal> get bankAccounts => _bankAccounts;
 
-  List<MemberSearchDto> _member = [];
+  final List<MemberSearchDto> _member = [];
 
   List<MemberSearchDto> get member => _member;
 

@@ -53,7 +53,7 @@ class MTextFieldCustom extends StatefulWidget {
   final InputDecoration? decoration;
 
   const MTextFieldCustom({
-    Key? key,
+    super.key,
     required this.hintText,
     this.controller,
     this.fillColor,
@@ -94,7 +94,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.decoration,
     this.onTap,
     this.expands = false,
-  }) : super(key: key);
+  });
 
   @override
   State<MTextFieldCustom> createState() => _TextFieldWidgetState();

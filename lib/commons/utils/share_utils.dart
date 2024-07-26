@@ -111,7 +111,7 @@ class ShareUtils {
       String name = '';
       String email = '';
       if (dto.userBankName.isNotEmpty) {
-        name = '${dto.userBankName}';
+        name = dto.userBankName;
       }
       if (dto.phone.isNotEmpty) {
         sdt = '\nSĐT: ${dto.phone}';

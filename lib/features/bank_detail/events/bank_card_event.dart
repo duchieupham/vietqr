@@ -157,7 +157,7 @@ class GetMyListGroupEvent extends BankCardEvent {
   final String userID;
   final int offset;
 
-  GetMyListGroupEvent({
+  const GetMyListGroupEvent({
     this.userID = '',
     this.offset = 0,
   });

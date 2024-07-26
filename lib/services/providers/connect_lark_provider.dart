@@ -5,7 +5,7 @@ class ConnectLarkProvider extends ChangeNotifier {
   bool _chooseAllBank = false;
 
   bool get chooseAllBank => _chooseAllBank;
-  List<String> _titles = [
+  final List<String> _titles = [
     'Chọn ngân hàng',
     'Tạo Lark Webhook',
     'Thiết lập Lark'
@@ -16,7 +16,7 @@ class ConnectLarkProvider extends ChangeNotifier {
 
   int get curStep => _curStep;
 
-  List<String> _bankIds = [];
+  final List<String> _bankIds = [];
 
   List<String> get bankIds => _bankIds;
 

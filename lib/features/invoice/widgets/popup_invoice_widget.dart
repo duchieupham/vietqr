@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
@@ -39,7 +37,7 @@ class PopupQrCreate extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DefaultTextStyle(
+              const DefaultTextStyle(
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -51,7 +49,7 @@ class PopupQrCreate extends StatelessWidget {
               ),
               Row(
                 children: [
-                  DefaultTextStyle(
+                  const DefaultTextStyle(
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -62,7 +60,7 @@ class PopupQrCreate extends StatelessWidget {
                     ),
                   ),
                   DefaultTextStyle(
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColor.ORANGE_DARK,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -75,7 +73,7 @@ class PopupQrCreate extends StatelessWidget {
               ),
               Row(
                 children: [
-                  DefaultTextStyle(
+                  const DefaultTextStyle(
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -86,13 +84,13 @@ class PopupQrCreate extends StatelessWidget {
                     ),
                   ),
                   DefaultTextStyle(
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.black,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                     child: Text(
-                      ' ${billNumber}',
+                      ' $billNumber',
                     ),
                   ),
                 ],
@@ -102,7 +100,7 @@ class PopupQrCreate extends StatelessWidget {
                 width: double.infinity,
                 height: 350,
                 decoration: BoxDecoration(
-                  image: DecorationImage(
+                  image: const DecorationImage(
                       image: AssetImage('assets/images/bg-qr-vqr.png'),
                       fit: BoxFit.cover),
                   borderRadius: BorderRadius.circular(10),
@@ -119,7 +117,7 @@ class PopupQrCreate extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 240,
                           height: 240,
                           // color: AppColor.GREY_DADADA,
@@ -129,8 +127,8 @@ class PopupQrCreate extends StatelessWidget {
                             version: QrVersions.auto,
                             embeddedImage: const AssetImage(
                                 'assets/images/ic-viet-qr-small.png'),
-                            embeddedImageStyle: QrEmbeddedImageStyle(
-                              size: const Size(30, 30),
+                            embeddedImageStyle: const QrEmbeddedImageStyle(
+                              size: Size(30, 30),
                             ),
                           ),
                         ),
@@ -161,13 +159,13 @@ class PopupQrCreate extends StatelessWidget {
               const SizedBox(height: 30),
               DefaultTextStyle(
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
                 ),
                 child: Text(
-                  '${invoiceName}',
+                  invoiceName,
                 ),
               ),
               Expanded(
@@ -195,7 +193,7 @@ class PopupQrCreate extends StatelessWidget {
                                 // height: 14,
                               ),
                               const SizedBox(width: 0),
-                              DefaultTextStyle(
+                              const DefaultTextStyle(
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: AppColor.BLUE_TEXT,
@@ -229,7 +227,7 @@ class PopupQrCreate extends StatelessWidget {
                                 // height: 14,
                               ),
                               const SizedBox(width: 0),
-                              DefaultTextStyle(
+                              const DefaultTextStyle(
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: AppColor.BLUE_TEXT,
@@ -257,7 +255,7 @@ class PopupQrCreate extends StatelessWidget {
               onTap: () {
                 Navigator.of(context).pop();
               },
-              child: Icon(
+              child: const Icon(
                 Icons.close,
                 color: Colors.black,
                 size: 20,

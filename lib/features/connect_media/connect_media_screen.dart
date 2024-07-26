@@ -24,7 +24,6 @@ import '../../layouts/m_button_widget.dart';
 import '../../models/bank_account_dto.dart';
 import '../../models/connect_gg_chat_info_dto.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
-import '../../services/providers/invoice_provider.dart';
 import 'blocs/connect_media_bloc.dart';
 import 'events/connect_media_evens.dart';
 
@@ -49,7 +48,7 @@ class _Screen extends StatefulWidget {
   final TypeConnect type;
   final String id;
 
-  const _Screen({super.key, required this.type, required this.id});
+  const _Screen({required this.type, required this.id});
 
   @override
   State<_Screen> createState() => __ScreenState();
@@ -59,8 +58,8 @@ class __ScreenState extends State<_Screen> {
   // late ConnectGgChatBloc _bloc;
   late ConnectMediaProvider _provider;
   final _bloc = getIt.get<ConnectMediaBloc>();
-  PageController _pageController = PageController(initialPage: 0);
-  TextEditingController _textEditingController = TextEditingController();
+  final PageController _pageController = PageController(initialPage: 0);
+  final TextEditingController _textEditingController = TextEditingController();
   Timer? _timer;
 
   int currentPageIndex = 0;
@@ -246,7 +245,7 @@ class __ScreenState extends State<_Screen> {
                       ? bottomButton(state)
                       : const SizedBox.shrink(),
               body: isFirst != true
-                  ? Container(
+                  ? SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: hasInfo == false
                           ? WebhookMediaScreen(
@@ -325,10 +324,10 @@ class __ScreenState extends State<_Screen> {
                               },
                             ),
                     )
-                  : Container(
+                  : SizedBox(
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
-                      child: Center(
+                      child: const Center(
                         child: CircularProgressIndicator(),
                       ),
                     ),
@@ -365,11 +364,11 @@ class __ScreenState extends State<_Screen> {
     Color iconColor = isEnable ? AppColor.WHITE : AppColor.BLACK;
     Color icon1Color = isEnable ? AppColor.BLUE_TEXT : AppColor.GREY_BUTTON;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 70 + MediaQuery.of(context).viewInsets.bottom,
       child: MButtonWidget(
-        margin: EdgeInsets.symmetric(horizontal: 40),
+        margin: const EdgeInsets.symmetric(horizontal: 40),
         height: 50,
         isEnable: isEnable,
         colorDisableBgr: AppColor.GREY_BUTTON,
@@ -613,7 +612,7 @@ class __ScreenState extends State<_Screen> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(100),
                   gradient: const LinearGradient(
-                      colors: [Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
+                      colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight)),
               child:

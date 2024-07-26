@@ -9,15 +9,16 @@ import 'package:vierqr/features/qr_box/states/qr_box_state.dart';
 import '../../../commons/utils/log.dart';
 
 class QRBoxBloc extends Bloc<QRBoxEvent, QRBoxState> with BaseManager {
+  @override
   final BuildContext context;
 
-  QRBoxBloc(this.context) : super(QRBoxState()) {
+  QRBoxBloc(this.context) : super(const QRBoxState()) {
     on<GetTerminalsEvent>(_getTermials);
     on<GetMerchantEvent>(_getMerchants);
     on<ActiveQRBoxEvent>(_active);
   }
 
-  QRBoxRepository _repository = QRBoxRepository();
+  final QRBoxRepository _repository = QRBoxRepository();
 
   void _active(QRBoxEvent event, Emitter emit) async {
     try {
@@ -52,7 +53,7 @@ class QRBoxBloc extends Bloc<QRBoxEvent, QRBoxState> with BaseManager {
             status: BlocStatus.LOADING, request: QR_Box.GET_MERCHANTS));
         final result = await _repository.getListMerchant(event.bankId);
         if (result.isNotEmpty) {
-          Future.delayed(Duration(milliseconds: 500));
+          Future.delayed(const Duration(milliseconds: 500));
           emit(state.copyWith(
               status: BlocStatus.SUCCESS,
               request: QR_Box.GET_MERCHANTS,
@@ -81,7 +82,7 @@ class QRBoxBloc extends Bloc<QRBoxEvent, QRBoxState> with BaseManager {
         final result = await _repository.getTerminals(
             bankId: event.bankId, merchantId: event.merchantId);
         if (result.isNotEmpty) {
-          Future.delayed(Duration(milliseconds: 500));
+          Future.delayed(const Duration(milliseconds: 500));
           emit(state.copyWith(
               status: BlocStatus.SUCCESS,
               request: QR_Box.GET_TERMINALS,

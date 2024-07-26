@@ -42,7 +42,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              DefaultTextStyle(
+              const DefaultTextStyle(
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -56,7 +56,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.close,
                   color: Colors.black,
                   size: 20,
@@ -64,7 +64,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 60,
           ),
           _buildItem(
@@ -72,7 +72,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             'Dịch vụ phần mềm VietQR',
             FontWeight.normal,
           ),
-          MySeparator(
+          const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildItem(
@@ -80,7 +80,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             "$bankName - $bankAccount",
             FontWeight.normal,
           ),
-          MySeparator(
+          const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildItem(
@@ -88,7 +88,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             dateRange,
             FontWeight.normal,
           ),
-          MySeparator(
+          const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildItem(
@@ -96,7 +96,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             '${CurrencyUtils.instance.getCurrencyFormatted(dto.amount.toString())} VND',
             FontWeight.bold,
           ),
-          MySeparator(
+          const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildItem(
@@ -104,7 +104,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             '${CurrencyUtils.instance.getCurrencyFormatted(dto.duration.toString())} tháng',
             FontWeight.bold,
           ),
-          MySeparator(
+          const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildItem(
@@ -112,7 +112,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             '${CurrencyUtils.instance.getCurrencyFormatted(vat.toString())} VND',
             FontWeight.bold,
           ),
-          MySeparator(
+          const MySeparator(
             color: AppColor.GREY_DADADA,
           ),
           _buildItem(
@@ -131,7 +131,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
     FontWeight fontWeightText, {
     double height = 50.0,
   }) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: height,
       child: Center(
@@ -139,7 +139,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             DefaultTextStyle(
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 15,
                 fontWeight: FontWeight.normal,

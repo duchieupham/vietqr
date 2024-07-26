@@ -10,10 +10,11 @@ import 'package:vierqr/models/response_message_dto.dart';
 import '../merchant.dart';
 
 class MerchantBloc extends Bloc<MerchantEvent, MerchantState> with BaseManager {
+  @override
   final BuildContext context;
 
   MerchantBloc(this.context)
-      : super(MerchantState(
+      : super(const MerchantState(
           responseDTO: ResponseMessageDTO(status: '', message: ''),
         )) {
     on<InsertMerchantEvent>(_insertMerchant);
@@ -22,7 +23,7 @@ class MerchantBloc extends Bloc<MerchantEvent, MerchantState> with BaseManager {
     on<UnRegisterMerchantEvent>(_unRegisterMerchant);
   }
 
-  MerchantRepository repository = MerchantRepository();
+  MerchantRepository repository = const MerchantRepository();
 
   void _requestOTP(MerchantEvent event, Emitter emit) async {
     try {

@@ -27,7 +27,7 @@ class SocketService {
 
   BuildContext get context => NavigationService.context!;
 
-  static int _port = 8443;
+  static const int _port = 8443;
 
   Socket? _socket;
   bool _isConnected = false;

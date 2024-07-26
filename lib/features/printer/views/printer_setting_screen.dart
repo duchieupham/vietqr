@@ -17,17 +17,19 @@ import 'package:vierqr/services/providers/countdown_provider.dart';
 class PrinterSettingScreen extends StatelessWidget {
   static String routeName = '/print_setting_screen';
 
+  const PrinterSettingScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PrinterBloc>(
       create: (BuildContext context) => PrinterBloc(),
-      child: PrinterSettingView(),
+      child: const PrinterSettingView(),
     );
   }
 }
 
 class PrinterSettingView extends StatefulWidget {
-  PrinterSettingView({super.key});
+  const PrinterSettingView({super.key});
 
   @override
   State<PrinterSettingView> createState() => _PrinterSettingViewState();

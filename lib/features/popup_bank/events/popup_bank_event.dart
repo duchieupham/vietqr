@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
-import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 
 class PopupBankEvent extends Equatable {
   const PopupBankEvent();
@@ -13,7 +12,7 @@ class PopupBankEvent extends Equatable {
 class PopupBankEventRemove extends PopupBankEvent {
   final BankAccountRemoveDTO dto;
 
-  PopupBankEventRemove(this.dto);
+  const PopupBankEventRemove(this.dto);
 
   @override
   List<Object?> get props => [dto];

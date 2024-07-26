@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -687,7 +686,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
               folderId: event.folderId,
               page: 1,
               size: 50,
-              addedToFolder: event.addedFolder ?? null);
+              addedToFolder: event.addedFolder);
           emit(state.copyWith(
               status: BlocStatus.SUCCESS,
               request: QrFeed.GET_UPDATE_FOLDER_DETAIL,

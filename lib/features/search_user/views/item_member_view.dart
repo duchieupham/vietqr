@@ -46,7 +46,7 @@ class _ItemMemberViewState extends State<ItemMemberView> {
                     ? DecorationImage(
                         image: ImageUtils.instance.getImageNetWork(dto.imgId),
                         fit: BoxFit.cover)
-                    : DecorationImage(
+                    : const DecorationImage(
                         image: AssetImage('assets/images/ic-avatar.png')),
               ),
             ),
@@ -63,12 +63,12 @@ class _ItemMemberViewState extends State<ItemMemberView> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.start,
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 4),
                     Text(dto.phoneNo ?? '',
                         textAlign: TextAlign.start,
-                        style: TextStyle(fontWeight: FontWeight.w600)),
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -87,13 +87,13 @@ class _ItemMemberViewState extends State<ItemMemberView> {
                           borderRadius: BorderRadius.circular(25),
                           color: AppColor.BLUE_TEXT.withOpacity(0.35),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Thêm',
                           style: TextStyle(color: AppColor.BLUE_TEXT),
                         ),
                       ),
                     )
-                  : Container(
+                  : const SizedBox(
                       width: 80,
                       height: 32,
                       child: Row(
@@ -103,7 +103,7 @@ class _ItemMemberViewState extends State<ItemMemberView> {
                             textAlign: TextAlign.end,
                             style: TextStyle(color: AppColor.BLUE_TEXT),
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Icon(
                             Icons.check,
                             color: AppColor.BLUE_TEXT,

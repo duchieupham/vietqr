@@ -36,11 +36,11 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                     color: AppColor.TRANSPARENT,
                     onPressed: () {},
                   ),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Giới thiệu về Danh bạ QR',
                       textAlign: TextAlign.center,
@@ -49,7 +49,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
                     color: AppColor.BLACK_TEXT,
                     onPressed: () {
                       widget.onSelected(isSelect);
@@ -67,7 +67,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColor.BLACK_TEXT,
                       height: 1.4,
@@ -76,10 +76,10 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                     children: [
                       TextSpan(text: '$textContent\n\n'),
                       TextSpan(text: '$textSecurity\n\n'),
-                      TextSpan(text: 'Để biết thêm chi tiết, '),
+                      const TextSpan(text: 'Để biết thêm chi tiết, '),
                       TextSpan(
                         text: 'Xem chi tiết tại đây',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: AppColor.BLUE_TEXT,

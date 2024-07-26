@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:vierqr/main.dart';
 
 import '../../navigator/app_navigator.dart';
 

@@ -12,7 +12,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 class SuggestionWidget extends StatefulWidget {
   final AccountBankDetailDTO dto;
   final BankCardBloc bloc;
-  SuggestionWidget({super.key, required this.dto, required this.bloc});
+  const SuggestionWidget({super.key, required this.dto, required this.bloc});
 
   @override
   State<SuggestionWidget> createState() => _SuggestionWidgetState();
@@ -267,7 +267,7 @@ class _SuggestionWidgetState extends State<SuggestionWidget> {
                         ],
                       )),
                       const Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                        padding: EdgeInsets.only(top: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

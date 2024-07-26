@@ -47,7 +47,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
@@ -59,7 +59,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
         children: [
           Container(
             color: Colors.lightBlue,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -70,7 +70,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
                     children: [
                       Text('$_monthSelect - $_year',
                           textAlign: TextAlign.start,
-                          style: TextStyle(fontSize: 16, color: Colors.white)),
+                          style: const TextStyle(fontSize: 16, color: Colors.white)),
                       DropdownButton<int>(
                         value: _year,
                         elevation: 16,
@@ -84,7 +84,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
                             value: value,
                             child: Text(
                               '$value',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 22,
                                   color: AppColor.WHITE,
                                   fontWeight: FontWeight.bold),
@@ -103,10 +103,10 @@ class _DialogPickDateState extends State<DialogPickDate> {
           Expanded(
             child: Container(
               height: 100,
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: GridView.builder(
                 padding: EdgeInsets.zero,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
                   crossAxisSpacing: 16,
@@ -155,7 +155,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
                 title: 'Đóng',
                 isEnable: true,
                 width: 80,
-                margin: EdgeInsets.only(right: 20, bottom: 20),
+                margin: const EdgeInsets.only(right: 20, bottom: 20),
                 colorEnableText: Colors.black,
                 colorEnableBgr: AppColor.BANK_CARD_COLOR_2,
                 onTap: () {
@@ -165,11 +165,11 @@ class _DialogPickDateState extends State<DialogPickDate> {
               MButtonWidget(
                 title: 'Xác nhận',
                 width: 80,
-                margin: EdgeInsets.only(right: 20, bottom: 20),
+                margin: const EdgeInsets.only(right: 20, bottom: 20),
                 isEnable: true,
                 onTap: () {
-                  DateTime _date = convertStringToDate();
-                  Navigator.of(context).pop(_date);
+                  DateTime date = convertStringToDate();
+                  Navigator.of(context).pop(date);
                 },
               ),
             ],

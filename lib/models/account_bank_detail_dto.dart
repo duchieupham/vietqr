@@ -37,7 +37,7 @@ class AccountBankDetailDTO {
     this.nationalId = '',
     this.qrCode = '',
     this.phoneAuthenticated = '',
-    this.ewalletToken = null,
+    this.ewalletToken,
     this.unlinkedType = 0,
     this.authenticated = false,
     this.transactions,

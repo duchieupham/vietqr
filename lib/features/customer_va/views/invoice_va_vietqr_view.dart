@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -10,8 +9,6 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
-import 'package:vierqr/layouts/dashedline/horizontal_dashed_line.dart';
-import 'package:vierqr/layouts/dashedline/vertical_dashed_line.dart';
 import 'package:vierqr/models/invoice_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';

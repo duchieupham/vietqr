@@ -34,10 +34,10 @@ void _getInviteCode(InviteBDSDEvent event, Emitter emit) async {
 
 void _createNewGroup(InviteBDSDEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is CreateNewGroup) {
-      emit(InviteBDSDLoadingState());
+      emit(const InviteBDSDLoadingState());
       responseMessageDTO =
           await _inviteBDSDRepository.createNewGroup(event.param);
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
@@ -48,17 +48,17 @@ void _createNewGroup(InviteBDSDEvent event, Emitter emit) async {
     }
   } catch (e) {
     LOG.error(e.toString());
-    emit(CreateNewGroupFailedState(
+    emit(const CreateNewGroupFailedState(
         dto: ResponseMessageDTO(status: '', message: 'E05')));
   }
 }
 
 void _removeGroup(InviteBDSDEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is RemoveGroup) {
-      emit(InviteBDSDLoadingState());
+      emit(const InviteBDSDLoadingState());
       responseMessageDTO = await _inviteBDSDRepository.removeGroup(event.param);
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
         emit(RemoveGroupSuccessState(dto: responseMessageDTO));
@@ -74,10 +74,10 @@ void _removeGroup(InviteBDSDEvent event, Emitter emit) async {
 
 void _updateGroup(InviteBDSDEvent event, Emitter emit) async {
   ResponseMessageDTO responseMessageDTO =
-      ResponseMessageDTO(status: '', message: '');
+      const ResponseMessageDTO(status: '', message: '');
   try {
     if (event is UpdateGroup) {
-      emit(InviteBDSDLoadingState());
+      emit(const InviteBDSDLoadingState());
       responseMessageDTO = await _inviteBDSDRepository.updateGroup(event.param);
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
         emit(UpdateGroupSuccessState(dto: responseMessageDTO));
@@ -87,7 +87,7 @@ void _updateGroup(InviteBDSDEvent event, Emitter emit) async {
     }
   } catch (e) {
     LOG.error(e.toString());
-    emit(UpdateGroupFailedState(
+    emit(const UpdateGroupFailedState(
         dto: ResponseMessageDTO(status: '', message: 'E05')));
   }
 }

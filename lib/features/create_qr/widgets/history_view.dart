@@ -7,8 +7,8 @@ class HistoryView extends StatelessWidget {
   final String output;
   final bool isEquals;
 
-  HistoryView(
-      {required this.history, required this.output, this.isEquals = false});
+  const HistoryView(
+      {super.key, required this.history, required this.output, this.isEquals = false});
 
   get money {
     if (output.isNotEmpty) {
@@ -29,10 +29,10 @@ class HistoryView extends StatelessWidget {
         }
         String textRemove = data.join('');
         if (isEquals) {
-          return StringUtils.formatMoney(texts.first) + ',' + textRemove;
+          return '${StringUtils.formatMoney(texts.first)},$textRemove';
         } else {
           if (textRemove.isNotEmpty) {
-            return StringUtils.formatMoney(texts.first) + ',' + textRemove;
+            return '${StringUtils.formatMoney(texts.first)},$textRemove';
           } else {
             return StringUtils.formatMoney(texts.first);
           }
@@ -58,17 +58,17 @@ class HistoryView extends StatelessWidget {
             ...List.generate(history.length, (index) {
               return Text(
                 history[index],
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   height: 1.5,
                 ),
               );
-            }).toList(),
+            }),
           Text(
             money,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColor.BLUE_TEXT,
               fontSize: 28,
               fontWeight: FontWeight.w600,

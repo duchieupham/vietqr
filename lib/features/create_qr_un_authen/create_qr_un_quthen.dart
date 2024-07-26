@@ -25,7 +25,7 @@ import '../../services/providers/create_qr_un_authen_provider.dart';
 import 'events/qrcode_un_authen_event.dart';
 
 class CreateQrUnQuthen extends StatefulWidget {
-  const CreateQrUnQuthen({Key? key, required this.appInfo}) : super(key: key);
+  const CreateQrUnQuthen({super.key, required this.appInfo});
 
   static String routeName = '/create_un_authen';
 
@@ -279,7 +279,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                                         width: 160,
                                         height: 40,
                                         margin:
-                                            EdgeInsets.symmetric(vertical: 28),
+                                            const EdgeInsets.symmetric(vertical: 28),
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                             borderRadius:
@@ -290,7 +290,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                                           provider.showMoreOption
                                               ? 'Đóng tuỳ chọn'
                                               : 'Tuỳ chọn thêm',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: AppColor.BLUE_TEXT),
                                         ),
                                       ),
@@ -472,7 +472,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
 
   _updateMoney(CreateQrUnATProvider provider) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final data = await NavigatorUtils.navigatePage(context, CalculatorScreen(),
+    final data = await NavigatorUtils.navigatePage(context, const CalculatorScreen(),
         routeName: CalculatorScreen.routeName);
 
     if (data != null && data is String) {

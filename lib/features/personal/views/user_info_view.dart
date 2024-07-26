@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,21 +9,15 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
-import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -34,12 +27,10 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
-import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -195,7 +186,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                             Navigator.of(context).pop();
                           },
                           child: const Text('Trở về'))
-                      : Container(
+                      : SizedBox(
                           width: 200,
                           child: Row(
                             children: [
@@ -227,7 +218,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                   radius: 15,
                   bgrColor: AppColor.TRANSPARENT,
                   isDismissible: true,
-                  widget: MyQRBottomSheet(),
+                  widget: const MyQRBottomSheet(),
                 );
               },
               child: Padding(
@@ -636,7 +627,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                 : Icons.visibility,
                                             size: 15,
                                           ),
-                                          SizedBox(width: 12),
+                                          const SizedBox(width: 12),
                                           Text(
                                             _isBalanceVisible
                                                 ? 'Ẩn số dư'
@@ -662,8 +653,8 @@ class _UserInfoViewState extends State<UserInfoView> {
                                             ],
                                             begin: Alignment.centerLeft,
                                             end: Alignment.centerRight)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
+                                    child: const Padding(
+                                      padding: EdgeInsets.symmetric(
                                           horizontal: 20),
                                       child: Row(
                                         children: [
@@ -673,7 +664,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                             width: 20,
                                           ),
                                           SizedBox(width: 12),
-                                          const Text(
+                                          Text(
                                             'Giới thiệu VietQR.VN',
                                             style: TextStyle(fontSize: 12),
                                           ),
@@ -689,7 +680,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                 ? InkWell(
                                     onTap: () {
                                       NavigatorUtils.navigatePage(
-                                          context, KeyActiveFreeScreen(),
+                                          context, const KeyActiveFreeScreen(),
                                           routeName:
                                               KeyActiveFreeScreen.routeName);
                                     },
@@ -715,21 +706,21 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                   'assets/images/ic-infinity.png',
                                               width: 40,
                                             ),
-                                            SizedBox(width: 8),
+                                            const SizedBox(width: 8),
                                             Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
+                                                const Text(
                                                   'Nhận ngay ưu đãi sử dụng dịch vụ',
                                                   style:
                                                       TextStyle(fontSize: 11),
                                                 ),
                                                 Row(
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       'không giới hạn của VietQR',
                                                       style: TextStyle(
                                                           fontSize: 11),
@@ -792,7 +783,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                 : InkWell(
                                     onTap: () {
                                       NavigatorUtils.navigatePage(
-                                          context, VerifyEmailScreen(),
+                                          context, const VerifyEmailScreen(),
                                           routeName:
                                               VerifyEmailScreen.routeName);
                                     },
@@ -818,7 +809,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                   'assets/images/logo-email.png',
                                               width: 40,
                                             ),
-                                            SizedBox(width: 8),
+                                            const SizedBox(width: 8),
                                             Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -843,14 +834,14 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                     )
                                                   ],
                                                 ),
-                                                Text(
+                                                const Text(
                                                   'Nhận ngay ưu đãi sử dụng dịch vụ',
                                                   style:
                                                       TextStyle(fontSize: 11),
                                                 ),
                                                 Row(
                                                   children: [
-                                                    Text(
+                                                    const Text(
                                                       'không giới hạn của VietQR',
                                                       style: TextStyle(
                                                           fontSize: 11),
@@ -909,7 +900,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                             const SizedBox(height: 12),
                             Column(
                               children: [
-                                Container(
+                                SizedBox(
                                   height: 50,
                                   child: Center(
                                     child: Row(
@@ -919,7 +910,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                         Expanded(
                                           child: Row(
                                             children: [
-                                              SizedBox(
+                                              const SizedBox(
                                                 width: 80,
                                                 child: Text('Email'),
                                               ),
@@ -946,7 +937,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                     width: 30,
                                                     color: AppColor.GREEN
                                                         .withOpacity(0.3),
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.check,
                                                       size: 15,
                                                     ),
@@ -966,7 +957,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                       width: 30,
                                                       color: AppColor.ORANGE
                                                           .withOpacity(0.3),
-                                                      child: Center(
+                                                      child: const Center(
                                                         child: Text('?'),
                                                       ),
                                                     ),
@@ -1594,7 +1585,7 @@ class _UserInfoViewState extends State<UserInfoView> {
   Widget _buildInfo(String title, String data) {
     return Column(
       children: [
-        Container(
+        SizedBox(
           height: 50,
           child: Center(
             child: Row(

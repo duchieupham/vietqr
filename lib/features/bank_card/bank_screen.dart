@@ -34,8 +34,6 @@ import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/share_bdsd/share_bdsd_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
-import 'package:vierqr/features/verify_email/verify_email_screen.dart';
-import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';

@@ -3,8 +3,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 // ignore: must_be_immutable
 class CountDown extends AnimatedWidget {
-  CountDown({Key? key, required this.animation})
-      : super(key: key, listenable: animation);
+  CountDown({super.key, required this.animation})
+      : super(listenable: animation);
   Animation<int> animation;
 
   @override
@@ -15,7 +15,7 @@ class CountDown extends AnimatedWidget {
         '${clockTimer.inMinutes.remainder(60).toString()}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}';
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 4),
       decoration: BoxDecoration(
           color: AppColor.BLUE_TEXT.withOpacity(0.2),
           borderRadius: BorderRadius.circular(8)),

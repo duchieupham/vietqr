@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 import 'package:vierqr/models/transaction_log_dto.dart';
 

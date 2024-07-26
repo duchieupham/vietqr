@@ -39,8 +39,8 @@ class SharePrefUtils {
       Constants.SharedPreferenceKey.TokenInfo.sharedValue,
     );
 
-    final _tokenInfo = await secureStorageService.getStorage();
-    tokenInfo = _tokenInfo ?? '';
+    final infoToken = await secureStorageService.getStorage();
+    tokenInfo = infoToken ?? '';
     print('Token - $tokenInfo');
     return tokenInfo;
   }

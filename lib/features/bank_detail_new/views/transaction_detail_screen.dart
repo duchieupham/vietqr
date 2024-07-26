@@ -1,19 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:readmore/readmore.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -24,7 +20,6 @@ import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
@@ -48,7 +43,6 @@ import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 import 'package:path/path.dart' as path;
 import 'package:vierqr/models/transaction_log_dto.dart';
-import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:http/http.dart' as http;
 import '../../../models/bank_account_dto.dart';
@@ -191,7 +185,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
       return pickedFile;
       // widget.onPhotoTaken(File(pickedFile.path));
     } catch (err) {
-      LOG.error("Camera Photo Err: " + err.toString());
+      LOG.error("Camera Photo Err: $err");
     }
     return null;
   }
@@ -562,7 +556,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       ),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     'your_picture_name.png',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1136,7 +1130,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           const SizedBox(width: 10),
           if (detail.transType != 'D' && detail.status != 2) ...[
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(Routes.SAVE_SHARE_TRANS_DETAIL, arguments: {
+                  'type': TypeImage.SAVE,
+                  'dto': detail,
+                });
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,
@@ -1152,7 +1152,13 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
             ),
             const SizedBox(width: 8),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamed(Routes.SAVE_SHARE_TRANS_DETAIL, arguments: {
+                  'type': TypeImage.SHARE,
+                  'dto': detail,
+                });
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 40,

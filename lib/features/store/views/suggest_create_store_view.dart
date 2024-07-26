@@ -26,7 +26,7 @@ class _SuggestCreateStoreViewState extends State<SuggestCreateStoreView> {
             Container(
               height: MediaQuery.of(context).size.height * 0.2,
               width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
                       'assets/images/banner-store-and-service-3D.png'),
@@ -34,13 +34,13 @@ class _SuggestCreateStoreViewState extends State<SuggestCreateStoreView> {
               ),
             ),
             ...[
-              Text(
+              const Text(
                 'Cửa hàng và dịch vụ',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 6),
-              Text(
+              const Text(
                 'Nhận thanh toán và quản lý tiền bán hàng\ntiện lợi ngay trên ứng dụng',
                 textAlign: TextAlign.center,
               ),
@@ -55,13 +55,13 @@ class _SuggestCreateStoreViewState extends State<SuggestCreateStoreView> {
                 height: 50,
                 colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.35),
                 onTap: () => NavigatorUtils.navigatePage(
-                    context, CreateStoreScreen(),
+                    context, const CreateStoreScreen(),
                     routeName: CreateStoreScreen.routeName),
               ),
               const SizedBox(height: 16),
             ],
             ...[
-              Text(
+              const Text(
                 'Giới thiệu tính năng',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),

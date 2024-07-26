@@ -10,9 +10,9 @@ class SMSListItem extends StatelessWidget {
   final TransactionDTO transactionDTO;
 
   const SMSListItem({
-    Key? key,
+    super.key,
     required this.transactionDTO,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/features/merchant/widgets/header_merchant_widget.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 
@@ -39,7 +38,7 @@ class _InputNameStoreViewState extends State<InputNameOrderView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 80),
-            Text(
+            const Text(
               'Đầu tiên, vui lòng nhập tiêu đề\nhoá đơn của bạn.',
               style: TextStyle(
                 fontSize: 20,
@@ -63,7 +62,7 @@ class _InputNameStoreViewState extends State<InputNameOrderView> {
                 _value = value;
                 setState(() {});
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập tiêu đề hoá đơn ở đây',
                 hintStyle: TextStyle(
                   fontSize: 14,

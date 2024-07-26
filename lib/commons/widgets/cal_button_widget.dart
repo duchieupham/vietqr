@@ -11,7 +11,7 @@ class CalButtonWidget extends StatelessWidget {
   final IconData? icon;
 
   const CalButtonWidget({
-    Key? key,
+    super.key,
     required this.size,
     this.height,
     required this.value,
@@ -19,7 +19,7 @@ class CalButtonWidget extends StatelessWidget {
     this.color,
     required this.textColor,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

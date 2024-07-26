@@ -88,7 +88,7 @@ class _VietQrState extends State<WidgetQr> {
             : const AssetImage('assets/images/ic-viet-qr-small.png'),
         embeddedImageStyle: widget.isEmbeddedImage
             ? null
-            : QrEmbeddedImageStyle(size: const Size(30, 30)),
+            : const QrEmbeddedImageStyle(size: Size(30, 30)),
       );
     }
 
@@ -98,7 +98,7 @@ class _VietQrState extends State<WidgetQr> {
       children: [
         Container(
           width: width,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/images/bg-qr-vqr.png'),
                   fit: BoxFit.fitHeight),
@@ -132,7 +132,7 @@ class _VietQrState extends State<WidgetQr> {
                           ),
                         ),
                       ),
-                      Container(
+                      const SizedBox(
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
@@ -167,7 +167,7 @@ class _VietQrState extends State<WidgetQr> {
                           ),
                         ),
                       ),
-                      Container(
+                      const SizedBox(
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
@@ -218,7 +218,7 @@ class _VietQrState extends State<WidgetQr> {
                             ),
                             Text(
                               '${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             GestureDetector(
@@ -250,7 +250,7 @@ class _VietQrState extends State<WidgetQr> {
                               widget.qrGeneratedDTO.content,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColor.GREY_TEXT,
                               ),
@@ -281,7 +281,7 @@ class _VietQrState extends State<WidgetQr> {
                       decoration: BoxDecoration(
                           color: AppColor.WHITE.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(10)),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
@@ -289,7 +289,7 @@ class _VietQrState extends State<WidgetQr> {
                             size: 18,
                             color: AppColor.BLUE_TEXT,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             'Thêm số tiền',
                             maxLines: 1,
@@ -315,7 +315,7 @@ class _VietQrState extends State<WidgetQr> {
                     children: [
                       Text(
                         '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: AppColor.ORANGE_DARK,
@@ -327,7 +327,7 @@ class _VietQrState extends State<WidgetQr> {
                             widget.qrGeneratedDTO.content,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               height: 1.4,
                               color: AppColor.GREY_TEXT,
@@ -345,8 +345,8 @@ class _VietQrState extends State<WidgetQr> {
         Container(
           width: width,
           height: 70,
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          decoration: const BoxDecoration(
             color: AppColor.WHITE,
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
@@ -415,7 +415,7 @@ class _VietQrState extends State<WidgetQr> {
             Image.asset(icon, height: 30, width: 26, fit: BoxFit.cover),
             Text(
               title,
-              style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+              style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
             )
           ],
         ),

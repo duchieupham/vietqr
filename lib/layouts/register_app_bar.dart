@@ -19,7 +19,7 @@ class RegisterAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool centerTitle;
 
   const RegisterAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.isLeading = true,
@@ -27,8 +27,7 @@ class RegisterAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.callBackHome,
     this.showBG = true,
     this.centerTitle = true,
-  })  : preferredSize = const Size.fromHeight(60),
-        super(key: key);
+  })  : preferredSize = const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,7 @@ class RegisterAppBar extends StatelessWidget implements PreferredSizeWidget {
         //             : DecorationImage(
         //                 image: FileImage(page.bannerApp), fit: BoxFit.cover))
         //     : BoxDecoration(),
-        decoration: BoxDecoration(color: AppColor.WHITE),
+        decoration: const BoxDecoration(color: AppColor.WHITE),
         child: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
@@ -120,9 +119,9 @@ class RegisterAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.only(left: 20),
         width: 100, // Increase width as needed to avoid overflow
         alignment: Alignment.centerLeft,
-        child: Row(
+        child: const Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(
               Icons.arrow_back_ios,
               color: Colors.black,

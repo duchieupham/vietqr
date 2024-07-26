@@ -19,7 +19,6 @@ import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
@@ -107,7 +106,7 @@ void main() async {
   }
   cameras = await availableCameras();
   await UserRepository.instance.getBanks();
-  await UserRepository.instance.getIntroContact();
+  UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${appConfig.getEnv}');
   runApp(const VietQRApp());

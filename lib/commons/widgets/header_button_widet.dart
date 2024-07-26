@@ -5,10 +5,10 @@ class HeaderButtonWidget extends StatelessWidget {
   final Widget button;
 
   const HeaderButtonWidget({
-    Key? key,
+    super.key,
     required this.title,
     required this.button,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

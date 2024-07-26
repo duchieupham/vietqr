@@ -1,6 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-import 'dart:ui';
 
 import 'package:vierqr/commons/utils/platform_utils.dart';
 

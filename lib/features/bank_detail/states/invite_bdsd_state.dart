@@ -13,7 +13,7 @@ class InviteBDSDInitialState extends InviteBDSDState {}
 class InviteBDSDLoadingState extends InviteBDSDState {
   final bool isLoading;
 
-  InviteBDSDLoadingState({this.isLoading = false});
+  const InviteBDSDLoadingState({this.isLoading = false});
 
   @override
   List<Object?> get props => [isLoading];

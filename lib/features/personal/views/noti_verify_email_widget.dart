@@ -4,7 +4,6 @@ import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class NotiVerifyEmailWidget extends StatefulWidget {
   final bool isVerify;
@@ -25,7 +24,7 @@ class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
     return widget.isVerify
         ? InkWell(
             onTap: () {
-              NavigatorUtils.navigatePage(context, KeyActiveFreeScreen(),
+              NavigatorUtils.navigatePage(context, const KeyActiveFreeScreen(),
                   routeName: KeyActiveFreeScreen.routeName);
             },
             child: Container(
@@ -44,18 +43,18 @@ class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
                       imagePath: 'assets/images/ic-infinity.png',
                       width: 40,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Nhận ngay ưu đãi sử dụng dịch vụ',
                           style: TextStyle(fontSize: 11),
                         ),
                         Row(
                           children: [
-                            Text(
+                            const Text(
                               'không giới hạn của VietQR',
                               style: TextStyle(fontSize: 11),
                             ),
@@ -102,7 +101,7 @@ class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
           )
         : InkWell(
             onTap: () {
-              NavigatorUtils.navigatePage(context, VerifyEmailScreen(),
+              NavigatorUtils.navigatePage(context, const VerifyEmailScreen(),
                   routeName: VerifyEmailScreen.routeName);
             },
             child: Container(
@@ -121,7 +120,7 @@ class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
                       imagePath: 'assets/images/logo-email.png',
                       width: 40,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,13 +139,13 @@ class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
                             )
                           ],
                         ),
-                        Text(
+                        const Text(
                           'Nhận ngay ưu đãi sử dụng dịch vụ',
                           style: TextStyle(fontSize: 11),
                         ),
                         Row(
                           children: [
-                            Text(
+                            const Text(
                               'không giới hạn của VietQR',
                               style: TextStyle(fontSize: 11),
                             ),

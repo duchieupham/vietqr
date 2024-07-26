@@ -95,14 +95,14 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                 Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: AppColor.WHITE,
                       ),
                       child: Row(
                         children: [
-                          Text(
+                          const Text(
                             'Trạng thái giao dịch',
                             style: TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.w500),
@@ -118,8 +118,8 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '${model.title}',
-                                      style: TextStyle(
+                                      model.title,
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -140,7 +140,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     const SizedBox(height: 16),
                     Container(
                       alignment: Alignment.centerLeft,
-                      child: Text(
+                      child: const Text(
                         'Danh sách giao dịch VietQR',
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold),
@@ -148,10 +148,10 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     ),
                     const SizedBox(height: 10),
                     if (state.status == BlocStatus.LOADING)
-                      Expanded(
+                      const Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 100),
-                          child: const Center(
+                          padding: EdgeInsets.only(bottom: 100),
+                          child: Center(
                             child: CircularProgressIndicator(
                               color: AppColor.BLUE_TEXT,
                             ),
@@ -160,10 +160,10 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                       )
                     else ...[
                       if (state.list.isEmpty)
-                        Expanded(
+                        const Expanded(
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 100),
-                            child: const Center(
+                            padding: EdgeInsets.only(bottom: 100),
+                            child: Center(
                               child: Text('Không có giao dịch nào'),
                             ),
                           ),
@@ -207,10 +207,10 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                 ),
                 enableList
                     ? Container(
-                        padding: EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 20),
                         child: Row(
                           children: [
-                            Text(
+                            const Text(
                               'Trạng thái giao dịch',
                               style: TextStyle(
                                   fontSize: 12,
@@ -250,7 +250,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       child: Container(
         width: width,
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-        margin: EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
             color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
         child: Row(
@@ -273,8 +273,8 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${TransactionUtils.instance.getTitleTransWallet(dto.paymentType)}',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    TransactionUtils.instance.getTitleTransWallet(dto.paymentType),
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                   const Padding(padding: EdgeInsets.only(top: 3)),
                   Text(
@@ -287,9 +287,9 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                   ),
                   const Padding(padding: EdgeInsets.only(top: 3)),
                   Text(
-                    '${TransactionUtils.instance.getPaymentMethod(dto.paymentMethod)}',
+                    TransactionUtils.instance.getPaymentMethod(dto.paymentMethod),
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColor.GREY_TEXT,
                       fontSize: 10,
                     ),
@@ -308,11 +308,11 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     color: AppColor.GREY_TEXT,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 Text(
-                  '${TransactionUtils.instance.getStatusString(dto.status)}',
+                  TransactionUtils.instance.getStatusString(dto.status),
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: TransactionUtils.instance
@@ -379,7 +379,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                         horizontal: 20.0, vertical: 16.0),
                     decoration: BoxDecoration(
                       border: position != (list.length - 1)
-                          ? Border(
+                          ? const Border(
                               bottom: BorderSide(
                                   color: AppColor.GREY_BORDER,
                                   width: 0.5))

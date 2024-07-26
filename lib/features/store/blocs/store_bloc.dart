@@ -8,16 +8,17 @@ import 'package:vierqr/models/store/store_dto.dart';
 import 'package:vierqr/models/store/total_store_dto.dart';
 
 class StoreBloc extends Bloc<StoreEvent, StoreState> with BaseManager {
+  @override
   final BuildContext context;
 
-  StoreBloc(this.context) : super(StoreState(stores: [], merchants: [])) {
+  StoreBloc(this.context) : super(const StoreState(stores: [], merchants: [])) {
     on<GetTotalStoreByDayEvent>(_getTotalStoreByDay);
     on<GetListStoreEvent>(_getListStore);
     on<GetMerchantsEvent>(_getListMerchant);
     on<UpdateListStoreEvent>(_updateListStore);
   }
 
-  StoreRepository repository = StoreRepository();
+  StoreRepository repository = const StoreRepository();
 
   void _getTotalStoreByDay(StoreEvent event, Emitter emit) async {
     try {

@@ -59,11 +59,11 @@ class GetKeyFreeSuccessfulState extends EmailState {
   final KeyFreeDTO keyFreeDTO;
   final BankAccountDTO dto;
 
-  GetKeyFreeSuccessfulState({required this.keyFreeDTO, required this.dto});
+  const GetKeyFreeSuccessfulState({required this.keyFreeDTO, required this.dto});
 }
 
 class GetKeyFreeFailedState extends EmailState {
   final KeyFreeDTO keyFreeDTO;
 
-  GetKeyFreeFailedState({required this.keyFreeDTO});
+  const GetKeyFreeFailedState({required this.keyFreeDTO});
 }

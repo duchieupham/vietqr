@@ -11,7 +11,7 @@ class MerchantRepository {
   const MerchantRepository();
 
   Future<ResponseMessageDTO> requestOTP(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
 
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/request';
@@ -31,7 +31,7 @@ class MerchantRepository {
   }
 
   Future<ResponseMessageDTO> confirmOTP(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
 
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/confirm';
@@ -52,7 +52,7 @@ class MerchantRepository {
 
   Future<ResponseMessageDTO> unRegisterMerchant(
       String merchantId, String userId) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
 
     try {
       String url =
@@ -76,7 +76,7 @@ class MerchantRepository {
   }
 
   Future<ResponseMessageDTO> insertMerchant(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
 
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/insert';
@@ -96,7 +96,7 @@ class MerchantRepository {
   }
 
   Future<ResponseMessageDTO> createStore(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(

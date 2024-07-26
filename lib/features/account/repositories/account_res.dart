@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -239,7 +238,7 @@ class AccountRepository {
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/logout';
       // String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
-      final String fcmToken = await SharePrefUtils.getTokenFCM();
+      final String fcmToken = SharePrefUtils.getTokenFCM();
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {'fcmToken': fcmToken},

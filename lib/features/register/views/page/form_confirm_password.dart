@@ -11,10 +11,10 @@ class FormConfirmPassword extends StatefulWidget {
   bool isFocus;
 
   FormConfirmPassword({
-    Key? key,
+    super.key,
     required this.onEnterIntro,
     required this.isFocus,
-  }) : super(key: key);
+  });
 
   @override
   State<FormConfirmPassword> createState() => _FormConfirmPasswordState();
@@ -40,9 +40,9 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
               Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 50, bottom: 30, left: 20),
+                    margin: const EdgeInsets.only(top: 50, bottom: 30, left: 20),
                     width: double.infinity,
-                    child: Text(
+                    child: const Text(
                       'Vui lòng xác nhận lại\nmật khẩu vừa đặt',
                       style: TextStyle(
                         color: Color(0xFF000000),
@@ -60,7 +60,7 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       height: 50,
-                      margin: EdgeInsets.only(left: 20, right: 20),
+                      margin: const EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           border: Border.all(
@@ -86,8 +86,8 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
                     visible: provider.confirmPassErr,
                     child: Container(
                       alignment: Alignment.centerRight,
-                      padding: EdgeInsets.only(top: 10, right: 20),
-                      child: Text(
+                      padding: const EdgeInsets.only(top: 10, right: 20),
+                      child: const Text(
                         'Mật khẩu xác nhận không trùng khớp',
                         style:
                             TextStyle(color: AppColor.RED_TEXT, fontSize: 13),

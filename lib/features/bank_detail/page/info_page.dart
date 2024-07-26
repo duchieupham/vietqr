@@ -38,8 +38,8 @@ class InfoDetailBankAccount extends StatefulWidget {
   final GestureTapCallback? onChangePageThongKe;
   final Function(QRDetailBank) updateQRGeneratedDTO;
 
-  InfoDetailBankAccount({
-    Key? key,
+  const InfoDetailBankAccount({
+    super.key,
     required this.bloc,
     required this.refresh,
     required this.dto,
@@ -50,7 +50,7 @@ class InfoDetailBankAccount extends StatefulWidget {
     this.merchantDTO,
     this.isRegisterMerchant = false,
     required this.updateQRGeneratedDTO,
-  }) : super(key: key);
+  });
 
   @override
   State<InfoDetailBankAccount> createState() => _InfoDetailBankAccountState();
@@ -116,14 +116,14 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         child: Center(
                           child: Text(
                             '${5 - (widget.dto.transCount ?? 0)}/5 GD miễn phí',
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 12, color: AppColor.BLUE_TEXT),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(height: small ? 8 : 12),
-                    Align(
+                    const Align(
                       alignment: Alignment.center,
                       child: Text(
                         'Nhận tiền từ mọi ngân hàng và ví điện thử có hỗ trợ VietQR',
@@ -301,8 +301,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
           ),
         ),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-          decoration: BoxDecoration(color: AppColor.WHITE),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          decoration: const BoxDecoration(color: AppColor.WHITE),
           child: ButtonIconWidget(
             height: 40,
             pathIcon: 'assets/images/qr-contact-other-white.png',
@@ -359,8 +359,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
               width: 32,
             )
           else
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
+            const Padding(
+              padding: EdgeInsets.only(left: 8),
               child: Icon(
                 Icons.remove_circle_outline,
                 color: AppColor.RED_TEXT,
@@ -382,7 +382,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                 ),
                 Text(
                   description,
-                  style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                  style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
               ],
             ),
@@ -426,13 +426,13 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
 
       return Center(
         child: Container(
-          margin: EdgeInsets.only(top: 20),
+          margin: const EdgeInsets.only(top: 20),
           alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(2),
+                padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
                     color: AppColor.ORANGE_DARK,
                     borderRadius: BorderRadius.circular(30)),
@@ -445,7 +445,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
               const SizedBox(
                 width: 8,
               ),
-              Text(
+              const Text(
                 'Tài khoản được chia sẻ',
                 style: TextStyle(color: AppColor.ORANGE_DARK),
               )
@@ -459,7 +459,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
           onTap: _onLinked,
           child: Container(
             width: 170,
-            margin: EdgeInsets.only(top: 20),
+            margin: const EdgeInsets.only(top: 20),
             decoration: BoxDecoration(
                 color: AppColor.BLUE_TEXT,
                 borderRadius: BorderRadius.circular(30)),
@@ -470,7 +470,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                   'assets/images/ic-linked-bank-white.png',
                   height: 30,
                 ),
-                Text(
+                const Text(
                   'Liên kết tài khoản',
                   style: TextStyle(fontSize: 12, color: AppColor.WHITE),
                 )

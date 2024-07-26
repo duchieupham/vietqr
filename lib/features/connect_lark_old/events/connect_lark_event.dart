@@ -46,7 +46,7 @@ class RemoveLarkConnect extends ConnectLarkEvent {
 class RemoveBankLarkEvent extends ConnectLarkEvent {
   final Map<String, dynamic> body;
 
-  RemoveBankLarkEvent(this.body);
+  const RemoveBankLarkEvent(this.body);
 
   @override
   List<Object?> get props => [body];
@@ -55,7 +55,7 @@ class RemoveBankLarkEvent extends ConnectLarkEvent {
 class AddBankLarkEvent extends ConnectLarkEvent {
   final Map<String, dynamic> body;
 
-  AddBankLarkEvent(this.body);
+  const AddBankLarkEvent(this.body);
 
   @override
   List<Object?> get props => [body];

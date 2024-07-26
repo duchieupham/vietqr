@@ -3,19 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
-import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
-import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/delete_dialog_widget.dart';
 import 'package:vierqr/features/qr_feed/widgets/popup_folder_detail_folder.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_folder_dto.dart';
-import 'package:vierqr/models/qr_folder_detail_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -225,7 +221,6 @@ class _buildItem extends StatelessWidget {
   final String title;
 
   const _buildItem({
-    super.key,
     required this.img,
     required this.title,
   });

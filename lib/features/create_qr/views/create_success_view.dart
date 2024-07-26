@@ -12,7 +12,6 @@ import 'package:vierqr/commons/widgets/widget_qr.dart';
 import 'package:vierqr/features/create_qr/widgets/dialog_exits_view.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -27,7 +26,7 @@ class CreateQRSuccess extends StatefulWidget {
   final GestureTapCallback onCreate;
   final List<BankTypeDTO> listBanks;
 
-  CreateQRSuccess(
+  const CreateQRSuccess(
       {super.key,
       required this.dto,
       required this.onCreate,
@@ -136,7 +135,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                       fontSize: 12, color: AppColor.GREY_TEXT, height: 1.4),
                 ),
                 const SizedBox(height: 8),
-                Container(
+                SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: GridView.builder(
                     padding: EdgeInsets.zero,
@@ -261,7 +260,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                 color: AppColor.WHITE,
                 border: Border.all(color: AppColor.BLUE_TEXT),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -274,7 +273,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                   //   'assets/images/ic-tb-dashboard-selected.png',
                   //   color: AppColor.BLUE_TEXT,
                   // ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                   Text(
                     'Trở về',
                     style: TextStyle(

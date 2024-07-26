@@ -15,7 +15,7 @@ class ButtonWidget extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final EdgeInsetsGeometry? padding;
   const ButtonWidget({
-    Key? key,
+    super.key,
     this.width,
     required this.text,
     required this.textColor,
@@ -27,7 +27,7 @@ class ButtonWidget extends StatelessWidget {
     this.margin,
     this.padding,
     this.enableShadow = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

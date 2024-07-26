@@ -8,8 +8,7 @@ import '../../../commons/widgets/divider_widget.dart';
 class ListNetWorkProvider extends StatelessWidget {
   final List<NetworkProviders> list;
   final Function(NetworkProviders) onTap;
-  const ListNetWorkProvider({Key? key, required this.list, required this.onTap})
-      : super(key: key);
+  const ListNetWorkProvider({super.key, required this.list, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +22,11 @@ class ListNetWorkProvider extends StatelessWidget {
             color: AppColor.BLUE_TEXT.withOpacity(0.3),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Column(
+          child: const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
+                children: [
                   Icon(
                     Icons.info_outline,
                     color: AppColor.BLUE_TEXT,
@@ -45,10 +44,10 @@ class ListNetWorkProvider extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(
+              SizedBox(
                 height: 4,
               ),
-              const Text(
+              Text(
                 'Chỉ thay đổi nhà mạng khi bạn đã đăng kí giữ số chuyển nhà mạng',
                 style: TextStyle(fontSize: 10),
               )

@@ -1009,9 +1009,9 @@ class _BuildHeader extends StatelessWidget {
 class _BuildNoteWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: const [
+      children: [
         Text(
           'Lưu ý',
           style: TextStyle(

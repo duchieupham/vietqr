@@ -17,7 +17,7 @@ class DialogInputOrder extends StatefulWidget {
 }
 
 class _DialogInputOrderState extends State<DialogInputOrder> {
-  CreateStoreRepository repository = CreateStoreRepository();
+  CreateStoreRepository repository = const CreateStoreRepository();
   String name = '';
   String des = '';
   String price = '';
@@ -26,11 +26,11 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
   OrderData data = OrderData();
 
   String getAmount(String a, String b) {
-    String _price = a.replaceAll(',', '');
-    String _quantity = b.replaceAll(',', '');
+    String price = a.replaceAll(',', '');
+    String quantity = b.replaceAll(',', '');
 
     String text =
-        '${int.parse(_price.isNotEmpty ? a : '0') * int.parse(_quantity.isNotEmpty ? b : '0')}';
+        '${int.parse(price.isNotEmpty ? a : '0') * int.parse(quantity.isNotEmpty ? b : '0')}';
     return CurrencyUtils.instance.getCurrencyFormatted(text);
   }
 
@@ -57,14 +57,14 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
             child: Stack(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Text(
                               'Danh mục mới',
                               style: TextStyle(
@@ -73,7 +73,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                           ),
                           GestureDetector(
                             onTap: () => Navigator.pop(context, ''),
-                            child: Icon(Icons.close),
+                            child: const Icon(Icons.close),
                           )
                         ],
                       ),
@@ -125,7 +125,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                         textFieldType: TextfieldType.LABEL,
                         title: 'Đơn giá',
                         hintText: 'Nhập đơn giá',
-                        suffixIcon: Column(
+                        suffixIcon: const Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text('VND'),
@@ -186,19 +186,19 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Thành tiền:'),
+                              const Text('Thành tiền:'),
                               RichText(
                                 text: TextSpan(
-                                  style: TextStyle(color: AppColor.BLACK),
+                                  style: const TextStyle(color: AppColor.BLACK),
                                   children: [
                                     TextSpan(
                                       text: amount.isNotEmpty ? amount : '0',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: AppColor.ORANGE_DARK,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16),
                                     ),
-                                    TextSpan(
+                                    const TextSpan(
                                       text: ' VND',
                                       style: TextStyle(
                                           color: AppColor.ORANGE_DARK,
@@ -213,9 +213,9 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                         MButtonWidget(
                           title: 'Hoàn tất',
                           isEnable: data.isEnable,
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           colorDisableBgr: AppColor.GREY_TEXT.withOpacity(0.3),
-                          margin: EdgeInsets.symmetric(vertical: 20),
+                          margin: const EdgeInsets.symmetric(vertical: 20),
                           onTap: () {
                             data.amount = amount.replaceAll(',', '');
                             if (data.quantity.isEmpty) {

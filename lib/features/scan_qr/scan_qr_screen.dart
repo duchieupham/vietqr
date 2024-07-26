@@ -75,7 +75,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
         endRequestTime - startRequestTime < 300) {
       await NavigatorUtils.showGeneralDialog(
         context: context,
-        child: GeneralDialog(),
+        child: const GeneralDialog(),
       );
     }
     return locationPermission.isGranted;
@@ -260,7 +260,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
     String address = '';
     String website = '';
 
-    list.forEach((element) {
+    for (var element in list) {
       if (element.contains('FN;CHARSET=UTF-8')) {
         List<String> splits = element.split(':');
         name = splits.last;
@@ -296,7 +296,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
           website = splits.last;
         }
       }
-    });
+    }
 
     VCardModel model = VCardModel(
       fullname: name,

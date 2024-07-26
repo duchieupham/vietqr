@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/events/statistical_event.dart';
@@ -15,8 +14,8 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
 
   StatisticBloc(this.terminalDto, this.bankId)
       : super(StatisticState(
-            listStatistics: [],
-            listSeparate: [],
+            listStatistics: const [],
+            listSeparate: const [],
             statisticDTO: ResponseStatisticDTO())) {
     on<StatisticEventGetOverview>(_getDataOverview);
     on<StatisticEventGetData>(_getDataTerminal);
@@ -56,7 +55,7 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
 
   int getDaysInMonth(int year, int month) {
     DateTime firstDayOfNextMonth = DateTime(year, month + 1, 1);
-    DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(Duration(days: 1));
+    DateTime lastDayOfMonth = firstDayOfNextMonth.subtract(const Duration(days: 1));
 
     return lastDayOfMonth.day;
   }

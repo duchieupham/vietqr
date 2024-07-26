@@ -27,7 +27,7 @@ class CreateStoreState extends Equatable {
   final List<BankAccountTerminal> banks;
   final List<MerchantDTO> merchants;
 
-  CreateStoreState({
+  const CreateStoreState({
     this.status = BlocStatus.NONE,
     this.msg,
     this.request = StoreType.NONE,

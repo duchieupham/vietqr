@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 
 import '../../../commons/constants/configurations/theme.dart';

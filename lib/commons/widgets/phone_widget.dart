@@ -65,8 +65,8 @@ class _BodyWidget extends State<PhoneWidget> {
     return Column(
       children: [
         if (widget.isShowTitle)
-          Row(
-            children: const [
+          const Row(
+            children: [
               SizedBox(
                 child: Text(
                   'Số điện thoại',

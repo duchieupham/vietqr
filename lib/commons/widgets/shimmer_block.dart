@@ -7,8 +7,7 @@ class ShimmerBlock extends StatelessWidget {
   final double borderRadius;
 
   const ShimmerBlock(
-      {Key? key, this.width = 20, this.height = 10, this.borderRadius = 0})
-      : super(key: key);
+      {super.key, this.width = 20, this.height = 10, this.borderRadius = 0});
 
   @override
   Widget build(BuildContext context) {

@@ -16,7 +16,7 @@ class TopUpProvider extends ChangeNotifier {
   String _phoneNo = SharePrefUtils.getPhone();
   String get phoneNo => _phoneNo;
 
-  String _carrierTypeId = '';
+  final String _carrierTypeId = '';
   String get carrierTypeId => _carrierTypeId;
 
   String _nameUser = '';
@@ -55,13 +55,13 @@ class TopUpProvider extends ChangeNotifier {
     _nameUser = dto.nickname;
 
     if (dto.carrierTypeId.isEmpty) {
-      _networkProviders = NetworkProviders(imgId: '');
+      _networkProviders = const NetworkProviders(imgId: '');
     } else {
-      _listNetworkProviders.forEach((element) {
+      for (var element in _listNetworkProviders) {
         if (element.id == dto.carrierTypeId) {
           _networkProviders = element;
         }
-      });
+      }
     }
 
     notifyListeners();
