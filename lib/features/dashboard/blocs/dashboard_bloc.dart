@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
@@ -257,6 +260,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         if (result != null) {
           if (result.userId.isNotEmpty) {
             await SharePrefUtils.saveProfileToCache(result);
+            getIt.get<BankBloc>().add(GetVerifyEmail());
           } else {
             emit(state.copyWith(
                 msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',

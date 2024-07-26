@@ -44,6 +44,15 @@ class ConfirmOTPStateFailedState extends EmailState {
   List<Object?> get props => [dto];
 }
 
+class ConfirmOTPStateFailedTimeOutState extends EmailState {
+  final ResponseMessageDTO dto;
+
+  const ConfirmOTPStateFailedTimeOutState({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
 class GetKeyFreeState extends EmailState {}
 
 class GetKeyFreeSuccessfulState extends EmailState {

@@ -3,6 +3,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/verify_email/views/key_active_free.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
@@ -25,15 +26,27 @@ class _VerifyEmailSuccessScreenState extends State<VerifyEmailSuccessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20),
-        child: MButtonWidget(
-          height: 50,
-          title: 'Hoàn thành',
-          margin: EdgeInsets.zero,
-          isEnable: true,
-          onTap: widget.onContinue,
-          colorDisableBgr: AppColor.GREY_BUTTON,
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(20),
+      //   child: MButtonWidget(
+      //     height: 50,
+      //     title: 'Hoàn thành',
+      //     margin: EdgeInsets.zero,
+      //     isEnable: true,
+      //     onTap: widget.onContinue,
+      //     colorDisableBgr: AppColor.GREY_BUTTON,
+      //   ),
+      // ),
+      bottomNavigationBar: VietQRButton.gradient(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        onPressed: widget.onContinue,
+        isDisabled: false,
+        size: VietQRButtonSize.large,
+        child: const Center(
+          child: Text(
+            'Hoàn thành',
+            style: TextStyle(color: AppColor.WHITE),
+          ),
         ),
       ),
       backgroundColor: AppColor.WHITE,

@@ -103,8 +103,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             curve: Curves.easeInOut,
           );
           getIt.get<DashBoardBloc>().add(GetUserInformation());
-          getIt.get<BankBloc>().add(GetVerifyEmail());
-          // SharePrefUtils.getProfile();
+          // getIt.get<BankBloc>().add(GetVerifyEmail());
+          // print(SharePrefUtils.getProfile().verify);
         }
         if (state is ConfirmOTPStateFailedState) {
           setState(() {
@@ -112,6 +112,20 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           });
           Fluttertoast.showToast(
             msg: 'Xác nhận OTP thất bại',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
+        }
+
+        if (state is ConfirmOTPStateFailedTimeOutState) {
+          setState(() {
+            _confirmOTP = false;
+          });
+          Fluttertoast.showToast(
+            msg: 'Mã OTP đã hết hiệu lực',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             backgroundColor: Theme.of(context).cardColor,

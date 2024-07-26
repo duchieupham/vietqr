@@ -42,6 +42,8 @@ void _confirmOTP(EmailEvent event, Emitter emit) async {
 
       if (dto.status == "SUCCESS") {
         emit(ConfirmOTPStateSuccessfulState());
+      } else if (dto.message == 'E175') {
+        emit(ConfirmOTPStateFailedTimeOutState(dto: dto));
       } else {
         emit(ConfirmOTPStateFailedState(dto: dto));
       }

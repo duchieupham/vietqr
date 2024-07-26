@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/pin_widget_register.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
@@ -116,15 +117,31 @@ class _OTPInputPageState extends State<OTPInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20),
-        child: MButtonWidget(
-          title: 'Xác thực',
-          height: 50,
-          margin: EdgeInsets.zero,
-          isEnable: widget.otpController.text.length == 6,
-          onTap: widget.onContinue,
-          colorDisableBgr: AppColor.GREY_BUTTON,
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(20),
+      //   child: MButtonWidget(
+      //     title: 'Xác thực',
+      //     height: 50,
+      //     margin: EdgeInsets.zero,
+      //     isEnable: widget.otpController.text.length == 6,
+      //     onTap: widget.onContinue,
+      //     colorDisableBgr: AppColor.GREY_BUTTON,
+      //   ),
+      // ),
+      bottomNavigationBar: VietQRButton.gradient(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        onPressed: widget.onContinue,
+        isDisabled: !(widget.otpController.text.length == 6),
+        size: VietQRButtonSize.large,
+        child: Center(
+          child: Text(
+            'Xác thực',
+            style: TextStyle(
+              color: (widget.otpController.text.length == 6)
+                  ? AppColor.WHITE
+                  : AppColor.BLACK,
+            ),
+          ),
         ),
       ),
       body: Column(

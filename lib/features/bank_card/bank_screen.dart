@@ -211,6 +211,7 @@ class _BankScreenState extends State<_BankScreen>
             scrollController.jumpTo(0);
           }
         }
+        isVerify = SharePrefUtils.getProfile().verify;
       },
       builder: (context, state) {
         return Column(
