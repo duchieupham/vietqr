@@ -7,7 +7,8 @@ class CustomDateRangePicker extends StatefulWidget {
   final DateTime? initialStartDate;
   final DateTime? initialEndDate;
 
-  const CustomDateRangePicker({super.key, this.initialStartDate, this.initialEndDate});
+  const CustomDateRangePicker(
+      {super.key, this.initialStartDate, this.initialEndDate});
 
   @override
   _CustomDateRangePickerState createState() => _CustomDateRangePickerState();
@@ -221,7 +222,7 @@ class _CustomDateRangePickerState extends State<CustomDateRangePicker> {
                 // _focusedDay = focusedDay;
 
                 _startDate = start;
-                _endDate = end;
+                _endDate = end ?? start;
                 _focusedDay = focusedDay;
                 _rangeStart = start;
                 _rangeEnd = end;

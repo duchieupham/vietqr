@@ -4,6 +4,8 @@ class QRRecreateDTO {
   final String content;
   final String userId;
   final String terminalCode;
+  final String orderId;
+
   final bool newTransaction;
 
   const QRRecreateDTO({
@@ -13,6 +15,7 @@ class QRRecreateDTO {
     required this.userId,
     required this.terminalCode,
     required this.newTransaction,
+    this.orderId = '',
   });
 
   factory QRRecreateDTO.fromJson(Map<String, dynamic> json) {
@@ -34,6 +37,7 @@ class QRRecreateDTO {
     data['userId'] = userId;
     data['newTransaction'] = newTransaction;
     data['terminalCode'] = terminalCode;
+    data['orderId'] = orderId;
     return data;
   }
 }

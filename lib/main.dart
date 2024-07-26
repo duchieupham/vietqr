@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -108,7 +109,23 @@ void main() async {
   UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${appConfig.getEnv}');
-  runApp(const VietQRApp());
+  if (kReleaseMode) {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn =
+            'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
+        // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+        // We recommend adjusting this value in production.
+        options.tracesSampleRate = 0.01;
+        // The sampling rate for profiling is relative to tracesSampleRate
+        // Setting to 1.0 will profile 100% of sampled transactions:
+        options.profilesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(const VietQRApp()),
+    );
+  } else {
+    runApp(const VietQRApp());
+  }
 }
 
 //true => new transaction

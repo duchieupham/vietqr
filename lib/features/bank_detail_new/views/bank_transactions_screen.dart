@@ -1,11 +1,15 @@
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/custom_date_range_picker.dart';
@@ -13,6 +17,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/repositories/transaction_repository.dart';
 import 'package:vierqr/features/bank_detail_new/views/transaction_detail_screen.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/confrim_qr_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/loading_item.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
@@ -22,6 +27,7 @@ import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -127,8 +133,6 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
       _startDate = null;
       _endDate = null;
       _bloc.add(SetTransTimeType(filter: filterType));
-    } else {
-      _showCustomDateRangePicker();
     }
     return filterType;
   }
@@ -149,6 +153,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
       setState(() {
         _startDate = selectedRange.start;
         _endDate = selectedRange.end;
+        selectFilterTime = FilterTrans(title: 'Tuỳ chọn', type: 3);
       });
       String title =
           '${DateFormat('dd/MM/yyyy').format(selectedRange.start).toString()}\nĐến ${DateFormat('dd/MM/yyyy').format(selectedRange.end).toString()}';
@@ -163,22 +168,19 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
       _bloc.add(GetTransListEvent(
           bankId: widget.bankId, offset: 0, type: selectFilterTransType.type));
     } else {
-      getFilterTime().then(
-        (value) {
-          if (value.type != selectFilterTime.type) {
-            _bloc.add(GetTransListEvent(
-                bankId: widget.bankId,
-                offset: 0,
-                type: selectFilterTransType.type));
-          }
-          setState(() {
-            selectFilterTime = value;
-          });
-        },
-      );
-      // setState(() {
-      //   selectFilterTime = FilterTrans(title: '7 ngày gần đây', type: 0);
-      // });
+      // getFilterTime().then(
+      //   (value) {
+      //     if (value.type != selectFilterTime.type) {
+      //       _bloc.add(GetTransListEvent(
+      //           bankId: widget.bankId,
+      //           offset: 0,
+      //           type: selectFilterTransType.type));
+      //     }
+      //     setState(() {
+      //       selectFilterTime = value;
+      //     });
+      //   },
+      // );
     }
   }
 
@@ -451,15 +453,18 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                 onTap: () {
                                   getFilterTime().then(
                                     (value) {
-                                      if (value.type != selectFilterTime.type) {
+                                      if (value.type != 3 &&
+                                          value.type != selectFilterTime.type) {
                                         _bloc.add(GetTransListEvent(
                                             bankId: widget.bankId,
                                             offset: 0,
                                             type: selectFilterTransType.type));
+                                        setState(() {
+                                          selectFilterTime = value;
+                                        });
+                                      } else if (value.type == 3) {
+                                        _showCustomDateRangePicker();
                                       }
-                                      setState(() {
-                                        selectFilterTime = value;
-                                      });
                                     },
                                   );
                                 },
@@ -757,43 +762,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
             else
               VietQRButton.solid(
                 onPressed: () {
-                  if (text == 'Đã hủy') {
-                    QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
-                        terminalCode: item.terminalCode,
-                        bankId: widget.dto.id,
-                        amount: item.amount.replaceAll(',', ''),
-                        content: item.content,
-                        userId: userId,
-                        newTransaction: false);
-                    generateQr(qrRecreateDTO).then(
-                      (value) {
-                        NavigatorUtils.navigatePage(
-                            context, CreateQrScreen(qrDto: value, page: 1),
-                            routeName: CreateQrScreen.routeName);
-                      },
-                    );
-                  } else {
-                    QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
-                      bankCode: item.bankCode,
-                      bankName: item.bankName,
-                      bankAccount: item.bankAccount,
-                      userBankName: item.userBankName,
-                      bankId: widget.dto.id,
-                      imgId: item.imgId,
-                      amount: item.amount,
-                      content: item.content,
-                      qrCode: item.qrCode,
-                      qrLink: item.qrLink,
-                    );
-
-                    NavigatorUtils.navigatePage(
-                        context,
-                        CreateQrScreen(
-                          qrDto: qrGeneratedDTO,
-                          page: 1,
-                        ),
-                        routeName: CreateQrScreen.routeName);
-                  }
+                  createQr(text == 'Đã hủy', item: item);
                 },
                 borderRadius: 100,
                 isDisabled: false,
@@ -809,9 +778,79 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
     );
   }
 
+  Future<void> createQr(bool isCancel,
+      {required TransactionItemDTO item}) async {
+    if (isCancel) {
+      QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+          terminalCode: item.terminalCode,
+          bankId: widget.dto.id,
+          amount: item.amount.replaceAll(',', ''),
+          content: item.content,
+          orderId: item.orderId,
+          userId: userId,
+          newTransaction: true);
+      if (item.orderId.isEmpty) {
+        generateQr(qrRecreateDTO).then(
+          (value) {
+            NavigatorUtils.navigatePage(
+                context, CreateQrScreen(qrDto: value, page: 1),
+                routeName: CreateQrScreen.routeName);
+          },
+        );
+      } else {
+        DialogWidget.instance
+            .showModelBottomSheet(
+          widget: ConfrimQrWidget(
+            bankAccount: widget.dto,
+            orderId: item.orderId,
+            dto: item,
+          ),
+          width: MediaQuery.of(context).size.width,
+          height: 500,
+          padding: const EdgeInsets.all(20),
+          borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        )
+            .then(
+          (value) {
+            if (value != null && value is QRRecreateDTO) {
+              generateQr(value).then(
+                (value) {
+                  NavigatorUtils.navigatePage(
+                      context, CreateQrScreen(qrDto: value, page: 1),
+                      routeName: CreateQrScreen.routeName);
+                },
+              );
+            }
+          },
+        );
+      }
+    } else {
+      QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
+        bankCode: item.bankCode,
+        bankName: item.bankName,
+        bankAccount: item.bankAccount,
+        userBankName: item.userBankName,
+        bankId: widget.dto.id,
+        imgId: item.imgId,
+        amount: item.amount,
+        content: item.content,
+        qrCode: item.qrCode,
+        qrLink: item.qrLink,
+      );
+
+      NavigatorUtils.navigatePage(
+          context,
+          CreateQrScreen(
+            qrDto: qrGeneratedDTO,
+            page: 1,
+          ),
+          routeName: CreateQrScreen.routeName);
+    }
+  }
+
   Future<QRGeneratedDTO?> generateQr(QRRecreateDTO dto) async {
     final TransactionRepository repository = TransactionRepository();
-
     try {
       final result = await repository.regenerateQR(dto);
       return result;

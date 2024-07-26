@@ -551,8 +551,11 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) =>
-                            DetailImageView(image: listImage.first.imgId),
+                        builder: (context) => DetailImageView(
+                          image: listImage.first.imgId,
+                          imgUrl:
+                              '${getIt.get<AppConfig>().getBaseUrl}images/${listImage.first.imgId}',
+                        ),
                       ),
                     );
                   },
