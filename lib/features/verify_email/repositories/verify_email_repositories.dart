@@ -40,7 +40,7 @@ class EmailRepository {
         body: param,
         type: AuthenticationType.SYSTEM,
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
         return result;

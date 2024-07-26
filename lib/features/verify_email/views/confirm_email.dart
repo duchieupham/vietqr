@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -61,18 +62,54 @@ class _EmailInputPageState extends State<EmailInputPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20),
-        child: MButtonWidget(
-          height: 50,
-          title: 'Tiếp tục',
-          margin: EdgeInsets.zero,
-          isEnable:
-              _emailError == null && widget.emailController.text.isNotEmpty,
-          onTap: widget.onContinue,
-          colorDisableBgr: AppColor.GREY_BUTTON,
+      bottomNavigationBar: VietQRButton.gradient(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        onPressed: widget.onContinue,
+        isDisabled:
+            !(_emailError == null && widget.emailController.text.isNotEmpty),
+        size: VietQRButtonSize.large,
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(
+                Icons.abc,
+                size: 18,
+                color: AppColor.TRANSPARENT,
+              ),
+              Text(
+                'Tiếp tục',
+                style: TextStyle(
+                  color: (_emailError == null &&
+                          widget.emailController.text.isNotEmpty)
+                      ? AppColor.WHITE
+                      : AppColor.BLACK,
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_outlined,
+                size: 18,
+                color: (_emailError == null &&
+                        widget.emailController.text.isNotEmpty)
+                    ? AppColor.WHITE
+                    : AppColor.BLACK,
+              ),
+            ],
+          ),
         ),
       ),
+      // bottomNavigationBar: Padding(
+      //   padding: const EdgeInsets.all(20),
+      //   child: MButtonWidget(
+      //     height: 50,
+      //     title: 'Tiếp tục',
+      //     margin: EdgeInsets.zero,
+      //     isEnable:
+      //         _emailError == null && widget.emailController.text.isNotEmpty,
+      //     onTap: widget.onContinue,
+      //     colorDisableBgr: AppColor.GREY_BUTTON,
+      //   ),
+      // ),
       backgroundColor: AppColor.WHITE,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
