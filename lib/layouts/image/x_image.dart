@@ -75,7 +75,8 @@ class XImage extends StatelessWidget {
     if (!imagePath.contains('http')) {
       return CachedNetworkImage(
         fit: fit ?? BoxFit.cover,
-        imageUrl: '${getIt.get<AppConfig>().getBaseUrl}images/$imagePath',
+        // imageUrl: '${getIt.get<AppConfig>().getBaseUrl}images/$imagePath',
+        imageUrl: imagePath,
         width: width,
         height: height,
         httpHeaders: {"Authorization": 'Bearer ${SharePrefUtils.tokenInfo}'},

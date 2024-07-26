@@ -73,13 +73,7 @@ class CacheImage extends StatelessWidget {
         child: const Center(
             child: FittedBox(
           fit: BoxFit.fitWidth,
-          child: Text(
-            "VQR",
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.center,
-          ),
+          child: XImage(imagePath: 'assets/images/ic-image-black.png'),
         )),
       ),
     );

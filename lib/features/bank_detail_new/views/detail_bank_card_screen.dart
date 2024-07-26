@@ -38,7 +38,7 @@ class DetailBankCardScreen extends StatefulWidget {
   final String bankId;
   final bool isLoading;
   final BankAccountDTO dto;
-
+  final BankCardBloc bankCardBloc;
   final int selectedIndex;
   final Function(int) onSelectTab;
   final Function(bool) onScroll;
@@ -47,6 +47,7 @@ class DetailBankCardScreen extends StatefulWidget {
   const DetailBankCardScreen({
     super.key,
     required this.bankId,
+    required this.bankCardBloc,
     required this.selectedIndex,
     required this.onSelectTab,
     required this.onScroll,
@@ -68,7 +69,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
   final GlobalKey _animatedBarKey = GlobalKey();
 
   String get userId => SharePrefUtils.getProfile().userId;
-  late BankCardBloc bankCardBloc;
+  // late BankCardBloc bankCardBloc;
   late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
@@ -79,9 +80,8 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
       qrCode: '',
       imgId: '');
   late AccountBankDetailDTO dto = AccountBankDetailDTO();
-  late List<TerminalAccountDTO> listTerminalAcc = [];
+  // late List<TerminalAccountDTO> listTerminalAcc = [];
   final otpController = TextEditingController();
-  late AccountBankDetailProvider _provider;
 
   // Future<void> _refresh() async {
   //   bankCardBloc.add(const BankCardGetDetailEvent());
@@ -100,10 +100,10 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
           isScrollToChart.value = position.dy >= scrollPosition.pixels &&
               position.dy <=
                   scrollPosition.pixels + scrollPosition.viewportDimension;
-                }
+        }
       },
     );
-    bankCardBloc
+    widget.bankCardBloc
         .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
     // bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
     // bankCardBloc.add(GetMerchantEvent());
@@ -112,9 +112,8 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
   @override
   void initState() {
     super.initState();
-    bankCardBloc = getIt.get<BankCardBloc>(
-        param1: widget.bankId, param2: widget.isLoading);
-    _provider = Provider.of<AccountBankDetailProvider>(context, listen: false);
+    // bankCardBloc = getIt.get<BankCardBloc>(
+    //     param1: widget.bankId, param2: widget.isLoading);
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         initData(context);
@@ -136,7 +135,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
       data['bankCode'] = dto.bankCode;
       data['amount'] = result.money.replaceAll(',', '');
       data['content'] = StringUtils.instance.removeDiacritic(result.content);
-      bankCardBloc.add(BankCardGenerateDetailQR(dto: data));
+      widget.bankCardBloc.add(BankCardGenerateDetailQR(dto: data));
     }
   }
 
@@ -150,7 +149,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
           phone: dto?.phoneAuthenticated ?? '',
           onResend: () {
             Navigator.pop(context);
-            bankCardBloc.add(BankCardEventUnRequestOTP(
+            widget.bankCardBloc.add(BankCardEventUnRequestOTP(
                 accountNumber: dto?.bankAccount ?? ''));
           },
           onChangeOTP: (value) {
@@ -163,7 +162,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                       ewalletToken: '',
                       bankAccount: bankAccount,
                       bankCode: dto.bankCode);
-              bankCardBloc.add(BankCardEventUnConfirmOTP(
+              widget.bankCardBloc.add(BankCardEventUnConfirmOTP(
                   dto: confirmDTO, unlinkType: dto.unlinkedType));
             } else {
               ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
@@ -172,7 +171,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                 applicationType: 'MOBILE',
                 bankAccount: bankAccount,
               );
-              bankCardBloc.add(BankCardEventUnConfirmOTP(
+              widget.bankCardBloc.add(BankCardEventUnConfirmOTP(
                   dto: confirmDTO, unlinkType: dto.unlinkedType));
             }
           },
@@ -194,11 +193,11 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
       builder: (context, AsyncSnapshot<bool> snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data == true) {
-            bankCardBloc.add(const BankCardGetDetailEvent());
+            widget.bankCardBloc.add(const BankCardGetDetailEvent());
           }
         }
         return BlocConsumer<BankCardBloc, BankCardState>(
-          bloc: bankCardBloc,
+          bloc: widget.bankCardBloc,
           listener: (context, state) async {
             // if (state.status == BlocStatus.LOADING) {
             //   DialogWidget.instance.openLoadingDialog();
@@ -210,7 +209,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
             if (state.request == BankDetailType.UN_LINK_BIDV) {
               eventBus.fire(GetListBankScreen());
-              bankCardBloc.add(const BankCardGetDetailEvent());
+              widget.bankCardBloc.add(const BankCardGetDetailEvent());
             }
             if (state.request == BankDetailType.REQUEST_OTP) {
               _onShowDialogRequestOTP(state.requestId ?? '',
@@ -219,7 +218,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
             if (state.request == BankDetailType.OTP) {
               Navigator.of(context).pop();
-              bankCardBloc.add(const BankCardGetDetailEvent());
+              widget.bankCardBloc.add(const BankCardGetDetailEvent());
               eventBus.fire(GetListBankScreen());
             }
 
@@ -290,11 +289,11 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                 );
               }
             }
-            if (state.request == BankDetailType.GET_LIST_GROUP) {
-              if (state.terminalAccountDto != null) {
-                listTerminalAcc = state.terminalAccountDto!;
-              }
-            }
+            // if (state.request == BankDetailType.GET_LIST_GROUP) {
+            //   if (state.terminalAccountDto != null) {
+            //     listTerminalAcc = state.terminalAccountDto!;
+            //   }
+            // }
 
             if (state.request == BankDetailType.CREATE_QR) {
               // Navigator.of(context).pop();
@@ -384,13 +383,13 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                       !dto.authenticated) ...[
                                     const SizedBox(height: 20),
                                     SuggestionWidget(
-                                      bloc: bankCardBloc,
+                                      bloc: widget.bankCardBloc,
                                       dto: dto,
                                     ),
                                   ],
                                   const SizedBox(height: 20),
                                   OptionWidget(
-                                    bloc: bankCardBloc,
+                                    bloc: widget.bankCardBloc,
                                     bankId: state.bankId ?? '',
                                     dto: dto,
                                   ),

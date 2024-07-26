@@ -8,6 +8,7 @@ import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -893,7 +894,7 @@ class _buildQRFeed extends StatelessWidget {
                 child: XImage(
                   borderRadius: BorderRadius.circular(100),
                   imagePath: dto.imageId.isNotEmpty
-                      ? dto.imageId
+                      ? '${getIt.get<AppConfig>().getBaseUrl}images/${dto.imageId}'
                       : ImageConstant.icAvatar,
                   width: 30,
                   height: 30,

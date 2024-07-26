@@ -151,7 +151,7 @@ class MaintainChargeRepositories {
       MaintainChargeCreate dto) async {
     try {
       final String url =
-          '${getIt.get<AppConfig>().getBaseUrl}request-active-key';
+          '${getIt.get<AppConfig>().getBaseUrl}request-active-key/backup';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.postAPI(
         url: url,

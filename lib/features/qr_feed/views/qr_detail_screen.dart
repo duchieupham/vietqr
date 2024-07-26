@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -722,7 +723,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
             child: XImage(
               borderRadius: BorderRadius.circular(100),
               imagePath: commend.imageId.isNotEmpty
-                  ? commend.imageId
+                  ? '${getIt.get<AppConfig>().getBaseUrl}images/${commend.imageId}'
                   : ImageConstant.icAvatar,
               width: 30,
               height: 30,
@@ -1081,8 +1082,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                         child: SizedBox(
                           width: 30,
                           height: 30,
-                          child:
-                              XImage(imagePath: ImageConstant.icAvatar),
+                          child: XImage(imagePath: ImageConstant.icAvatar),
                         ),
                       ),
                 const SizedBox(width: 10),
