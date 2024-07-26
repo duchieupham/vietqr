@@ -91,7 +91,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // await Injection.inject(env: EnvType.PROD);
-  await Injection.inject(env: EnvType.STG);
+  await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
