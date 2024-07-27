@@ -57,7 +57,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
             ],
           ),
           Positioned(
-            bottom: 20,
+            bottom: 100,
             right: 16,
             child: GestureDetector(
               onTap: _onCreateStore,
@@ -443,7 +443,8 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                       const SizedBox(height: 16),
                       RichText(
                         text: TextSpan(
-                          style: const TextStyle(color: Colors.black, fontSize: 11),
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 11),
                           children: [
                             TextSpan(
                               text: '${dto.totalTrans ?? 0} giao dịch\n',
@@ -469,7 +470,8 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                       const SizedBox(height: 12),
                       RichText(
                         text: TextSpan(
-                          style: const TextStyle(color: Colors.black, fontSize: 11),
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 11),
                           children: [
                             TextSpan(
                               text: (dto.ratePreviousDate ?? 0) >= 0
