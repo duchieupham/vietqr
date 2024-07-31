@@ -8,6 +8,7 @@ import 'package:vierqr/models/response_message_dto.dart';
 class EmailBloc extends Bloc<EmailEvent, EmailState> {
   EmailBloc() : super(EmailInitialState()) {
     on<SendOTPEvent>(_sendOTP);
+    on<SendOTPAgainEvent>(_sendOTPAgain);
     on<ConfirmOTPEvent>(_confirmOTP);
     on<GetKeyFreeEvent>(_getKeyFree);
   }
@@ -30,6 +31,24 @@ void _sendOTP(EmailEvent event, Emitter emit) async {
     }
   } catch (e) {
     emit(SendOTPFailedState(dto: dto));
+  }
+}
+
+void _sendOTPAgain(EmailEvent event, Emitter emit) async {
+  ResponseMessageDTO dto = const ResponseMessageDTO(status: '', message: '');
+  try {
+    if (event is SendOTPAgainEvent) {
+      emit(SendOTPState());
+      dto = await emailRepository.sendOTP(event.param);
+
+      if (dto.status == "SUCCESS") {
+        emit(SendOTPAgainSuccessfulState());
+      } else {
+        emit(SendOTPAgainFailedState(dto: dto));
+      }
+    }
+  } catch (e) {
+    emit(SendOTPAgainFailedState(dto: dto));
   }
 }
 

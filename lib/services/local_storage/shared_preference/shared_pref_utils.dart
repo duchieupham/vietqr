@@ -7,6 +7,7 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -427,6 +428,13 @@ class SharePrefUtils {
     // Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.of(context)
         .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => false);
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => LoginScreen(),
+    //     settings: RouteSettings(name: Routes.LOGIN),
+    //   ),
+    // );
   }
 
   static onClearCache() async {

@@ -30,6 +30,7 @@ import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
@@ -237,7 +238,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       XImage(
-                        imagePath: 'assets/images/ic-add-image-black.png',
+                        imagePath: 'assets/images/ic-myqr-black.png',
                         width: 30,
                         height: 30,
                         fit: BoxFit.cover,
@@ -352,83 +353,90 @@ class _UserInfoViewState extends State<UserInfoView> {
                                   horizontal: 20, vertical: 20),
                               child: Column(
                                 children: [
-                                  Stack(children: [
-                                    Container(
-                                        width: 120,
-                                        height: 120,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(100),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.black.withOpacity(0.1),
-                                              spreadRadius: 8,
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: _buildAvatarWidget(context, 80)),
-                                    Positioned(
-                                      bottom: 8,
-                                      right: 8,
-                                      child: InkWell(
-                                        onTap: () async {
-                                          await Permission.mediaLibrary
-                                              .request();
-                                          await imagePicker
-                                              .pickImage(
-                                                  source: ImageSource.gallery)
-                                              .then(
-                                            (pickedFile) async {
-                                              if (pickedFile != null) {
-                                                File? file =
-                                                    File(pickedFile.path);
-                                                File? compressedFile = FileUtils
-                                                    .instance
-                                                    .compressImage(file);
-
-                                                await Future.delayed(
-                                                    const Duration(
-                                                        milliseconds: 200), () {
-                                                  String userId = SharePrefUtils
-                                                          .getProfile()
-                                                      .userId;
-                                                  String imgId = SharePrefUtils
-                                                          .getProfile()
-                                                      .imgId;
-                                                  _userEditBloc.add(
-                                                    UserEditAvatarEvent(
-                                                        userId: userId,
-                                                        imgId: imgId,
-                                                        image: compressedFile),
-                                                  );
-                                                });
-                                              }
-                                            },
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          height: 30,
-                                          width: 30,
+                                  Stack(
+                                    children: [
+                                      Container(
+                                          width: 120,
+                                          height: 120,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(100),
-                                            color: AppColor.GREY_F0F4FA,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.1),
+                                                spreadRadius: 8,
+                                                blurRadius: 10,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
                                           ),
-                                          child: const XImage(
-                                            imagePath:
-                                                'assets/images/ic-add-image-black.png',
-                                            width: 30,
+                                          child:
+                                              _buildAvatarWidget(context, 80)),
+                                      Positioned(
+                                        bottom: 8,
+                                        right: 8,
+                                        child: InkWell(
+                                          onTap: () async {
+                                            await Permission.mediaLibrary
+                                                .request();
+                                            await imagePicker
+                                                .pickImage(
+                                                    source: ImageSource.gallery)
+                                                .then(
+                                              (pickedFile) async {
+                                                if (pickedFile != null) {
+                                                  File? file =
+                                                      File(pickedFile.path);
+                                                  File? compressedFile =
+                                                      FileUtils.instance
+                                                          .compressImage(file);
+
+                                                  await Future.delayed(
+                                                      const Duration(
+                                                          milliseconds: 200),
+                                                      () {
+                                                    String userId =
+                                                        SharePrefUtils
+                                                                .getProfile()
+                                                            .userId;
+                                                    String imgId =
+                                                        SharePrefUtils
+                                                                .getProfile()
+                                                            .imgId;
+                                                    _userEditBloc.add(
+                                                      UserEditAvatarEvent(
+                                                          userId: userId,
+                                                          imgId: imgId,
+                                                          image:
+                                                              compressedFile),
+                                                    );
+                                                  });
+                                                }
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4),
                                             height: 30,
-                                            fit: BoxFit.cover,
+                                            width: 30,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              color: AppColor.GREY_F0F4FA,
+                                            ),
+                                            child: const XImage(
+                                              imagePath:
+                                                  'assets/images/ic-add-image-black.png',
+                                              width: 30,
+                                              height: 30,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                  ]),
+                                      )
+                                    ],
+                                  ),
                                   const Padding(
                                       padding: EdgeInsets.only(top: 10)),
                                   Column(
@@ -455,6 +463,61 @@ class _UserInfoViewState extends State<UserInfoView> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
+                                      if (SharePrefUtils.getProfile()
+                                              .fullName ==
+                                          'Undefined')
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.of(context)
+                                                .pushNamed(Routes.USER_EDIT);
+                                          },
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Container(
+                                              height: 30,
+                                              width: 320,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                  gradient:
+                                                      const LinearGradient(
+                                                          colors: [
+                                                        Color(0xFFD8ECF8),
+                                                        Color(0xFFFFEAD9),
+                                                        Color(0xFFF5C9D1),
+                                                      ],
+                                                          begin: Alignment
+                                                              .bottomLeft,
+                                                          end: Alignment
+                                                              .topRight)),
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  XImage(
+                                                    imagePath:
+                                                        'assets/images/ic-suggest.png',
+                                                    width: 30,
+                                                  ),
+                                                  Text(
+                                                    'Tên của bạn thật khó nhận biết 😧. Cập nhật ngay!',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      color: AppColor.BLACK,
+                                                      fontSize: 10,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -654,8 +717,8 @@ class _UserInfoViewState extends State<UserInfoView> {
                                             begin: Alignment.centerLeft,
                                             end: Alignment.centerRight)),
                                     child: const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 20),
                                       child: Row(
                                         children: [
                                           XImage(
@@ -916,7 +979,10 @@ class _UserInfoViewState extends State<UserInfoView> {
                                               ),
                                               Expanded(
                                                 child: Text(
-                                                  _emailController.text,
+                                                  _emailController
+                                                          .text.isNotEmpty
+                                                      ? _emailController.text
+                                                      : '-',
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
@@ -974,12 +1040,27 @@ class _UserInfoViewState extends State<UserInfoView> {
                               ],
                             ),
                             _buildInfo('CCCD', _nationalIdController.text),
+                            const MySeparator(
+                              color: AppColor.GREY_DADADA,
+                            ),
                             _buildInfo('Ngày cấp', _nationalDate),
+                            const MySeparator(
+                              color: AppColor.GREY_DADADA,
+                            ),
                             _buildInfo(
                                 'CMT (cũ)', _oldNationalIdController.text),
+                            const MySeparator(
+                              color: AppColor.GREY_DADADA,
+                            ),
                             _buildInfo('Giới tính',
                                 provider.gender == 0 ? 'Nam' : 'Nữ'),
+                            const MySeparator(
+                              color: AppColor.GREY_DADADA,
+                            ),
                             _buildInfo('Ngày sinh', _birthDate),
+                            const MySeparator(
+                              color: AppColor.GREY_DADADA,
+                            ),
                             _buildInfo('Địa chỉ', _addressController.text),
 
                             const SizedBox(height: 20),
@@ -1603,9 +1684,9 @@ class _UserInfoViewState extends State<UserInfoView> {
             ),
           ),
         ),
-        const MySeparator(
-          color: AppColor.GREY_DADADA,
-        ),
+        // const MySeparator(
+        //   color: AppColor.GREY_DADADA,
+        // ),
       ],
     );
   }

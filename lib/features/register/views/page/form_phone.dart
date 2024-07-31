@@ -24,27 +24,66 @@ class FormPhone extends StatefulWidget {
 
 class _FormPhoneState extends State<FormPhone> {
   @override
+  void initState() {
+    super.initState();
+    widget.phoneController.text = '';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                margin: const EdgeInsets.only(
-                  bottom: 20,
-                  top: 100,
-                ),
-                width: double.infinity,
-                child: const Text(
-                  'Xin chào, vui lòng nhập\nSố điện thoại để đăng ký\ntài khoản VietQR VN',
-                  style: TextStyle(
-                    color: Color(0xFF000000),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Nhập ',
+                      style: TextStyle(
+                        color: AppColor.BLACK,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'số điện thoại ',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        foreground: Paint()
+                          ..shader = LinearGradient(
+                            colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(
+                            Rect.fromLTWH(
+                                0, 0, 200, 40), // Adjust size as needed
+                          ),
+                      ),
+                    ),
+                    TextSpan(
+                      text: '*',
+                      style: TextStyle(
+                        color: AppColor.BLACK,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              Text(
+                'để đăng ký tài khoản VietQR',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              // PhoneWidget(
+              //   phoneController: widget.phoneController,
+              //   onChanged: provider.updatePhone,
+              //   autoFocus: false,
+              // ),
               PhoneWidget(
                 onChanged: provider.updatePhone,
                 onSubmit: (value) {
@@ -57,6 +96,7 @@ class _FormPhoneState extends State<FormPhone> {
                   }
                 },
                 phoneController: widget.phoneController,
+                // phoneController: provider.phoneNoController,
                 autoFocus: widget.isFocus,
               ),
               Container(

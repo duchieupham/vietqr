@@ -22,6 +22,7 @@ import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
+import 'package:vierqr/features/login/widgets/welcome_login.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_event.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
@@ -90,8 +91,8 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await Injection.inject(env: EnvType.STG);
   // await Injection.inject(env: EnvType.PROD);
-  await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
@@ -141,15 +142,16 @@ class VietQRApp extends StatefulWidget {
 }
 
 class _VietQRApp extends State<VietQRApp> {
-  static Widget _mainScreen = const LoginScreen();
+  static Widget _mainScreen = const WelcomeLoginScreen();
 
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
   @override
   void initState() {
     super.initState();
-    _mainScreen =
-        (userId.isNotEmpty) ? const DashBoardScreen() : const LoginScreen();
+    _mainScreen = (userId.isNotEmpty)
+        ? const DashBoardScreen()
+        : const WelcomeLoginScreen();
     // _mainScreen = const DashBoardScreen();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(

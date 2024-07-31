@@ -72,6 +72,7 @@ dependencies:
   flutter_local_notifications: ^17.1.2
   webview_flutter: ^4.4.2
   flutter_inappwebview: ^6.0.0
+  smooth_page_indicator: ^1.2.0+3
 
   palette_generator: ^0.3.3+2
   url_launcher: ^6.1.10

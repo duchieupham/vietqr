@@ -208,6 +208,16 @@ class GradientColor {
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
+  LinearGradient aiTextColor = const LinearGradient(
+    colors: [
+      Color(0xFF458BF8),
+      Color(0xFFFF8021),
+      Color(0xFFFF3751),
+      Color(0xFFC958DB),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
   LinearGradient lightMintLinear = const LinearGradient(
     colors: [
       Color(0xFFBAFFBF),
