@@ -105,291 +105,251 @@ class _ConfirmEmailRegisterScreenState
               // Navigator.of(context).pop();
             },
           ),
-          resizeToAvoidBottomInset: false,
-          body: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 12),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Xác thực thông tin ',
-                            style: TextStyle(
-                              color: AppColor.BLACK,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'Email',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              foreground: Paint()
-                                ..shader = LinearGradient(
-                                  colors: [
-                                    Color(0xFF00C6FF),
-                                    Color(0xFF0072FF)
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ).createShader(
-                                  Rect.fromLTWH(0, 0, 200, 40),
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      'cho tài khoản ${widget.phoneNum}',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    MTextFieldCustom(
-                      controller: _emailController,
-                      isObscureText: false,
-                      maxLines: 1,
-                      showBorder: false,
-                      enable: true,
-                      fillColor: AppColor.WHITE,
-                      autoFocus: true,
-                      textFieldType: TextfieldType.DEFAULT,
-                      title: '',
-                      hintText: '',
-                      inputType: TextInputType.emailAddress,
-                      keyboardAction: TextInputAction.next,
-                      onSubmitted: (value) {
-                        validateEmail(_emailController.text);
-                        bool isValidEmail = _emailError == null &&
-                            _emailController.text.isNotEmpty;
-                        if (isValidEmail) {
-                          Map<String, dynamic> param = {
-                            'recipient': _emailController.text,
-                            'userId': SharePrefUtils.getProfile().userId,
-                          };
-                          _bloc.add(SendOTPEvent(param: param));
-                        }
-                      },
-                      onChange: (value) {
-                        validateEmail(value);
-                      },
-                      decoration: const InputDecoration(
-                        hintText: 'Nhập email tại đây',
-                        hintStyle: TextStyle(
-                          fontSize: 14,
-                          color: AppColor.GREY_TEXT,
-                        ),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColor.GREY_DADADA),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColor.GREY_DADADA),
-                        ),
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide(color: AppColor.GREY_DADADA),
-                        ),
-                      ),
-                    ),
-                    if (_emailError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          _emailError!,
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 11),
-                        ),
-                      ),
-                    const SizedBox(height: 20),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Nhận ngay ưu đãi sử dụng dịch vụ VietQR ',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'miễn phí 01 tháng',
-                            style: TextStyle(
-                              fontSize: 20,
-                              foreground: Paint()
-                                ..shader = LinearGradient(
-                                  colors: [
-                                    Color(0xFF00C6FF),
-                                    Color(0xFF0072FF)
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ).createShader(
-                                  Rect.fromLTWH(0, 0, 200, 40),
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
+          resizeToAvoidBottomInset:
+              true, // Allow the screen to resize when the keyboard is visible
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 12),
+                  RichText(
+                    text: TextSpan(
                       children: [
-                        XImage(
-                          imagePath: 'assets/images/ic-noti-bdsd-black.png',
-                          width: 40,
+                        TextSpan(
+                          text: 'Xác thực thông tin ',
+                          style: TextStyle(
+                            color: AppColor.BLACK,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Nhận thông báo biến động số dư',
-                          style: TextStyle(fontSize: 12),
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
+                        TextSpan(
+                          text: 'Email',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()
+                              ..shader = LinearGradient(
+                                colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ).createShader(Rect.fromLTWH(0, 0, 200, 40)),
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        XImage(
-                          imagePath: 'assets/images/ic-earth-black.png',
-                          width: 40,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Chia sẻ BĐSD qua nền tảng mạng xã hội',
-                          style: TextStyle(fontSize: 12),
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        XImage(
-                          imagePath: 'assets/images/ic-store-black.png',
-                          width: 40,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Quản lý doanh thu các cửa hàng',
-                          style: TextStyle(fontSize: 12),
-                          textAlign: TextAlign.center,
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: GestureDetector(
-                        onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           const FormRegisterSuccessSplash()),
-                          // );
-                          // Navigator.of(context).pushAndRemoveUntil(
-                          //     MaterialPageRoute(
-                          //         builder: (context) =>
-                          //             const FormRegisterSuccessSplash()),
-                          //     (Route<dynamic> route) => false);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FormRegisterSuccessSplash(
-                                      onHome: () {
-                                        _onHomeCalled = true;
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        backToPreviousPage(context, true);
-                                      },
-                                    )),
-                          );
-                          Future.delayed(const Duration(seconds: 15), () {
-                            if (!_onHomeCalled) {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              backToPreviousPage(context, true);
-                            }
-                          });
-                        },
-                        child: ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [
-                              Color(0xFF00C6FF),
-                              Color(0xFF0072FF),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
-                          child: const Text(
-                            'Bỏ qua',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                  ),
+                  Text(
+                    'cho tài khoản ${widget.phoneNum}',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  MTextFieldCustom(
+                    controller: _emailController,
+                    isObscureText: false,
+                    maxLines: 1,
+                    showBorder: false,
+                    enable: true,
+                    fillColor: AppColor.WHITE,
+                    autoFocus: true,
+                    textFieldType: TextfieldType.DEFAULT,
+                    title: '',
+                    hintText: '',
+                    inputType: TextInputType.emailAddress,
+                    keyboardAction: TextInputAction.next,
+                    onSubmitted: (value) {
+                      validateEmail(_emailController.text);
+                      bool isValidEmail = _emailError == null &&
+                          _emailController.text.isNotEmpty;
+                      if (isValidEmail) {
+                        Map<String, dynamic> param = {
+                          'recipient': _emailController.text,
+                          'userId': SharePrefUtils.getProfile().userId,
+                        };
+                        _bloc.add(SendOTPEvent(param: param));
+                      }
+                    },
+                    onChange: (value) {
+                      validateEmail(value);
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Nhập email tại đây',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: AppColor.GREY_TEXT,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppColor.GREY_DADADA),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppColor.GREY_DADADA),
+                      ),
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppColor.GREY_DADADA),
                       ),
                     ),
-                    const SizedBox(height: 30),
-                  ],
-                ),
+                  ),
+                  if (_emailError != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        _emailError!,
+                        style: const TextStyle(color: Colors.red, fontSize: 11),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Nhận ngay ưu đãi sử dụng dịch vụ VietQR ',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'miễn phí 01 tháng',
+                          style: TextStyle(
+                            fontSize: 20,
+                            foreground: Paint()
+                              ..shader = LinearGradient(
+                                colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ).createShader(Rect.fromLTWH(0, 0, 200, 40)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      XImage(
+                        imagePath: 'assets/images/ic-noti-bdsd-black.png',
+                        width: 40,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Nhận thông báo biến động số dư',
+                        style: TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      XImage(
+                        imagePath: 'assets/images/ic-earth-black.png',
+                        width: 40,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Chuyển khoản nhanh chóng, mọi lúc mọi nơi',
+                        style: TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      XImage(
+                        imagePath: 'assets/images/ic-store-black.png',
+                        width: 40,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Quản lý doanh thu các cửa hàng',
+                        style: TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Positioned(
-                bottom: MediaQuery.of(context).viewInsets.bottom == 0
-                    ? 50
-                    : MediaQuery.of(context).viewInsets.bottom,
-                left: 0,
-                right: 0,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      child: VietQRButton.gradient(
-                        onPressed: () {
-                          Map<String, dynamic> param = {
-                            'recipient': _emailController.text,
-                            'userId': SharePrefUtils.getProfile().userId,
-                          };
-                          _bloc.add(SendOTPEvent(param: param));
-                        },
-                        isDisabled: !(_emailError == null &&
-                            _emailController.text.isNotEmpty),
-                        size: VietQRButtonSize.large,
-                        child: Center(
-                          child: Text(
-                            'Xác thực Email',
-                            style: TextStyle(
-                              color: (_emailError == null &&
-                                      _emailController.text.isNotEmpty)
-                                  ? AppColor.WHITE
-                                  : AppColor.BLACK,
-                            ),
-                          ),
-                        ),
+            ),
+          ),
+          bottomNavigationBar: Padding(
+            padding: EdgeInsets.fromLTRB(
+                20, 20, 20, 20 + MediaQuery.of(context).viewInsets.bottom),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VietQRButton.gradient(
+                  onPressed: () {
+                    Map<String, dynamic> param = {
+                      'recipient': _emailController.text,
+                      'userId': SharePrefUtils.getProfile().userId,
+                    };
+                    _bloc.add(SendOTPEvent(param: param));
+                  },
+                  isDisabled: !(_emailError == null &&
+                      _emailController.text.isNotEmpty),
+                  size: VietQRButtonSize.large,
+                  child: Center(
+                    child: Text(
+                      'Xác thực Email',
+                      style: TextStyle(
+                        color: (_emailError == null &&
+                                _emailController.text.isNotEmpty)
+                            ? AppColor.WHITE
+                            : AppColor.BLACK,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FormRegisterSuccessSplash(
+                          onHome: () {
+                            _onHomeCalled = true;
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            backToPreviousPage(context, true);
+                          },
+                        ),
+                      ),
+                    );
+                    Future.delayed(const Duration(seconds: 15), () {
+                      if (!_onHomeCalled) {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                        backToPreviousPage(context, true);
+                      }
+                    });
+                  },
+                  child: ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ).createShader(bounds),
+                    child: const Text(
+                      'Bỏ qua',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

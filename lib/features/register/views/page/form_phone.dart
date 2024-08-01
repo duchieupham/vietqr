@@ -79,11 +79,6 @@ class _FormPhoneState extends State<FormPhone> {
                 'để đăng ký tài khoản VietQR',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              // PhoneWidget(
-              //   phoneController: widget.phoneController,
-              //   onChanged: provider.updatePhone,
-              //   autoFocus: false,
-              // ),
               PhoneWidget(
                 onChanged: provider.updatePhone,
                 onSubmit: (value) {

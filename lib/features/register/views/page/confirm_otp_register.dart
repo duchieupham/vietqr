@@ -306,6 +306,43 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                             ),
                           ),
                     const Spacer(),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: MediaQuery.of(context).viewInsets.bottom == 0
+                    ? 0
+                    : MediaQuery.of(context).viewInsets.bottom,
+                left: 0,
+                right: 0,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: VietQRButton.gradient(
+                        onPressed: () {
+                          Map<String, dynamic> param = {
+                            'otp': _otpController.text,
+                            'userId': SharePrefUtils.getProfile().userId,
+                            'email': widget.email,
+                          };
+                          _bloc.add(ConfirmOTPEvent(param: param));
+                        },
+                        isDisabled: !(_otpController.text.length == 6),
+                        size: VietQRButtonSize.large,
+                        child: Center(
+                          child: Text(
+                            'Xác thực OTP',
+                            style: TextStyle(
+                              color: (_otpController.text.length == 6)
+                                  ? AppColor.WHITE
+                                  : AppColor.BLACK,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -363,43 +400,6 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                       ),
                     ),
                     const SizedBox(height: 30),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: MediaQuery.of(context).viewInsets.bottom == 0
-                    ? 50
-                    : MediaQuery.of(context).viewInsets.bottom,
-                left: 0,
-                right: 0,
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      child: VietQRButton.gradient(
-                        onPressed: () {
-                          Map<String, dynamic> param = {
-                            'otp': _otpController.text,
-                            'userId': SharePrefUtils.getProfile().userId,
-                            'email': widget.email,
-                          };
-                          _bloc.add(ConfirmOTPEvent(param: param));
-                        },
-                        isDisabled: !(_otpController.text.length == 6),
-                        size: VietQRButtonSize.large,
-                        child: Center(
-                          child: Text(
-                            'Xác thực OTP',
-                            style: TextStyle(
-                              color: (_otpController.text.length == 6)
-                                  ? AppColor.WHITE
-                                  : AppColor.BLACK,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

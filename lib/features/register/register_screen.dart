@@ -146,9 +146,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             }
 
             if (state is RegisterFailedState) {
-              //pop loading dialog
               Navigator.pop(context);
-              //
+              provider.updatePage(0);
               DialogWidget.instance.openMsgDialog(
                 title: 'Không thể đăng ký',
                 msg: state.msg,
@@ -316,7 +315,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // }
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 10, left: 20, right: 20),
+                padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

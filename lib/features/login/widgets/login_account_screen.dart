@@ -52,47 +52,17 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
       backgroundColor: AppColor.WHITE,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        leadingWidth: widget.list.isNotEmpty ? 300 : 100,
+        leadingWidth: 100,
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: widget.list.isNotEmpty
-            ? GestureDetector(
-                onTap: () {
-                  widget.onQuickLogin!(widget.list.first);
-                },
-                child: Row(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: XImage(
-                        imagePath: 'assets/images/ic-suggest.png',
-                        width: 30,
-                      ),
-                    ),
-                    ShaderMask(
-                      shaderCallback: (bounds) => VietQRTheme
-                          .gradientColor.aiTextColor
-                          .createShader(bounds),
-                      child: Text(
-                        'Bạn có phải là ${widget.list.first.fullName} ?',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : const Padding(
-                padding: EdgeInsets.only(left: 20),
-                child: XImage(
-                  imagePath: 'assets/images/ic-viet-qr.png',
-                  height: 40,
-                  // width: 30,
-                ),
-              ),
+        leading: const Padding(
+          padding: EdgeInsets.only(left: 20),
+          child: XImage(
+            imagePath: 'assets/images/ic-viet-qr.png',
+            height: 40,
+            // width: 30,
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
@@ -256,6 +226,38 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             ),
           ),
           const Spacer(),
+          widget.list.isNotEmpty
+              ? GestureDetector(
+                  onTap: () {
+                    widget.onQuickLogin!(widget.list.first);
+                  },
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8),
+                        child: XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                      ),
+                      ShaderMask(
+                        shaderCallback: (bounds) => VietQRTheme
+                            .gradientColor.aiTextColor
+                            .createShader(bounds),
+                        child: Text(
+                          'Bạn có phải là ${widget.list.first.fullName} ?',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
+          const SizedBox(height: 8),
           VietQRButton.gradient(
               margin: EdgeInsets.symmetric(horizontal: 30),
               onPressed: widget.onRegister!,
