@@ -31,6 +31,19 @@ class SendOTPFailedState extends EmailState {
   List<Object?> get props => [dto];
 }
 
+class SendOTPAgainState extends EmailState {}
+
+class SendOTPAgainSuccessfulState extends EmailState {}
+
+class SendOTPAgainFailedState extends EmailState {
+  final ResponseMessageDTO dto;
+
+  const SendOTPAgainFailedState({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
 class ConfirmOTPState extends EmailState {}
 
 class ConfirmOTPStateSuccessfulState extends EmailState {}
@@ -59,7 +72,8 @@ class GetKeyFreeSuccessfulState extends EmailState {
   final KeyFreeDTO keyFreeDTO;
   final BankAccountDTO dto;
 
-  const GetKeyFreeSuccessfulState({required this.keyFreeDTO, required this.dto});
+  const GetKeyFreeSuccessfulState(
+      {required this.keyFreeDTO, required this.dto});
 }
 
 class GetKeyFreeFailedState extends EmailState {

@@ -33,6 +33,7 @@ import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/widgets/login_account_screen.dart';
 import 'package:vierqr/features/login/widgets/quick_login_screen.dart';
 import 'package:vierqr/features/register/register_screen.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
@@ -155,6 +156,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
               children: [
                 renderFormLogin(),
                 renderLoginByAccountBeforeThat(),
+                renderPasswordBeforeThat(),
                 Consumer<AuthProvider>(
                   builder: (context, provider, child) {
                     return Positioned(
@@ -222,66 +224,374 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
               bottom: height < 800 ? 50 : 66,
               left: 0,
               right: 0,
-              child: Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    // child: _buildButtonBottom(state.appInfoDTO),
-                  ),
-                  const SizedBox(height: 20),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ValueListenableBuilder<List<InfoUserDTO>>(
-                        valueListenable: listInfoUsers,
-                        builder: (context, users, _) {
-                          if (users.isNotEmpty) {
-                            return Container(
-                              alignment: Alignment.center,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: GestureDetector(
-                                onTap: () =>
-                                    onSetIsQuickLogin(FlowType.NEAREST_LOGIN),
-                                child: const Text(
-                                  'Đăng nhập bằng tài khoản trước đó',
-                                  style: TextStyle(
-                                      color: AppColor.BLUE_TEXT,
-                                      decoration: TextDecoration.underline),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              Color(0xFF458BF8),
+                              Color(0xFFFF8021),
+                              Color(0xFFFF3751),
+                              Color(0xFFC958DB),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            'Gợi ý cho bạn',
+                            style: TextStyle(
+                              fontSize: 15,
+                              foreground: Paint()
+                                ..shader = const LinearGradient(
+                                  colors: [
+                                    Color(0xFF458BF8),
+                                    Color(0xFFFF8021),
+                                    Color(0xFFFF3751),
+                                    Color(0xFFC958DB),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(
+                                    const Rect.fromLTWH(0, 0, 200, 30)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ValueListenableBuilder<List<InfoUserDTO>>(
+                      valueListenable: listInfoUsers,
+                      builder: (context, users, _) {
+                        if (users.isNotEmpty) {
+                          InfoUserDTO user = users.first;
+                          return InkWell(
+                            onTap: () {
+                              onSetIsQuickLogin(FlowType.QUICK_LOGIN);
+                              updateInfoUser(user);
+                              // onLoginCard();
+                            },
+                            child: Container(
+                              height: 40,
+                              // width: 240,
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFD8ECF8),
+                                    Color(0xFFFFEAD9),
+                                    Color(0xFFF5C9D1),
+                                  ],
+                                  begin: Alignment.bottomLeft,
+                                  end: Alignment.topRight,
                                 ),
+                                borderRadius: BorderRadius.circular(30),
                               ),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  XImage(
+                                    imagePath:
+                                        'assets/images/ic-person@-black.png',
+                                    width: 30,
+                                  ),
+                                  Text(
+                                    'Bạn có phải là ',
+                                    style: TextStyle(fontSize: 11),
+                                  ),
+                                  Text(
+                                    user.fullName,
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    //  const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {
+                        onLoginCard();
+                      },
+                      child: Container(
+                        height: 40,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        width: 240,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD8ECF8),
+                              Color(0xFFFFEAD9),
+                              Color(0xFFF5C9D1),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            XImage(
+                              imagePath: 'assets/images/ic-info-black.png',
+                              width: 30,
+                            ),
+                            Text(
+                              'Đăng nhập bằng',
+                              style: TextStyle(fontSize: 11),
+                            ),
+                            Text(
+                              ' VietQR ID Card',
+                              style: TextStyle(
+                                  fontSize: 11, fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 40),
-                    child: MButtonWidget(
-                      title: 'Tôi là người dùng mới',
-                      isEnable: true,
-                      // width: 350,
-                      height: 50,
-                      colorEnableBgr: AppColor.WHITE,
-                      border: Border.all(
-                        width: 1,
-                        color: AppColor.BLUE_TEXT,
-                      ),
-                      margin: EdgeInsets.zero,
-                      colorEnableText: AppColor.BLUE_TEXT,
+                    ),
+                    const SizedBox(height: 12),
+                    InkWell(
                       onTap: () {
                         _onRegister();
                       },
+                      child: Container(
+                        width: 180,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD8ECF8),
+                              Color(0xFFFFEAD9),
+                              Color(0xFFF5C9D1),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              XImage(
+                                imagePath: 'assets/images/ic-person-black.png',
+                                width: 30,
+                              ),
+                              Text(
+                                'Tôi là người dùng mới',
+                                style: TextStyle(fontSize: 11),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(height: height < 800 ? 16 : 5),
-                ],
+                    const SizedBox(height: 12),
+
+                    // const SizedBox(height: 16),
+                    // Container(
+                    //   margin: const EdgeInsets.symmetric(horizontal: 40),
+                    //   child: MButtonWidget(
+                    //     title: 'Tôi là người dùng mới',
+                    //     isEnable: true,
+                    //     // width: 350,
+                    //     height: 50,
+                    //     colorEnableBgr: AppColor.WHITE,
+                    //     border: Border.all(
+                    //       width: 1,
+                    //       color: AppColor.BLUE_TEXT,
+                    //     ),
+                    //     margin: EdgeInsets.zero,
+                    //     colorEnableText: AppColor.BLUE_TEXT,
+                    //     onTap: () {
+                    //       _onRegister();
+                    //     },
+                    //   ),
+                    // ),
+                    const SizedBox(height: 10),
+                    SizedBox(height: height < 800 ? 16 : 5),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        });
+  }
+
+  Widget renderPasswordBeforeThat() {
+    final height = MediaQuery.of(context).size.height;
+    return ValueListenableBuilder(
+        valueListenable: isQuickLogin,
+        builder: (context, value, child) {
+          if (value != FlowType.NEAREST_LOGIN &&
+              value != FlowType.FIRST_LOGIN) {
+            return Positioned(
+              bottom: height < 800 ? 50 : 66,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              Color(0xFF458BF8),
+                              Color(0xFFFF8021),
+                              Color(0xFFFF3751),
+                              Color(0xFFC958DB),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            'Gợi ý cho bạn',
+                            style: TextStyle(
+                              fontSize: 15,
+                              foreground: Paint()
+                                ..shader = const LinearGradient(
+                                  colors: [
+                                    Color(0xFF458BF8),
+                                    Color(0xFFFF8021),
+                                    Color(0xFFFF3751),
+                                    Color(0xFFC958DB),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(
+                                    const Rect.fromLTWH(0, 0, 200, 30)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    //  const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {
+                        // onLoginCard();
+                      },
+                      child: Container(
+                        height: 40,
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        width: 230,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD8ECF8),
+                              Color(0xFFFFEAD9),
+                              Color(0xFFF5C9D1),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            XImage(
+                              imagePath: 'assets/images/ic-password-black.png',
+                              width: 30,
+                            ),
+                            Text(
+                              'Bạn quên mật khẩu đăng nhập?',
+                              style: TextStyle(fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {
+                        passController.clear();
+                        onSetIsQuickLogin(FlowType.FIRST_LOGIN);
+                        updateInfoUser(null);
+                        // _onRegister();
+                      },
+                      child: Container(
+                        width: 270,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD8ECF8),
+                              Color(0xFFFFEAD9),
+                              Color(0xFFF5C9D1),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              XImage(
+                                imagePath: 'assets/images/ic-person@-black.png',
+                                width: 30,
+                              ),
+                              Text(
+                                'Đăng nhập bằng tài khoản VietQR khác',
+                                style: TextStyle(fontSize: 11),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // const SizedBox(height: 16),
+                    // Container(
+                    //   margin: const EdgeInsets.symmetric(horizontal: 40),
+                    //   child: MButtonWidget(
+                    //     title: 'Tôi là người dùng mới',
+                    //     isEnable: true,
+                    //     // width: 350,
+                    //     height: 50,
+                    //     colorEnableBgr: AppColor.WHITE,
+                    //     border: Border.all(
+                    //       width: 1,
+                    //       color: AppColor.BLUE_TEXT,
+                    //     ),
+                    //     margin: EdgeInsets.zero,
+                    //     colorEnableText: AppColor.BLUE_TEXT,
+                    //     onTap: () {
+                    //       _onRegister();
+                    //     },
+                    //   ),
+                    // ),
+                    const SizedBox(height: 10),
+                    SizedBox(height: height < 800 ? 16 : 5),
+                  ],
+                ),
               ),
             );
           }
@@ -534,6 +844,7 @@ extension _LoginScreenFunction on _LoginScreenState {
   }
 
   void updateListInfoUser() async {
+    // print(SharePrefUtils.getLoginAccountList());
     final res = await SharePrefUtils.getLoginAccountList() ?? [];
     listInfoUsers.value = res;
   }
@@ -642,8 +953,8 @@ extension _LoginScreenFunction on _LoginScreenState {
 
   void onLoginCard() async {
     if (Platform.isAndroid) {
-      final data =
-          await DialogWidget.instance.openDialogIntroduce(child: const NFCDialog());
+      final data = await DialogWidget.instance
+          .openDialogIntroduce(child: const NFCDialog());
       if (data != null && data is NfcTag) {
         Future.delayed(const Duration(milliseconds: 500), () {
           String cardNumber = readTagToKey(data, '');

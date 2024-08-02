@@ -137,7 +137,7 @@ class RegisterProvider with ChangeNotifier {
       var isValid =
           StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
               true;
-      debugPrint("is Valid ==> $isValid");
+      // debugPrint("is Valid ==> $isValid");
       if (isValidValidationPhone() && !isValid) {
         return true;
       }
@@ -155,7 +155,7 @@ class RegisterProvider with ChangeNotifier {
       var isValid =
           StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
               true;
-      debugPrint("is Valid ==> $isValid");
+      // debugPrint("is Valid ==> $isValid");
       if (isValidValidationPassword() && !isValid) {
         return true;
       }

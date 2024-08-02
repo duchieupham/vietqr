@@ -16,6 +16,14 @@ class SendOTPEvent extends EmailEvent {
   List<Object?> get props => [param];
 }
 
+class SendOTPAgainEvent extends EmailEvent {
+  final Map<String, dynamic> param;
+  const SendOTPAgainEvent({required this.param});
+
+  @override
+  List<Object?> get props => [param];
+}
+
 class ConfirmOTPEvent extends EmailEvent {
   final Map<String, dynamic> param;
   const ConfirmOTPEvent({required this.param});
