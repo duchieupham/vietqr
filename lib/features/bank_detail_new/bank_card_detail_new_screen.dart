@@ -27,12 +27,14 @@ class BankCardDetailNewScreen extends StatefulWidget {
   final String bankId;
   final bool isLoading;
   final BankAccountDTO dto;
+  final int page;
   static String routeName = '/bank_card_detail_screen';
 
   const BankCardDetailNewScreen({
     super.key,
     required this.bankId,
     required this.dto,
+    required this.page,
     this.isLoading = true,
   });
 
@@ -44,7 +46,7 @@ class BankCardDetailNewScreen extends StatefulWidget {
 class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
   ValueNotifier<bool> isScrollNotifier = ValueNotifier<bool>(true);
   ValueNotifier<bool> scrollToTopNotifier = ValueNotifier<bool>(false);
-  late ScrollController scrollController;
+  final ScrollController scrollController = ScrollController();
   late BankCardBloc bankCardBloc;
   late AccountBankDetailDTO dto = AccountBankDetailDTO();
 
@@ -59,21 +61,26 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
     super.initState();
     bankCardBloc = getIt.get<BankCardBloc>(
         param1: widget.bankId, param2: widget.isLoading);
-    scrollController = ScrollController()
-      ..addListener(
-        () {
-          scrollToTopNotifier.value =
-              scrollController.hasClients && scrollController.offset > 200;
-          isScrollNotifier.value = scrollController.offset <= 0.0;
-          if (scrollController.position.pixels ==
-              scrollController.position.maxScrollExtent) {
-            getIt.get<NewTransactionBloc>().add(GetTransListEvent(
-                  isLoadMore: true,
-                  bankId: widget.bankId,
-                ));
-          }
-        },
-      );
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _pageController.jumpToPage(widget.page);
+        scrollController.addListener(
+          () {
+            scrollToTopNotifier.value =
+                scrollController.hasClients && scrollController.offset > 200;
+            isScrollNotifier.value = scrollController.offset <= 0.0;
+            if (scrollController.position.pixels ==
+                scrollController.position.maxScrollExtent) {
+              getIt.get<NewTransactionBloc>().add(GetTransListEvent(
+                    isLoadMore: true,
+                    bankId: widget.bankId,
+                  ));
+            }
+          },
+        );
+      },
+    );
   }
 
   Future<void> getStatistic() async {

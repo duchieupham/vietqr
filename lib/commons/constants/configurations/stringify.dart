@@ -1,6 +1,5 @@
 // ignore_for_file: constant_identifier_names
 
-
 import 'package:vierqr/commons/utils/platform_utils.dart';
 
 class Stringify {
@@ -73,6 +72,7 @@ enum SharedPreferenceKey {
   QrIntro,
   BankType,
   PhoneNumber,
+  Banner,
   ThemeVersion,
   LogoVersion,
   LogoApp,
@@ -89,6 +89,8 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
     switch (this) {
       case SharedPreferenceKey.TokenInfo:
         return 'TOKEN';
+      case SharedPreferenceKey.Banner:
+        return 'Banner';
       case SharedPreferenceKey.TokenFree:
         return 'TOKEN_FREE';
       case SharedPreferenceKey.TokenFCM:

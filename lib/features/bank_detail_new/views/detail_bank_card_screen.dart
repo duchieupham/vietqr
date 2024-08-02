@@ -199,14 +199,6 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
         return BlocConsumer<BankCardBloc, BankCardState>(
           bloc: widget.bankCardBloc,
           listener: (context, state) async {
-            // if (state.status == BlocStatus.LOADING) {
-            //   DialogWidget.instance.openLoadingDialog();
-            // }
-
-            // if (state.status == BlocStatus.UNLOADING) {
-            //   Navigator.pop(context);
-            // }
-
             if (state.request == BankDetailType.UN_LINK_BIDV) {
               eventBus.fire(GetListBankScreen());
               widget.bankCardBloc.add(const BankCardGetDetailEvent());
@@ -240,14 +232,6 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
               if (state.bankDetailDTO != null) {
                 dto = state.bankDetailDTO!;
               }
-
-              ///tắt BĐSD
-              // if (dto.isHideBDSD && state.isInit) listTitle.removeLast();
-
-              // if (widget.pageIndex != 0) {
-              //   _provider.changeCurrentPage(widget.pageIndex);
-              //   pageController.jumpToPage(widget.pageIndex);
-              // }
 
               if (AppDataHelper.instance
                   .checkExitsBankAccount(dto.bankAccount)) {
@@ -297,6 +281,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
             if (state.request == BankDetailType.CREATE_QR) {
               // Navigator.of(context).pop();
+              // qrGeneratedDTO = state.qrGeneratedDTO!;
               if (state.qrGeneratedDTO!.amount.isNotEmpty &&
                   state.qrGeneratedDTO!.amount != '0') {
                 qrGeneratedDTO = state.qrGeneratedDTO!;

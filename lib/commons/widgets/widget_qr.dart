@@ -217,7 +217,7 @@ class _VietQrState extends State<WidgetQr> {
                               ),
                             ),
                             Text(
-                              '${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
+                              '${widget.qrGeneratedDTO.amount} VND',
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -314,7 +314,7 @@ class _VietQrState extends State<WidgetQr> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
+                        '+ ${widget.qrGeneratedDTO.amount} VND',
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,

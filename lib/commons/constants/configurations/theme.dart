@@ -110,6 +110,11 @@ class GradientColor {
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
+  LinearGradient rainbowLinear = const LinearGradient(colors: [
+    Color(0xFFD8ECF8),
+    Color(0xFFFFEAD9),
+    Color(0xFFF5C9D1),
+  ], begin: Alignment.bottomLeft, end: Alignment.topRight);
   LinearGradient brightBlueLinear = const LinearGradient(
     colors: [
       Color(0xFF00B8F5),
@@ -221,6 +226,11 @@ class GradientColor {
     Color(0xFFD8ECF8),
     Color(0xFFFFEAD9),
     Color(0xFFF5C9D1),
+  ], begin: Alignment.bottomLeft, end: Alignment.topRight);
+
+  LinearGradient vietQrPro = const LinearGradient(colors: [
+    Color(0xFFE5CCA7),
+    Color(0xFF736052),
   ], begin: Alignment.bottomLeft, end: Alignment.topRight);
 
   LinearGradient viet_qr = const LinearGradient(

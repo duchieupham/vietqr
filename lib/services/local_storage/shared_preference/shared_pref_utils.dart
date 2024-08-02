@@ -75,6 +75,19 @@ class SharePrefUtils {
     return sharedPreferenceService.get() ?? '';
   }
 
+  ///Set Banner
+  static Future<void> saveBanner(bool isOpen) async {
+    final sharedPreferenceService =
+        SharedPrefLocal<bool>(Constants.SharedPreferenceKey.Banner.sharedValue);
+    await sharedPreferenceService.set(data: isOpen);
+  }
+
+  static bool getBanner() {
+    final sharedPreferenceService =
+        SharedPrefLocal<bool>(Constants.SharedPreferenceKey.Banner.sharedValue);
+    return sharedPreferenceService.get() ?? false;
+  }
+
   /// Profile
   static Future<void> saveProfileToCache(UserProfile profile) async {
     final sharedPreferenceService = SharedPrefLocal<UserProfile>(

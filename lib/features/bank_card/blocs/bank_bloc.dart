@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -9,9 +12,13 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
+import 'package:vierqr/features/verify_email/repositories/verify_email_repositories.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
+import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/nearest_transaction_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 
@@ -23,8 +30,9 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
   BankBloc(this.context)
       : super(const BankState(
+            listTrans: [],
             listBanks: [],
-            colors: [],
+            // colors: [],
             listBankTypeDTO: [],
             listBankAccountTerminal: [])) {
     on<BankCardEventGetList>(_getBankAccounts);
@@ -33,9 +41,66 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     on<UpdateListBank>(_updateListBank);
     on<GetListBankAccountTerminal>(_getBankAccountTerminal);
     on<GetVerifyEmail>(_verifyEmail);
+    on<SelectBankAccount>(_selectBank);
+    on<SelectTimeEvent>(_selectTime);
+    on<GetOverviewEvent>(_getOverview);
+    on<GetKeyFreeEvent>(_getKeyFree);
+    on<GetInvoiceOverview>(_getInvoiceOverview);
+    on<GetTransEvent>(_getTrans);
+    on<ArrangeBankListEvent>(_arrange);
   }
 
+  FilterTrans selected = FilterTrans(
+      title: 'Ngày',
+      type: 1,
+      fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+      toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
+
   final bankCardRepository = const BankCardRepository();
+
+  void _selectTime(BankEvent event, Emitter emit) async {
+    if (event is SelectTimeEvent) {
+      selected = event.timeSelect;
+    }
+  }
+
+  void _arrange(BankEvent event, Emitter emit) async {
+    try {
+      if (event is ArrangeBankListEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankType.ARRANGE));
+        final result = await bankCardRepository.arrangeBankList(event.list);
+        if (result) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS, request: BankType.ARRANGE));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, request: BankType.ARRANGE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, request: BankType.ARRANGE));
+    }
+  }
+
+  void _getTrans(BankEvent event, Emitter emit) async {
+    try {
+      if (event is GetTransEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankType.GET_TRANS));
+        final result = await bankCardRepository.getListTrans(event.bankId);
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: BankType.GET_TRANS,
+            listTrans: result));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: BankType.GET_TRANS));
+    }
+  }
 
   void _updateListBank(BankEvent event, Emitter emit) {
     if (event is UpdateListBank) {
@@ -52,6 +117,25 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     }
   }
 
+  void _getInvoiceOverview(BankEvent event, Emitter emit) async {
+    try {
+      if (event is GetInvoiceOverview) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING,
+            request: BankType.GET_INVOICE_OVERVIEW));
+        final result = await bankCardRepository.getInvoiceOverview();
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            invoiceOverviewDTO: result,
+            request: BankType.GET_INVOICE_OVERVIEW));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: BankType.GET_INVOICE_OVERVIEW));
+    }
+  }
+
   Future _getListBankTypes(BankEvent event, Emitter emit) async {
     if (banks.isNotEmpty) {
       emit(state.copyWith(
@@ -65,11 +149,60 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           list.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
         }
         banks = list;
-        emit(state.copyWith(listBankTypeDTO: list, request: BankType.GET_BANK));
+        emit(state.copyWith(
+            listBankTypeDTO: list, request: BankType.GET_BANK_LOCAL));
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(status: BlocStatus.ERROR));
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: BankType.GET_BANK_LOCAL));
+    }
+  }
+
+  void _selectBank(BankEvent event, Emitter emit) async {
+    if (event is SelectBankAccount) {
+      emit(state.copyWith(bankSelect: event.bank));
+    }
+  }
+
+  void _getOverview(BankEvent event, Emitter emit) async {
+    try {
+      if (event is GetOverviewEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankType.GET_OVERVIEW));
+        final result = await bankCardRepository.getOverview(
+          bankId: event.bankId,
+          fromDate: event.fromDate ?? selected.fromDate!,
+          toDate: event.toDate ?? selected.toDate!,
+        );
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: BankType.GET_OVERVIEW,
+            overviewDto: result));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: BankType.GET_OVERVIEW));
+    }
+  }
+
+  void _getKeyFree(BankEvent event, Emitter emit) async {
+    const EmailRepository emailRepository = EmailRepository();
+    try {
+      if (event is GetKeyFreeEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankType.GET_KEY_FREE));
+        final result = await emailRepository.getKeyFree(event.param);
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: BankType.GET_KEY_FREE,
+            keyDTO: result));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: BankType.GET_KEY_FREE));
     }
   }
 
@@ -77,20 +210,36 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     try {
       if (event is BankCardEventGetList) {
         bool isEmpty = false;
-
-        if (state.status == BlocStatus.NONE) {
-          emit(state.copyWith(status: BlocStatus.LOADING));
-        }
+        BankOverviewDTO? overviewDTO;
+        List<NearestTransDTO> listTrans = [];
+        emit(state.copyWith(
+          status: BlocStatus.LOADING_PAGE,
+          request: BankType.BANK,
+        ));
         List<BankAccountDTO> list =
             await bankCardRepository.getListBankAccount(userId);
-
+        if (list.isNotEmpty && event.isGetOverview) {
+          overviewDTO = await bankCardRepository.getOverview(
+              bankId: list.first.id,
+              fromDate: selected.fromDate!,
+              toDate: selected.toDate!);
+          listTrans = await bankCardRepository.getListTrans(list.first.id);
+        }
         if (list.isEmpty) {
           isEmpty = true;
         }
-
-        final List<Color> colors = [];
-        PaletteGenerator? paletteGenerator;
-        BuildContext context = NavigationService.context!;
+        emit(state.copyWith(
+            request: BankType.BANK,
+            listBanks: list,
+            overviewDto: isEmpty ? null : overviewDTO,
+            listTrans: listTrans,
+            bankSelect: isEmpty ? null : list.first,
+            // colors: colors,
+            status: BlocStatus.UNLOADING,
+            isEmpty: isEmpty));
+        // final List<Color> colors = [];
+        // PaletteGenerator? paletteGenerator;
+        // BuildContext context = NavigationService.context!;
         Provider.of<InvoiceProvider>(context, listen: false)
             .setListUnAuth(list);
         Provider.of<ConnectMediaProvider>(context, listen: false)
@@ -109,28 +258,21 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
           Provider.of<InvoiceProvider>(context, listen: false)
               .setListBank(listLinked);
-          for (BankAccountDTO dto in list) {
-            int index = list.indexOf(dto);
-            dto.position = index * 100;
-            NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
-            paletteGenerator = await PaletteGenerator.fromImageProvider(image);
-            if (paletteGenerator.dominantColor != null) {
-              dto.setColor(paletteGenerator.dominantColor!.color);
-            } else {
-              if (!mounted) return;
-              dto.setColor(Theme.of(context).cardColor);
-            }
-          }
+          // for (BankAccountDTO dto in list) {
+          //   int index = list.indexOf(dto);
+          //   dto.position = index * 100;
+          //   NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+          //   paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+          //   if (paletteGenerator.dominantColor != null) {
+          //     dto.setColor(paletteGenerator.dominantColor!.color);
+          //   } else {
+          //     if (!mounted) return;
+          //     dto.setColor(Theme.of(context).cardColor);
+          //   }
+          // }
         } else {
           Provider.of<InvoiceProvider>(context, listen: false).setListBank([]);
         }
-
-        emit(state.copyWith(
-            request: BankType.BANK,
-            listBanks: list,
-            colors: colors,
-            status: BlocStatus.UNLOADING,
-            isEmpty: isEmpty));
       }
     } catch (e) {
       LOG.error(e.toString());

@@ -687,7 +687,8 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 Text(
                   description,
                   maxLines: 2,
-                  style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
               ],
             ),
@@ -750,7 +751,8 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   Text(
                     des,
                     maxLines: 2,
-                    style: const TextStyle(color: AppColor.GREY_TEXT, fontSize: 10),
+                    style: const TextStyle(
+                        color: AppColor.GREY_TEXT, fontSize: 10),
                   )
               ],
             ),
@@ -806,7 +808,8 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   ),
                   Text(
                     dto.phoneNo,
-                    style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColor.GREY_TEXT),
                   )
                 ],
               ),

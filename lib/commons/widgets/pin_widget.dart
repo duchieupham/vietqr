@@ -77,6 +77,7 @@ class PinWidget extends StatelessWidget {
               decoration: const InputDecoration(
                 enabledBorder: InputBorder.none,
                 disabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 counterStyle: TextStyle(
                   height: 0,
                 ),

@@ -203,6 +203,12 @@ class ErrorUtils {
         result =
             'Tài khoản không hoạt động. Vui lòng kiểm tra lại thông tin đăng ký.';
         break;
+      case ErrorType.E159:
+        result = 'CCCD/MST sai định dạng.';
+        break;
+      case ErrorType.E160:
+        result = 'Số điện thoại không trùng khớp.';
+        break;
       default:
         result = message;
     }

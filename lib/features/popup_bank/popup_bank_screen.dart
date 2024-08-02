@@ -55,7 +55,8 @@ class _PopupBankScreen extends StatefulWidget {
   final BankAccountDTO dto;
   final int index;
 
-  const _PopupBankScreen({required this.tag, required this.dto, required this.index});
+  const _PopupBankScreen(
+      {required this.tag, required this.dto, required this.index});
 
   @override
   State<_PopupBankScreen> createState() => _PopupBankScreenState();
@@ -471,20 +472,20 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
           },
           onTap: () {
             if (dto.bankCode.contains('BIDV')) {
+              ConfirmOTPUnlinkTypeBankDTO confirmDTO =
+                  ConfirmOTPUnlinkTypeBankDTO(
+                      ewalletToken: '',
+                      bankAccount: dto.bankAccount,
+                      bankCode: dto.bankCode);
+              bloc.add(
+                  PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
+            } else {
               ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
                 requestId: requestId,
                 otpValue: otpController.text,
                 applicationType: 'MOBILE',
                 bankAccount: dto.bankAccount,
               );
-              bloc.add(
-                  PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
-            } else {
-              ConfirmOTPUnlinkTypeBankDTO confirmDTO =
-              ConfirmOTPUnlinkTypeBankDTO(
-                  ewalletToken: '',
-                  bankAccount: dto.bankAccount,
-                  bankCode: dto.bankCode);
               bloc.add(
                   PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
             }
