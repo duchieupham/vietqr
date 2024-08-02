@@ -18,6 +18,7 @@ import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_input_money.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/option_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/qr_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
@@ -383,11 +384,13 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                   ServiceVietqrWidget(
                                     bankDTto: widget.dto,
                                   ),
-                                  // const SizedBox(height: 20),
-                                  // AnimationGraphWidget(
-                                  //   scrollNotifer: isScrollToChart,
-                                  //   key: _animatedBarKey,
-                                  // ),
+                                  const SizedBox(height: 20),
+                                  AnimationGraphWidget(
+                                    bloc: widget.bankCardBloc,
+                                    bankId: widget.bankId,
+                                    scrollNotifer: isScrollToChart,
+                                    key: _animatedBarKey,
+                                  ),
                                   const SizedBox(height: 120),
                                 ],
                               ),

@@ -14,6 +14,7 @@ import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/create_store/create_store_screen.dart';
+import 'package:vierqr/features/detail_store/detail_store_screen.dart';
 import 'package:vierqr/features/my_vietqr/bloc/vietqr_store_bloc.dart';
 import 'package:vierqr/features/my_vietqr/event/vietqr_store_event.dart';
 import 'package:vierqr/features/my_vietqr/state/vietqr_store_state.dart';
@@ -84,7 +85,7 @@ class _VietQRStoreWidgetState extends State<VietQRStoreWidget> {
                                 height: 250,
                                 child: QrImageView(
                                   padding: EdgeInsets.zero,
-                                  data: '',
+                                  data: state.terminal!.qrCode,
                                   size: 200,
                                   version: QrVersions.auto,
                                   backgroundColor: AppColor.TRANSPARENT,
@@ -149,13 +150,13 @@ class _VietQRStoreWidgetState extends State<VietQRStoreWidget> {
                             const SizedBox(height: 20),
                             Text(
                               textAlign: TextAlign.center,
-                              'Katinat Lê Thánh Tôn',
-                              style: TextStyle(fontSize: 20),
+                              state.terminal!.terminalName,
+                              style: const TextStyle(fontSize: 20),
                             ),
                             Text(
                               textAlign: TextAlign.center,
-                              'KTN0001',
-                              style: TextStyle(
+                              state.terminal!.terminalCode,
+                              style: const TextStyle(
                                   fontSize: 12, color: AppColor.GREY_TEXT),
                             ),
                           ],
@@ -164,7 +165,11 @@ class _VietQRStoreWidgetState extends State<VietQRStoreWidget> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _button(),
+                  _button(
+                      dto: state.terminal,
+                      merchantId: state.storeSelect != null
+                          ? state.storeSelect?.merchantId
+                          : ''),
                 ]
               ] else
                 _buildEmpty(),
@@ -295,8 +300,8 @@ class _VietQRStoreWidgetState extends State<VietQRStoreWidget> {
     );
   }
 
-  Widget _button() {
-    return Container(
+  Widget _button({TerminalDTO? dto, String? merchantId}) {
+    return SizedBox(
       child: Row(
         children: [
           Expanded(
@@ -308,18 +313,30 @@ class _VietQRStoreWidgetState extends State<VietQRStoreWidget> {
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(color: AppColor.WHITE)),
               child: GestureDetector(
-                onTap: () {},
-                child: Row(
+                onTap: () async {
+                  if (dto != null) {
+                    await NavigatorUtils.navigatePage(
+                        context,
+                        DetailStoreScreen(
+                          merchantId: merchantId,
+                          terminalId: dto.terminalId,
+                          terminalCode: dto.terminalCode,
+                          terminalName: dto.terminalName,
+                        ),
+                        routeName: DetailStoreScreen.routeName);
+                  }
+                },
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const XImage(
+                    XImage(
                       imagePath: 'assets/images/ic-edit.png',
                       height: 30,
                     ),
                     Text(
                       'Truy cập vào cửa hàng',
-                      style: const TextStyle(fontSize: 13),
+                      style: TextStyle(fontSize: 13),
                     ),
                   ],
                 ),

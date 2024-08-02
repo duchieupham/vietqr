@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -33,6 +34,27 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     // on<GetMyListGroupEvent>(_getMyListGroup);
     on<GetMyListGroupEvent>(_getMyListGroupTrans);
     on<GetMerchantEvent>(_getMerchant);
+    on<GetOverviewBankCardEvent>(_getOverview);
+  }
+
+  void _getOverview(BankCardEvent event, Emitter emit) async {
+    const bankCardRepository = BankCardRepository();
+
+    if (event is GetOverviewBankCardEvent) {
+      final resultMonth = await bankCardRepository.getOverview(
+        bankId: event.bankId,
+        fromDate:
+            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+      );
+      final resultDay = await bankCardRepository.getOverview(
+        bankId: event.bankId,
+        fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+      );
+      emit(state.copyWith(
+          overviewDayDto: resultDay, overviewMonthDto: resultMonth));
+    }
   }
 
   void _getDetail(BankCardEvent event, Emitter emit) async {

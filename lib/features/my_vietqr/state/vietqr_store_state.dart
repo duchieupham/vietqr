@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/vietqr_store_dto.dart';
 
 class VietQRStoreState extends Equatable {
@@ -9,6 +10,7 @@ class VietQRStoreState extends Equatable {
   final List<VietQRStoreDTO> listStore;
   final VietQRStoreDTO? storeSelect;
   final TerminalDTO? terminal;
+  final MetaDataDTO? metadata;
 
   const VietQRStoreState({
     this.msg,
@@ -17,6 +19,7 @@ class VietQRStoreState extends Equatable {
     required this.listStore,
     this.storeSelect,
     this.terminal,
+    this.metadata,
   });
 
   VietQRStoreState copyWith({
@@ -26,6 +29,7 @@ class VietQRStoreState extends Equatable {
     List<VietQRStoreDTO>? listStore,
     VietQRStoreDTO? storeSelect,
     TerminalDTO? terminal,
+    MetaDataDTO? metadata,
   }) {
     return VietQRStoreState(
       status: status ?? this.status,
@@ -34,10 +38,11 @@ class VietQRStoreState extends Equatable {
       listStore: listStore ?? this.listStore,
       storeSelect: storeSelect ?? this.storeSelect,
       terminal: terminal ?? this.terminal,
+      metadata: metadata ?? this.metadata,
     );
   }
 
   @override
   List<Object?> get props =>
-      [msg, status, request, listStore, storeSelect, terminal];
+      [msg, status, request, listStore, storeSelect, terminal, metadata];
 }

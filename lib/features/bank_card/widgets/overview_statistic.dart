@@ -82,6 +82,8 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                           bankBloc.add(SelectTimeEvent(timeSelect: selected));
                           bankBloc.add(GetOverviewEvent(
                             bankId: widget.bankDto.id,
+                            fromDate: list[index].fromDate,
+                            toDate: list[index].toDate,
                           ));
                         },
                         child: Container(

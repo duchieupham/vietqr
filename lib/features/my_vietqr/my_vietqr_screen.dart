@@ -187,7 +187,7 @@ class _MyVietQRScreenState extends State<MyVietQRScreen> {
                     BlocBuilder<VietQRStoreBloc, VietQRStoreState>(
                       bloc: getIt.get<VietQRStoreBloc>(),
                       builder: (context, state) {
-                        if (state.terminal == null) {
+                        if (state.terminal!.terminalId.isEmpty) {
                           return const SizedBox.shrink();
                         }
                         return Column(
@@ -384,7 +384,9 @@ class _MyVietQRScreenState extends State<MyVietQRScreen> {
       padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
       bgrColor: AppColor.WHITE,
       margin: EdgeInsets.zero,
-      widget: SelectStoreWidget(),
+      widget: SelectStoreWidget(
+        bankId: selectBank.id,
+      ),
     )
         .then(
       (value) {
@@ -417,6 +419,11 @@ class _MyVietQRScreenState extends State<MyVietQRScreen> {
               getIt.get<BankCardBloc>(param1: selectBank.id, param2: true);
           bankCardBloc
               .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
+          if (_index == 1) {
+            getIt
+                .get<VietQRStoreBloc>()
+                .add(GetListStore(bankId: selectBank.id));
+          }
         }
       },
     );

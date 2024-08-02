@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/my_vietqr/bloc/vietqr_store_bloc.dart';
 import 'package:vierqr/features/my_vietqr/event/vietqr_store_event.dart';
 import 'package:vierqr/features/my_vietqr/state/vietqr_store_state.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/vietqr_store_dto.dart';
 
 class SelectStoreWidget extends StatefulWidget {
-  const SelectStoreWidget({super.key});
+  final String bankId;
+  const SelectStoreWidget({super.key, required this.bankId});
 
   @override
   State<SelectStoreWidget> createState() => _SelectStoreWidgetState();
@@ -19,11 +22,49 @@ class SelectStoreWidget extends StatefulWidget {
 
 class _SelectStoreWidgetState extends State<SelectStoreWidget> {
   final VietQRStoreBloc _bloc = getIt.get<VietQRStoreBloc>();
+  final ScrollController _controller = ScrollController();
+
+  List<VietQRStoreDTO> list = [];
+  MetaDataDTO? metadata;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc.add(GetListStore(bankId: widget.bankId));
+    _controller.addListener(
+      () {
+        if (_controller.position.pixels ==
+            _controller.position.maxScrollExtent) {
+          if (metadata != null) {
+            int total = (metadata!.total! / 5).ceil();
+            if (total > metadata!.page!) {
+              _bloc.add(GetListStore(
+                  bankId: widget.bankId,
+                  isLoadMore: true,
+                  page: metadata!.page! + 1));
+            }
+          }
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VietQRStoreBloc, VietQRStoreState>(
+    return BlocConsumer<VietQRStoreBloc, VietQRStoreState>(
       bloc: _bloc,
+      listener: (context, state) {
+        if (state.status == BlocStatus.SUCCESS &&
+            state.request == VietQrStore.GET_LIST) {
+          list = [...state.listStore];
+          metadata = state.metadata;
+        }
+        if (state.status == BlocStatus.SUCCESS &&
+            state.request == VietQrStore.LOADMORE) {
+          list = [...list, ...state.listStore];
+          metadata = state.metadata;
+        }
+      },
       builder: (context, state) {
         return Column(
           children: [
@@ -52,6 +93,7 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
             const SizedBox(height: 25),
             Expanded(
               child: ListView(
+                controller: _controller,
                 padding: EdgeInsets.zero,
                 children: [
                   ...List.generate(
@@ -95,6 +137,16 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
                       );
                     },
                   ),
+                  if (state.status == BlocStatus.LOAD_MORE)
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),

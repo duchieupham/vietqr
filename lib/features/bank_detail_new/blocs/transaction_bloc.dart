@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_detail_new/repositories/transaction_repository.dart';
 import 'package:vierqr/features/bank_detail_new/states/transaction_state.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';

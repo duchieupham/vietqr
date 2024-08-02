@@ -31,21 +31,36 @@ class VietQRStoreBloc extends Bloc<VietqrStoreEvent, VietQRStoreState> {
             request: VietQrStore.GET_LIST));
         final result = await _repository.getListStore(
             bankId: event.bankId, page: event.page ?? 1, size: event.size ?? 5);
-        TerminalDTO? terminalDTO;
-        if (result.isNotEmpty) {
-          final listTer = result.first.terminals;
-          if (listTer.isNotEmpty) {
-            terminalDTO = listTer.first;
+        if (!event.isLoadMore) {
+          TerminalDTO terminalDTO = TerminalDTO(
+              terminalId: '',
+              terminalName: '',
+              terminalCode: '',
+              rawTerminalCode: '',
+              terminalAddress: '',
+              qrCode: '');
+          if (result.isNotEmpty) {
+            final listTer = result.first.terminals;
+            if (listTer.isNotEmpty) {
+              terminalDTO = listTer.first;
+            }
           }
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: VietQrStore.GET_LIST,
+            listStore: result,
+            storeSelect: result.isNotEmpty ? result.first : null,
+            terminal: terminalDTO,
+            metadata: _repository.metaDataDTO,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: VietQrStore.LOADMORE,
+            listStore: result,
+            metadata: _repository.metaDataDTO,
+          ));
         }
-        emit(state.copyWith(
-          status: BlocStatus.SUCCESS,
-          request:
-              event.isLoadMore ? VietQrStore.LOADMORE : VietQrStore.GET_LIST,
-          listStore: result,
-          storeSelect: result.isNotEmpty ? result.first : null,
-          terminal: terminalDTO,
-        ));
       }
     } catch (e) {
       emit(state.copyWith(
