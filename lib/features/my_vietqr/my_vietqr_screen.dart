@@ -419,11 +419,7 @@ class _MyVietQRScreenState extends State<MyVietQRScreen> {
               getIt.get<BankCardBloc>(param1: selectBank.id, param2: true);
           bankCardBloc
               .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
-          if (_index == 1) {
-            getIt
-                .get<VietQRStoreBloc>()
-                .add(GetListStore(bankId: selectBank.id));
-          }
+          getIt.get<VietQRStoreBloc>().add(GetListStore(bankId: selectBank.id));
         }
       },
     );

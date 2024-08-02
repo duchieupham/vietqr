@@ -6,6 +6,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
@@ -117,7 +118,35 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                 ],
               ),
               const SizedBox(height: 20),
-              if (state.overviewDto != null &&
+              if (state.status == BlocStatus.LOADING) ...[
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: const ShimmerBlock(
+                          width: 150, height: 12, borderRadius: 50),
+                    ),
+                    // ShimmerBlock(width: 150, height: 22, borderRadius: 50),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: const ShimmerBlock(
+                          width: 70, height: 12, borderRadius: 50),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+              ] else if (state.overviewDto != null &&
                   state.overviewDto!.merchantName.isNotEmpty) ...[
                 Row(
                   children: [
@@ -199,34 +228,46 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  AutoSizeText.rich(
-                                    maxLines: 1,
-                                    TextSpan(
-                                      text: CurrencyUtils.instance
-                                          .getCurrencyFormatted(state
-                                              .overviewDto!.totalCredit
-                                              .toString()),
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColor.GREEN),
-                                      children: const [
-                                        TextSpan(
-                                          text: ' VND',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              color: AppColor.GREY_TEXT),
-                                          children: [],
-                                        )
-                                      ],
+                                  if (state.status == BlocStatus.LOADING) ...[
+                                    const ShimmerBlock(
+                                        width: 100,
+                                        height: 12,
+                                        borderRadius: 10),
+                                    const SizedBox(height: 2),
+                                    const ShimmerBlock(
+                                        width: 70,
+                                        height: 12,
+                                        borderRadius: 10),
+                                  ] else ...[
+                                    AutoSizeText.rich(
+                                      maxLines: 1,
+                                      TextSpan(
+                                        text: CurrencyUtils.instance
+                                            .getCurrencyFormatted(state
+                                                .overviewDto!.totalCredit
+                                                .toString()),
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColor.GREEN),
+                                        children: const [
+                                          TextSpan(
+                                            text: ' VND',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                                color: AppColor.GREY_TEXT),
+                                            children: [],
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  AutoSizeText(
-                                    minFontSize: 10,
-                                    '${state.overviewDto!.countCredit} GD đến (+)',
-                                    style: const TextStyle(fontSize: 12),
-                                  )
+                                    AutoSizeText(
+                                      minFontSize: 10,
+                                      '${state.overviewDto!.countCredit} GD đến (+)',
+                                      style: const TextStyle(fontSize: 12),
+                                    )
+                                  ]
                                 ],
                               ),
                             ),
@@ -270,34 +311,46 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  AutoSizeText.rich(
-                                    maxLines: 1,
-                                    TextSpan(
-                                      text: CurrencyUtils.instance
-                                          .getCurrencyFormatted(state
-                                              .overviewDto!.totalDebit
-                                              .toString()),
-                                      style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColor.RED_TEXT),
-                                      children: const [
-                                        TextSpan(
-                                          text: ' VND',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.normal,
-                                              color: AppColor.GREY_TEXT),
-                                          children: [],
-                                        )
-                                      ],
+                                  if (state.status == BlocStatus.LOADING) ...[
+                                    const ShimmerBlock(
+                                        width: 100,
+                                        height: 12,
+                                        borderRadius: 10),
+                                    const SizedBox(height: 2),
+                                    const ShimmerBlock(
+                                        width: 70,
+                                        height: 12,
+                                        borderRadius: 10),
+                                  ] else ...[
+                                    AutoSizeText.rich(
+                                      maxLines: 1,
+                                      TextSpan(
+                                        text: CurrencyUtils.instance
+                                            .getCurrencyFormatted(state
+                                                .overviewDto!.totalDebit
+                                                .toString()),
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColor.RED_TEXT),
+                                        children: const [
+                                          TextSpan(
+                                            text: ' VND',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                                color: AppColor.GREY_TEXT),
+                                            children: [],
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  AutoSizeText(
-                                    minFontSize: 8,
-                                    '${state.overviewDto!.countDebit} GD đến (-)',
-                                    style: const TextStyle(fontSize: 12),
-                                  )
+                                    AutoSizeText(
+                                      minFontSize: 8,
+                                      '${state.overviewDto!.countDebit} GD đến (-)',
+                                      style: const TextStyle(fontSize: 12),
+                                    )
+                                  ]
                                 ],
                               ),
                             ),

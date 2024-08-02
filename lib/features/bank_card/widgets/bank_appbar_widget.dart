@@ -105,7 +105,7 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                           duration: const Duration(milliseconds: 300),
                           child: const XImage(
                             imagePath: 'assets/images/ic-viet-qr.png',
-                            height: 40,
+                            height: 35,
                             fit: BoxFit.fitHeight,
                           )),
                       if (opacity == 0.0)

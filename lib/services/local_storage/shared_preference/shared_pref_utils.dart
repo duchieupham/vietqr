@@ -76,16 +76,16 @@ class SharePrefUtils {
     return sharedPreferenceService.get() ?? '';
   }
 
-  ///Set Banner
-  static Future<void> saveBanner(bool isOpen) async {
-    final sharedPreferenceService =
-        SharedPrefLocal<bool>(Constants.SharedPreferenceKey.Banner.sharedValue);
+  ///Set Invoice Open
+  static Future<void> saveInvoice(bool isOpen) async {
+    final sharedPreferenceService = SharedPrefLocal<bool>(
+        Constants.SharedPreferenceKey.Invoice.sharedValue);
     await sharedPreferenceService.set(data: isOpen);
   }
 
-  static bool getBanner() {
-    final sharedPreferenceService =
-        SharedPrefLocal<bool>(Constants.SharedPreferenceKey.Banner.sharedValue);
+  static bool getInvoice() {
+    final sharedPreferenceService = SharedPrefLocal<bool>(
+        Constants.SharedPreferenceKey.Invoice.sharedValue);
     return sharedPreferenceService.get() ?? false;
   }
 

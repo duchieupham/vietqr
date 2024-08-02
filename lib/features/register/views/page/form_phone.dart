@@ -40,7 +40,7 @@ class _FormPhoneState extends State<FormPhone> {
               RichText(
                 text: TextSpan(
                   children: [
-                    TextSpan(
+                    const TextSpan(
                       text: 'Nhập ',
                       style: TextStyle(
                         color: AppColor.BLACK,
@@ -54,7 +54,7 @@ class _FormPhoneState extends State<FormPhone> {
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         foreground: Paint()
-                          ..shader = LinearGradient(
+                          ..shader = const LinearGradient(
                             colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
@@ -64,7 +64,7 @@ class _FormPhoneState extends State<FormPhone> {
                           ),
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '*',
                       style: TextStyle(
                         color: AppColor.BLACK,
@@ -75,7 +75,7 @@ class _FormPhoneState extends State<FormPhone> {
                   ],
                 ),
               ),
-              Text(
+              const Text(
                 'để đăng ký tài khoản VietQR',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),

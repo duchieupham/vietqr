@@ -58,9 +58,9 @@ class _BankInfroWidgetState extends State<BankInfroWidget> with DialogHelper {
                             .createShader(bounds)
                         : VietQRTheme.gradientColor.brightBlueLinear
                             .createShader(bounds),
-                    child: const Text(
-                      'VietQR Plus',
-                      style: TextStyle(fontSize: 14, color: AppColor.WHITE),
+                    child: Text(
+                      'VietQR ${widget.dto.mmsActive ? 'Pro' : 'Plus'}',
+                      style:const TextStyle(fontSize: 14, color: AppColor.WHITE),
                     ),
                   ),
                   if (widget.dto.validFeeTo! != 0 &&

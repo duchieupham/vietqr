@@ -82,7 +82,8 @@ class _BankScreenState extends State<BankScreen> {
   final carouselController = CarouselController();
   rive.StateMachineController? _riveController;
   late rive.SMITrigger _action;
-
+  final GlobalKey _textFieldKey = GlobalKey();
+  final FocusNode _focusNode = FocusNode();
   final ValueNotifier<double> _opacityNotifier = ValueNotifier<double>(0.0);
 
   late final BankBloc _bloc = getIt.get<BankBloc>();
@@ -94,6 +95,13 @@ class _BankScreenState extends State<BankScreen> {
       () {
         _opacityNotifier.value =
             widget.scrollController.offset > 100 ? 1.0 : 0.0;
+      },
+    );
+    _focusNode.addListener(
+      () {
+        if (_focusNode.hasFocus) {
+          _scrollToFocusedTextField();
+        }
       },
     );
     if (isRefresh) {
@@ -112,6 +120,22 @@ class _BankScreenState extends State<BankScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
+  }
+
+  void _scrollToFocusedTextField() {
+    final context = _textFieldKey.currentContext;
+    if (context != null) {
+      final box = context.findRenderObject() as RenderBox;
+      final position = box.localToGlobal(Offset.zero, ancestor: null);
+
+      widget.scrollController.animateTo(
+        widget.scrollController.offset +
+            position.dy -
+            250, // Adjust this value as needed
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   void getListBank(BuildContext context) {
@@ -151,74 +175,81 @@ class _BankScreenState extends State<BankScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: CustomScrollView(
-            controller: widget.scrollController,
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              BankAppbarWidget(
-                notifier: _opacityNotifier,
-              ),
-              CupertinoSliverRefreshControl(
-                builder: (context, refreshState, pulledExtent,
-                    refreshTriggerPullDistance, refreshIndicatorExtent) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    width: 25,
-                    height: 25,
-                    child: rive.RiveAnimation.asset(
-                      'assets/rives/loading_ani',
-                      fit: BoxFit.contain,
-                      antialiasing: false,
-                      animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
-                      onInit: _onRiveInit,
-                    ),
-                  );
-                },
-                onRefresh: () => _refresh(),
-              ),
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    ListBankWidget(),
-                    BankStatistic(
-                      onStore: () {
-                        widget.onStore.call();
-                      },
-                    ),
-                  ],
+    return GestureDetector(
+      onTap: () {
+        _focusNode.unfocus();
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: CustomScrollView(
+              controller: widget.scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                BankAppbarWidget(
+                  notifier: _opacityNotifier,
                 ),
-              ),
-            ],
-          ),
-        )
-        // Expanded(
-        //   child: RefreshIndicator(
-        //     onRefresh: _refresh,
-        //     child: ListView(
-        //       padding:
-        //           const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-        //       children: [
-        //         const SizedBox(height: 20),
-        //         NotiVerifyEmailWidget(
-        //           isVerify: isVerify,
-        //         ),
-        //         const SizedBox(height: 20),
-        //         const ExtendAnnualFee(),
-        //         const BanksAuthenticated(),
-        //         const BanksUnAuthenticated(),
-        //         _loading(),
-        //         const BanksView(),
-        //       ],
-        //     ),
-        //   ),
-        // ),
-        // const SizedBox(height: 4),
-        // const BottomSection(),
-      ],
+                CupertinoSliverRefreshControl(
+                  builder: (context, refreshState, pulledExtent,
+                      refreshTriggerPullDistance, refreshIndicatorExtent) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      width: 25,
+                      height: 25,
+                      child: rive.RiveAnimation.asset(
+                        'assets/rives/loading_ani',
+                        fit: BoxFit.contain,
+                        antialiasing: false,
+                        animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
+                        onInit: _onRiveInit,
+                      ),
+                    );
+                  },
+                  onRefresh: () => _refresh(),
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      ListBankWidget(),
+                      BankStatistic(
+                        textFielddKey: _textFieldKey,
+                        focusNode: _focusNode,
+                        onStore: () {
+                          widget.onStore.call();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+          // Expanded(
+          //   child: RefreshIndicator(
+          //     onRefresh: _refresh,
+          //     child: ListView(
+          //       padding:
+          //           const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          //       children: [
+          //         const SizedBox(height: 20),
+          //         NotiVerifyEmailWidget(
+          //           isVerify: isVerify,
+          //         ),
+          //         const SizedBox(height: 20),
+          //         const ExtendAnnualFee(),
+          //         const BanksAuthenticated(),
+          //         const BanksUnAuthenticated(),
+          //         _loading(),
+          //         const BanksView(),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 4),
+          // const BottomSection(),
+        ],
+      ),
     );
   }
 

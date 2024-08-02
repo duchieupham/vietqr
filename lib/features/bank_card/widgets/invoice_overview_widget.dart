@@ -8,6 +8,7 @@ import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
 class InvoiceOverviewWidget extends StatefulWidget {
@@ -18,11 +19,18 @@ class InvoiceOverviewWidget extends StatefulWidget {
 }
 
 class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget> {
-  bool isClose = false;
+  // bool isClose = false;
+  // bool get isShow => SharePrefUtils.getInvoice();
+  bool isShow = true;
+  @override
+  void initState() {
+    super.initState();
+    isShow = SharePrefUtils.getInvoice();
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (isClose) {
+    if (!isShow) {
       return const SizedBox.shrink();
     }
     return BlocBuilder<BankBloc, BankState>(
@@ -101,9 +109,10 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
+                      await SharePrefUtils.saveInvoice(false);
                       setState(() {
-                        isClose = true;
+                        isShow = SharePrefUtils.getInvoice();
                       });
                     },
                     child: const XImage(
@@ -131,7 +140,7 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget> {
       child: Row(
         children: [
           Container(
-          width: 40,
+            width: 40,
             height: 40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),

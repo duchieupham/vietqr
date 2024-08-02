@@ -12,6 +12,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/format_date.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
@@ -38,10 +39,13 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 class BankStatistic extends StatefulWidget {
   final VoidCallback onStore;
-
+  final GlobalKey textFielddKey;
+  final FocusNode focusNode;
   const BankStatistic({
     super.key,
     required this.onStore,
+    required this.textFielddKey,
+    required this.focusNode,
   });
 
   @override
@@ -165,15 +169,38 @@ class _BankStatisticState extends State<BankStatistic>
                   topLeft: Radius.circular(20), topRight: Radius.circular(20))),
           child: Column(
             children: [
-              if (bankSelect != null && bankSelect?.bankTypeStatus == 1)
-                SlideFadeTransition(
-                  offset: 1,
-                  delayStart: const Duration(milliseconds: 20),
-                  direction: Direction.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: BankInfroWidget(dto: bankSelect!),
+              if (state.status == BlocStatus.LOADING &&
+                  state.request != BankType.GET_OVERVIEW)
+                Container(
+                  margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.BLACK.withOpacity(0.1),
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        )
+                      ]),
+                  child: const Row(
+                    children: [
+                      ShimmerBlock(height: 30, width: 30, borderRadius: 100),
+                      SizedBox(width: 6),
+                      ShimmerBlock(height: 14, width: 80, borderRadius: 10),
+                      Spacer(),
+                      ShimmerBlock(height: 12, width: 120, borderRadius: 10),
+                    ],
                   ),
+                )
+              else if (bankSelect != null && bankSelect?.bankTypeStatus == 1)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: BankInfroWidget(dto: bankSelect!),
                 ),
               if (bankSelect != null &&
                   !bankSelect!.isValidService! &&
@@ -212,9 +239,12 @@ class _BankStatisticState extends State<BankStatistic>
               if (state.listBanks.isNotEmpty) ...[
                 const LatestTransWidget(),
               ],
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: BanksView(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: BanksView(
+                  focusNode: widget.focusNode,
+                  key: widget.textFielddKey,
+                ),
               ),
               const SizedBox(height: 100),
             ],

@@ -1,7 +1,8 @@
 part of '../bank_screen.dart';
 
 class BanksView extends StatefulWidget {
-  const BanksView({super.key});
+  final FocusNode focusNode;
+  const BanksView({super.key, required this.focusNode});
 
   @override
   State<BanksView> createState() => _BanksViewState();
@@ -47,6 +48,7 @@ class _BanksViewState extends State<BanksView> {
                   borderRadius: BorderRadius.circular(50),
                 ),
                 child: MTextFieldCustom(
+                    focusNode: widget.focusNode,
                     controller: controller,
                     focusBorder: InputBorder.none,
                     enableBorder: InputBorder.none,

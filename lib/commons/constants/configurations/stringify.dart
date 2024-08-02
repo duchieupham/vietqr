@@ -73,6 +73,7 @@ enum SharedPreferenceKey {
   BankType,
   PhoneNumber,
   Banner,
+  Invoice,
   ThemeVersion,
   LogoVersion,
   LogoApp,
@@ -89,8 +90,10 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
     switch (this) {
       case SharedPreferenceKey.TokenInfo:
         return 'TOKEN';
+      case SharedPreferenceKey.Invoice:
+        return 'INVOICE';
       case SharedPreferenceKey.Banner:
-        return 'Banner';
+        return 'BANNER';
       case SharedPreferenceKey.TokenFree:
         return 'TOKEN_FREE';
       case SharedPreferenceKey.TokenFCM:

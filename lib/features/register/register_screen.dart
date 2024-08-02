@@ -248,7 +248,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const EdgeInsets.symmetric(horizontal: 0),
                               child: FormPhone(
                                 pageController: widget.pageController,
-                                phoneController: provider.phoneNoController,
+                                phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
                                 onEnterIntro: (value) {
                                   provider.updatePage(value);
