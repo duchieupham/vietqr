@@ -19,7 +19,7 @@ class _WelcomeLoginScreenState extends State<WelcomeLoginScreen> {
         _isAnimated = true;
       });
     });
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
         (Route<dynamic> route) => false,
@@ -33,11 +33,11 @@ class _WelcomeLoginScreenState extends State<WelcomeLoginScreen> {
       body: Stack(
         children: [
           AnimatedPositioned(
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 2),
             curve: Curves.easeInOut,
             bottom: _isAnimated
                 ? MediaQuery.of(context).size.height / 2
-                : MediaQuery.of(context).size.height / 3,
+                : MediaQuery.of(context).size.height / 2.5,
             left: 0,
             right: 0,
             child: Center(
