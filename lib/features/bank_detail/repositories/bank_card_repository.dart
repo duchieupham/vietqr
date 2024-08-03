@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -13,25 +14,119 @@ import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
+import 'package:vierqr/models/bank_arrange_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
+import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
+import 'package:vierqr/models/nearest_transaction_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
 import '../../../models/qr_box_dto.dart';
 
 class BankCardRepository {
   const BankCardRepository();
+  String get userId => SharePrefUtils.getProfile().userId.trim();
+
+  Future<BankOverviewDTO?> getOverview(
+      {required String bankId,
+      required String fromDate,
+      required String toDate}) async {
+    try {
+      String url =
+          '${EnvConfig.getBaseUrl()}transactions/overview/v2?bankId=$bankId&userId=$userId&fromDate=$fromDate&toDate=$toDate';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return BankOverviewDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      rethrow;
+    }
+
+    return null;
+  }
+
+  Future<bool> arrangeBankList(List<BankArrangeDTO> list) async {
+    try {
+      Map<String, dynamic> data = {};
+      data['bankArranges'] = list
+          .map(
+            (e) => e.toJson(),
+          )
+          .toList();
+      data['userId'] = userId;
+      String url = '${EnvConfig.getBaseUrl()}account-bank/update-arrangement';
+      final response = await BaseAPIClient.postAPI(
+        body: data,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+      // rethrow;
+    }
+    return false;
+  }
+
+  Future<List<NearestTransDTO>> getListTrans(String bankId) async {
+    List<NearestTransDTO> list = [];
+    try {
+      String url =
+          '${EnvConfig.getBaseUrl()}transactions/latest?bankId=$bankId&userId=$userId&limit=5';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        list = data
+            .map<NearestTransDTO>((json) => NearestTransDTO.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      rethrow;
+    }
+    return list;
+  }
+
+  Future<InvoiceOverviewDTO?> getInvoiceOverview() async {
+    try {
+      String url = '${EnvConfig.getBaseUrl()}invoice/overview/$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return InvoiceOverviewDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      rethrow;
+    }
+    return null;
+  }
 
   Future<List<BankTypeDTO>> getBankTypes() async {
     List<BankTypeDTO> listBanks = [];
@@ -532,7 +627,8 @@ class BankCardRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto, {required int unlinkType}) async {
+  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto,
+      {required int unlinkType}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {

@@ -18,6 +18,7 @@ import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_input_money.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/option_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/qr_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
@@ -199,14 +200,6 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
         return BlocConsumer<BankCardBloc, BankCardState>(
           bloc: widget.bankCardBloc,
           listener: (context, state) async {
-            // if (state.status == BlocStatus.LOADING) {
-            //   DialogWidget.instance.openLoadingDialog();
-            // }
-
-            // if (state.status == BlocStatus.UNLOADING) {
-            //   Navigator.pop(context);
-            // }
-
             if (state.request == BankDetailType.UN_LINK_BIDV) {
               eventBus.fire(GetListBankScreen());
               widget.bankCardBloc.add(const BankCardGetDetailEvent());
@@ -240,14 +233,6 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
               if (state.bankDetailDTO != null) {
                 dto = state.bankDetailDTO!;
               }
-
-              ///tắt BĐSD
-              // if (dto.isHideBDSD && state.isInit) listTitle.removeLast();
-
-              // if (widget.pageIndex != 0) {
-              //   _provider.changeCurrentPage(widget.pageIndex);
-              //   pageController.jumpToPage(widget.pageIndex);
-              // }
 
               if (AppDataHelper.instance
                   .checkExitsBankAccount(dto.bankAccount)) {
@@ -297,6 +282,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
             if (state.request == BankDetailType.CREATE_QR) {
               // Navigator.of(context).pop();
+              // qrGeneratedDTO = state.qrGeneratedDTO!;
               if (state.qrGeneratedDTO!.amount.isNotEmpty &&
                   state.qrGeneratedDTO!.amount != '0') {
                 qrGeneratedDTO = state.qrGeneratedDTO!;
@@ -398,11 +384,13 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                   ServiceVietqrWidget(
                                     bankDTto: widget.dto,
                                   ),
-                                  // const SizedBox(height: 20),
-                                  // AnimationGraphWidget(
-                                  //   scrollNotifer: isScrollToChart,
-                                  //   key: _animatedBarKey,
-                                  // ),
+                                  const SizedBox(height: 20),
+                                  AnimationGraphWidget(
+                                    bloc: widget.bankCardBloc,
+                                    bankId: widget.bankId,
+                                    scrollNotifer: isScrollToChart,
+                                    key: _animatedBarKey,
+                                  ),
                                   const SizedBox(height: 120),
                                 ],
                               ),

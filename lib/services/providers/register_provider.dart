@@ -68,9 +68,12 @@ class RegisterProvider with ChangeNotifier {
 
     if (phone.isNotEmpty) {
       phoneNoController.value = phoneNoController.value.copyWith(text: phone);
-      _isPhoneErr = false;
+      var isValid =
+          StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
+              true;
+      _isPhoneErr = isValid;
     } else {
-      _isPhoneErr = true;
+      _isPhoneErr = false;
     }
     notifyListeners();
   }
@@ -127,9 +130,9 @@ class RegisterProvider with ChangeNotifier {
     return false;
   }
 
-  bool isValidValidationPhone() {
-    return !_isPhoneErr;
-  }
+  // bool isValidValidationPhone() {
+  //   return !_isPhoneErr;
+  // }
 
   /// > xu ly validate ????
   bool isEnableButtonPhone() {
@@ -137,11 +140,13 @@ class RegisterProvider with ChangeNotifier {
       var isValid =
           StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
               true;
-      debugPrint("is Valid ==> $isValid");
-      if (isValidValidationPhone() && !isValid) {
+      // debugPrint("is Valid ==> $isValid");
+      if (!isValid) {
+        // _isPhoneErr = false;
         return true;
       }
     }
+    _isPhoneErr = true;
     return false;
   }
 
@@ -155,7 +160,7 @@ class RegisterProvider with ChangeNotifier {
       var isValid =
           StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
               true;
-      debugPrint("is Valid ==> $isValid");
+      // debugPrint("is Valid ==> $isValid");
       if (isValidValidationPassword() && !isValid) {
         return true;
       }

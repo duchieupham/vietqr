@@ -1,17 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
+import 'package:vierqr/features/home/home.dart';
+import 'package:vierqr/layouts/button/button.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/splash_screen.dart';
 
 import '../../../../commons/constants/configurations/app_images.dart';
 import '../../../../commons/constants/configurations/theme.dart';
 
 class FormRegisterSuccessSplash extends StatefulWidget {
-  // final Function() onEdit;
-  // final Function() onHome;
+  final VoidCallback onHome;
   const FormRegisterSuccessSplash({
+    required this.onHome,
     super.key,
-    // required this.onEdit,
-    // required this.onHome,
   });
 
   @override
@@ -21,7 +24,7 @@ class FormRegisterSuccessSplash extends StatefulWidget {
 
 class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
   Timer? _timer;
-  int _start = 3;
+  int _start = 15;
 
   @override
   void initState() {
@@ -36,7 +39,18 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
       (Timer timer) {
         if (_start == 0) {
           timer.cancel();
-          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => DashBoardScreen(
+          //       isFromLogin: true,
+          //       isLogoutEnterHome: true,
+          //     ),
+          //     settings: RouteSettings(name: SplashScreen.routeName),
+          //   ),
+          // );
+          // Navigator.pushReplacement(context,
+          //     MaterialPageRoute(builder: (context) => DashBoardScreen()));
         } else {
           setState(() {
             _start--;
@@ -61,7 +75,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
       child: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.only(top: 90),
@@ -73,43 +87,104 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 40),
+              padding: const EdgeInsets.only(top: 0),
               child: Image.asset(
                 AppImages.icRegisterSuccessful,
                 width: 236,
-                height: 304,
+                height: 200,
                 fit: BoxFit.fitWidth,
               ),
             ),
-            const DefaultTextStyle(
+            DefaultTextStyle(
               style: TextStyle(
                 color: AppColor.BLACK,
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
-              child: Text(
-                'Đăng ký tài khoản\nthành công!',
-                textAlign: TextAlign.center,
+              child: ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [
+                    Color(0xFF9CD740),
+                    Color(0xFF2BACE6),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ).createShader(bounds),
+                child: const Text(
+                  'Đăng ký thành công!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
-            const SizedBox(
-              height: 70,
+            DefaultTextStyle(
+              style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
+              child: RichText(
+                text: TextSpan(
+                  text: 'Hệ thống tự động điều hướng sau ',
+                  style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: '$_start',
+                      style: const TextStyle(
+                          fontSize: 15, color: AppColor.BLUE_TEXT),
+                    ),
+                    const TextSpan(
+                      text: ' giây',
+                      style: TextStyle(fontSize: 15, color: AppColor.BLACK),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            // Container(
-            //   child: DefaultTextStyle(
-            //     style: TextStyle(fontSize: 15),
-            //     child: MButtonWidget(
-            //       title: 'Bạn có muốn cập nhật thông tin cá nhân',
-            //       isEnable: true,
-            //       height: 50,
-            //       margin: EdgeInsets.only(left: 40, right: 40),
-            //       colorEnableBgr: AppColor.WHITE,
-            //       colorEnableText: AppColor.BLUE_TEXT,
-            //       border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
-            //       // onTap: widget.onEdit,
-            //     ),
-            //   ),
-            // ),
+            const Spacer(),
+            GestureDetector(
+              onTap: widget.onHome,
+              child: Container(
+                width: double.infinity,
+                height: 50,
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    gradient: LinearGradient(
+                        colors: [
+                          Color(0xFFE1EFFF),
+                          Color(0xFFE5F9FF),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight)),
+                child: Center(
+                  child: DefaultTextStyle(
+                    style: TextStyle(
+                      color: AppColor.BLACK,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    child: ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [
+                          Color(0xFF00C6FF),
+                          Color(0xFF0072FF),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ).createShader(bounds),
+                      child: const Text(
+                        'Trang chủ VietQR.VN',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
             // Container(
             //   child: DefaultTextStyle(
             //     style: TextStyle(fontSize: 15),
@@ -118,33 +193,10 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
             //       isEnable: true,
             //       margin: EdgeInsets.only(left: 40, right: 40),
             //       height: 50,
-            //       // onTap: widget.onHome,
+            //       onTap: widget.onHome,
             //     ),
             //   ),
             // ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 25),
-              child: DefaultTextStyle(
-                style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
-                child: RichText(
-                  text: TextSpan(
-                    text: 'Hệ thống tự động điều hướng sau ',
-                    style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '$_start',
-                        style:
-                            const TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
-                      ),
-                      const TextSpan(
-                        text: ' giây',
-                        style: TextStyle(fontSize: 15, color: AppColor.BLACK),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),

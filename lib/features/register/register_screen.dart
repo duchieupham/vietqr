@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/utils/user_information_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/login/blocs/login_bloc.dart';
+import 'package:vierqr/features/login/events/login_event.dart';
+import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
+import 'package:vierqr/features/register/views/page/confirm_email.register.dart';
 import 'package:vierqr/features/register/views/page/form_confirm_password.dart';
 import 'package:vierqr/features/register/views/page/form_password.dart';
 import 'package:vierqr/features/register/views/page/form_phone.dart';
 import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/register/views/page/referral_code.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/layouts/n_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
@@ -139,40 +146,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
             }
 
             if (state is RegisterFailedState) {
-              //pop loading dialog
               Navigator.pop(context);
-              //
+              provider.updatePage(0);
               DialogWidget.instance.openMsgDialog(
                 title: 'Không thể đăng ký',
                 msg: state.msg,
               );
             }
             if (state is RegisterSuccessState) {
+              AccountLoginDTO dto = AccountLoginDTO(
+                phoneNo: Provider.of<RegisterProvider>(context, listen: false)
+                    .phoneNoController
+                    .text,
+                password: EncryptUtils.instance.encrypted(
+                  Provider.of<RegisterProvider>(context, listen: false)
+                      .phoneNoController
+                      .text,
+                  Provider.of<RegisterProvider>(context, listen: false)
+                      .passwordController
+                      .text,
+                ),
+              );
+              getIt
+                  .get<LoginBloc>(
+                      param1: context, param2: getIt.get<LoginRepository>())
+                  .add(LoginEventByPhone(
+                    dto: dto,
+                    isToast: true,
+                  ));
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const FormRegisterSuccessSplash(
-                        // onEdit: () {
-                        //   Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => UserEditView()),
-                        //   );
-                        // },
-                        // onHome: () {
-                        //   Navigator.of(context).pop();
-                        //   Navigator.of(context).pop();
-                        //   Navigator.of(context).pop();
-                        //   backToPreviousPage(context, true);
-                        // },
-                        )),
+                  builder: (context) => ConfirmEmailRegisterScreen(
+                    phoneNum:
+                        Provider.of<RegisterProvider>(context, listen: false)
+                            .phoneNoController
+                            .text,
+                  ),
+                ),
               );
-              Future.delayed(const Duration(seconds: 3), () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                backToPreviousPage(context, true);
-              });
             }
+            // if (state is RegisterSuccessState) {
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => const FormRegisterSuccessSplash()),
+            //   );
+            //   Future.delayed(const Duration(seconds: 3), () {
+            //     Navigator.of(context).pop();
+            //     Navigator.of(context).pop();
+            //     backToPreviousPage(context, true);
+            //   });
+            // }
           },
           builder: (context, state) {
             return GestureDetector(
@@ -183,9 +208,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 appBar: RegisterAppBar(
                   title: '',
                   onPressed: () {
-                    Provider.of<PinProvider>(context, listen: false).reset();
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    Navigator.of(context).pop();
+                    // Provider.of<PinProvider>(context, listen: false).reset();
+                    // FocusManager.instance.primaryFocus?.unfocus();
+                    // Navigator.of(context).pop();
+                    if (provider.page == 0) {
+                      Provider.of<PinProvider>(context, listen: false).reset();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      Navigator.of(context).pop();
+                    }
+                    if (provider.page == 1) {
+                      Provider.of<PinProvider>(context, listen: false).reset();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      provider.updatePage(0);
+                    }
+                    if (provider.page == 2) {
+                      Provider.of<PinProvider>(context, listen: false).reset();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      provider.updatePage(0);
+                    }
+                    if (provider.page == 3) {
+                      Provider.of<PinProvider>(context, listen: false).reset();
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      provider.updatePage(2);
+                    }
                   },
                 ),
                 backgroundColor: AppColor.WHITE,
@@ -193,14 +238,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 bottomNavigationBar:
                     _bottom(width, height, viewInsets, provider),
                 body: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   height: MediaQuery.of(context).size.height,
                   child: Column(
                     children: [
                       provider.page == 0
                           ? Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                                  const EdgeInsets.symmetric(horizontal: 0),
                               child: FormPhone(
                                 pageController: widget.pageController,
                                 phoneController: _phoneNoController,
@@ -251,34 +296,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ? const SizedBox()
         : Consumer<RegisterProvider>(
             builder: (context, provider, child) {
-              if (provider.page == 0) {
-                return _buildButtonSubmitFormPhone(
-                    height,
-                    () {
+              // if (provider.page == 0) {
+              //   return _buildButtonSubmitFormPhone(height, () {
+              //     provider.updatePage(2);
+              //     widget.pageController.animateToPage(2,
+              //         duration: const Duration(milliseconds: 300),
+              //         curve: Curves.ease);
+              //   });
+              // }
+              // if (provider.page == 2) {
+              //   return _buildButtonSubmitFormPassword(heights, () {
+              //     Provider.of<PinProvider>(context, listen: false).reset();
+              //     provider.updatePage(3);
+              //     widget.pageController.animateToPage(3,
+              //         duration: const Duration(milliseconds: 300),
+              //         curve: Curves.ease);
+              //   });
+              // }
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (provider.page == 0) ...[
+                      _buildButtonSubmitFormPhone(
+                        height,
+                        () {
                           provider.updatePage(2);
                           widget.pageController.animateToPage(2,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.ease);
-                        });
-              }
-              if (provider.page == 2) {
-                return _buildButtonSubmitFormPassword(
-                    heights,
-                    () {
+                        },
+                      ),
+                    ],
+                    if (provider.page == 2) ...[
+                      _buildButtonSubmitFormPassword(
+                        heights,
+                        () {
                           Provider.of<PinProvider>(context, listen: false)
                               .reset();
                           provider.updatePage(3);
                           widget.pageController.animateToPage(3,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.ease);
-                        });
-              }
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                        },
+                      ),
+                    ],
                     if (provider.page == 1) ...[
                       _buildButtonSubmit(context, heights),
                     ],
@@ -321,21 +385,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildButtonSubmitFormConfirmPassword(double height) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
-        return MButtonWidget(
-          title: 'Đăng ký',
-          isEnable: provider.isEnableButton(), //isEnableButton(),
-          margin: EdgeInsets.zero,
-          colorDisableBgr: AppColor.GREY_BUTTON,
-          width: 350,
-          height: 50,
-          onTap: () async {
-            // await provider.phoneAuthentication(_phoneNoController.text,
-            //     onSentOtp: (type) {
-            //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
-            // });
+        // return MButtonWidget(
+        //   title: 'Đăng ký',
+        //   isEnable: provider.isEnableButton(),
+        //   margin: const EdgeInsets.only(bottom: 10),
+        //   colorDisableBgr: AppColor.GREY_BUTTON,
+        //   width: 350,
+        //   height: 50,
+        //   onTap: () async {
+        //     // await provider.phoneAuthentication(_phoneNoController.text,
+        //     //     onSentOtp: (type) {
+        //     //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
+        //     // });
+        // onRegister(provider, height);
+        // Provider.of<PinProvider>(context, listen: false).reset();
+        //   },
+        // );
+        return VietQRButton.gradient(
+          onPressed: () async {
             onRegister(provider, height);
             Provider.of<PinProvider>(context, listen: false).reset();
           },
+          child: Center(
+            child: Text(
+              'Đăng ký',
+              style: TextStyle(
+                color:
+                    provider.isEnableButton() ? AppColor.WHITE : AppColor.BLACK,
+              ),
+            ),
+          ),
+          isDisabled: !(provider.isEnableButton()),
         );
       },
     );
@@ -344,14 +424,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildButtonSubmitFormPhone(double height, VoidCallback callback) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
-        return MButtonWidget(
-            title: 'Tiếp tục',
-            isEnable: provider.isEnableButtonPhone(),
-            margin: const EdgeInsets.only(bottom: 36),
-            colorDisableBgr: AppColor.GREY_BUTTON,
-            width: 350,
-            height: 50,
-            onTap: callback);
+        // return MButtonWidget(
+        //     title: 'Tiếp tục',
+        //     isEnable: provider.isEnableButtonPhone(),
+        //     margin: const EdgeInsets.only(bottom: 10),
+        //     colorDisableBgr: AppColor.GREY_BUTTON,
+        //     width: 350,
+        //     height: 50,
+        //     onTap: callback);
+        return VietQRButton.gradient(
+          onPressed: callback,
+          isDisabled: !(provider.isEnableButtonPhone()),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Icon(
+                  Icons.abc,
+                  size: 18,
+                  color: AppColor.TRANSPARENT,
+                ),
+                Text(
+                  'Tiếp tục',
+                  style: TextStyle(
+                    color: provider.isEnableButtonPhone()
+                        ? AppColor.WHITE
+                        : AppColor.BLACK,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_outlined,
+                  size: 18,
+                  color: provider.isEnableButtonPhone()
+                      ? AppColor.WHITE
+                      : AppColor.BLACK,
+                ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -359,14 +470,49 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildButtonSubmitFormPassword(double height, VoidCallback callback) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
-        return MButtonWidget(
-          title: 'Tiếp tục',
-          isEnable: provider.isEnableButtonPassword(),
-          margin: const EdgeInsets.only(bottom: 36),
-          colorDisableBgr: AppColor.GREY_BUTTON,
-          width: 350,
-          height: 50,
-          onTap: callback,
+        // return MButtonWidget(
+        //   title: 'Tiếp tục',
+        //   isEnable: provider.isEnableButtonPassword() &&
+        //       provider.passwordController.text.isNotEmpty,
+        //   margin: const EdgeInsets.only(bottom: 10),
+        //   colorDisableBgr: AppColor.GREY_BUTTON,
+        //   width: 350,
+        //   height: 50,
+        //   onTap: callback,
+        // );
+        return VietQRButton.gradient(
+          onPressed: callback,
+          isDisabled: !(provider.isEnableButtonPassword() &&
+              provider.passwordController.text.isNotEmpty),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Icon(
+                  Icons.abc,
+                  size: 18,
+                  color: AppColor.TRANSPARENT,
+                ),
+                Text(
+                  'Tiếp tục',
+                  style: TextStyle(
+                    color: (provider.isEnableButtonPassword() &&
+                            provider.passwordController.text.isNotEmpty)
+                        ? AppColor.WHITE
+                        : AppColor.BLACK,
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_outlined,
+                  size: 18,
+                  color: (provider.isEnableButtonPassword() &&
+                          provider.passwordController.text.isNotEmpty)
+                      ? AppColor.WHITE
+                      : AppColor.BLACK,
+                ),
+              ],
+            ),
+          ),
         );
       },
     );

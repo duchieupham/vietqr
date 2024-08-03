@@ -8,6 +8,7 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
+import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
@@ -35,10 +36,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
       if (event is LoginEventByPhone) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: LoginType.NONE));
-        // AccountLoginDTO? dto = AccountLoginDTO(
-        //     phoneNo: event.dto.phoneNo,
-        //     password:
-        //         '0b76f0eccef126b2712f5cdc7bff3f867183cf0531e0ae393cbd03aaddc299e2');
+        AccountLoginDTO? dto = AccountLoginDTO(
+            phoneNo: event.dto.phoneNo,
+            password:
+                'c9b6800dcc470c39048c8e53259044092751d7905ca4693879175b4cdff6a5b6');
         bool check = await loginRepository.login(event.dto);
         if (check) {
           emit(state.copyWith(

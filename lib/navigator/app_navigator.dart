@@ -38,6 +38,7 @@ import 'package:vierqr/features/maintain_charge/views/dynamic_active_key_screen.
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/features/mobile_recharge/qr_mobile_recharge.dart';
 import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
+import 'package:vierqr/features/my_vietqr/my_vietqr_screen.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_info_view.dart';
@@ -60,6 +61,7 @@ import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/transaction_wallet/trans_wallet_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/maintain_charge_create.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
@@ -137,6 +139,16 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
+      case Routes.MY_VIETQR_SCREEN:
+        Map map = settings.arguments as Map;
+        List<BankAccountDTO> list = map['list'];
+        BankAccountDTO dto = map['dto'];
+        return _buildRoute(
+            settings,
+            MyVietQRScreen(
+              bankDto: dto,
+              listBank: list,
+            ));
       case Routes.QR_UPDATE_SCREEN:
         Map map = settings.arguments as Map;
         bool isPublic = map['isPublic'];

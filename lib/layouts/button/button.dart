@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -64,7 +63,6 @@ class VietQRButton extends StatelessWidget {
   const VietQRButton.solid({
     super.key,
     required this.onPressed,
-    required this.child,
     this.padding,
     this.text,
     this.margin,
@@ -77,12 +75,12 @@ class VietQRButton extends StatelessWidget {
     this.size = VietQRButtonSize.medium,
     this.onHover,
     required this.isDisabled,
+    required this.child,
   }) : type = VietQRButtonType.solid;
 
   const VietQRButton.outlined({
     super.key,
     required this.onPressed,
-    required this.child,
     this.padding,
     this.text,
     this.margin,
@@ -95,12 +93,12 @@ class VietQRButton extends StatelessWidget {
     this.size = VietQRButtonSize.medium,
     this.onHover,
     required this.isDisabled,
+    required this.child,
   }) : type = VietQRButtonType.outlined;
 
   const VietQRButton.gradient({
     super.key,
     required this.onPressed,
-    required this.child,
     this.padding,
     this.text,
     this.margin,
@@ -113,6 +111,7 @@ class VietQRButton extends StatelessWidget {
     this.size = VietQRButtonSize.medium,
     this.onHover,
     required this.isDisabled,
+    required this.child,
   }) : type = VietQRButtonType.gradient;
 
   @override

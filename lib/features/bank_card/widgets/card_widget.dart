@@ -76,15 +76,15 @@ class CardWidget extends StatelessWidget {
       onTap: isExtend!
           ? null
           : () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) =>
-                      BankCardDetailNewScreen(dto: e, bankId: e.id),
-                  settings: const RouteSettings(
-                    name: Routes.BANK_CARD_DETAIL_NEW,
-                  ),
-                ),
-              );
+              // await Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         BankCardDetailNewScreen(dto: e, bankId: e.id),
+              //     settings: const RouteSettings(
+              //       name: Routes.BANK_CARD_DETAIL_NEW,
+              //     ),
+              //   ),
+              // );
             },
       onLongPress: isExtend!
           ? null

@@ -1,27 +1,90 @@
 part of '../bank_screen.dart';
 
-class BanksView extends StatelessWidget {
-  const BanksView({super.key});
+class BanksView extends StatefulWidget {
+  final FocusNode focusNode;
+  const BanksView({super.key, required this.focusNode});
+
+  @override
+  State<BanksView> createState() => _BanksViewState();
+}
+
+class _BanksViewState extends State<BanksView> {
+  final TextEditingController controller = TextEditingController();
+  List<BankTypeDTO> list = [];
+  List<BankTypeDTO> listSearch = [];
+  bool isSearch = false;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BankBloc, BankState>(
+    return BlocConsumer<BankBloc, BankState>(
       bloc: getIt.get<BankBloc>(),
+      listener: (context, state) {
+        if (state.request == BankType.GET_BANK_LOCAL) {
+          list = state.listBankTypeDTO;
+        }
+      },
       builder: (context, state) {
         bool isEmpty = state.isEmpty;
-        List<BankTypeDTO> list = state.listBankTypeDTO;
         List<BankAccountDTO> listBanks = state.listBanks;
 
-        if (isEmpty || listBanks.length <= 5) {
+        if (!isEmpty || listBanks.length <= 5) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
-                  'Thêm tài khoản ngân hàng',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  'Chúng tôi hỗ trợ các ngân hàng',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                height: 48,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: MTextFieldCustom(
+                    focusNode: widget.focusNode,
+                    controller: controller,
+                    focusBorder: InputBorder.none,
+                    enableBorder: InputBorder.none,
+                    enable: true,
+                    contentPadding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+                    hintText: 'Tìm kiếm ngân hàng',
+                    prefixIcon: const XImage(
+                        imagePath: 'assets/images/ic-search-black.png',
+                        width: 30,
+                        height: 30),
+                    keyboardAction: TextInputAction.done,
+                    onChange: (value) {
+                      if (value.isNotEmpty) {
+                        setState(() {
+                          isSearch = true;
+                          listSearch = list
+                              .where(
+                                (element) =>
+                                    element.bankCode
+                                        .toLowerCase()
+                                        .contains(value) ||
+                                    element.bankName
+                                        .toLowerCase()
+                                        .contains(value) ||
+                                    element.bankShortName!.contains(value),
+                              )
+                              .toList();
+                        });
+                      } else {
+                        setState(() {
+                          isSearch = false;
+                        });
+                      }
+                    },
+                    inputType: TextInputType.text,
+                    isObscureText: false),
               ),
               const SizedBox(height: 16),
               GridView.builder(
@@ -34,9 +97,9 @@ class BanksView extends StatelessWidget {
                   mainAxisSpacing: 4,
                   childAspectRatio: 2,
                 ),
-                itemCount: list.length,
+                itemCount: isSearch ? listSearch.length : list.length,
                 itemBuilder: (context, index) {
-                  var data = list[index];
+                  var data = isSearch ? listSearch[index] : list[index];
                   return GestureDetector(
                     onTap: () async {
                       await NavigatorUtils.navigatePage(
@@ -67,10 +130,10 @@ class BanksView extends StatelessWidget {
                           margin: const EdgeInsets.all(4),
                         ),
                         Align(
-                          alignment: Alignment.topRight,
+                          alignment: Alignment.bottomRight,
                           child: data.linkType == LinkBankType.LINK
                               ? const XImage(
-                                  imagePath: ImageConstant.icAuthenticatedBank,
+                                  imagePath: 'assets/images/ic-isAuthen.png',
                                   width: 20)
                               : const SizedBox.shrink(),
                         ),

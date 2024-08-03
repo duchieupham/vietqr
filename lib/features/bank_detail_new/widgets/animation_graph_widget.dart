@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/widgets/separator_widget.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
+import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 
 class AnimationGraphWidget extends StatefulWidget {
+  final String bankId;
+  final BankCardBloc bloc;
   final ValueNotifier<bool> scrollNotifer;
-  const AnimationGraphWidget({super.key, required this.scrollNotifer});
+  const AnimationGraphWidget(
+      {super.key,
+      required this.scrollNotifer,
+      required this.bankId,
+      required this.bloc});
 
   @override
   State<AnimationGraphWidget> createState() => _AnimationGraphWidgetState();
@@ -15,16 +29,13 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
-  final List<Transaction> transactions = [
-    Transaction(amount: '+ 15,000', time: '18:20', color: Colors.green),
-    Transaction(amount: '+ 20,000', time: '18:00', color: Colors.orange),
-    Transaction(amount: '- 32,000', time: '15:00', color: Colors.red),
-    Transaction(amount: '+ 320,000', time: '09:00', color: Colors.green),
-    Transaction(amount: '- 86,000', time: '09/07/2024', color: Colors.red),
-  ];
+  late final BankBloc bankBloc = getIt.get<BankBloc>();
+
   @override
   void initState() {
     super.initState();
+    bankBloc.add(GetTransEvent(bankId: widget.bankId));
+    widget.bloc.add(GetOverviewBankCardEvent(bankId: widget.bankId));
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -36,18 +47,40 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   }
 
   double calculateMaxAmount(double totalAmount) {
-    if (totalAmount <= 50000000) {
-      return 50000000;
-    } else if (totalAmount <= 100000000) {
-      return 100000000;
-    } else if (totalAmount <= 150000000) {
-      return 150000000;
-    } else if (totalAmount <= 200000000) {
-      return 200000000;
-    } else {
-      return (totalAmount * 1.2).roundToDouble(); // 20% more than totalAmount
-    }
+    // Calculate the number of digits in the totalAmount
+    int lengthOfZeros = totalAmount.toInt().toString().length - 1;
+    // Calculate the dynamic percentage based on the number of digits
+    double percentage = 1 + (lengthOfZeros * 0.1);
+
+    // Calculate the max amount based on the percentage
+    return (totalAmount * percentage).roundToDouble();
   }
+
+  // double calculateMaxAmount(double totalAmount) {
+  //   if (totalAmount <= 500000) {
+  //     return 500000;
+  //   } else if (totalAmount <= 1000000) {
+  //     return 1000000;
+  //   } else if (totalAmount <= 2000000) {
+  //     return 2000000;
+  //   } else if (totalAmount <= 5000000) {
+  //     return 5000000;
+  //   } else if (totalAmount <= 10000000) {
+  //     return 10000000;
+  //   } else if (totalAmount <= 20000000) {
+  //     return 20000000;
+  //   } else if (totalAmount <= 50000000) {
+  //     return 50000000;
+  //   } else if (totalAmount <= 100000000) {
+  //     return 100000000;
+  //   } else if (totalAmount <= 150000000) {
+  //     return 150000000;
+  //   } else if (totalAmount <= 200000000) {
+  //     return 200000000;
+  //   } else {
+  //     return (totalAmount * 1.2).roundToDouble(); // 20% more than totalAmount
+  //   }
+  // }
 
   bool isFiftyPercent(double currentAmount, double totalAmount) {
     if (totalAmount == 0) return false; // To handle division by zero
@@ -56,11 +89,11 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
 
   @override
   Widget build(BuildContext context) {
-    double totalAmount1 = 180300000; // Example total amount
-    double totalAmount2 = 90200000; // Example total amount
+    // double totalAmount1 = 180300000; // Example total amount
+    // double totalAmount2 = 90200000; // Example total amount
 
-    double maxAmount1 = calculateMaxAmount(totalAmount1);
-    double maxAmount2 = calculateMaxAmount(totalAmount1);
+    // double maxAmount1 = calculateMaxAmount(totalAmount1);
+    // double maxAmount2 = calculateMaxAmount(totalAmount1);
 
     return ValueListenableBuilder<bool>(
       valueListenable: widget.scrollNotifer,
@@ -74,301 +107,326 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         // }
         return Column(
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              height: 280,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Biểu đồ thu chi',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  Text(
-                                    '07/2024',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColor.GREY_TEXT),
-                                  ),
-                                ],
-                              ),
-                              // const SizedBox(height: 20),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  AnimatedBar(
-                                    animation: _animation,
-                                    totalAmount: totalAmount1,
-                                    currentAmount: 15800000, // in VND
-                                    maxAmount:
-                                        maxAmount1, // Dynamically calculated max amount
-                                    color: AppColor.GREEN.withOpacity(0.2),
-                                  ),
-                                  const SizedBox(width: 20),
-                                  AnimatedBar(
-                                    animation: _animation,
-                                    totalAmount: totalAmount2,
-                                    currentAmount: 50000000, // in VND
-                                    maxAmount:
-                                        maxAmount2, // Dynamically calculated max amount
-                                    color: Colors.red.withOpacity(0.5),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // const SizedBox(width: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            BlocBuilder<BankCardBloc, BankCardState>(
+              bloc: widget.bloc,
+              builder: (context, state) {
+                if (state.overviewMonthDto == null ||
+                    state.overviewDayDto == null) {
+                  return const SizedBox.shrink();
+                }
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                  height: 280,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Row(
                           children: [
-                            InkWell(
-                              onTap: () {},
-                              child: Container(
-                                height: 30,
-                                width: 150,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFE1EFFF),
-                                      Color(0xFFE5F9FF),
-                                    ],
-                                    end: Alignment.centerRight,
-                                    begin: Alignment.centerLeft,
-                                  ),
-                                ),
-                                child: const Center(
-                                  child: Text(
-                                    'Chi tiết thống kê',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColor.BLUE_TEXT),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RichText(
-                                    text: TextSpan(
-                                        text:
-                                            StringUtils.formatNumber(120000000),
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            color: AppColor.GREEN,
-                                            fontWeight: FontWeight.bold),
-                                        children: const [
-                                      TextSpan(
-                                        text: ' VND',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColor.GREY_TEXT,
-                                            fontWeight: FontWeight.normal),
-                                      )
-                                    ])),
-                                const SizedBox(height: 2),
-                                const Text(
-                                  '12,049 GD đến (+)',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColor.BLACK,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                                const SizedBox(height: 10),
-                                RichText(
-                                    text: TextSpan(
-                                        text:
-                                            StringUtils.formatNumber(90000000),
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            color: AppColor.RED_TEXT,
-                                            fontWeight: FontWeight.bold),
-                                        children: const [
-                                      TextSpan(
-                                        text: ' VND',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColor.GREY_TEXT,
-                                            fontWeight: FontWeight.normal),
-                                      )
-                                    ])),
-                                const SizedBox(height: 2),
-                                const Text(
-                                  '1,023 GD đi (-)',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: AppColor.BLACK,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 16,
-                                      color: AppColor.GREEN,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Giao dịch đến (+)',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColor.BLACK,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      size: 16,
-                                      color: AppColor.RED_TEXT,
-                                    ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Giao dịch đến (-)',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColor.BLACK,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 25),
-                  RichText(
-                    text: const TextSpan(
-                        text: 'Còn ',
-                        style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                        children: [
-                          TextSpan(
-                              text: '12 ngày nữa ',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColor.BLACK,
-                                  fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text: 'sang chu kỳ mới',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColor.BLACK,
-                              )),
-                        ]),
-                  )
-                  // Text(
-                  //   'Còn 12 ngày nữa sang chu kỳ mới',
-                  //   style: TextStyle(fontSize: 12),
-                  // ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              height: 320,
-              margin: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(20)),
-              child: Column(
-                children: [
-                  Container(
-                    height: 50,
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Số tiền (VND)',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12),
-                        ),
-                        Text(
-                          'Thời gian',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12),
-                    child: const MySeparator(
-                      color: AppColor.GREY_DADADA,
-                    ),
-                  ),
-                  Expanded(
-                      child: ListView.separated(
-                          padding: const EdgeInsets.only(top: 0),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final transaction = transactions[index];
-                            return Container(
-                              height: 50,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12.0),
-                              child: Row(
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    transaction.amount,
-                                    style: TextStyle(
-                                        color: transaction.color, fontSize: 12),
+                                  const Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Biểu đồ thu chi',
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      Text(
+                                        '07/2024',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.GREY_TEXT),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    transaction.time,
-                                    style: const TextStyle(
-                                        color: AppColor.BLACK, fontSize: 12),
+                                  // const SizedBox(height: 20),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      AnimatedBar(
+                                        animation: _animation,
+                                        totalAmount: double.parse(state
+                                            .overviewMonthDto!.totalCredit
+                                            .toString()),
+                                        currentAmount: double.parse(state
+                                            .overviewDayDto!.totalCredit
+                                            .toString()), // in VND
+                                        maxAmount: calculateMaxAmount(
+                                            double.parse(state
+                                                .overviewMonthDto!.totalCredit
+                                                .toString())), // Dynamically calculated max amount
+                                        color: AppColor.GREEN.withOpacity(0.2),
+                                      ),
+                                      const SizedBox(width: 20),
+                                      AnimatedBar(
+                                        animation: _animation,
+                                        totalAmount: double.parse(state
+                                            .overviewMonthDto!.totalDebit
+                                            .toString()),
+                                        currentAmount: calculateMaxAmount(
+                                            double.parse(state
+                                                .overviewDayDto!.totalDebit
+                                                .toString())), // in VND
+                                        maxAmount: calculateMaxAmount(
+                                            double.parse(state
+                                                .overviewMonthDto!.totalDebit
+                                                .toString())), // Dynamically calculated max amount
+                                        color: Colors.red.withOpacity(0.5),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            );
-                          },
-                          separatorBuilder: (context, index) => const Padding(
-                                padding:
-                                    EdgeInsets.symmetric(horizontal: 10),
-                                child: MySeparator(
-                                  color: AppColor.GREY_DADADA,
+                            ),
+                            // const SizedBox(width: 20),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  onTap: () {},
+                                  child: Container(
+                                    height: 30,
+                                    width: 150,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          Color(0xFFE1EFFF),
+                                          Color(0xFFE5F9FF),
+                                        ],
+                                        end: Alignment.centerRight,
+                                        begin: Alignment.centerLeft,
+                                      ),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'Chi tiết thống kê',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.BLUE_TEXT),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                          itemCount: transactions.length))
-                  // for (var transaction in transactions) ...[
-
-                  //   Container(
-                  //     margin: const EdgeInsets.symmetric(horizontal: 12),
-                  //     child: const MySeparator(
-                  //       color: AppColor.GREY_DADADA,
-                  //     ),
-                  //   ),
-                  // ]
-                ],
-              ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(
+                                        text: TextSpan(
+                                            text: StringUtils.formatNumber(state
+                                                .overviewMonthDto!.totalCredit),
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.GREEN,
+                                                fontWeight: FontWeight.bold),
+                                            children: const [
+                                          TextSpan(
+                                            text: ' VND',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.GREY_TEXT,
+                                                fontWeight: FontWeight.normal),
+                                          )
+                                        ])),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${CurrencyUtils.instance.getCurrencyFormatted(state.overviewMonthDto!.countCredit.toString())} GD đến (+)',
+                                      style: const TextStyle(
+                                          fontSize: 10,
+                                          color: AppColor.BLACK,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    RichText(
+                                        text: TextSpan(
+                                            text: StringUtils.formatNumber(state
+                                                .overviewMonthDto!.totalDebit),
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.RED_TEXT,
+                                                fontWeight: FontWeight.bold),
+                                            children: const [
+                                          TextSpan(
+                                            text: ' VND',
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.GREY_TEXT,
+                                                fontWeight: FontWeight.normal),
+                                          )
+                                        ])),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      '${CurrencyUtils.instance.getCurrencyFormatted(state.overviewMonthDto!.countDebit.toString())} GD đi (-)',
+                                      style: const TextStyle(
+                                          fontSize: 10,
+                                          color: AppColor.BLACK,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          size: 16,
+                                          color: AppColor.GREEN,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          'Giao dịch đến (+)',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColor.BLACK,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          size: 16,
+                                          color: AppColor.RED_TEXT,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          'Giao dịch đến (-)',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColor.BLACK,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      RichText(
+                        text: const TextSpan(
+                            text: 'Còn ',
+                            style:
+                                TextStyle(fontSize: 12, color: AppColor.BLACK),
+                            children: [
+                              TextSpan(
+                                  text: '12 ngày nữa ',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColor.BLACK,
+                                      fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                  text: 'sang chu kỳ mới',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColor.BLACK,
+                                  )),
+                            ]),
+                      )
+                      // Text(
+                      //   'Còn 12 ngày nữa sang chu kỳ mới',
+                      //   style: TextStyle(fontSize: 12),
+                      // ),
+                    ],
+                  ),
+                );
+              },
             ),
+            const SizedBox(height: 20),
+            const LatestTransWidget(),
+            // Container(
+            //   height: 320,
+            //   margin: const EdgeInsets.symmetric(horizontal: 12),
+            //   decoration: BoxDecoration(
+            //       color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            //   child: Column(
+            //     children: [
+            //       Container(
+            //         height: 50,
+            //         padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            //         child: const Row(
+            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //           children: [
+            //             Text(
+            //               'Số tiền (VND)',
+            //               style: TextStyle(
+            //                   fontWeight: FontWeight.bold, fontSize: 12),
+            //             ),
+            //             Text(
+            //               'Thời gian',
+            //               style: TextStyle(
+            //                   fontWeight: FontWeight.bold, fontSize: 12),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //       Container(
+            //         margin: const EdgeInsets.symmetric(horizontal: 12),
+            //         child: const MySeparator(
+            //           color: AppColor.GREY_DADADA,
+            //         ),
+            //       ),
+            //       Expanded(
+            //           child: ListView.separated(
+            //               padding: const EdgeInsets.only(top: 0),
+            //               physics: const NeverScrollableScrollPhysics(),
+            //               itemBuilder: (context, index) {
+            //                 final transaction = transactions[index];
+            //                 return Container(
+            //                   height: 50,
+            //                   padding:
+            //                       const EdgeInsets.symmetric(horizontal: 12.0),
+            //                   child: Row(
+            //                     mainAxisAlignment:
+            //                         MainAxisAlignment.spaceBetween,
+            //                     children: [
+            //                       Text(
+            //                         transaction.amount,
+            //                         style: TextStyle(
+            //                             color: transaction.color, fontSize: 12),
+            //                       ),
+            //                       Text(
+            //                         transaction.time,
+            //                         style: const TextStyle(
+            //                             color: AppColor.BLACK, fontSize: 12),
+            //                       ),
+            //                     ],
+            //                   ),
+            //                 );
+            //               },
+            //               separatorBuilder: (context, index) => const Padding(
+            //                     padding: EdgeInsets.symmetric(horizontal: 10),
+            //                     child: MySeparator(
+            //                       color: AppColor.GREY_DADADA,
+            //                     ),
+            //                   ),
+            //               itemCount: transactions.length))
+            //       // for (var transaction in transactions) ...[
+
+            //       //   Container(
+            //       //     margin: const EdgeInsets.symmetric(horizontal: 12),
+            //       //     child: const MySeparator(
+            //       //       color: AppColor.GREY_DADADA,
+            //       //     ),
+            //       //   ),
+            //       // ]
+            //     ],
+            //   ),
+            // ),
           ],
         );
       },
@@ -403,6 +461,20 @@ class AnimatedBar extends StatelessWidget {
       double billions = amount / 1000000;
       return '${billions.toStringAsFixed(1).replaceAll('.', ',')} Tr';
     }
+    // String formatAmount(double amount) {
+    //   if (amount < 1000) {
+    //     return '${amount.toInt()} đ';
+    //   } else if (amount < 1000000) {
+    //     double thousands = amount / 1000;
+    //     return '${thousands.toStringAsFixed(thousands == thousands.toInt() ? 0 : 1).replaceAll('.', ',')} ngàn';
+    //   } else if (amount < 1000000000) {
+    //     double millions = amount / 1000000;
+    //     return '${millions.toStringAsFixed(millions == millions.toInt() ? 0 : 1).replaceAll('.', ',')} tr';
+    //   } else {
+    //     double billions = amount / 1000000000;
+    //     return '${billions.toStringAsFixed(billions == billions.toInt() ? 0 : 1).replaceAll('.', ',')} tỷ';
+    //   }
+    // }
 
     // print(object)
     return Column(

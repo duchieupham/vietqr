@@ -265,7 +265,8 @@ class _EmailInputPageState extends State<EmailInputPage> {
                         padding: const EdgeInsets.only(top: 4.0),
                         child: Text(
                           _emailError!,
-                          style: const TextStyle(color: Colors.red, fontSize: 11),
+                          style:
+                              const TextStyle(color: Colors.red, fontSize: 11),
                         ),
                       ),
                   ],

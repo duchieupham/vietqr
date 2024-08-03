@@ -4,6 +4,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
+import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
@@ -28,6 +29,8 @@ class BankCardState extends Equatable {
   final bool isRegisterMerchant;
   final MerchantDTO? merchantDTO;
   final List<TerminalAccountDTO>? terminalAccountDto;
+  final BankOverviewDTO? overviewDayDto;
+  final BankOverviewDTO? overviewMonthDto;
 
   const BankCardState({
     this.msg,
@@ -47,6 +50,8 @@ class BankCardState extends Equatable {
     this.merchantDTO,
     this.isInit = false,
     this.isRegisterMerchant = false,
+    this.overviewDayDto,
+    this.overviewMonthDto,
   });
 
   BankCardState copyWith({
@@ -69,6 +74,8 @@ class BankCardState extends Equatable {
     bool? isInit,
     bool? isRegisterMerchant,
     MerchantDTO? merchantDTO,
+    BankOverviewDTO? overviewDayDto,
+    BankOverviewDTO? overviewMonthDto,
   }) {
     return BankCardState(
       status: status ?? this.status,
@@ -88,6 +95,8 @@ class BankCardState extends Equatable {
       isRegisterMerchant: isRegisterMerchant ?? this.isRegisterMerchant,
       merchantDTO: merchantDTO ?? this.merchantDTO,
       terminalAccountDto: terminalAccountDto ?? this.terminalAccountDto,
+      overviewDayDto: overviewDayDto ?? this.overviewDayDto,
+      overviewMonthDto: overviewMonthDto ?? this.overviewMonthDto,
     );
   }
 
@@ -109,5 +118,7 @@ class BankCardState extends Equatable {
         isRegisterMerchant,
         merchantDTO,
         terminalAccountDto,
+        overviewDayDto,
+        overviewMonthDto,
       ];
 }

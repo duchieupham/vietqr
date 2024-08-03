@@ -61,4 +61,6 @@ enum ErrorType {
   E137,
   E138,
   E139,
+  E159,
+  E160
 }

@@ -96,4 +96,7 @@ class Routes {
   static const String CUSTOMER_VA_SUCCESS = 'customer_va/success';
   static const String CUSTOMER_VA_SPLASH = 'customer_va/splash';
   static const String CUSTOMER_VA_LIST = 'customer_va/list';
+
+  static const String MY_VIETQR_SCREEN = 'my_vietqr_screen';
+
 }

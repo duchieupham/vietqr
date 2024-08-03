@@ -8,6 +8,7 @@ import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/connect_media/blocs/connect_media_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
+import 'package:vierqr/features/my_vietqr/bloc/vietqr_store_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
@@ -32,6 +33,9 @@ class BlocModule extends DIModule {
       )
       ..registerLazySingleton(
         () => QrFeedBloc(),
+      )
+      ..registerLazySingleton(
+        () => VietQRStoreBloc(),
       )
       ..registerLazySingleton(
         // (param1, param2) => BankBloc(param1 as BuildContext),

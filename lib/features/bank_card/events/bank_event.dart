@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_arrange_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 
 enum UpdateBankType {
@@ -15,7 +17,76 @@ class BankEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class BankCardEventGetList extends BankEvent {}
+class CloseBannerEvent extends BankEvent {
+  final List<int> listBanner;
+
+  const CloseBannerEvent({required this.listBanner});
+
+  @override
+  List<Object?> get props => [listBanner];
+}
+
+class CloseInvoiceOverviewEvent extends BankEvent {
+  final bool isClose;
+
+  const CloseInvoiceOverviewEvent({required this.isClose});
+
+  @override
+  List<Object?> get props => [isClose];
+}
+
+class GetOverviewEvent extends BankEvent {
+  final String bankId;
+  final String? fromDate;
+  final String? toDate;
+
+  const GetOverviewEvent({
+    required this.bankId,
+    this.fromDate,
+    this.toDate,
+  });
+
+  @override
+  List<Object?> get props => [
+        bankId,
+        fromDate,
+        toDate,
+      ];
+}
+
+class SelectBankAccount extends BankEvent {
+  final BankAccountDTO bank;
+
+  const SelectBankAccount({required this.bank});
+  @override
+  List<Object?> get props => [bank];
+}
+
+class SelectTimeEvent extends BankEvent {
+  final FilterTrans timeSelect;
+
+  const SelectTimeEvent({required this.timeSelect});
+  @override
+  List<Object?> get props => [timeSelect];
+}
+
+class BankCardEventGetList extends BankEvent {
+  final bool isGetOverview;
+
+  const BankCardEventGetList({this.isGetOverview = false});
+
+  @override
+  List<Object?> get props => [isGetOverview];
+}
+
+class GetKeyFreeEvent extends BankEvent {
+  final Map<String, dynamic> param;
+
+  const GetKeyFreeEvent({required this.param});
+
+  @override
+  List<Object?> get props => [param];
+}
 
 class GetVerifyEmail extends BankEvent {}
 
@@ -28,6 +99,15 @@ class GetListBankAccountTerminal extends BankEvent {
 
   @override
   List<Object?> get props => [userId, terminalId];
+}
+
+class ArrangeBankListEvent extends BankEvent {
+  final List<BankArrangeDTO> list;
+
+  const ArrangeBankListEvent({required this.list});
+
+  @override
+  List<Object?> get props => [list];
 }
 
 class QREventGenerateList extends BankEvent {
@@ -52,3 +132,14 @@ class UpdateListBank extends BankEvent {
 }
 
 class LoadDataBankEvent extends BankEvent {}
+
+class GetInvoiceOverview extends BankEvent {}
+
+class GetTransEvent extends BankEvent {
+  final String bankId;
+
+  const GetTransEvent({required this.bankId});
+
+  @override
+  List<Object?> get props => [bankId];
+}

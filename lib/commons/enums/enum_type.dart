@@ -273,12 +273,23 @@ enum AddBankType {
   SCAN_NOT_FOUND
 }
 
+enum VietQrStore {
+  NONE,
+  GET_LIST,
+  LOADMORE,
+}
+
 enum BankType {
   QR,
   NONE,
   BANK,
   GET_BANK,
   GET_BANK_LOCAL,
+  GET_KEY_FREE,
+  GET_OVERVIEW,
+  GET_INVOICE_OVERVIEW,
+  GET_TRANS,
+  ARRANGE,
   VERIFY,
 }
 

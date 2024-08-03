@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -24,6 +25,7 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/bottom_bar_item.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
@@ -79,21 +81,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
     with
         UniLinksListenerMixin,
         WidgetsBindingObserver,
-        AutomaticKeepAliveClientMixin,
+        // AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin,
         DialogHelper {
   //page controller
   late PageController _pageController;
-
-  //list page
-  final List<Widget> _listScreens = [
-    const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-    const HomeScreen(key: PageStorageKey('HOME_PAGE')),
-    // const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-    const QrFeedScreen(key: PageStorageKey('QR_WALLET')),
-
-    const StoreScreen(key: PageStorageKey('STORE_PAGE')),
-  ];
 
   List barItems = [
     {
@@ -209,6 +201,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
   StreamSubscription<Uri>? _linkSubscription;
+  final scrollController = ScrollController();
+  ValueNotifier<bool> scrollNotifier = ValueNotifier<bool>(true);
+  ValueNotifier<bool> scrollToTopNotifier = ValueNotifier<bool>(false);
 
   final TextEditingController _editingController =
       TextEditingController(text: '');
@@ -231,6 +226,21 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       //thực hiện một số thao tác khi frame hình được vẽ xong
+      // scrollController.addListener(() {
+      //   if (scrollController.position.userScrollDirection ==
+      //       ScrollDirection.reverse) {
+      //     // Hide bottom bar
+      //     if (scrollNotifier.value) {
+      //       scrollNotifier.value = false;
+      //     }
+      //   } else if (scrollController.position.userScrollDirection ==
+      //       ScrollDirection.forward) {
+      //     // Show bottom bar
+      //     if (!scrollNotifier.value) {
+      //       scrollNotifier.value = true;
+      //     }
+      //   }
+      // });
       _bloc.add(const TokenEventCheckValid());
       listenNewNotification();
       onUpdateApp();
@@ -276,7 +286,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
     return BlocListener<DashBoardBloc, DashBoardState>(
       bloc: _bloc,
       listener: onListening,
@@ -287,44 +297,99 @@ class _DashBoardScreen extends State<DashBoardScreen>
         return Scaffold(
           backgroundColor: AppColor.WHITE,
           resizeToAvoidBottomInset: false,
+          floatingActionButton: ScrollToTopButton(
+              bottom: 80,
+              onPressed: () {
+                scrollController.animateTo(0.0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut);
+                scrollNotifier.value = true;
+              },
+              notifier: scrollToTopNotifier),
           body: Stack(
             children: [
-              if (provider.pageSelected != 3) const BackgroundAppBarHome(),
+              if (provider.pageSelected != 3 && provider.pageSelected != 0)
+                const BackgroundAppBarHome(),
               Container(
                 padding: EdgeInsets.only(
-                    top: provider.pageSelected == 3 ? 0 : kToolbarHeight * 2),
-                child: PageView(
-                  key: const PageStorageKey('PAGE_VIEW'),
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: _pageController,
-                  onPageChanged: (index) async {
-                    // if (index != PageType.STORE.pageIndex) {
-                    provider.updateIndex(index);
-                    sendDataFromBottomBar(index);
-                    // }
+                    top:
+                        provider.pageSelected == 3 || provider.pageSelected == 0
+                            ? 0
+                            : kToolbarHeight * 2),
+                decoration: BoxDecoration(
+                    gradient: provider.pageSelected == 0
+                        ? VietQRTheme.gradientColor.lilyLinear
+                        : null),
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (scrollNotification) {
+                    if (scrollNotification is ScrollUpdateNotification) {
+                      scrollToTopNotifier.value = scrollController.offset > 200;
+                      if (scrollController.offset > 150 &&
+                          scrollController.position.userScrollDirection ==
+                              ScrollDirection.reverse) {
+                        if (scrollNotifier.value) {
+                          scrollNotifier.value = false;
+                        }
+                      } else if (scrollController
+                              .position.userScrollDirection ==
+                          ScrollDirection.forward) {
+                        if (!scrollNotifier.value) {
+                          scrollNotifier.value = true;
+                        }
+                      }
+                    }
+                    return true;
                   },
-                  children: _listScreens,
+                  child: PageView(
+                    key: const PageStorageKey('PAGE_VIEW'),
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) async {
+                      // if (index != PageType.STORE.pageIndex) {
+                      provider.updateIndex(index);
+                      sendDataFromBottomBar(index);
+                      // }
+                    },
+                    children: [
+                      BankScreen(
+                        scrollController: scrollController,
+                        key: const PageStorageKey('QR_GENERATOR_PAGE'),
+                        onStore: () {
+                          onTapPage(5);
+                          // provider.updateIndex(5, isOnTap: true, isHome: false);
+                        },
+                      ),
+                      const HomeScreen(key: PageStorageKey('HOME_PAGE')),
+                      // const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
+                      const QrFeedScreen(key: PageStorageKey('QR_WALLET')),
+
+                      const StoreScreen(key: PageStorageKey('STORE_PAGE')),
+                    ],
+                  ),
                 ),
               ),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
-              Positioned(
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: Consumer<AuthProvider>(
-                    builder: (context, page, _) {
-                      return getBottomBar(
-                        page.pageSelected,
-                        onTap: (index) {
-                          SharePrefUtils.getProfile();
-                          onTapPage(index);
-                          page.updateIndex(index,
-                              isOnTap: true, isHome: index == 2 ? true : false);
-                        },
-                      );
-                    },
-                  ))
+              ValueListenableBuilder<bool>(
+                valueListenable: scrollNotifier,
+                builder: (context, isScroll, child) {
+                  return AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    bottom: !isScroll ? -100 : 0.0,
+                    left: 0,
+                    right: 0,
+                    child: getBottomBar(
+                      provider.pageSelected,
+                      onTap: (index) {
+                        onTapPage(index);
+                        provider.updateIndex(index,
+                            isOnTap: true, isHome: index == 2 ? true : false);
+                      },
+                    ),
+                  );
+                },
+              )
             ],
           ),
           // bottomNavigationBar: Consumer<AuthProvider>(
@@ -412,8 +477,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
   @override
   void getInitUri(Uri? uri) {
@@ -452,7 +517,7 @@ class SaveImageData {
 extension _DashBoardExtensionFunction on _DashBoardScreen {
   void initialServices({bool isLogin = false}) {
     if (isLogin) {
-      _bankBloc.add(BankCardEventGetList());
+      _bankBloc.add(const BankCardEventGetList());
       _bankBloc.add(LoadDataBankEvent());
     }
     _bloc.add(GetBanksEvent());
@@ -785,11 +850,6 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
               blurRadius: 8,
               spreadRadius: 1,
               offset: const Offset(0, 4)),
-          // BoxShadow(
-          //     color: AppColor.BLACK.withOpacity(0.1),
-          //     blurRadius: 4,
-          //     spreadRadius: 1,
-          //     offset: const Offset(0, -1))
         ],
       ),
       child: Row(

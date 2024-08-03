@@ -271,7 +271,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             body: CustomScrollView(
               shrinkWrap: true,
               controller: _scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
                   backgroundColor: AppColor.WHITE,

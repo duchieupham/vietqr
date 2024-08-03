@@ -552,7 +552,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                                               Text(
                                                 e.key,
                                                 style: const TextStyle(
-                                                    fontSize: 12,
+                                                    fontSize: 16,
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
@@ -681,8 +681,8 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
     }
 
     return InkWell(
-      onTap: () async {
-        await Navigator.of(context).push(
+      onTap: () {
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => TransactionDetailScreen(
               bankDto: widget.dto,
@@ -698,13 +698,14 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
         padding: const EdgeInsets.symmetric(vertical: 15),
         child: Row(
           mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             XImage(
               imagePath: item.transType == 'C'
                   ? 'assets/images/ic-trans-type.png'
                   : 'assets/images/ic-trans-debit.png',
-              height: 30,
-              width: 30,
+              height: 35,
+              width: 35,
               fit: BoxFit.cover,
             ),
             const SizedBox(width: 10),
@@ -718,14 +719,14 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                         ? '${item.amount} '
                         : '${item.transType == 'D' ? '-' : '+'} ${item.amount} ',
                     style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 16,
                         color: color,
                         fontWeight: FontWeight.bold),
                     children: const [
                       TextSpan(
                         text: 'VND',
                         style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 14,
                             color: AppColor.GREY_TEXT,
                             fontWeight: FontWeight.normal),
                         children: [],
@@ -735,7 +736,7 @@ class _BankTransactionsScreenState extends State<BankTransactionsScreen> {
                   const SizedBox(height: 2),
                   Text(
                     text,
-                    style: const TextStyle(fontSize: 10, color: AppColor.BLACK),
+                    style: const TextStyle(fontSize: 12, color: AppColor.BLACK),
                   )
                 ],
               ),

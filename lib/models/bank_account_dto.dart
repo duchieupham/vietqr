@@ -29,6 +29,7 @@ class BankAccountDTO {
   String? keyActive;
   int? timeActiveKey;
   bool? activeKey;
+  bool mmsActive;
 
   //thêm
   Color? bankColor;
@@ -67,6 +68,7 @@ class BankAccountDTO {
     this.validFeeTo,
     this.transCount,
     this.activeKey = false,
+    this.mmsActive = false,
     this.keyActive = '',
     this.timeActiveKey = 0,
   });
@@ -102,6 +104,7 @@ class BankAccountDTO {
       transCount: json['transCount'],
       keyActive: json['keyActive'] ?? '',
       activeKey: json['activeKey'] ?? false,
+      mmsActive: json['mmsActive'] ?? false,
       timeActiveKey: json['timeActiveKey'] ?? 1,
     );
   }
