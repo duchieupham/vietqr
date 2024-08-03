@@ -17,6 +17,24 @@ class BankEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class CloseBannerEvent extends BankEvent {
+  final List<int> listBanner;
+
+  const CloseBannerEvent({required this.listBanner});
+
+  @override
+  List<Object?> get props => [listBanner];
+}
+
+class CloseInvoiceOverviewEvent extends BankEvent {
+  final bool isClose;
+
+  const CloseInvoiceOverviewEvent({required this.isClose});
+
+  @override
+  List<Object?> get props => [isClose];
+}
+
 class GetOverviewEvent extends BankEvent {
   final String bankId;
   final String? fromDate;

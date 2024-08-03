@@ -30,6 +30,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
   BankBloc(this.context)
       : super(const BankState(
+            listBanner: [0, 1],
             listTrans: [],
             listBanks: [],
             // colors: [],
@@ -48,6 +49,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     on<GetInvoiceOverview>(_getInvoiceOverview);
     on<GetTransEvent>(_getTrans);
     on<ArrangeBankListEvent>(_arrange);
+    on<CloseInvoiceOverviewEvent>(_isCloseInvoiceOverview);
+    on<CloseBannerEvent>(_isCloseBanner);
   }
 
   FilterTrans selected = FilterTrans(
@@ -57,6 +60,18 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
 
   final bankCardRepository = const BankCardRepository();
+
+  void _isCloseBanner(BankEvent event, Emitter emit) async {
+    if (event is CloseBannerEvent) {
+      emit(state.copyWith(listBanner: event.listBanner));
+    }
+  }
+
+  void _isCloseInvoiceOverview(BankEvent event, Emitter emit) async {
+    if (event is CloseInvoiceOverviewEvent) {
+      emit(state.copyWith(isClose: event.isClose));
+    }
+  }
 
   void _selectTime(BankEvent event, Emitter emit) async {
     if (event is SelectTimeEvent) {

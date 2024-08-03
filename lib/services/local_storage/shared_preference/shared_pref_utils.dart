@@ -76,18 +76,6 @@ class SharePrefUtils {
     return sharedPreferenceService.get() ?? '';
   }
 
-  ///Set Invoice Open
-  static Future<void> saveInvoice(bool isOpen) async {
-    final sharedPreferenceService = SharedPrefLocal<bool>(
-        Constants.SharedPreferenceKey.Invoice.sharedValue);
-    await sharedPreferenceService.set(data: isOpen);
-  }
-
-  static bool getInvoice() {
-    final sharedPreferenceService = SharedPrefLocal<bool>(
-        Constants.SharedPreferenceKey.Invoice.sharedValue);
-    return sharedPreferenceService.get() ?? false;
-  }
 
   /// Profile
   static Future<void> saveProfileToCache(UserProfile profile) async {

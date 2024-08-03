@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -18,24 +19,26 @@ class InvoiceOverviewWidget extends StatefulWidget {
   State<InvoiceOverviewWidget> createState() => _InvoiceOverviewWidgetState();
 }
 
-class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget> {
-  // bool isClose = false;
-  // bool get isShow => SharePrefUtils.getInvoice();
-  bool isShow = true;
+class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    isShow = SharePrefUtils.getInvoice();
+    // isShow = SharePrefUtils.getInvoice();
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
-    if (!isShow) {
-      return const SizedBox.shrink();
-    }
+    super.build(context);
     return BlocBuilder<BankBloc, BankState>(
       bloc: getIt.get<BankBloc>(),
       builder: (context, state) {
+        if (state.isClose) {
+          return const SizedBox.shrink();
+        }
         if (state.invoiceOverviewDTO == null ||
             state.invoiceOverviewDTO!.countInvoice == 0) {
           return const SizedBox.shrink();
@@ -109,11 +112,10 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: () async {
-                      await SharePrefUtils.saveInvoice(false);
-                      setState(() {
-                        isShow = SharePrefUtils.getInvoice();
-                      });
+                    onTap: () {
+                      getIt
+                          .get<BankBloc>()
+                          .add(const CloseInvoiceOverviewEvent(isClose: true));
                     },
                     child: const XImage(
                       imagePath: 'assets/images/ic-close-black.png',

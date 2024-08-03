@@ -24,9 +24,13 @@ class BankState extends Equatable {
   final KeyFreeDTO? keyDTO;
   final BankTypeDTO? bankTypeDTO;
   final List<BankTypeDTO> listBankTypeDTO;
+  final List<int> listBanner;
+
   final TypeQR typeQR;
   final String? barCode;
   final bool isEmpty;
+  final bool isClose;
+
   final bool isBankSelect;
   final List<BankAccountTerminal> listBankAccountTerminal;
 
@@ -41,11 +45,13 @@ class BankState extends Equatable {
     this.overviewDto,
     required this.listBanks,
     required this.listTrans,
+    required this.listBanner,
     this.bankSelect,
     this.keyDTO,
     this.invoiceOverviewDTO,
     required this.listBankTypeDTO,
     this.isEmpty = false,
+    this.isClose = false,
     this.isBankSelect = false,
     required this.listBankAccountTerminal,
   });
@@ -58,7 +64,7 @@ class BankState extends Equatable {
     List<NearestTransDTO>? listTrans,
     BankAccountDTO? bankSelect,
     List<BankAccountTerminal>? listBankTerminal,
-    // List<Color>? colors,
+    List<int>? listBanner,
     NationalScannerDTO? nationalScannerDTO,
     String? bankAccount,
     BankOverviewDTO? overviewDto,
@@ -69,6 +75,7 @@ class BankState extends Equatable {
     TypeQR? typeQR,
     String? barCode,
     bool? isEmpty,
+    bool? isClose,
     bool? isBankSelect,
   }) {
     return BankState(
@@ -85,9 +92,10 @@ class BankState extends Equatable {
       bankSelect: bankSelect ?? this.bankSelect,
       overviewDto: overviewDto ?? this.overviewDto,
       invoiceOverviewDTO: invoiceOverviewDTO ?? this.invoiceOverviewDTO,
-      // colors: colors ?? this.colors,
+      listBanner: listBanner ?? this.listBanner,
       listBankTypeDTO: listBankTypeDTO ?? this.listBankTypeDTO,
       isEmpty: isEmpty ?? this.isEmpty,
+      isClose: isClose ?? this.isClose,
       isBankSelect: isBankSelect ?? this.isBankSelect,
       keyDTO: keyDTO ?? this.keyDTO,
     );
@@ -99,7 +107,7 @@ class BankState extends Equatable {
         request,
         msg,
         bankAccount,
-        // colors,
+        listBanner,
         listBanks,
         bankSelect,
         listTrans,
@@ -108,6 +116,7 @@ class BankState extends Equatable {
         typeQR,
         barCode,
         isEmpty,
+        isClose,
         isBankSelect,
         keyDTO,
       ];

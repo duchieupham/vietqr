@@ -149,7 +149,6 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    SharePrefUtils.saveInvoice(true);
 
     _mainScreen = (userId.isNotEmpty)
         ? const DashBoardScreen()
