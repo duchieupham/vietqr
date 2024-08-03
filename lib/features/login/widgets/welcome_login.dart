@@ -33,7 +33,7 @@ class _WelcomeLoginScreenState extends State<WelcomeLoginScreen> {
       body: Stack(
         children: [
           AnimatedPositioned(
-            duration: const Duration(seconds: 2),
+            duration: const Duration(seconds: 1),
             curve: Curves.easeInOut,
             bottom: _isAnimated
                 ? MediaQuery.of(context).size.height / 2
