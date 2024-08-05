@@ -262,7 +262,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                   child: Row(
                     children: [
                       const Padding(
-                        padding: EdgeInsets.only(left: 8),
+                        padding: EdgeInsets.only(left: 25),
                         child: XImage(
                           imagePath: 'assets/images/ic-suggest.png',
                           width: 30,

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -246,32 +248,75 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
         children: [
           const SizedBox(height: 20),
           Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  spreadRadius: 18,
-                  blurRadius: 10,
-                  offset: const Offset(0, 0),
+            width: 100,
+            height: 100,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  // top: 0,
+                  // bottom: 0,
+                  // left: 0,
+                  // right: 0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: widget.imgId.isNotEmpty
+                        ? Image(
+                            image: ImageUtils.instance
+                                .getImageNetWork(widget.imgId),
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'assets/images/ic-avatar.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: Container(
+                      width: 90,
+                      height: 90,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Colors.black.withOpacity(0), // Transparent color
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(50),
+                    child: widget.imgId.isNotEmpty
+                        ? Image(
+                            image: ImageUtils.instance
+                                .getImageNetWork(widget.imgId),
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          )
+                        : Image.asset(
+                            'assets/images/ic-avatar.png',
+                            width: 80,
+                            height: 80,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
               ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: widget.imgId.isNotEmpty
-                  ? Image(
-                      image: ImageUtils.instance.getImageNetWork(widget.imgId),
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.fill,
-                    )
-                  : Image.asset(
-                      'assets/images/ic-avatar.png',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.fill,
-                    ),
             ),
           ),
           const SizedBox(height: 20),
