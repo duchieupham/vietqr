@@ -69,9 +69,8 @@ class RegisterProvider with ChangeNotifier {
     if (phone.isNotEmpty) {
       phoneNoController.value = phoneNoController.value.copyWith(text: phone);
       var isValid =
-          StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
-              true;
-      _isPhoneErr = isValid;
+          StringUtils.instance.isValidatePhone(phoneNoController.value.text);
+      _isPhoneErr = !isValid;
     } else {
       _isPhoneErr = false;
     }
@@ -138,15 +137,15 @@ class RegisterProvider with ChangeNotifier {
   bool isEnableButtonPhone() {
     if (phoneNoController.text.isNotEmpty) {
       var isValid =
-          StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
-              true;
+          StringUtils.instance.isValidatePhone(phoneNoController.value.text);
       // debugPrint("is Valid ==> $isValid");
-      if (!isValid) {
-        // _isPhoneErr = false;
-        return true;
-      }
+      // if (!isValid) {
+      //   // _isPhoneErr = false;
+      //   return true;
+      // }
+      return isValid;
     }
-    _isPhoneErr = true;
+    // _isPhoneErr = true;
     return false;
   }
 

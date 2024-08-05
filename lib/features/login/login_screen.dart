@@ -1085,6 +1085,9 @@ extension _LoginScreenFunction on _LoginScreenState {
       );
       if (!mounted) return;
       _bloc.add(LoginEventByPhone(dto: dto, isToast: true));
+    } else if (data != null && data is InfoUserDTO) {
+      onSetIsQuickLogin(FlowType.QUICK_LOGIN);
+      updateInfoUser(data);
     }
   }
 

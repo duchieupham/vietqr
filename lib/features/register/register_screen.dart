@@ -91,6 +91,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
     }
+    _registerProvider.updateErrs(
+        phoneErr: _registerProvider.isEnableButtonPhone(),
+        passErr: false,
+        confirmPassErr: false);
   }
 
   @override
@@ -268,15 +272,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               },
                               listener: (context, state) {
                                 if (state.request == LoginType.CHECK_EXIST) {
-                                  Fluttertoast.showToast(
-                                    msg: 'Tài khoản đã tồn tại',
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    backgroundColor:
-                                        Theme.of(context).cardColor,
-                                    textColor: Theme.of(context).hintColor,
-                                    fontSize: 15,
-                                  );
+                                  // Fluttertoast.showToast(
+                                  //   msg: 'Tài khoản đã tồn tại',
+                                  //   toastLength: Toast.LENGTH_SHORT,
+                                  //   gravity: ToastGravity.CENTER,
+                                  //   backgroundColor:
+                                  //       Theme.of(context).cardColor,
+                                  //   textColor: Theme.of(context).hintColor,
+                                  //   fontSize: 15,
+                                  // );
+                                  if (state.infoUserDTO != null) {
+                                    Navigator.of(context)
+                                        .pop(state.infoUserDTO);
+                                  }
                                 }
                                 if (state.request == LoginType.REGISTER) {
                                   provider.updatePage(2);
