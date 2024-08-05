@@ -9,7 +9,7 @@ class FormPhone extends StatefulWidget {
   final TextEditingController phoneController;
   final PageController pageController;
   final bool isFocus;
-  final Function() onExistPhone;
+  final Function(String) onExistPhone;
 
   const FormPhone(
       {super.key,
@@ -82,14 +82,14 @@ class _FormPhoneState extends State<FormPhone> {
               PhoneWidget(
                 onChanged: provider.updatePhone,
                 onSubmit: (value) {
-                  widget.onExistPhone;
-                  String text = value..replaceAll(' ', '');
-                  if (text.length == 10) {
-                    provider.updatePage(2);
-                    widget.pageController.animateToPage(2,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.ease);
-                  }
+                  String text = value.replaceAll(' ', '');
+                  widget.onExistPhone(text);
+                  // if (text.length == 10) {
+                  //   provider.updatePage(2);
+                  //   widget.pageController.animateToPage(2,
+                  //       duration: const Duration(milliseconds: 300),
+                  //       curve: Curves.ease);
+                  // }
                 },
                 phoneController: widget.phoneController,
                 // phoneController: provider.phoneNoController,
