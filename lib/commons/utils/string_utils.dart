@@ -14,8 +14,8 @@ class StringUtils {
       r'^[a-zA-Z0-9.,!@#$&*/? ]+$';
   final String _transactionContentPattern = r'^[a-zA-ZÀ-ỹẠ-ỵ0-9.,!@#$&*/? ]+$';
   final String _fullNamePattern = r'^[a-zA-ZÀ-ỹẠ-ỵ0-9 ]+$';
-  final String _phonePattern = r'^(?:[+0]9)?[0-9]{10}$';
-  // final String _phonePattern = r'^(?:\+84|0)(?:3[2-9]|5[25689]|7[06-9]|8[1-689]|9[0-46-9])\d{7}$';
+  // final String _phonePattern = r'^(?:[+0]9)?[0-9]{10}$';
+  final String _phonePattern = r'^(?:\+84|0)(?:3[2-9]|5[25689]|7[06-9]|8[1-689]|9[0-46-9])\d{7}$';
 
   bool isNumeric(String text) {
     return int.tryParse(text) != null;

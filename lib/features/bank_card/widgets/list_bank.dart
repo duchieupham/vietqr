@@ -261,7 +261,8 @@ class _ListBankWidgetState extends State<ListBankWidget>
                         height: 5,
                         width: 18,
                         decoration: BoxDecoration(
-                          color: AppColor.BLUE_TEXT,
+                          // color: AppColor.BLUE_TEXT,
+                          gradient: VietQRTheme.gradientColor.brightBlueLinear,
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),

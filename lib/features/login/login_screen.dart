@@ -1064,6 +1064,7 @@ extension _LoginScreenFunction on _LoginScreenState {
   void _onRegister() async {
     updateInfoUser(null);
     Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
+
     final data = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) =>

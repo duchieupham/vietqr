@@ -76,13 +76,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final focusNode = FocusNode();
   // final PageController pageController = PageController();
   final controller = ScrollController();
+  late RegisterProvider _registerProvider;
 
   // final auth = FirebaseAuth.instance;
 
   void initialServices(BuildContext context) {
     if (StringUtils.instance.isNumeric(widget.phoneNo)) {
-      Provider.of<RegisterProvider>(context, listen: false)
-          .updatePhone(widget.phoneNo);
+      _registerProvider.updatePhone(widget.phoneNo);
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
     }
@@ -92,6 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    _registerProvider = Provider.of<RegisterProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
     });

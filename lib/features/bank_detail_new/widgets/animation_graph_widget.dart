@@ -453,7 +453,9 @@ class AnimatedBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double maxHeight = 150.0; // Fixed maximum height for the bars
-    double barHeight = (totalAmount / maxAmount) * maxHeight;
+    double barHeight =
+        totalAmount != 0 ? (totalAmount / maxAmount) * maxHeight : maxHeight;
+
     double currentHeight =
         currentAmount != 0 ? (currentAmount / totalAmount) * barHeight : 6;
     bool isFiftyPercent = currentHeight >= barHeight * 0.7;
