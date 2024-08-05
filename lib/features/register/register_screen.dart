@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -10,7 +12,9 @@ import 'package:vierqr/commons/utils/user_information_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
+import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
+import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
@@ -72,6 +76,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   late RegisterBloc _bloc;
+  late LoginBloc _loginBloc;
   final _phoneNoController = TextEditingController();
   final focusNode = FocusNode();
   // final PageController pageController = PageController();
@@ -82,13 +87,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void initialServices(BuildContext context) {
     if (StringUtils.instance.isNumeric(widget.phoneNo)) {
-      // Provider.of<RegisterProvider>(context, listen: false)
-      //     .updatePhone(widget.phoneNo);
       _registerProvider.updatePhone(widget.phoneNo);
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
-    } else {
-      _registerProvider.reset();
     }
   }
 
@@ -96,6 +97,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    _loginBloc = getIt.get<LoginBloc>(
+        param1: context, param2: getIt.get<LoginRepository>());
     _registerProvider = Provider.of<RegisterProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
@@ -172,13 +175,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       .text,
                 ),
               );
-              getIt
-                  .get<LoginBloc>(
-                      param1: context, param2: getIt.get<LoginRepository>())
-                  .add(LoginEventByPhone(
-                    dto: dto,
-                    isToast: true,
-                  ));
+              _loginBloc.add(LoginEventByPhone(
+                dto: dto,
+                isToast: true,
+              ));
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -211,6 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               },
               child: Scaffold(
                 appBar: RegisterAppBar(
+                  isLeading: provider.page == 0 ? false : true,
                   title: '',
                   onPressed: () {
                     // Provider.of<PinProvider>(context, listen: false).reset();
@@ -248,23 +249,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       provider.page == 0
-                          ? Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 0),
-                              child: FormPhone(
-                                pageController: widget.pageController,
-                                phoneController: _phoneNoController,
-                                isFocus: widget.isFocus,
-                                onExistPhone: () {
-                                  getIt
-                                      .get<LoginBloc>(
-                                          param1: context,
-                                          param2: getIt.get<LoginRepository>())
-                                      .add(CheckExitsPhoneEvent(
-                                          phone: _phoneNoController.text));
-                                },
-                              ),
+                          ? BlocConsumer<LoginBloc, LoginState>(
+                              bloc: _loginBloc,
+                              builder: (context, state) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 0),
+                                  child: FormPhone(
+                                    pageController: widget.pageController,
+                                    phoneController: _phoneNoController,
+                                    isFocus: widget.isFocus,
+                                    onExistPhone: (value) {
+                                      _loginBloc.add(
+                                          CheckExitsPhoneEvent(phone: value));
+                                    },
+                                  ),
+                                );
+                              },
+                              listener: (context, state) {
+                                if (state.request == LoginType.CHECK_EXIST) {
+                                  Fluttertoast.showToast(
+                                    msg: 'Tài khoản đã tồn tại',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    backgroundColor:
+                                        Theme.of(context).cardColor,
+                                    textColor: Theme.of(context).hintColor,
+                                    fontSize: 15,
+                                  );
+                                }
+                                if (state.request == LoginType.REGISTER) {
+                                  provider.updatePage(2);
+                                  widget.pageController.animateToPage(2,
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.ease);
+                                }
+                              },
                             )
+                          // ? Padding(
+                          //     padding:
+                          //         const EdgeInsets.symmetric(horizontal: 0),
+                          //     child: FormPhone(
+                          //       pageController: widget.pageController,
+                          //       phoneController: _phoneNoController,
+                          //       isFocus: widget.isFocus,
+                          //       onExistPhone: () {
+                          //         _loginBloc.add(CheckExitsPhoneEvent(
+                          //             phone: _phoneNoController.text));
+                          //       },
+                          //     ),
+                          //   )
                           : const SizedBox.shrink(),
                       provider.page == 1
                           ? const ReferralCode()
@@ -329,10 +364,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _buildButtonSubmitFormPhone(
                         height,
                         () {
-                          provider.updatePage(2);
-                          widget.pageController.animateToPage(2,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease);
+                          _loginBloc.add(CheckExitsPhoneEvent(
+                              phone:
+                                  _phoneNoController.text.replaceAll(' ', '')));
+                          // provider.updatePage(2);
+                          // widget.pageController.animateToPage(2,
+                          //     duration: const Duration(milliseconds: 300),
+                          //     curve: Curves.ease);
                         },
                       ),
                     ],
@@ -427,9 +465,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildButtonSubmitFormPhone(double height, VoidCallback callback) {
+  Widget _buildButtonSubmitFormPhone(double height, Function() callback) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
+        bool isEnable = provider.isEnableButtonPhone();
         // return MButtonWidget(
         //     title: 'Tiếp tục',
         //     isEnable: provider.isEnableButtonPhone(),
@@ -439,8 +478,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         //     height: 50,
         //     onTap: callback);
         return VietQRButton.gradient(
-          onPressed: callback,
-          isDisabled: !(provider.isEnableButtonPhone()),
+          onPressed: () {
+            if (isEnable) {
+              callback();
+            }
+          },
+          isDisabled: !isEnable,
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -453,9 +496,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Text(
                   'Tiếp tục',
                   style: TextStyle(
-                    color: provider.isEnableButtonPhone()
-                        ? AppColor.WHITE
-                        : AppColor.BLACK,
+                    color: isEnable ? AppColor.WHITE : AppColor.BLACK,
                   ),
                 ),
                 Icon(

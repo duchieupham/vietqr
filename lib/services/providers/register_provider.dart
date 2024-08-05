@@ -142,11 +142,11 @@ class RegisterProvider with ChangeNotifier {
               true;
       // debugPrint("is Valid ==> $isValid");
       if (!isValid) {
-        _isPhoneErr = false;
+        // _isPhoneErr = false;
         return true;
       }
     }
-    // _isPhoneErr = true;
+    _isPhoneErr = true;
     return false;
   }
 
