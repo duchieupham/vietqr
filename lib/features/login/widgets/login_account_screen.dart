@@ -38,6 +38,8 @@ class LoginAccountScreen extends StatefulWidget {
 class _LoginAccountScreenState extends State<LoginAccountScreen> {
   final PageController _pageController = PageController();
   bool isVNSelected = true;
+  int _pageIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -55,139 +57,160 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
         leadingWidth: 100,
         elevation: 0,
         backgroundColor: Colors.white,
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 20),
-          child: XImage(
-            imagePath: 'assets/images/ic-viet-qr.png',
-            height: 40,
-            // width: 30,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Container(
-              padding: const EdgeInsets.all(4.0),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFE1EFFF),
-                    Color(0xFFE5F9FF),
-                  ],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+        leading: _pageIndex != 0
+            ? const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: XImage(
+                  imagePath: 'assets/images/ic-viet-qr.png',
+                  height: 40,
+                  // width: 30,
                 ),
-                borderRadius: BorderRadius.circular(20.0),
+              )
+            : const SizedBox.shrink(),
+        actions: [
+          Row(
+            children: [
+              VietQRButton.solid(
+                borderRadius: 50,
+                onPressed: () {},
+                isDisabled: false,
+                width: 40,
+                size: VietQRButtonSize.medium,
+                child: const XImage(
+                  imagePath: 'assets/images/ic-headphone-black.png',
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isVNSelected = true;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: isVNSelected
-                            ? const LinearGradient(
-                                colors: [
-                                  Color(0xFF00C6FF),
-                                  Color(0xFF0072FF),
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              )
-                            : null,
-                        color: isVNSelected ? null : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: isVNSelected
-                          ? const Text(
-                              'VN',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : ShaderMask(
-                              shaderCallback: (bounds) => const LinearGradient(
-                                colors: [
-                                  Color(0xFF00C6FF),
-                                  Color(0xFF0072FF),
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ).createShader(bounds),
-                              child: const Text(
-                                'VN',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+              Padding(
+                padding: const EdgeInsets.only(right: 12, left: 8),
+                child: Container(
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFE1EFFF),
+                        Color(0xFFE5F9FF),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
                     ),
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
-                  const SizedBox(width: 0),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isVNSelected = false;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        gradient: !isVNSelected
-                            ? const LinearGradient(
-                                colors: [
-                                  Color(0xFF00C6FF),
-                                  Color(0xFF0072FF),
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              )
-                            : null,
-                        color: !isVNSelected ? null : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: !isVNSelected
-                          ? const Text(
-                              'EN',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : ShaderMask(
-                              shaderCallback: (bounds) => const LinearGradient(
-                                colors: [
-                                  Color(0xFF00C6FF),
-                                  Color(0xFF0072FF),
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ).createShader(bounds),
-                              child: const Text(
-                                'EN',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isVNSelected = true;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: isVNSelected
+                                ? const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  )
+                                : null,
+                            color: isVNSelected ? null : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: isVNSelected
+                              ? const Text(
+                                  'VN',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ).createShader(bounds),
+                                  child: const Text(
+                                    'VN',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                    ),
+                        ),
+                      ),
+                      const SizedBox(width: 0),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isVNSelected = false;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: !isVNSelected
+                                ? const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  )
+                                : null,
+                            color: !isVNSelected ? null : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: !isVNSelected
+                              ? const Text(
+                                  'EN',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ).createShader(bounds),
+                                  child: const Text(
+                                    'EN',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -200,6 +223,11 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             height: height * 0.6,
             child: PageView(
               controller: _pageController,
+              onPageChanged: (value) {
+                setState(() {
+                  _pageIndex = value;
+                });
+              },
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 introdution1(),

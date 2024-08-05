@@ -30,26 +30,25 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   final _otpController = TextEditingController();
   bool showBlueContainer = false;
   final PageController _pageController = PageController();
+  int _pageIndex = 0;
+  UserProfile get userProfile => SharePrefUtils.getProfile();
   bool _confirmOTP = true;
 
-  void initialServices(BuildContext context) {
-    final UserProfile accountInformationDTO = SharePrefUtils.getProfile();
-    if (accountInformationDTO.email.isNotEmpty &&
-        _emailController.text.isEmpty) {
+  void initialServices() {
+    if (userProfile.email.isNotEmpty && _emailController.text.isEmpty) {
       _emailController.value =
-          _emailController.value.copyWith(text: accountInformationDTO.email);
+          _emailController.value.copyWith(text: userProfile.email);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    initialServices(context);
-    _pageController.addListener(() {
-      setState(() {
-        showBlueContainer = _pageController.page == 1;
-      });
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        initialServices();
+      },
+    );
   }
 
   @override
@@ -107,9 +106,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           // print(SharePrefUtils.getProfile().verify);
         }
         if (state is ConfirmOTPStateFailedState) {
-          setState(() {
-            _confirmOTP = false;
-          });
+          _confirmOTP = false;
           Fluttertoast.showToast(
             msg: 'Xác nhận OTP thất bại',
             toastLength: Toast.LENGTH_SHORT,
@@ -121,9 +118,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         }
 
         if (state is ConfirmOTPStateFailedTimeOutState) {
-          setState(() {
-            _confirmOTP = false;
-          });
+          _confirmOTP = false;
           Fluttertoast.showToast(
             msg: 'Mã OTP đã hết hiệu lực',
             toastLength: Toast.LENGTH_SHORT,
@@ -157,15 +152,15 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                       ),
             leading: GestureDetector(
               onTap: () {
-                // if (_pageController.page == 1) {
-                //   _pageController.previousPage(
-                //     duration: const Duration(milliseconds: 300),
-                //     curve: Curves.easeInOut,
-                //   );
-                // } else if (_pageController.page == 0) {
-                //   Navigator.of(context).pop();
-                // }
-                Navigator.of(context).pop();
+                if (_pageIndex == 1) {
+                  _pageController.previousPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                } else if (_pageIndex == 0) {
+                  Navigator.of(context).pop();
+                }
+                // Navigator.of(context).pop();
               },
               child: const Row(
                 children: [
@@ -191,6 +186,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           body: PageView(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (value) {
+              setState(() {
+                _pageIndex = value;
+                showBlueContainer = value == 1;
+              });
+            },
             children: [
               EmailInputPage(
                 emailController: _emailController,

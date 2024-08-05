@@ -87,6 +87,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _registerProvider.updatePhone(widget.phoneNo);
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
+    } else {
+      _registerProvider.reset();
     }
   }
 

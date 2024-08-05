@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/layouts/button/button.dart';
@@ -21,7 +22,7 @@ class EmailInputPage extends StatefulWidget {
 }
 
 class _EmailInputPageState extends State<EmailInputPage> {
-  String? _emailError;
+  final ValueNotifier<String> _notifier = ValueNotifier<String>('');
 
   bool isValidEmail(String email) {
     final emailRegex = RegExp(
@@ -31,24 +32,24 @@ class _EmailInputPageState extends State<EmailInputPage> {
 
   void validateEmail(String email) {
     if (email.isEmpty || !isValidEmail(email)) {
-      setState(() {
-        _emailError =
-            'Email không hợp lệ. Vui lòng kiểm tra lại thông tin của bạn.';
-      });
+      _notifier.value =
+          'Email không hợp lệ. Vui lòng kiểm tra lại thông tin của bạn.';
     } else {
-      setState(() {
-        _emailError = null;
-      });
+      _notifier.value = '';
     }
   }
 
   @override
   void initState() {
     super.initState();
-
-    widget.emailController.addListener(() {
-      validateEmail(widget.emailController.text);
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        validateEmail(widget.emailController.text);
+      },
+    );
+    // widget.emailController.addListener(() {
+    //
+    // });
   }
 
   @override
@@ -60,41 +61,46 @@ class _EmailInputPageState extends State<EmailInputPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: VietQRButton.gradient(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        onPressed: widget.onContinue,
-        isDisabled:
-            !(_emailError == null && widget.emailController.text.isNotEmpty),
-        size: VietQRButtonSize.large,
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Icon(
-                Icons.abc,
-                size: 18,
-                color: AppColor.TRANSPARENT,
+      bottomNavigationBar: ValueListenableBuilder<String>(
+        valueListenable: _notifier,
+        builder: (context, emailError, child) {
+          return VietQRButton.gradient(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            onPressed: widget.onContinue,
+            isDisabled: (emailError.isNotEmpty &&
+                widget.emailController.text.isNotEmpty),
+            size: VietQRButtonSize.large,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Icon(
+                    Icons.abc,
+                    size: 18,
+                    color: AppColor.TRANSPARENT,
+                  ),
+                  Text(
+                    'Tiếp tục',
+                    style: TextStyle(
+                      color: (emailError.isNotEmpty &&
+                              widget.emailController.text.isNotEmpty)
+                          ? AppColor.BLACK
+                          : AppColor.WHITE,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_outlined,
+                    size: 18,
+                    color: (emailError.isNotEmpty &&
+                            widget.emailController.text.isNotEmpty)
+                        ? AppColor.BLACK
+                        : AppColor.WHITE,
+                  ),
+                ],
               ),
-              Text(
-                'Tiếp tục',
-                style: TextStyle(
-                  color: (_emailError == null &&
-                          widget.emailController.text.isNotEmpty)
-                      ? AppColor.WHITE
-                      : AppColor.BLACK,
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_outlined,
-                size: 18,
-                color: (_emailError == null &&
-                        widget.emailController.text.isNotEmpty)
-                    ? AppColor.WHITE
-                    : AppColor.BLACK,
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
       // bottomNavigationBar: Padding(
       //   padding: const EdgeInsets.all(20),
@@ -229,6 +235,7 @@ class _EmailInputPageState extends State<EmailInputPage> {
                       enable: true,
                       fillColor: AppColor.WHITE,
                       value: widget.emailController.text,
+                      controller: widget.emailController,
                       autoFocus: true,
                       textFieldType: TextfieldType.DEFAULT,
                       title: '',
@@ -241,7 +248,8 @@ class _EmailInputPageState extends State<EmailInputPage> {
                         }
                       },
                       onChange: (value) {
-                        widget.emailController.text = value;
+                        validateEmail(value);
+                        // widget.emailController.text = value;
                       },
                       decoration: const InputDecoration(
                         hintText: 'Nhập email tại đây',
@@ -260,15 +268,22 @@ class _EmailInputPageState extends State<EmailInputPage> {
                         ),
                       ),
                     ),
-                    if (_emailError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          _emailError!,
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 11),
-                        ),
-                      ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _notifier,
+                      builder: (context, error, child) {
+                        if (error.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            error,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 11),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
