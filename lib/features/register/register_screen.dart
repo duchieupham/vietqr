@@ -82,6 +82,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void initialServices(BuildContext context) {
     if (StringUtils.instance.isNumeric(widget.phoneNo)) {
+      // Provider.of<RegisterProvider>(context, listen: false)
+      //     .updatePhone(widget.phoneNo);
       _registerProvider.updatePhone(widget.phoneNo);
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
@@ -253,12 +255,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 pageController: widget.pageController,
                                 phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
-                                onEnterIntro: (value) {
-                                  provider.updatePage(value);
-                                  widget.pageController.animateToPage(value,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.ease);
+                                onExistPhone: () {
+                                  getIt
+                                      .get<LoginBloc>(
+                                          param1: context,
+                                          param2: getIt.get<LoginRepository>())
+                                      .add(CheckExitsPhoneEvent(
+                                          phone: _phoneNoController.text));
                                 },
                               ),
                             )

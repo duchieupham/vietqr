@@ -9,14 +9,14 @@ class FormPhone extends StatefulWidget {
   final TextEditingController phoneController;
   final PageController pageController;
   final bool isFocus;
-  final Function(int) onEnterIntro;
+  final Function() onExistPhone;
 
   const FormPhone(
       {super.key,
       required this.pageController,
       required this.phoneController,
       required this.isFocus,
-      required this.onEnterIntro});
+      required this.onExistPhone});
 
   @override
   State<FormPhone> createState() => _FormPhoneState();
@@ -82,6 +82,7 @@ class _FormPhoneState extends State<FormPhone> {
               PhoneWidget(
                 onChanged: provider.updatePhone,
                 onSubmit: (value) {
+                  widget.onExistPhone;
                   String text = value..replaceAll(' ', '');
                   if (text.length == 10) {
                     provider.updatePage(2);
