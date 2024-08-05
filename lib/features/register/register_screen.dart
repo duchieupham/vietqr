@@ -364,7 +364,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               // }
 
               return Padding(
-                padding: EdgeInsets.only(bottom: 20, left: 20, right: 20),
+                padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
