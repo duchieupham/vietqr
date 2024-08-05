@@ -141,11 +141,12 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                 right: 10,
                                 child: InkWell(
                                   onTap: () {
-                                    List<int> list =
-                                        List.from(state.listBanner);
-                                    list.removeAt(index);
-                                    getIt.get<BankBloc>().add(
-                                        CloseBannerEvent(listBanner: list));
+                                    // List<int> list =
+                                    //     List.from(state.listBanner);
+                                    // list.removeAt(index);
+                                    getIt
+                                        .get<BankBloc>()
+                                        .add(CloseBannerEvent(listBanner: []));
                                   },
                                   child: const XImage(
                                     imagePath:
@@ -211,11 +212,11 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                               right: 10,
                               child: InkWell(
                                 onTap: () {
-                                  List<int> list = List.from(state.listBanner);
-                                  list.removeAt(index);
+                                  // List<int> list = List.from(state.listBanner);
+                                  // list.removeAt(index);
                                   getIt
                                       .get<BankBloc>()
-                                      .add(CloseBannerEvent(listBanner: list));
+                                      .add(CloseBannerEvent(listBanner: []));
                                 },
                                 child: const XImage(
                                   imagePath: 'assets/images/ic-close-black.png',

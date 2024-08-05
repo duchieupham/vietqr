@@ -176,7 +176,9 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
   void _selectBank(BankEvent event, Emitter emit) async {
     if (event is SelectBankAccount) {
-      emit(state.copyWith(bankSelect: event.bank));
+      emit(state.copyWith(
+          bankSelect: event.bank,
+          listBanner: event.bank.mmsActive ? [] : [0, 1]));
     }
   }
 

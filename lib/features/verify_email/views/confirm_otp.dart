@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -30,8 +31,11 @@ class OTPInputPage extends StatefulWidget {
 
 class _OTPInputPageState extends State<OTPInputPage> {
   late Timer _timer;
-  int _remainingSeconds = 600; // 10 minutes in seconds
-  bool _isTimerExpired = false;
+  // int _remainingSeconds = 600; // 10 minutes in seconds
+  final ValueNotifier<int> _timerNotifier = ValueNotifier<int>(600);
+  final ValueNotifier<bool> _expriedNotifer = ValueNotifier<bool>(false);
+
+  // bool _isTimerExpired = false;
   final FocusNode passFocus = FocusNode();
   bool isFocus = true;
 
@@ -43,11 +47,11 @@ class _OTPInputPageState extends State<OTPInputPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _requestFocus();
-      widget.otpController.addListener(() {
-        if (mounted) {
-          setState(() {});
-        }
-      });
+      // widget.otpController.addListener(() {
+      //   if (mounted) {
+      //     setState(() {});
+      //   }
+      // });
     });
   }
 
@@ -62,17 +66,13 @@ class _OTPInputPageState extends State<OTPInputPage> {
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_remainingSeconds > 0) {
+      if (_timerNotifier.value > 0) {
         if (mounted) {
-          setState(() {
-            _remainingSeconds--;
-          });
+          _timerNotifier.value--;
         }
       } else {
         if (mounted) {
-          setState(() {
-            _isTimerExpired = true;
-          });
+          _expriedNotifer.value = true;
         }
         _timer.cancel();
       }
@@ -81,10 +81,8 @@ class _OTPInputPageState extends State<OTPInputPage> {
 
   void _resetTimer() {
     if (mounted) {
-      setState(() {
-        _remainingSeconds = 600; // Reset to 10 minutes
-        _isTimerExpired = false;
-      });
+      _timerNotifier.value = 600;
+      _expriedNotifer.value = true;
     }
     _timer.cancel();
     _startTimer();
@@ -187,69 +185,81 @@ class _OTPInputPageState extends State<OTPInputPage> {
                     'Mã OTP có hiệu lực trong vòng',
                     style: TextStyle(fontSize: 12),
                   ),
-                  _isTimerExpired
-                      ? GestureDetector(
-                          onTap: () {
-                            _resetTimer();
-                            widget.sendOTP();
-                          },
-                          child: ShaderMask(
-                            shaderCallback: (bounds) => const LinearGradient(
-                              colors: [
-                                Color(0xFF00C6FF),
-                                Color(0xFF0072FF),
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ).createShader(bounds),
-                            child: Text(
-                              'Gửi lại mã OTP?',
-                              style: TextStyle(
-                                fontSize: 20,
-                                decoration: TextDecoration.underline,
-                                decorationColor: Colors.transparent,
-                                decorationThickness: 2,
-                                foreground: Paint()
-                                  ..shader = const LinearGradient(
-                                    colors: [
-                                      Color(0xFF00C6FF),
-                                      Color(0xFF0072FF),
-                                    ],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                  ).createShader(
-                                      const Rect.fromLTWH(0, 0, 200, 30)),
-                              ),
-                            ),
-                          ),
-                        )
-                      : ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [
-                              Color(0xFF00C6FF),
-                              Color(0xFF0072FF),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            _formatTime(_remainingSeconds),
-                            style: TextStyle(
-                              fontSize: 20,
-                              decorationThickness: 2,
-                              foreground: Paint()
-                                ..shader = const LinearGradient(
+                  ValueListenableBuilder<bool>(
+                    valueListenable: _expriedNotifer,
+                    builder: (context, isExpired, child) {
+                      return isExpired
+                          ? GestureDetector(
+                              onTap: () {
+                                _resetTimer();
+                                widget.sendOTP();
+                              },
+                              child: ShaderMask(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
                                   colors: [
                                     Color(0xFF00C6FF),
                                     Color(0xFF0072FF),
                                   ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
-                                ).createShader(
-                                    const Rect.fromLTWH(0, 0, 200, 30)),
-                            ),
-                          ),
-                        ),
+                                ).createShader(bounds),
+                                child: Text(
+                                  'Gửi lại mã OTP?',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: Colors.transparent,
+                                    decorationThickness: 2,
+                                    foreground: Paint()
+                                      ..shader = const LinearGradient(
+                                        colors: [
+                                          Color(0xFF00C6FF),
+                                          Color(0xFF0072FF),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ).createShader(
+                                          const Rect.fromLTWH(0, 0, 200, 30)),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : ValueListenableBuilder<int>(
+                              valueListenable: _timerNotifier,
+                              builder: (context, time, child) {
+                                return ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ).createShader(bounds),
+                                  child: Text(
+                                    _formatTime(time),
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      decorationThickness: 2,
+                                      foreground: Paint()
+                                        ..shader = const LinearGradient(
+                                          colors: [
+                                            Color(0xFF00C6FF),
+                                            Color(0xFF0072FF),
+                                          ],
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                        ).createShader(
+                                            const Rect.fromLTWH(0, 0, 200, 30)),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                    },
+                  ),
                   const SizedBox(
                     height: 12,
                   )

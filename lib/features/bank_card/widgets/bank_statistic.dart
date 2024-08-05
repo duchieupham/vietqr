@@ -240,7 +240,12 @@ class _BankStatisticState extends State<BankStatistic>
                 const LatestTransWidget(),
               ],
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  0,
+                  20,
+                  MediaQuery.of(context).viewInsets.bottom,
+                ),
                 child: BanksView(
                   focusNode: widget.focusNode,
                   key: widget.textFielddKey,
