@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -27,7 +28,7 @@ class VerifyEmailScreen extends StatefulWidget {
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   final EmailBloc _bloc = getIt.get<EmailBloc>();
   final _emailController = TextEditingController();
-  final _otpController = TextEditingController();
+
   bool showBlueContainer = false;
   final PageController _pageController = PageController();
   int _pageIndex = 0;
@@ -53,7 +54,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   void dispose() {
-    _pageController.dispose();
+    // _pageController.dispose();
     super.dispose();
   }
 
@@ -62,13 +63,20 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     return BlocConsumer<EmailBloc, EmailState>(
       bloc: _bloc,
       listener: (context, state) {
-        if (state is SendOTPSuccessfulState && _pageController.page == 0) {
-          _pageController.nextPage(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
+        if (state is SendOTPState) {
+          DialogWidget.instance.openLoadingDialog();
         }
-        if (state is SendOTPSuccessfulState && _pageController.page == 1) {
+        if (state is SendOTPSuccessfulState) {
+          _confirmOTP = true;
+          if (_pageIndex == 0) {
+            _pageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          }
+          Navigator.of(context).pop();
+        }
+        if (state is SendOTPSuccessfulState && _pageIndex == 1) {
           Fluttertoast.showToast(
             msg: 'Gửi mã OTP thành công',
             toastLength: Toast.LENGTH_SHORT,
@@ -134,22 +142,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           appBar: AppBar(
             leadingWidth: 120,
             elevation: 0,
-            backgroundColor:
-                _pageController.hasClients && _pageController.page == 2
-                    ? Colors.white
-                    : null,
-            flexibleSpace:
-                _pageController.hasClients && _pageController.page == 2
-                    ? null
-                    : Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                        ),
+            backgroundColor: _pageIndex == 2 ? Colors.white : null,
+            flexibleSpace: _pageIndex == 2
+                ? null
+                : Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                       ),
+                    ),
+                  ),
             leading: GestureDetector(
               onTap: () {
                 if (_pageIndex == 1) {
@@ -157,7 +161,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     duration: const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                   );
-                } else if (_pageIndex == 0) {
+                } else if (_pageIndex == 0 || _pageIndex == 2) {
                   Navigator.of(context).pop();
                 }
                 // Navigator.of(context).pop();
@@ -201,15 +205,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                     'userId': SharePrefUtils.getProfile().userId,
                   };
                   _bloc.add(SendOTPEvent(param: param));
-                  // _pageController.nextPage(
-                  //   duration: const Duration(milliseconds: 300),
-                  //   curve: Curves.easeInOut,
-                  // );
                 },
               ),
               OTPInputPage(
                 confirmOTP: _confirmOTP,
-                otpController: _otpController,
+                // otpController: _otpController,
                 email: _emailController.text,
                 sendOTP: () {
                   Map<String, dynamic> param = {
@@ -218,17 +218,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   };
                   _bloc.add(SendOTPEvent(param: param));
                 },
-                onContinue: () {
+                onContinue: (otp) {
                   Map<String, dynamic> param = {
-                    'otp': _otpController.text,
+                    'otp': otp,
                     'userId': SharePrefUtils.getProfile().userId,
                     'email': _emailController.text,
                   };
                   _bloc.add(ConfirmOTPEvent(param: param));
-                  // _pageController.nextPage(
-                  //   duration: const Duration(milliseconds: 300),
-                  //   curve: Curves.easeInOut,
-                  // );
                 },
               ),
               VerifyEmailSuccessScreen(

@@ -10,9 +10,8 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 class OTPInputPage extends StatefulWidget {
-  final TextEditingController otpController;
-  final VoidCallback onContinue;
-  final VoidCallback sendOTP;
+  final Function(String) onContinue;
+  final Function() sendOTP;
   final String email;
   final bool confirmOTP;
 
@@ -21,7 +20,6 @@ class OTPInputPage extends StatefulWidget {
     required this.onContinue,
     required this.sendOTP,
     required this.email,
-    required this.otpController,
     required this.confirmOTP,
   });
 
@@ -31,6 +29,7 @@ class OTPInputPage extends StatefulWidget {
 
 class _OTPInputPageState extends State<OTPInputPage> {
   late Timer _timer;
+  final _otpController = TextEditingController();
   // int _remainingSeconds = 600; // 10 minutes in seconds
   final ValueNotifier<int> _timerNotifier = ValueNotifier<int>(600);
   final ValueNotifier<bool> _expriedNotifer = ValueNotifier<bool>(false);
@@ -42,11 +41,12 @@ class _OTPInputPageState extends State<OTPInputPage> {
   @override
   void initState() {
     super.initState();
-    _startTimer();
-    _resetPin();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _requestFocus();
+      _startTimer();
+      _resetPin();
+      passFocus.requestFocus();
+      // _requestFocus();
       // widget.otpController.addListener(() {
       //   if (mounted) {
       //     setState(() {});
@@ -55,51 +55,44 @@ class _OTPInputPageState extends State<OTPInputPage> {
     });
   }
 
-  @override
-  void didUpdateWidget(covariant OTPInputPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.confirmOTP == false) {
-      _resetPin();
-      _requestFocus();
-    }
-  }
+  // @override
+  // void didUpdateWidget(covariant OTPInputPage oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (widget.confirmOTP == false) {
+  //     _resetPin();
+  //     _requestFocus();
+  //   }
+  // }
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timerNotifier.value > 0) {
-        if (mounted) {
-          _timerNotifier.value--;
-        }
+        _timerNotifier.value--;
       } else {
-        if (mounted) {
-          _expriedNotifer.value = true;
-        }
+        _expriedNotifer.value = true;
         _timer.cancel();
       }
     });
   }
 
   void _resetTimer() {
-    if (mounted) {
-      _timerNotifier.value = 600;
-      _expriedNotifer.value = true;
-    }
-    _timer.cancel();
+    _timerNotifier.value = 600;
+    _expriedNotifer.value = false;
+    // _timer.cancel();
     _startTimer();
   }
 
   void _resetPin() {
-    widget.otpController.clear();
     Provider.of<PinProvider>(context, listen: false).reset();
   }
 
-  void _requestFocus() {
-    passFocus.requestFocus();
-  }
+  // void _requestFocus() {
+  //   passFocus.requestFocus();
+  // }
 
   @override
   void dispose() {
-    widget.otpController.dispose();
+    _otpController.dispose();
     _timer.cancel();
     passFocus.dispose();
     super.dispose();
@@ -128,107 +121,80 @@ class _OTPInputPageState extends State<OTPInputPage> {
       // ),
       bottomNavigationBar: VietQRButton.gradient(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        onPressed: widget.onContinue,
-        isDisabled: !(widget.otpController.text.length == 6),
+        onPressed: () {
+          widget.onContinue(_otpController.text);
+        },
+        isDisabled: !(_otpController.text.length == 6),
         size: VietQRButtonSize.large,
         child: Center(
           child: Text(
             'Xác thực',
             style: TextStyle(
-              color: (widget.otpController.text.length == 6)
+              color: (_otpController.text.length == 6)
                   ? AppColor.WHITE
                   : AppColor.BLACK,
             ),
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+      body: GestureDetector(
+        onTap: () {
+          passFocus.unfocus();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  RichText(
-                    text: TextSpan(
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                      ),
-                      children: [
-                        const TextSpan(
-                            text: 'Thông tin xác thực đã được gửi\nđến email '),
-                        TextSpan(
-                          text: widget.email,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
                         ),
-                      ],
+                        children: [
+                          const TextSpan(
+                              text:
+                                  'Thông tin xác thực đã được gửi\nđến email '),
+                          TextSpan(
+                            text: widget.email,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Mã OTP có hiệu lực trong vòng',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  ValueListenableBuilder<bool>(
-                    valueListenable: _expriedNotifer,
-                    builder: (context, isExpired, child) {
-                      return isExpired
-                          ? GestureDetector(
-                              onTap: () {
-                                _resetTimer();
-                                widget.sendOTP();
-                              },
-                              child: ShaderMask(
-                                shaderCallback: (bounds) =>
-                                    const LinearGradient(
-                                  colors: [
-                                    Color(0xFF00C6FF),
-                                    Color(0xFF0072FF),
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ).createShader(bounds),
-                                child: Text(
-                                  'Gửi lại mã OTP?',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: Colors.transparent,
-                                    decorationThickness: 2,
-                                    foreground: Paint()
-                                      ..shader = const LinearGradient(
-                                        colors: [
-                                          Color(0xFF00C6FF),
-                                          Color(0xFF0072FF),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(
-                                          const Rect.fromLTWH(0, 0, 200, 30)),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : ValueListenableBuilder<int>(
-                              valueListenable: _timerNotifier,
-                              builder: (context, time, child) {
-                                return ShaderMask(
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Mã OTP có hiệu lực trong vòng',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _expriedNotifer,
+                      builder: (context, isExpired, child) {
+                        return isExpired
+                            ? InkWell(
+                                onTap: () {
+                                  _resetTimer();
+                                  widget.sendOTP();
+                                },
+                                child: ShaderMask(
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(
                                     colors: [
@@ -239,9 +205,11 @@ class _OTPInputPageState extends State<OTPInputPage> {
                                     end: Alignment.centerRight,
                                   ).createShader(bounds),
                                   child: Text(
-                                    _formatTime(time),
+                                    'Gửi lại mã OTP?',
                                     style: TextStyle(
                                       fontSize: 20,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.transparent,
                                       decorationThickness: 2,
                                       foreground: Paint()
                                         ..shader = const LinearGradient(
@@ -255,26 +223,52 @@ class _OTPInputPageState extends State<OTPInputPage> {
                                             const Rect.fromLTWH(0, 0, 200, 30)),
                                     ),
                                   ),
-                                );
-                              },
-                            );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  )
-                ],
+                                ),
+                              )
+                            : ValueListenableBuilder<int>(
+                                valueListenable: _timerNotifier,
+                                builder: (context, time, child) {
+                                  return ShaderMask(
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      colors: [
+                                        Color(0xFF00C6FF),
+                                        Color(0xFF0072FF),
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      _formatTime(time),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        decorationThickness: 2,
+                                        foreground: Paint()
+                                          ..shader = const LinearGradient(
+                                            colors: [
+                                              Color(0xFF00C6FF),
+                                              Color(0xFF0072FF),
+                                            ],
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                          ).createShader(const Rect.fromLTWH(
+                                              0, 0, 200, 30)),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Focus(
-            onFocusChange: (value) {
-              setState(() {
-                isFocus = value;
-              });
-            },
-            child: Container(
+            const SizedBox(height: 16),
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.symmetric(horizontal: 30),
               height: 40,
@@ -288,26 +282,26 @@ class _OTPInputPageState extends State<OTPInputPage> {
                 width: MediaQuery.of(context).size.width,
                 pinSize: 15,
                 pinLength: Numeral.DEFAULT_PIN_LENGTH,
-                editingController: widget.otpController,
+                editingController: _otpController,
                 focusNode: passFocus,
                 autoFocus: true,
                 onDone: (value) {
-                  widget.onContinue();
+                  widget.onContinue(value);
                 },
               ),
             ),
-          ),
-          if (widget.confirmOTP == false)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    'Mã OTP không hợp lệ. Vui lòng kiểm tra lại thông tin.',
-                    style: TextStyle(fontSize: 11, color: AppColor.RED_TEXT),
-                  )),
-            ),
-        ],
+            if (!widget.confirmOTP)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'Mã OTP không hợp lệ. Vui lòng kiểm tra lại thông tin.',
+                      style: TextStyle(fontSize: 11, color: AppColor.RED_TEXT),
+                    )),
+              ),
+          ],
+        ),
       ),
     );
   }

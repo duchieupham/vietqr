@@ -187,7 +187,8 @@ class _MyVietQRScreenState extends State<MyVietQRScreen> {
                     BlocBuilder<VietQRStoreBloc, VietQRStoreState>(
                       bloc: getIt.get<VietQRStoreBloc>(),
                       builder: (context, state) {
-                        if (state.terminal!.terminalId.isEmpty) {
+                        if (state.terminal != null &&
+                            state.terminal!.terminalId.isEmpty) {
                           return const SizedBox.shrink();
                         }
                         return Column(

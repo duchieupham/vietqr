@@ -54,7 +54,7 @@ class _EmailInputPageState extends State<EmailInputPage> {
 
   @override
   void dispose() {
-    widget.emailController.dispose();
+    // widget.emailController.dispose();
     super.dispose();
   }
 
