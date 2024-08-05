@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -47,80 +48,32 @@ class _QrWidgetState extends State<QrWidget> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
           Container(
+            height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 10),
             width: double.infinity,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: AppColor.TRANSPARENT,
+                if (widget.dto.userBankName.isNotEmpty) ...[
+                  Text(
+                    widget.dto.bankAccount,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 12),
                   ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (widget.dto.userBankName.isNotEmpty) ...[
-                        Text(
-                          widget.dto.userBankName,
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          widget.dto.bankAccount,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ]
-                    ],
+                  Text(
+                    widget.dto.userBankName,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    FlutterClipboard.copy(
-                            '${widget.dto.userBankName}\n${widget.dto.bankAccount}')
-                        .then(
-                      (value) => Fluttertoast.showToast(
-                        msg: 'Đã sao chép',
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.CENTER,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Theme.of(context).primaryColor,
-                        textColor: Theme.of(context).hintColor,
-                        fontSize: 15,
-                        webBgColor: 'rgba(255, 255, 255, 0.5)',
-                        webPosition: 'center',
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    height: 30,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColor.GREY_F0F4FA,
-                    ),
-                    child: const XImage(
-                      imagePath: 'assets/images/ic-save-blue.png',
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                ]
               ],
             ),
           ),
+          // const SizedBox(height: 22),
+          const MySeparator(color: AppColor.GREY_DADADA),
           const SizedBox(height: 12),
           SizedBox(
             height: 250,

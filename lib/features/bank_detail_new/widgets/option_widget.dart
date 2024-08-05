@@ -15,9 +15,14 @@ import 'package:vierqr/models/bank_type_dto.dart';
 class OptionWidget extends StatefulWidget {
   final AccountBankDetailDTO dto;
   final BankCardBloc bloc;
+  final bool isOwner;
   final String bankId;
   const OptionWidget(
-      {super.key, required this.dto, required this.bankId, required this.bloc});
+      {super.key,
+      required this.dto,
+      required this.bankId,
+      required this.bloc,
+      required this.isOwner});
 
   @override
   State<OptionWidget> createState() => _OptionWidgetState();
@@ -69,14 +74,15 @@ class _OptionWidgetState extends State<OptionWidget> {
                   'Tuỳ chọn',
                   style: TextStyle(fontSize: 20),
                 ),
-                Text(
-                  !widget.dto.authenticated ? 'Chưa liên kết' : 'Đã liên kết',
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: !widget.dto.authenticated
-                          ? AppColor.ORANGE
-                          : AppColor.GREEN),
-                ),
+                if (widget.dto.authenticated && widget.isOwner)
+                  Text(
+                    !widget.dto.authenticated ? 'Chưa liên kết' : 'Đã liên kết',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: !widget.dto.authenticated
+                            ? AppColor.ORANGE
+                            : AppColor.GREEN),
+                  ),
               ],
             ),
             const SizedBox(height: 16),
@@ -127,11 +133,11 @@ class _OptionWidgetState extends State<OptionWidget> {
               color: AppColor.GREY_DADADA,
             ),
             buildOptionRow(
-                widget.dto.authenticated
+                widget.dto.authenticated && widget.isOwner
                     ? 'Huỷ liên kết tài khoản'
                     : 'Xoá tài khoản ngân hàng',
                 'assets/images/ic-remove-black.png', () {
-              if (widget.dto.authenticated) {
+              if (widget.dto.authenticated && widget.isOwner) {
                 _unLink();
                 // DialogWidget.instance.openMsgDialog(
                 //   title: 'Không thể xoá TK',

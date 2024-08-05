@@ -108,9 +108,8 @@ class _BankScreenState extends State<BankScreen> {
       getIt.get<DashBoardBloc>().add(GetPointEvent());
     }
 
-    _bloc.add(LoadDataBankEvent());
-    _bloc.add(GetInvoiceOverview());
-    _bloc.add(const BankCardEventGetList(isGetOverview: true));
+    // _bloc.add(GetInvoiceOverview());
+    // _bloc.add(const BankCardEventGetList(isGetOverview: true));
   }
 
   @override
@@ -148,7 +147,7 @@ class _BankScreenState extends State<BankScreen> {
 
   Future<void> _refresh() async {
     _bloc.add(const BankCardEventGetList(isGetOverview: true));
-    _bloc.add(GetInvoiceOverview());
+    // _bloc.add(GetInvoiceOverview());
   }
 
   @override

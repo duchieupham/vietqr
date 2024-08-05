@@ -24,6 +24,7 @@ import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
@@ -46,6 +47,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/splash_screen.dart';
 
+import '../bank_card/events/bank_event.dart';
 import 'widgets/bgr_app_bar_login.dart';
 
 part 'widgets/form_first_login.dart';
@@ -76,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
   NfcTag? tag;
 
   Map<String, dynamic>? additionalData;
-
+  final BankBloc _bankBloc = getIt.get<BankBloc>();
   late final LoginBloc _bloc = getIt.get<LoginBloc>(param1: context);
   late AuthProvider _authProvider;
   var controller = StreamController<AccountLoginDTO?>.broadcast();
@@ -283,7 +285,8 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                             child: Container(
                               height: 40,
                               // width: 240,
-                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
                                   colors: [
@@ -299,18 +302,18 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  XImage(
+                                  const XImage(
                                     imagePath:
                                         'assets/images/ic-person@-black.png',
                                     width: 30,
                                   ),
-                                  Text(
+                                  const Text(
                                     'Bạn có phải là ',
                                     style: TextStyle(fontSize: 11),
                                   ),
                                   Text(
                                     user.fullName,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold),
                                   )
@@ -345,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                           ),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Row(
+                        child: const Row(
                           children: [
                             XImage(
                               imagePath: 'assets/images/ic-info-black.png',
@@ -498,7 +501,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                       },
                       child: Container(
                         height: 40,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         width: 230,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
@@ -512,7 +515,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                           ),
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: Row(
+                        child: const Row(
                           children: [
                             XImage(
                               imagePath: 'assets/images/ic-password-black.png',
@@ -632,11 +635,11 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                       onSetIsQuickLogin(FlowType.FIRST_LOGIN);
                     }
                   },
-                  onQuickLogin: (dto) {
+                  onQuickLogin: (dto) async {
                     onSetIsQuickLogin(FlowType.QUICK_LOGIN);
                     updateInfoUser(dto);
                   },
-                  onBackLogin: () {
+                  onBackLogin: () async {
                     updateInfoUser(null);
                     onSetIsQuickLogin(FlowType.FIRST_LOGIN);
                   },
@@ -746,12 +749,13 @@ extension _LoginScreenFunction on _LoginScreenState {
         updateInfoUser(infoUser);
         _saveAccount();
       }
+      await getHomeBankAccount();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => DashBoardScreen(
+          builder: (context) => SplashScreen(
             isFromLogin: true,
-            isLogoutEnterHome: isLogoutEnterHome,
+            // isLogoutEnterHome: isLogoutEnterHome,
           ),
           settings: RouteSettings(name: SplashScreen.routeName),
         ),
@@ -830,20 +834,26 @@ extension _LoginScreenFunction on _LoginScreenState {
         _bloc.add(LoginEventByPhone(dto: dto, isToast: true));
       }
 
-      if (state.request != LoginType.NONE || state.status != BlocStatus.NONE) {
-        _bloc.add(UpdateEvent());
-      }
+      // if (state.request != LoginType.NONE || state.status != BlocStatus.NONE) {
+      //   _bloc.add(UpdateEvent());
+      // }
     }
+  }
+
+  Future<void> getHomeBankAccount() async {
+    _bankBloc.add(LoadDataBankEvent());
+    _bankBloc.add(GetInvoiceOverview());
+    _bankBloc.add(const BankCardEventGetList(isGetOverview: true));
   }
 
   init() async {
-    updateListInfoUser();
+    await updateListInfoUser();
     if (listInfoUsers.value.isNotEmpty) {
-      onSetIsQuickLogin(FlowType.NEAREST_LOGIN);
+      onSetIsQuickLogin(FlowType.FIRST_LOGIN);
     }
   }
 
-  void updateListInfoUser() async {
+  Future<void> updateListInfoUser() async {
     // print(SharePrefUtils.getLoginAccountList());
     final res = await SharePrefUtils.getLoginAccountList() ?? [];
     listInfoUsers.value = res;

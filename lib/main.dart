@@ -19,6 +19,7 @@ import 'package:vierqr/commons/enums/env_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
@@ -38,7 +39,9 @@ import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/qr_box_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/splash_screen.dart';
 
+import 'features/bank_card/events/bank_event.dart';
 import 'services/socket_service/socket_service.dart';
 
 //Share Preferences
@@ -151,8 +154,11 @@ class _VietQRApp extends State<VietQRApp> {
     super.initState();
 
     _mainScreen = (userId.isNotEmpty)
-        ? const DashBoardScreen()
+        ? const SplashScreen(
+            isFromLogin: true,
+          )
         : const WelcomeLoginScreen();
+
     // _mainScreen = const DashBoardScreen();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -161,7 +167,6 @@ class _VietQRApp extends State<VietQRApp> {
         statusBarBrightness: Brightness.light, // For iOS (dark icons)
       ),
     );
-
     SocketService.instance.init();
 
     if (notificationController.isClosed) {

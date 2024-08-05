@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +46,7 @@ class BankCardRepository {
       required String fromDate,
       required String toDate}) async {
     try {
+      final receivePort = ReceivePort();
       String url =
           '${EnvConfig.getBaseUrl()}transactions/overview/v2?bankId=$bankId&userId=$userId&fromDate=$fromDate&toDate=$toDate';
       final response = await BaseAPIClient.getAPI(
@@ -53,8 +55,14 @@ class BankCardRepository {
       );
 
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        return BankOverviewDTO.fromJson(data);
+        // var data = jsonDecode(response.body);
+        // return BankOverviewDTO.fromJson(data);
+
+        await Isolate.spawn(
+            parseOverView, [receivePort.sendPort, response.body]);
+
+        final parsedData = await receivePort.first;
+        return parsedData as BankOverviewDTO?;
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -62,6 +70,19 @@ class BankCardRepository {
     }
 
     return null;
+  }
+
+  void parseOverView(List<dynamic> param) {
+    final SendPort sendPort = param[0];
+    final String responseBody = param[1];
+
+    try {
+      final data = jsonDecode(responseBody);
+      final result = BankOverviewDTO.fromJson(data);
+      sendPort.send(result);
+    } catch (e) {
+      sendPort.send(null);
+    }
   }
 
   Future<bool> arrangeBankList(List<BankArrangeDTO> list) async {
@@ -118,14 +139,33 @@ class BankCardRepository {
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        return InvoiceOverviewDTO.fromJson(data);
+        // var data = jsonDecode(response.body);
+        // return InvoiceOverviewDTO.fromJson(data);
+        final receivePort = ReceivePort();
+        await Isolate.spawn(
+            parseInvoiceOvervoew, [receivePort.sendPort, response.body]);
+
+        final parsedData = await receivePort.first;
+        return parsedData as InvoiceOverviewDTO?;
       }
     } catch (e) {
       LOG.error(e.toString());
       rethrow;
     }
     return null;
+  }
+
+  void parseInvoiceOvervoew(List<dynamic> args) {
+    final SendPort sendPort = args[0];
+    final String responseBody = args[1];
+
+    try {
+      final data = jsonDecode(responseBody);
+      final result = InvoiceOverviewDTO.fromJson(data);
+      sendPort.send(result);
+    } catch (e) {
+      sendPort.send(null);
+    }
   }
 
   Future<List<BankTypeDTO>> getBankTypes() async {
@@ -299,23 +339,46 @@ class BankCardRepository {
     List<BankAccountDTO> result = [];
 
     try {
+      ReceivePort receivePort = ReceivePort();
+
       final String url = '${EnvConfig.getBaseUrl()}account-bank/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        if (data != null) {
-          result = data.map<BankAccountDTO>((json) {
-            return BankAccountDTO.fromJson(json);
-          }).toList();
-        }
+        // var data = jsonDecode(response.body);
+        // if (data != null) {
+        //   result = data.map<BankAccountDTO>((json) {
+        //     return BankAccountDTO.fromJson(json);
+        //   }).toList();
+        // }
+        final isolate = await Isolate.spawn(
+            parseBankList, [receivePort.sendPort, response.body]);
+
+        result = await receivePort.first;
+        isolate.kill(priority: Isolate.immediate);
       }
     } catch (e) {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  void parseBankList(List<dynamic> param) {
+    SendPort sendPort = param[0];
+    final responseBody = param[1];
+
+    try {
+      final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+      final transactions = parsed
+          .map<BankAccountDTO>((json) => BankAccountDTO.fromJson(json))
+          .toList();
+      sendPort.send(transactions);
+    } catch (e) {
+      LOG.error('Error parsing transactions: $e');
+      sendPort.send([]);
+    }
   }
 
   Future<List<BankAccountTerminal>> getListBankAccountTerminal(

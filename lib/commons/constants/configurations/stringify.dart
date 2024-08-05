@@ -79,6 +79,7 @@ enum SharedPreferenceKey {
   LogoApp,
   BannerApp,
   BannerEvent,
+  Introduction,
   Banks,
   Themes,
   SingleTheme,
@@ -90,6 +91,8 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
     switch (this) {
       case SharedPreferenceKey.TokenInfo:
         return 'TOKEN';
+      case SharedPreferenceKey.Introduction:
+        return 'INTRODUCTION';
       case SharedPreferenceKey.Invoice:
         return 'INVOICE';
       case SharedPreferenceKey.Banner:

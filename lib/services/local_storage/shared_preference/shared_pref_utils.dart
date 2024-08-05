@@ -31,6 +31,21 @@ class SharePrefUtils {
     sharedPrefs = await SharedPreferences.getInstance();
   }
 
+  ///Set màn Introduction
+  static Future<void> setIsFirstOnboard(bool value) async {
+    final sharedPreferenceService = SharedPrefLocal<bool>(
+        Constants.SharedPreferenceKey.Introduction.sharedValue);
+    await sharedPreferenceService.set(data: value);
+  }
+
+  static bool getIsFirstOnboard() {
+    final sharedPreferenceService = SharedPrefLocal<bool>(
+      Constants.SharedPreferenceKey.Introduction.sharedValue,
+    );
+
+    return sharedPreferenceService.get() ?? false;
+  }
+
   /// Access Token
   static Future<String> getTokenInfo() async {
     if (tokenInfo.isNotEmpty) {
@@ -75,7 +90,6 @@ class SharePrefUtils {
 
     return sharedPreferenceService.get() ?? '';
   }
-
 
   /// Profile
   static Future<void> saveProfileToCache(UserProfile profile) async {

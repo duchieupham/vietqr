@@ -375,6 +375,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                   ],
                                   const SizedBox(height: 20),
                                   OptionWidget(
+                                    isOwner: widget.dto.isOwner,
                                     bloc: widget.bankCardBloc,
                                     bankId: state.bankId ?? '',
                                     dto: dto,

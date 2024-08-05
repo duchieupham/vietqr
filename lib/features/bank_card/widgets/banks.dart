@@ -19,7 +19,7 @@ class _BanksViewState extends State<BanksView> {
     return BlocConsumer<BankBloc, BankState>(
       bloc: getIt.get<BankBloc>(),
       listener: (context, state) {
-        if (state.request == BankType.GET_BANK_LOCAL) {
+        if (state.listBankTypeDTO.isNotEmpty) {
           list = state.listBankTypeDTO;
         }
       },

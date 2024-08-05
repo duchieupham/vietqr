@@ -224,23 +224,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
     Future.delayed(const Duration(seconds: 1), requestNotificationPermission);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       //thực hiện một số thao tác khi frame hình được vẽ xong
-      // scrollController.addListener(() {
-      //   if (scrollController.position.userScrollDirection ==
-      //       ScrollDirection.reverse) {
-      //     // Hide bottom bar
-      //     if (scrollNotifier.value) {
-      //       scrollNotifier.value = false;
-      //     }
-      //   } else if (scrollController.position.userScrollDirection ==
-      //       ScrollDirection.forward) {
-      //     // Show bottom bar
-      //     if (!scrollNotifier.value) {
-      //       scrollNotifier.value = true;
-      //     }
-      //   }
-      // });
+
       _bloc.add(const TokenEventCheckValid());
       listenNewNotification();
       onUpdateApp();
@@ -291,9 +277,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
       bloc: _bloc,
       listener: onListening,
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        if (!provider.isRenderUI) {
-          return SplashScreen(isFromLogin: widget.isFromLogin);
-        }
+        // if (!provider.isRenderUI) {
+        //   return SplashScreen(isFromLogin: widget.isFromLogin);
+        // }
         return Scaffold(
           backgroundColor: AppColor.WHITE,
           resizeToAvoidBottomInset: false,
@@ -516,10 +502,8 @@ class SaveImageData {
 /// phần xử lý dữ liệu của DashBoard
 extension _DashBoardExtensionFunction on _DashBoardScreen {
   void initialServices({bool isLogin = false}) {
-    if (isLogin) {
-      _bankBloc.add(const BankCardEventGetList());
-      _bankBloc.add(LoadDataBankEvent());
-    }
+    if (isLogin) {}
+    // _bankBloc.add(LoadDataBankEvent());
     _bloc.add(GetBanksEvent());
     _bloc.add(GetUserInformation());
     _bloc.add(GetUserSettingEvent());
@@ -532,7 +516,8 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   }
 
   void onRenderUI() async {
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    // await getHomeBankAccount();
+    Future.delayed(const Duration(milliseconds: 3000), () async {
       _provider.updateRenderUI();
     });
   }
