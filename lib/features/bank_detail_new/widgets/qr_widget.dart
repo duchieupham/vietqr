@@ -76,26 +76,22 @@ class _QrWidgetState extends State<QrWidget> {
           // const SizedBox(height: 22),
           const MySeparator(color: AppColor.GREY_DADADA),
           const SizedBox(height: 12),
-          Expanded(
-            child: Center(
-              child: QrImageView(
-                padding: EdgeInsets.zero,
-                data: widget.dto.qrCode,
-                size: width * 0.6,
-                version: QrVersions.auto,
-                backgroundColor: AppColor.TRANSPARENT,
-                errorCorrectionLevel: QrErrorCorrectLevel.M,
-                embeddedImage:
-                    const AssetImage('assets/images/ic-viet-qr-small.png'),
-                dataModuleStyle: const QrDataModuleStyle(
-                    dataModuleShape: QrDataModuleShape.square,
-                    color: AppColor.BLACK),
-                eyeStyle: const QrEyeStyle(
-                    eyeShape: QrEyeShape.square, color: AppColor.BLACK),
-                embeddedImageStyle: const QrEmbeddedImageStyle(
-                  size: Size(30, 30),
-                ),
-              ),
+          QrImageView(
+            padding: EdgeInsets.zero,
+            data: widget.dto.qrCode,
+            size: width * 0.55,
+            version: QrVersions.auto,
+            backgroundColor: AppColor.TRANSPARENT,
+            errorCorrectionLevel: QrErrorCorrectLevel.M,
+            embeddedImage:
+                const AssetImage('assets/images/ic-viet-qr-small.png'),
+            dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: AppColor.BLACK),
+            eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.square, color: AppColor.BLACK),
+            embeddedImageStyle: const QrEmbeddedImageStyle(
+              size: Size(30, 30),
             ),
           ),
           // const Spacer(),
