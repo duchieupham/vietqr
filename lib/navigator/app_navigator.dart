@@ -6,6 +6,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/save_share_qr.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/save_share_trans_detail.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_lark_old/connect_lark_screen.dart';
@@ -191,6 +192,16 @@ class NavigationService {
         return CupertinoPageRoute(
             builder: (context) => SaveShareTransDetail(
                   dto: dto,
+                  type: type,
+                ),
+            settings: settings);
+      case Routes.SAVE_SHARE_QR:
+        Map map = settings.arguments as Map;
+        QRGeneratedDTO dto = map['dto'];
+        TypeImage type = map['type'];
+        return CupertinoPageRoute(
+            builder: (context) => SaveShareQr(
+                  qrDto: dto,
                   type: type,
                 ),
             settings: settings);

@@ -41,7 +41,7 @@ class DetailBankCardScreen extends StatefulWidget {
   final BankAccountDTO dto;
   final BankCardBloc bankCardBloc;
   final int selectedIndex;
-  final Function(int) onSelectTab;
+  final Function() onTap;
   final Function(bool) onScroll;
   final GlobalKey globalKey;
 
@@ -50,7 +50,7 @@ class DetailBankCardScreen extends StatefulWidget {
     required this.bankId,
     required this.bankCardBloc,
     required this.selectedIndex,
-    required this.onSelectTab,
+    required this.onTap,
     required this.onScroll,
     required this.dto,
     this.isLoading = true,
@@ -98,7 +98,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
               _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
           final position = renderBox.localToGlobal(Offset.zero);
           final scrollPosition = scrollController.position;
-          isScrollToChart.value = position.dy >= scrollPosition.pixels &&
+          isScrollToChart.value = position.dy >= scrollPosition.pixels + 250 &&
               position.dy <=
                   scrollPosition.pixels + scrollPosition.viewportDimension;
         }
@@ -233,46 +233,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
               if (state.bankDetailDTO != null) {
                 dto = state.bankDetailDTO!;
               }
-
-              if (AppDataHelper.instance
-                  .checkExitsBankAccount(dto.bankAccount)) {
-                QRDetailBank qrDetail = AppDataHelper.instance
-                    .getQrcodeByBankAccount(dto.bankAccount);
-                if (qrDetail.money.isNotEmpty && qrDetail.money != '0') {
-                  qrGeneratedDTO = QRGeneratedDTO(
-                    bankCode: dto.bankCode,
-                    bankName: dto.bankName,
-                    bankAccount: dto.bankAccount,
-                    userBankName: dto.userBankName,
-                    amount: qrDetail.money,
-                    content: qrDetail.content,
-                    qrCode: qrDetail.qrCode,
-                    imgId: dto.imgId,
-                  );
-                } else {
-                  qrGeneratedDTO = QRGeneratedDTO(
-                    bankCode: dto.bankCode,
-                    bankName: dto.bankName,
-                    bankAccount: dto.bankAccount,
-                    userBankName: dto.userBankName,
-                    amount: '',
-                    content: '',
-                    qrCode: dto.qrCode,
-                    imgId: dto.imgId,
-                  );
-                }
-              } else {
-                qrGeneratedDTO = QRGeneratedDTO(
-                  bankCode: dto.bankCode,
-                  bankName: dto.bankName,
-                  bankAccount: dto.bankAccount,
-                  userBankName: dto.userBankName,
-                  amount: '',
-                  content: '',
-                  qrCode: dto.qrCode,
-                  imgId: dto.imgId,
-                );
-              }
+              qrGeneratedDTO = state.qrGenerate;
             }
             // if (state.request == BankDetailType.GET_LIST_GROUP) {
             //   if (state.terminalAccountDto != null) {
@@ -293,6 +254,8 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                     qrCode: qrGeneratedDTO.qrCode,
                     bankAccount: qrGeneratedDTO.bankAccount);
                 AppDataHelper.instance.addListQRDetailBank(qrDetailBank);
+                widget.bankCardBloc
+                    .add(SetQrGenerateEvent(qrGeneratedDTO: qrGeneratedDTO));
               }
             }
             if (state.request == BankDetailType.ERROR) {
@@ -309,7 +272,6 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
             return Container(
               width: double.infinity,
-              // height: 200,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -349,10 +311,10 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
                                 if (itemheight > widgetHeight) {
                                   heightNotifier.value =
-                                      constraints.maxHeight - 200;
+                                      constraints.maxHeight - 150;
                                 } else if (itemheight <= widgetHeight) {
                                   heightNotifier.value =
-                                      (constraints.maxHeight - 200) +
+                                      (constraints.maxHeight - 150) +
                                           (widgetHeight - itemheight);
                                 }
                               },
@@ -373,13 +335,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                       dto: dto,
                                     ),
                                   ],
-                                  const SizedBox(height: 20),
-                                  OptionWidget(
-                                    isOwner: widget.dto.isOwner,
-                                    bloc: widget.bankCardBloc,
-                                    bankId: state.bankId ?? '',
-                                    dto: dto,
-                                  ),
+
                                   const SizedBox(height: 20),
                                   // if(qrGeneratedDT)
                                   ServiceVietqrWidget(
@@ -391,6 +347,14 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                     bankId: widget.bankId,
                                     scrollNotifer: isScrollToChart,
                                     key: _animatedBarKey,
+                                    onTap: widget.onTap,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  OptionWidget(
+                                    isOwner: widget.dto.isOwner,
+                                    bloc: widget.bankCardBloc,
+                                    bankId: state.bankId ?? '',
+                                    dto: dto,
                                   ),
                                   const SizedBox(height: 120),
                                 ],
@@ -561,7 +525,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
       builder: (context, value, child) {
         return Column(
           children: [
-            const SizedBox(height: 200),
+            const SizedBox(height: 150),
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(

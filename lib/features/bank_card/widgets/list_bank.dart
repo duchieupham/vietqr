@@ -74,205 +74,214 @@ class _ListBankWidgetState extends State<ListBankWidget>
         }
       },
       builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 130,
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Swiper(
-                controller: _swiperController,
-                onTap: (index) {
-                  if (state.isEmpty) {
-                    NavigatorUtils.navigatePage(context, const AddBankScreen(),
-                        routeName: AddBankScreen.routeName);
-                  }
-                  if (state.listBanks.isNotEmpty) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => BankCardDetailNewScreen(
-                            page: 0,
-                            dto: state.listBanks[index],
-                            bankId: state.listBanks[index].id),
-                        settings: const RouteSettings(
-                          name: Routes.BANK_CARD_DETAIL_NEW,
-                        ),
-                      ),
-                    );
-                  }
-                },
-                onIndexChanged: (value) {
-                  bankBloc.add(SelectBankAccount(bank: state.listBanks[value]));
-                  bankBloc
-                      .add(GetOverviewEvent(bankId: state.listBanks[value].id));
-                  bankBloc
-                      .add(GetTransEvent(bankId: state.listBanks[value].id));
-                  int itemCount =
-                      (state.listBanks.length); // Assuming 1-indexed itemse
-                  double availableWidth = 80 - 18;
-                  double moveStep = availableWidth / (itemCount - 1);
-                  setState(() {
-                    if (itemCount > 0) {
-                      // moveWidth = (80 / itemCount);
-                      move = moveStep * value;
-                    } else {
-                      move = 0.0;
+        return Container(
+          decoration:
+              BoxDecoration(gradient: VietQRTheme.gradientColor.lilyLinear),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 130,
+                width: MediaQuery.of(context).size.width,
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: Swiper(
+                  controller: _swiperController,
+                  onTap: (index) {
+                    if (state.isEmpty) {
+                      NavigatorUtils.navigatePage(
+                          context, const AddBankScreen(),
+                          routeName: AddBankScreen.routeName);
                     }
-                  });
-                },
-                viewportFraction: 0.55,
-                scale: 0.8,
-                loop: false,
-                itemHeight: 100,
-                itemWidth: 200,
-                itemCount:
-                    (state.listBanks.isNotEmpty ? state.listBanks.length : 1),
-                curve: Curves.easeInOut,
-                itemBuilder: (context, index) {
-                  if (state.listBanks.isEmpty) {
+                    if (state.listBanks.isNotEmpty) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => BankCardDetailNewScreen(
+                              page: 0,
+                              dto: state.listBanks[index],
+                              bankId: state.listBanks[index].id),
+                          settings: const RouteSettings(
+                            name: Routes.BANK_CARD_DETAIL_NEW,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  onIndexChanged: (value) {
+                    bankBloc
+                        .add(SelectBankAccount(bank: state.listBanks[value]));
+                    bankBloc.add(
+                        GetOverviewEvent(bankId: state.listBanks[value].id));
+                    bankBloc
+                        .add(GetTransEvent(bankId: state.listBanks[value].id));
+                    int itemCount =
+                        (state.listBanks.length); // Assuming 1-indexed itemse
+                    double availableWidth = 80 - 18;
+                    double moveStep = availableWidth / (itemCount - 1);
+                    setState(() {
+                      if (itemCount > 0) {
+                        // moveWidth = (80 / itemCount);
+                        move = moveStep * value;
+                      } else {
+                        move = 0.0;
+                      }
+                    });
+                  },
+                  viewportFraction: 0.55,
+                  scale: 0.8,
+                  loop: false,
+                  itemHeight: 100,
+                  itemWidth: 200,
+                  itemCount:
+                      (state.listBanks.isNotEmpty ? state.listBanks.length : 1),
+                  curve: Curves.easeInOut,
+                  itemBuilder: (context, index) {
+                    if (state.listBanks.isEmpty) {
+                      return Container(
+                        width: 200,
+                        height: 100,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColor.WHITE.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppColor.WHITE),
+                        ),
+                        child: const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            XImage(
+                              imagePath: 'assets/images/ic-bank-add.png',
+                              width: 40,
+                              height: 40,
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Thêm tài khoản ngân hàng',
+                              style: TextStyle(fontSize: 10),
+                            )
+                          ],
+                        ),
+                      );
+                    }
                     return Container(
-                      width: 200,
-                      height: 100,
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: AppColor.WHITE.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: AppColor.WHITE),
                       ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                      child: Stack(
                         children: [
-                          XImage(
-                            imagePath: 'assets/images/ic-bank-add.png',
-                            width: 40,
-                            height: 40,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: AppColor.WHITE,
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: DecorationImage(
+                                    image: ImageUtils.instance.getImageNetWork(
+                                        state.listBanks[index].imgId),
+                                  ),
+                                ),
+                                // child: XImage(imagePath: e.imgId),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                state.listBanks[index].bankAccount,
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                state.listBanks[index].userBankName
+                                    .toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                ),
+                              )
+                            ],
                           ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Thêm tài khoản ngân hàng',
-                            style: TextStyle(fontSize: 10),
-                          )
+                          if (state.listBanks.isNotEmpty &&
+                              state.listBanks[index].isAuthenticated &&
+                              state.listBanks[index].isOwner)
+                            const Positioned(
+                              right: 0,
+                              top: 0,
+                              child: XImage(
+                                imagePath: 'assets/images/ic-isAuthen.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          if (state.listBanks.isNotEmpty &&
+                              state.listBanks[index].isAuthenticated &&
+                              !state.listBanks[index].isOwner)
+                            const Positioned(
+                              right: 0,
+                              top: 0,
+                              child: XImage(
+                                imagePath: 'assets/images/ic-shared.png',
+                                width: 30,
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                         ],
                       ),
                     );
-                  }
-                  return Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColor.WHITE.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColor.WHITE),
-                    ),
-                    child: Stack(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 60,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: AppColor.WHITE,
-                                borderRadius: BorderRadius.circular(8),
-                                image: DecorationImage(
-                                  image: ImageUtils.instance.getImageNetWork(
-                                      state.listBanks[index].imgId),
-                                ),
-                              ),
-                              // child: XImage(imagePath: e.imgId),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              state.listBanks[index].bankAccount,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            Text(
-                              state.listBanks[index].userBankName.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 10,
-                              ),
-                            )
-                          ],
-                        ),
-                        if (state.listBanks.isNotEmpty &&
-                            state.listBanks[index].isAuthenticated &&
-                            state.listBanks[index].isOwner)
-                          const Positioned(
-                            right: 0,
-                            top: 0,
-                            child: XImage(
-                              imagePath: 'assets/images/ic-isAuthen.png',
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        if (state.listBanks.isNotEmpty &&
-                            state.listBanks[index].isAuthenticated &&
-                            !state.listBanks[index].isOwner)
-                          const Positioned(
-                            right: 0,
-                            top: 0,
-                            child: XImage(
-                              imagePath: 'assets/images/ic-shared.png',
-                              width: 30,
-                              height: 30,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            if (state.isEmpty) ...[
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: VietQRButton.suggest(
-                    size: VietQRButtonSize.small,
-                    onPressed: () async {
-                      await NavigatorUtils.navigatePage(
-                          context, const AddBankScreen(),
-                          routeName: AddBankScreen.routeName);
-                    },
-                    text: 'Quét mã VietQR của bạn để thêm tài khoản ngân hàng'),
-              ),
-              const SizedBox(height: 10),
-            ],
-            if (state.listBanks.isNotEmpty) ...[
-              Container(
-                alignment: Alignment.centerLeft,
-                height: 5,
-                width: 80,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: AppColor.WHITE,
+                  },
                 ),
-                child: Stack(
-                  // fit: StackFit.expand,
-                  children: [
-                    Positioned(
-                      left: move,
-                      child: Container(
-                        height: 5,
-                        width: 18,
-                        decoration: BoxDecoration(
-                          // color: AppColor.BLUE_TEXT,
-                          gradient: VietQRTheme.gradientColor.brightBlueLinear,
-                          borderRadius: BorderRadius.circular(10),
+              ),
+              if (state.isEmpty) ...[
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  child: VietQRButton.suggest(
+                      size: VietQRButtonSize.small,
+                      onPressed: () async {
+                        await NavigatorUtils.navigatePage(
+                            context, const AddBankScreen(),
+                            routeName: AddBankScreen.routeName);
+                      },
+                      text:
+                          'Quét mã VietQR của bạn để thêm tài khoản ngân hàng'),
+                ),
+                const SizedBox(height: 10),
+              ],
+              if (state.listBanks.isNotEmpty) ...[
+                Container(
+                  alignment: Alignment.centerLeft,
+                  height: 5,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: AppColor.WHITE,
+                  ),
+                  child: Stack(
+                    // fit: StackFit.expand,
+                    children: [
+                      Positioned(
+                        left: move,
+                        child: Container(
+                          height: 5,
+                          width: 18,
+                          decoration: BoxDecoration(
+                            // color: AppColor.BLUE_TEXT,
+                            gradient:
+                                VietQRTheme.gradientColor.brightBlueLinear,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8)
-            ]
-          ],
+                const SizedBox(height: 8)
+              ]
+            ],
+          ),
         );
       },
     );

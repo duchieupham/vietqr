@@ -6,6 +6,7 @@ import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 
 class BankCardEvent extends Equatable {
@@ -22,6 +23,15 @@ class BankCardEventInsert extends BankCardEvent {
 
   @override
   List<Object?> get props => [dto];
+}
+
+class SetQrGenerateEvent extends BankCardEvent {
+  final QRGeneratedDTO qrGeneratedDTO;
+
+  const SetQrGenerateEvent({required this.qrGeneratedDTO});
+
+  @override
+  List<Object?> get props => [qrGeneratedDTO];
 }
 
 class BankCardEventGetList extends BankCardEvent {

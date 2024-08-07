@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
@@ -149,10 +150,10 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
                           onScroll: (boolValue) {
                             isScrollNotifier.value = boolValue;
                           },
-                          onSelectTab: (index) {
-                            setState(() {
-                              _selectedIndex = index;
-                            });
+                          onTap: () {
+                            _pageController.nextPage(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut);
                           },
                           bankId: widget.bankId,
                           isLoading: widget.isLoading,
@@ -191,8 +192,9 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
               dto: widget.dto,
               width: width,
               selectTab: _selectedIndex,
-              onSave: () => onSaveImage(context),
-              onShare: () => share(),
+              bankCardBloc: bankCardBloc,
+              // onSave: () => onSaveImage(context),
+              // onShare: () => share(),
             ),
           ],
         ),

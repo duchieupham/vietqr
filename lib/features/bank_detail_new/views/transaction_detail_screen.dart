@@ -66,6 +66,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   final NewTransactionBloc _bloc = getIt.get<NewTransactionBloc>();
   File? imageSelect;
 
+  TransactionItemDetailDTO? detail;
   MerchantRole role = MerchantRole();
   List<TransactionLogDTO> transLogList = [];
   List<ImageDTO> listImage = [];
@@ -198,6 +199,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         if (state.requestDetail == TransDetail.GET_DETAIL &&
             state.status == BlocStatus.SUCCESS) {
           if (state.transDetail != null) {
+            detail = state.transDetail;
             note = state.transDetail!.note;
             onRole(state.transDetail!.bankId);
           }
@@ -213,16 +215,10 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
         }
       },
       builder: (context, state) {
-        TransactionItemDetailDTO? detail;
-        if (state.requestDetail == TransDetail.GET_DETAIL &&
-            state.status == BlocStatus.SUCCESS) {
-          detail = state.transDetail;
-        }
-
         return Scaffold(
           bottomNavigationBar:
               state.status != BlocStatus.LOADING_PAGE && detail != null
-                  ? bottomBar(detail)
+                  ? bottomBar(detail!)
                   : const SizedBox.shrink(),
           body: Column(
             children: [
@@ -250,20 +246,20 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 10),
                             physics: const ClampingScrollPhysics(),
                             children: [
-                              if (detail != null) _buildDetail(detail),
+                              if (detail != null) _buildDetail(detail!),
                               const SizedBox(height: 10),
                               VietQRButton.suggest(
                                   margin: const EdgeInsets.only(right: 4),
                                   height: 30,
                                   onPressed: () {
                                     if (detail != null) {
-                                      onUpdateTerminal(detail);
+                                      onUpdateTerminal(detail!);
                                     }
                                   },
                                   text:
                                       'Bạn có muốn cập nhật điểm bán cho GD này?'),
                               const SizedBox(height: 30),
-                              if (detail != null) _buildNote(detail),
+                              if (detail != null) _buildNote(detail!),
                               const SizedBox(height: 30),
                               _buildSelectImg(),
                               const SizedBox(height: 30),
@@ -427,7 +423,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                                       e.message,
                                       style: const TextStyle(
                                           fontSize: 12, color: AppColor.BLACK),
-                                      maxLines: !isReaMored ? 1 : 3,
+                                      maxLines: !isReaMored ? 1 : 4,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     if (isReaMored)
@@ -1052,19 +1048,18 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
               ? Expanded(
                   child: InkWell(
                     onTap: () {
-                      // BankAccountDTO bankAccountDTO = BankAccountDTO();
-                      // NavigatorUtils.navigatePage(context,
-                      //     CreateQrScreen(bankAccountDTO: bankAccountDTO),
-                      //     routeName: CreateQrScreen.routeName);
                       if (detail.status != 0) {
-                        QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
-                            terminalCode: detail.terminalCode,
-                            bankId: detail.bankId,
-                            amount: detail.amount.replaceAll(',', ''),
-                            content: detail.content,
-                            userId: userId,
-                            newTransaction: false);
-                        _bloc.add(RegenerateQREvent(qrDto: qrRecreateDTO));
+                        // QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+                        //     terminalCode: detail.terminalCode,
+                        //     bankId: detail.bankId,
+                        //     amount: detail.amount.replaceAll(',', ''),
+                        //     content: detail.content,
+                        //     userId: userId,
+                        //     newTransaction: false);
+                        // _bloc.add(RegenerateQREvent(qrDto: qrRecreateDTO));
+                        NavigatorUtils.navigatePage(context,
+                            CreateQrScreen(bankAccountDTO: widget.bankDto),
+                            routeName: CreateQrScreen.routeName);
                       } else {
                         QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
                           bankCode: detail.bankCode,
@@ -1131,7 +1126,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                 )
               : const SizedBox.shrink(),
           const SizedBox(width: 10),
-          if (detail.transType != 'D' && detail.status != 2) ...[
+          if (detail.status != 2) ...[
             InkWell(
               onTap: () {
                 Navigator.of(context)

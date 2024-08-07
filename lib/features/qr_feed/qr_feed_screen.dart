@@ -220,8 +220,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
             state.status == BlocStatus.SUCCESS) {}
-      },
-      builder: (context, state) {
+
         if (state.request == QrFeed.GET_QR_FEED_LIST &&
             state.status == BlocStatus.SUCCESS) {
           list = [...state.listQrFeed!];
@@ -260,6 +259,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           list[indexOfQr] = state.qrFeed!;
           // updateState();
         }
+      },
+      builder: (context, state) {
         return SafeArea(
           child: Scaffold(
             floatingActionButton: ScrollToTopButton(

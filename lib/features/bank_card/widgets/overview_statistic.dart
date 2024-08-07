@@ -147,7 +147,8 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                 ),
                 const SizedBox(height: 10),
               ] else if (state.overviewDto != null &&
-                  state.overviewDto!.merchantName.isNotEmpty) ...[
+                  state.overviewDto!.merchantName.isNotEmpty &&
+                  !state.bankSelect!.isOwner) ...[
                 Row(
                   children: [
                     Container(
@@ -347,7 +348,7 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                                     ),
                                     AutoSizeText(
                                       minFontSize: 8,
-                                      '${state.overviewDto!.countDebit} GD đến (-)',
+                                      '${state.overviewDto!.countDebit} GD đi (-)',
                                       style: const TextStyle(fontSize: 12),
                                     )
                                   ]

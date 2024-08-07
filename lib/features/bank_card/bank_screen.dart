@@ -91,12 +91,7 @@ class _BankScreenState extends State<BankScreen> {
   String userId = SharePrefUtils.getProfile().userId;
 
   initData({bool isRefresh = false}) {
-    widget.scrollController.addListener(
-      () {
-        _opacityNotifier.value =
-            widget.scrollController.offset > 100 ? 1.0 : 0.0;
-      },
-    );
+    widget.scrollController.addListener(_onScroll);
     _focusNode.addListener(
       () {
         if (_focusNode.hasFocus) {
@@ -119,6 +114,10 @@ class _BankScreenState extends State<BankScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
+  }
+
+  void _onScroll() {
+    _opacityNotifier.value = widget.scrollController.offset > 100 ? 1.0 : 0.0;
   }
 
   void _scrollToFocusedTextField() {
@@ -153,9 +152,8 @@ class _BankScreenState extends State<BankScreen> {
   @override
   void dispose() {
     super.dispose();
-    widget.scrollController.removeListener(
-      () {},
-    );
+    print('dispose');
+    widget.scrollController.removeListener(_onScroll);
   }
 
   _onRiveInit(rive.Artboard artboard) {
@@ -179,7 +177,6 @@ class _BankScreenState extends State<BankScreen> {
         _focusNode.unfocus();
       },
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
             child: CustomScrollView(

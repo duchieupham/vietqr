@@ -24,7 +24,6 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
     super.initState();
     if (kDebugMode) {
       // phoneNoController.text = '0373568944';
-      isEnableButton.value = true;
     }
   }
 
@@ -360,11 +359,14 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                 builder: (context, value, _) {
                   return VietQRButton.gradient(
                     onPressed: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      String phone = getPhone.replaceAll(' ', '');
-                      widget.bloc.add(CheckExitsPhoneEvent(phone: phone));
+                      if (value) {
+                        isEnableButton.value = false;
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        String phone = getPhone.replaceAll(' ', '');
+                        widget.bloc.add(CheckExitsPhoneEvent(phone: phone));
+                      }
                     },
-                    isDisabled: !(value && phoneNoController.text.isNotEmpty),
+                    isDisabled: !value,
                     child: Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -377,17 +379,13 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                           Text(
                             'Tiếp tục',
                             style: TextStyle(
-                              color: value && phoneNoController.text.isNotEmpty
-                                  ? AppColor.WHITE
-                                  : AppColor.BLACK,
+                              color: value ? AppColor.WHITE : AppColor.BLACK,
                             ),
                           ),
                           Icon(
                             Icons.arrow_forward_outlined,
                             size: 18,
-                            color: value && phoneNoController.text.isNotEmpty
-                                ? AppColor.WHITE
-                                : AppColor.BLACK,
+                            color: value ? AppColor.WHITE : AppColor.BLACK,
                           ),
                         ],
                       ),
@@ -407,15 +405,14 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
 
   bool isValidatePhoneNumber(String phoneNumber) {
     String phone = phoneNumber.replaceAll(' ', '');
-    const pattern = r'(^(?:[+0]9)?[0-9]{10,11}$)';
-    final regExp = RegExp(pattern);
+    // const pattern = r'(^(?:[+0]9)?[0-9]{10,11}$)';
+    // final regExp = RegExp(pattern);
+    var isValid = StringUtils.instance.isValidatePhone(phone);
     if (phone.isEmpty) {
-      return false;
-    } else if (!(phone.startsWith('0') && regExp.hasMatch(phone))) {
       return false;
     }
 
-    return true;
+    return isValid;
   }
 
   setIsEnableButton(bool value) {

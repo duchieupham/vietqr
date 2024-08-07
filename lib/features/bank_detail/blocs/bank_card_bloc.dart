@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -14,6 +15,7 @@ import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
+import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -23,7 +25,18 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   final bool isLoading;
 
   BankCardBloc(this.bankId, {this.isLoading = true})
-      : super(BankCardState(bankId: bankId)) {
+      : super(BankCardState(
+          bankId: bankId,
+          qrGenerate: QRGeneratedDTO(
+              bankCode: '',
+              bankName: '',
+              bankAccount: '',
+              userBankName: '',
+              amount: '',
+              content: '',
+              qrCode: '',
+              imgId: ''),
+        )) {
     on<BankCardEventRemove>(_removeBankAccount);
     on<BankCardGetDetailEvent>(_getDetail);
     on<BankCardEventUnRequestOTP>(_requestOTP);
@@ -35,6 +48,13 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<GetMyListGroupEvent>(_getMyListGroupTrans);
     on<GetMerchantEvent>(_getMerchant);
     on<GetOverviewBankCardEvent>(_getOverview);
+    on<SetQrGenerateEvent>(_setQrGenerate);
+  }
+
+  void _setQrGenerate(BankCardEvent event, Emitter emit) async {
+    if (event is SetQrGenerateEvent) {
+      emit(state.copyWith(qrGenerate: event.qrGeneratedDTO));
+    }
   }
 
   void _getOverview(BankCardEvent event, Emitter emit) async {
@@ -58,6 +78,15 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   }
 
   void _getDetail(BankCardEvent event, Emitter emit) async {
+    QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
+        bankCode: '',
+        bankName: '',
+        bankAccount: '',
+        userBankName: '',
+        amount: '',
+        content: '',
+        qrCode: '',
+        imgId: '');
     try {
       if (event is BankCardGetDetailEvent) {
         emit(state.copyWith(
@@ -67,12 +96,50 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
             request: BankDetailType.NONE));
         final AccountBankDetailDTO dto =
             await bankCardRepository.getAccountBankDetail(bankId);
-
+        if (AppDataHelper.instance.checkExitsBankAccount(dto.bankAccount)) {
+          QRDetailBank qrDetail =
+              AppDataHelper.instance.getQrcodeByBankAccount(dto.bankAccount);
+          if (qrDetail.money.isNotEmpty && qrDetail.money != '0') {
+            qrGeneratedDTO = QRGeneratedDTO(
+              bankCode: dto.bankCode,
+              bankName: dto.bankName,
+              bankAccount: dto.bankAccount,
+              userBankName: dto.userBankName,
+              amount: qrDetail.money,
+              content: qrDetail.content,
+              qrCode: qrDetail.qrCode,
+              imgId: dto.imgId,
+            );
+          } else {
+            qrGeneratedDTO = QRGeneratedDTO(
+              bankCode: dto.bankCode,
+              bankName: dto.bankName,
+              bankAccount: dto.bankAccount,
+              userBankName: dto.userBankName,
+              amount: '',
+              content: '',
+              qrCode: dto.qrCode,
+              imgId: dto.imgId,
+            );
+          }
+        } else {
+          qrGeneratedDTO = QRGeneratedDTO(
+            bankCode: dto.bankCode,
+            bankName: dto.bankName,
+            bankAccount: dto.bankAccount,
+            userBankName: dto.userBankName,
+            amount: '',
+            content: '',
+            qrCode: dto.qrCode,
+            imgId: dto.imgId,
+          );
+        }
         emit(
           state.copyWith(
             bankDetailDTO: dto,
             status: BlocStatus.NONE,
             request: BankDetailType.SUCCESS,
+            qrGenerate: qrGeneratedDTO,
             bankId: bankId,
             isInit: event.isInit,
           ),

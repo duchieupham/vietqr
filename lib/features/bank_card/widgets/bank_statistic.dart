@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -24,6 +25,7 @@ import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/overview_statistic.dart';
+import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
@@ -236,21 +238,30 @@ class _BankStatisticState extends State<BankStatistic>
                   },
                 ),
               ],
-              if (state.listBanks.isNotEmpty) ...[
-                const LatestTransWidget(),
+              if (state.listBanks.isNotEmpty && bankSelect != null) ...[
+                LatestTransWidget(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => BankCardDetailNewScreen(
+                            page: 1, dto: bankSelect!, bankId: bankSelect!.id),
+                        settings: const RouteSettings(
+                          name: Routes.BANK_CARD_DETAIL_NEW,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ],
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  20,
-                  0,
-                  20,
-                  MediaQuery.of(context).viewInsets.bottom,
+              if (state.listBanks.isEmpty)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                      20, 0, 20, MediaQuery.of(context).viewInsets.bottom),
+                  child: BanksView(
+                    focusNode: widget.focusNode,
+                    key: widget.textFielddKey,
+                  ),
                 ),
-                child: BanksView(
-                  focusNode: widget.focusNode,
-                  key: widget.textFielddKey,
-                ),
-              ),
               const SizedBox(height: 100),
             ],
           ),

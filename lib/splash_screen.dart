@@ -91,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
           //   },
           // );
-          Navigator.pushReplacement(
+          await Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => const DashBoardScreen(

@@ -22,6 +22,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
@@ -334,7 +335,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                       },
                       child: Container(
                         height: 40,
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         width: 240,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
@@ -749,14 +750,10 @@ extension _LoginScreenFunction on _LoginScreenState {
         updateInfoUser(infoUser);
         _saveAccount();
       }
-      await getHomeBankAccount();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => SplashScreen(
-            isFromLogin: true,
-            // isLogoutEnterHome: isLogoutEnterHome,
-          ),
+          builder: (context) => const SplashScreen(isFromLogin: true),
           settings: RouteSettings(name: SplashScreen.routeName),
         ),
       );
@@ -838,12 +835,6 @@ extension _LoginScreenFunction on _LoginScreenState {
       //   _bloc.add(UpdateEvent());
       // }
     }
-  }
-
-  Future<void> getHomeBankAccount() async {
-    _bankBloc.add(LoadDataBankEvent());
-    _bankBloc.add(GetInvoiceOverview());
-    _bankBloc.add(const BankCardEventGetList(isGetOverview: true));
   }
 
   init() async {

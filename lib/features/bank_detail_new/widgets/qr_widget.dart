@@ -20,9 +20,10 @@ class QrWidget extends StatefulWidget {
 class _QrWidgetState extends State<QrWidget> {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Container(
       // width: 320,
-      margin: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+      margin: EdgeInsets.fromLTRB(width * 0.1, 0, width * 0.1, 0),
       height: 400,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -75,40 +76,29 @@ class _QrWidgetState extends State<QrWidget> {
           // const SizedBox(height: 22),
           const MySeparator(color: AppColor.GREY_DADADA),
           const SizedBox(height: 12),
-          SizedBox(
-            height: 250,
-            width: 250,
-
-            // child: PrettyQrView.data(
-            //   data: widget.dto.qrCode,
-            //   errorCorrectLevel: QrErrorCorrectLevel.M,
-            //   decoration: PrettyQrDecoration(
-            //       shape: PrettyQrSmoothSymbol(roundFactor: 1),
-            //       image: PrettyQrDecorationImage(
-            //           scale: 0.1,
-            //           image: AssetImage('assets/images/ic-viet-qr-small.png'))),
-            // ),
-
-            child: QrImageView(
-              padding: EdgeInsets.zero,
-              data: widget.dto.qrCode,
-              size: 80,
-              version: QrVersions.auto,
-              backgroundColor: AppColor.TRANSPARENT,
-              errorCorrectionLevel: QrErrorCorrectLevel.M,
-              embeddedImage:
-                  const AssetImage('assets/images/ic-viet-qr-small.png'),
-              dataModuleStyle: const QrDataModuleStyle(
-                  dataModuleShape: QrDataModuleShape.square,
-                  color: AppColor.BLACK),
-              eyeStyle: const QrEyeStyle(
-                  eyeShape: QrEyeShape.square, color: AppColor.BLACK),
-              embeddedImageStyle: const QrEmbeddedImageStyle(
-                size: Size(30, 30),
+          Expanded(
+            child: Center(
+              child: QrImageView(
+                padding: EdgeInsets.zero,
+                data: widget.dto.qrCode,
+                size: width * 0.6,
+                version: QrVersions.auto,
+                backgroundColor: AppColor.TRANSPARENT,
+                errorCorrectionLevel: QrErrorCorrectLevel.M,
+                embeddedImage:
+                    const AssetImage('assets/images/ic-viet-qr-small.png'),
+                dataModuleStyle: const QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: AppColor.BLACK),
+                eyeStyle: const QrEyeStyle(
+                    eyeShape: QrEyeShape.square, color: AppColor.BLACK),
+                embeddedImageStyle: const QrEmbeddedImageStyle(
+                  size: Size(30, 30),
+                ),
               ),
             ),
           ),
-          const Spacer(),
+          // const Spacer(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 46),
             child: Row(

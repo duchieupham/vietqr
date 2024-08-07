@@ -91,8 +91,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
         await loginRepository.checkExistPhone(event.phone).then(
           (value) {
             if (value is InfoUserDTO) {
-              Provider.of<RegisterProvider>(context, listen: false)
-                  .updatePhone(event.phone);
+              // Provider.of<RegisterProvider>(context, listen: false)
+              //     .updatePhone(event.phone);
 
               emit(
                 state.copyWith(
