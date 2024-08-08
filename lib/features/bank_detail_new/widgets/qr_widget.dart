@@ -6,7 +6,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
-import 'package:vierqr/layouts/image/x_image.dart';
+
 import 'package:vierqr/models/qr_generated_dto.dart';
 
 class QrWidget extends StatefulWidget {

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class PolicyView extends StatefulWidget {
@@ -277,14 +278,28 @@ class _PolicyViewState extends State<PolicyView> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      MButtonWidget(
-                        title: 'Xác nhận',
-                        isEnable: true,
-                        colorEnableBgr: AppColor.BLUE_TEXT,
-                        colorEnableText: AppColor.WHITE,
-                        margin: const EdgeInsets.only(left: 20, right: 20),
-                        onTap: widget.onTap,
-                      ),
+                      // MButtonWidget(
+                      //   title: 'Xác nhận',
+                      //   isEnable: isAgreeWithPolicy,
+                      //   colorEnableBgr: AppColor.BLUE_TEXT,
+                      //   colorEnableText: AppColor.WHITE,
+                      //   margin: const EdgeInsets.only(left: 20, right: 20),
+                      //   onTap: widget.onTap,
+                      // ),
+                      VietQRButton.gradient(
+                          onPressed: () {
+                            widget.onTap?.call();
+                          },
+                          isDisabled: !isAgreeWithPolicy,
+                          child: Center(
+                            child: Text(
+                              'Xác nhận',
+                              style: TextStyle(
+                                  color: isAgreeWithPolicy
+                                      ? AppColor.WHITE
+                                      : AppColor.BLACK),
+                            ),
+                          ))
                     ],
                   ),
                 ),
