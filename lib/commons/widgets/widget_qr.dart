@@ -314,7 +314,7 @@ class _VietQrState extends State<WidgetQr> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        '+ ${widget.qrGeneratedDTO.amount} VND',
+                        '+ ${widget.qrGeneratedDTO.amount.contains('*') ? widget.qrGeneratedDTO.amount : CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,

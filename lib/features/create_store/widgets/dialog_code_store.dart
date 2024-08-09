@@ -54,7 +54,8 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                 margin: const EdgeInsets.symmetric(horizontal: 40),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
@@ -109,7 +110,7 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
                       text: const TextSpan(
                         style: TextStyle(color: AppColor.GREY_TEXT),
                         children: [
-                          TextSpan(text: 'Tối đa 10 ký tự.\n'),
+                          TextSpan(text: 'Đủ 10 ký tự.\n'),
                           TextSpan(
                               text:
                                   'Không chứa tiếng việt và ký tự đặc biệt.\n'),
