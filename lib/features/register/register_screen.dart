@@ -625,7 +625,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String sharingCode = provider.introduceController.text;
 
     provider.updateErrs(
-      phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
+      phoneErr: !(StringUtils.instance.isValidatePhone(phone)),
       passErr:
           (!StringUtils.instance.isNumeric(password) || (password.length != 6)),
       confirmPassErr:
