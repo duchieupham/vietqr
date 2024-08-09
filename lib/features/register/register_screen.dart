@@ -91,10 +91,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
     }
-    _registerProvider.updateErrs(
-        phoneErr: _registerProvider.isEnableButtonPhone(),
-        passErr: false,
-        confirmPassErr: false);
+    // _registerProvider.updateErrs(
+    //     phoneErr: !_registerProvider.isEnableButtonPhone(),
+    //     passErr: false,
+    //     confirmPassErr: false);
   }
 
   @override
@@ -261,7 +261,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       const EdgeInsets.symmetric(horizontal: 0),
                                   child: FormPhone(
                                     pageController: widget.pageController,
-                                    phoneController: _phoneNoController,
+                                    phoneController: provider.phoneNoController,
                                     isFocus: widget.isFocus,
                                     onExistPhone: (value) {
                                       _loginBloc.add(
