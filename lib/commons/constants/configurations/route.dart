@@ -28,6 +28,8 @@ class Routes {
   static const String TRANSACTION_DETAIL_VIEW = '/transactionDetailyView';
   static const String SAVE_SHARE_TRANS_DETAIL = '/save_share_trans_detail';
   static const String SAVE_SHARE_QR = '/save_share_qr';
+  static const String CONFIRM_EMAIL_SCREEN = '/confirm_email_screen';
+  static const String REGISTER_SPLASH_SCREEN = '/register_splash_screen';
 
   static const String SCAN_QR_VIEW = '/scanQRView';
   static const String SEARCH_BANK = '/searchBank';

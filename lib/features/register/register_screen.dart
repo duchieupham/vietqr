@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -183,31 +184,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 dto: dto,
                 isToast: true,
               ));
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ConfirmEmailRegisterScreen(
-                    phoneNum:
-                        Provider.of<RegisterProvider>(context, listen: false)
-                            .phoneNoController
-                            .text
-                            .replaceAll(' ', ''),
-                  ),
-                ),
-              );
+
+              Navigator.of(context)
+                  .pushNamed(Routes.CONFIRM_EMAIL_SCREEN, arguments: {
+                'phoneNum':
+                    Provider.of<RegisterProvider>(context, listen: false)
+                        .phoneNoController
+                        .text
+                        .replaceAll(' ', '')
+              });
             }
-            // if (state is RegisterSuccessState) {
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (context) => const FormRegisterSuccessSplash()),
-            //   );
-            //   Future.delayed(const Duration(seconds: 3), () {
-            //     Navigator.of(context).pop();
-            //     Navigator.of(context).pop();
-            //     backToPreviousPage(context, true);
-            //   });
-            // }
           },
           builder: (context, state) {
             return GestureDetector(
@@ -412,8 +398,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     //                 curve: Curves.ease),
                     //           }),
                     // ],
-                    if (!provider.isShowButton)
-                      SizedBox(height: viewInsets.bottom),
+                    // if (!provider.isShowButton)
+                    SizedBox(height: viewInsets.bottom),
                     const SizedBox(height: 10),
                   ],
                 ),

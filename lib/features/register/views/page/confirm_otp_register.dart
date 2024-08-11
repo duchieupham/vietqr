@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/pin_code_input.dart';
@@ -15,6 +16,7 @@ import 'package:vierqr/features/verify_email/events/verify_email_event.dart';
 import 'package:vierqr/features/verify_email/states/verify_email_state.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/register_app_bar.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
@@ -108,34 +110,22 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
             textColor: Theme.of(context).hintColor,
             fontSize: 15,
           );
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => FormRegisterSuccessSplash(
-                      onHome: () {
-                        _onHomeCalled = true;
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        backToPreviousPage(context, true);
-                      },
-                    )),
-          );
-          Future.delayed(const Duration(seconds: 15), () {
-            if (!_onHomeCalled) {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              backToPreviousPage(context, true);
-            }
-          });
+          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN);
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(
-          //       builder: (context) => const FormRegisterSuccessSplash()),
+          //       builder: (context) => FormRegisterSuccessSplash(
+          //           // onHome: () {
+          //           //   _onHomeCalled = true;
+          //           //   Navigator.of(context).pop();
+          //           //   Navigator.of(context).pop();
+          //           //   Navigator.of(context).pop();
+          //           //   Navigator.of(context).pop();
+          //           //   backToPreviousPage(context, true);
+          //           // },
+          //           )),
           // );
+
           getIt.get<DashBoardBloc>().add(GetUserInformation());
           // getIt.get<BankBloc>().add(GetVerifyEmail());
           // print(SharePrefUtils.getProfile().verify);
@@ -348,36 +338,24 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: GestureDetector(
                         onTap: () {
+                          Navigator.of(context)
+                              .pushNamed(Routes.REGISTER_SPLASH_SCREEN);
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
-                          //       builder: (context) =>
-                          //           const FormRegisterSuccessSplash(
-                          //               )),
+                          //       builder: (context) => FormRegisterSuccessSplash(
+
+                          //           )),
                           // );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FormRegisterSuccessSplash(
-                                      onHome: () {
-                                        _onHomeCalled = true;
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        backToPreviousPage(context, true);
-                                      },
-                                    )),
-                          );
-                          Future.delayed(const Duration(seconds: 15), () {
-                            if (!_onHomeCalled) {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              backToPreviousPage(context, true);
-                            }
-                          });
+                          // Future.delayed(const Duration(seconds: 15), () {
+                          //   if (!_onHomeCalled) {
+                          //     Navigator.of(context).pop();
+                          //     Navigator.of(context).pop();
+                          //     Navigator.of(context).pop();
+                          //     Navigator.of(context).pop();
+                          //     backToPreviousPage(context, true);
+                          //   }
+                          // });
                         },
                         child: ShaderMask(
                           shaderCallback: (bounds) => const LinearGradient(
