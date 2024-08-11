@@ -36,7 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
       if (event is LoginEventByPhone) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: LoginType.NONE));
-        AccountLoginDTO? dto = AccountLoginDTO(
+        AccountLoginDTO dto = AccountLoginDTO(
             phoneNo: event.dto.phoneNo,
             password:
                 'c9b6800dcc470c39048c8e53259044092751d7905ca4693879175b4cdff6a5b6');

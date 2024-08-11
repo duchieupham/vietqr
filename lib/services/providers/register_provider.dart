@@ -67,9 +67,11 @@ class RegisterProvider with ChangeNotifier {
     String phone = value.replaceAll(" ", "");
 
     if (phone.isNotEmpty) {
-      phoneNoController.value = phoneNoController.value.copyWith(text: phone);
-      var isValid =
-          StringUtils.instance.isValidatePhone(phoneNoController.value.text);
+      phoneNoController.value = TextEditingValue(
+        text: value,
+        selection: TextSelection.collapsed(offset: value.length),
+      );
+      var isValid = StringUtils.instance.isValidatePhone(phone);
       _isPhoneErr = !isValid;
     } else {
       _isPhoneErr = false;
@@ -94,7 +96,7 @@ class RegisterProvider with ChangeNotifier {
           confirmPassController.value.copyWith(text: value);
       _isConfirmPassErr = false;
     } else {
-      _isConfirmPassErr = true;
+      _isConfirmPassErr = value.isEmpty ? false : true;
     }
     notifyListeners();
   }
@@ -136,8 +138,8 @@ class RegisterProvider with ChangeNotifier {
   /// > xu ly validate ????
   bool isEnableButtonPhone() {
     if (phoneNoController.text.isNotEmpty) {
-      var isValid =
-          StringUtils.instance.isValidatePhone(phoneNoController.value.text);
+      String phone = phoneNoController.text.replaceAll(' ', '');
+      var isValid = StringUtils.instance.isValidatePhone(phone);
       // debugPrint("is Valid ==> $isValid");
       // if (!isValid) {
       //   // _isPhoneErr = false;

@@ -192,7 +192,7 @@ class VietQRButton extends StatelessWidget {
         );
       case VietQRButtonType.gradient:
         return InkWell(
-          onTap: onPressed,
+          onTap: isDisabled ? null : onPressed,
           child: Container(
               width: width,
               height: height ?? 50,

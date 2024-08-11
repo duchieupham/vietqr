@@ -735,6 +735,8 @@ extension _LoginScreenFunction on _LoginScreenState {
     }
 
     if (state.request == LoginType.LOGIN) {
+      Provider.of<RegisterProvider>(context, listen: false)
+          .updateErrs(phoneErr: false, passErr: false, confirmPassErr: false);
       _authProvider.updateRenderUI(isLogout: true);
       UserProfile userProfile = SharePrefUtils.getProfile();
 

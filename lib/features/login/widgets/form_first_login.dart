@@ -23,7 +23,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
   void initState() {
     super.initState();
     if (kDebugMode) {
-      // phoneNoController.text = '0373568944';
+      phoneNoController.text = '0373568944';
     }
   }
 

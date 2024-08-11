@@ -190,7 +190,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     phoneNum:
                         Provider.of<RegisterProvider>(context, listen: false)
                             .phoneNoController
-                            .text,
+                            .text
+                            .replaceAll(' ', ''),
                   ),
                 ),
               );
@@ -271,16 +272,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 );
                               },
                               listener: (context, state) {
+                                if (state.request == LoginType.NONE &&
+                                    state.status == BlocStatus.LOADING) {
+                                  DialogWidget.instance.openLoadingDialog();
+                                }
+                                if (state.status == BlocStatus.UNLOADING) {
+                                  Navigator.of(context).pop();
+                                }
                                 if (state.request == LoginType.CHECK_EXIST) {
-                                  // Fluttertoast.showToast(
-                                  //   msg: 'Tài khoản đã tồn tại',
-                                  //   toastLength: Toast.LENGTH_SHORT,
-                                  //   gravity: ToastGravity.CENTER,
-                                  //   backgroundColor:
-                                  //       Theme.of(context).cardColor,
-                                  //   textColor: Theme.of(context).hintColor,
-                                  //   fontSize: 15,
-                                  // );
                                   if (state.infoUserDTO != null) {
                                     Navigator.of(context)
                                         .pop(state.infoUserDTO);
@@ -373,8 +372,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         height,
                         () {
                           _loginBloc.add(CheckExitsPhoneEvent(
-                              phone:
-                                  _phoneNoController.text.replaceAll(' ', '')));
+                              phone: provider.phoneNoController.text
+                                  .replaceAll(' ', '')));
                           // provider.updatePage(2);
                           // widget.pageController.animateToPage(2,
                           //     duration: const Duration(milliseconds: 300),
@@ -437,27 +436,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildButtonSubmitFormConfirmPassword(double height) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
-        // return MButtonWidget(
-        //   title: 'Đăng ký',
-        //   isEnable: provider.isEnableButton(),
-        //   margin: const EdgeInsets.only(bottom: 10),
-        //   colorDisableBgr: AppColor.GREY_BUTTON,
-        //   width: 350,
-        //   height: 50,
-        //   onTap: () async {
-        //     // await provider.phoneAuthentication(_phoneNoController.text,
-        //     //     onSentOtp: (type) {
-        //     //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
-        //     // });
-        // onRegister(provider, height);
-        // Provider.of<PinProvider>(context, listen: false).reset();
-        //   },
-        // );
         return VietQRButton.gradient(
           onPressed: () async {
             onRegister(provider, height);
             Provider.of<PinProvider>(context, listen: false).reset();
           },
+          isDisabled: !provider.isEnableButton(),
           child: Center(
             child: Text(
               'Đăng ký',
@@ -467,7 +451,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
-          isDisabled: !(provider.isEnableButton()),
         );
       },
     );
@@ -477,14 +460,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         bool isEnable = provider.isEnableButtonPhone();
-        // return MButtonWidget(
-        //     title: 'Tiếp tục',
-        //     isEnable: provider.isEnableButtonPhone(),
-        //     margin: const EdgeInsets.only(bottom: 10),
-        //     colorDisableBgr: AppColor.GREY_BUTTON,
-        //     width: 350,
-        //     height: 50,
-        //     onTap: callback);
+
         return VietQRButton.gradient(
           onPressed: () {
             if (isEnable) {
@@ -522,23 +498,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildButtonSubmitFormPassword(double height, VoidCallback callback) {
+  Widget _buildButtonSubmitFormPassword(double height, Function() callback) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
-        // return MButtonWidget(
-        //   title: 'Tiếp tục',
-        //   isEnable: provider.isEnableButtonPassword() &&
-        //       provider.passwordController.text.isNotEmpty,
-        //   margin: const EdgeInsets.only(bottom: 10),
-        //   colorDisableBgr: AppColor.GREY_BUTTON,
-        //   width: 350,
-        //   height: 50,
-        //   onTap: callback,
-        // );
         return VietQRButton.gradient(
-          onPressed: callback,
-          isDisabled: !(provider.isEnableButtonPassword() &&
-              provider.passwordController.text.isNotEmpty),
+          onPressed: () {
+            callback;
+          },
+          isDisabled: !provider.isEnableButtonPassword(),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -617,7 +584,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   onRegister(provider, height) async {
     provider.updateHeight(height, true);
 
-    String phone = provider.phoneNoController.text;
+    String phone = provider.phoneNoController.text.replaceAll(' ', '');
 
     String password = provider.passwordController.text;
     String confirmPassword = provider.confirmPassController.text;
