@@ -1072,15 +1072,7 @@ extension _LoginScreenFunction on _LoginScreenState {
         await Navigator.of(context).pushNamed(Routes.REGISTER, arguments: {
       'pageController': pageController,
       'isFocus': true,
-    }
-            // MaterialPageRoute(
-            //   builder: (context) =>
-            //       Register(pageController: pageController, isFocus: true),
-            //   settings: const RouteSettings(
-            //     name: Routes.REGISTER,
-            //   ),
-            // ),
-            );
+    });
 
     if (data is Map) {
       AccountLoginDTO dto = AccountLoginDTO(

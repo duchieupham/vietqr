@@ -280,19 +280,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 }
                               },
                             )
-                          // ? Padding(
-                          //     padding:
-                          //         const EdgeInsets.symmetric(horizontal: 0),
-                          //     child: FormPhone(
-                          //       pageController: widget.pageController,
-                          //       phoneController: _phoneNoController,
-                          //       isFocus: widget.isFocus,
-                          //       onExistPhone: () {
-                          //         _loginBloc.add(CheckExitsPhoneEvent(
-                          //             phone: _phoneNoController.text));
-                          //       },
-                          //     ),
-                          //   )
                           : const SizedBox.shrink(),
                       provider.page == 1
                           ? const ReferralCode()
@@ -330,24 +317,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ? const SizedBox()
         : Consumer<RegisterProvider>(
             builder: (context, provider, child) {
-              // if (provider.page == 0) {
-              //   return _buildButtonSubmitFormPhone(height, () {
-              //     provider.updatePage(2);
-              //     widget.pageController.animateToPage(2,
-              //         duration: const Duration(milliseconds: 300),
-              //         curve: Curves.ease);
-              //   });
-              // }
-              // if (provider.page == 2) {
-              //   return _buildButtonSubmitFormPassword(heights, () {
-              //     Provider.of<PinProvider>(context, listen: false).reset();
-              //     provider.updatePage(3);
-              //     widget.pageController.animateToPage(3,
-              //         duration: const Duration(milliseconds: 300),
-              //         curve: Curves.ease);
-              //   });
-              // }
-
               return Padding(
                 padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
                 child: Column(
@@ -386,18 +355,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (provider.page == 3) ...[
                       _buildButtonSubmitFormConfirmPassword(height),
                     ],
-                    // if (_provider.page == 2) ...[
-                    //   _buildButtonSubmitFormPassword(
-                    //       heights,
-                    //       () => {
-                    //             Provider.of<PinProvider>(context, listen: false)
-                    //                 .reset(),
-                    //             provider.updatePage(3),
-                    //             pageController.animateToPage(3,
-                    //                 duration: const Duration(milliseconds: 300),
-                    //                 curve: Curves.ease),
-                    //           }),
-                    // ],
+
                     // if (!provider.isShowButton)
                     SizedBox(height: viewInsets.bottom),
                     const SizedBox(height: 10),
