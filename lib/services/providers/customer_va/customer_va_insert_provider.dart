@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../models/bank_type_dto.dart';
+
 class CustomerVaInsertProvider with ChangeNotifier {
+
+
+  final keyAccount = GlobalKey();
   final String _bidvLogoUrl = 'https://dev.vietqr.org/vqr/images/bidv.png';
   bool _isMerchantNameErr = false;
   bool _isBankAccountErr = false;
@@ -9,6 +14,9 @@ class CustomerVaInsertProvider with ChangeNotifier {
   bool _isPhoneAuthenticatedErr = false;
 
   bool _isAgreePolicy = false;
+
+  bool isEdit = true;
+  bool isEnableName = false;
 
   String _merchantName = '';
   String _bankAccount = '';
@@ -61,6 +69,25 @@ class CustomerVaInsertProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void updateEnableName(value) {
+    isEnableName = value;
+    notifyListeners();
+  }
+
+  //   void updateValidUserBankName(String value) {
+  //   _userBankName = '';
+  //   if (value.isEmpty) {
+  //     _userBankName = 'Chủ thẻ/tài khoản không hợp lệ';
+  //     // isEnableButton = false;
+  //   } else {
+  //     _userBankName = value;
+  //     isEnableName = true;
+  //     // isEnableButton = true;
+  //   }
+
+  //   notifyListeners();
+  // }
 
   void updateUserBankName(String value) {
     _userBankName = value;

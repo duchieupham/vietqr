@@ -36,112 +36,114 @@ class _CustomerVAInsertMerchantView
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.WHITE,
-      appBar: const CustomerVaHeaderWidget(),
-      bottomNavigationBar: _bottom(),
-      body: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-          children: [
-            const SizedBox(
-              height: 50,
-            ),
-            const Text(
-              'Đầu tiên, vui lòng cung cấp tên\ndoanh nghiệp / tổ chức của bạn',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColor.WHITE,
+        appBar: const CustomerVaHeaderWidget(),
+        bottomNavigationBar: _bottom(),
+        body: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+            children: [
+              const SizedBox(
+                height: 50,
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            MTextFieldCustom(
-              isObscureText: false,
-              maxLines: 1,
-              showBorder: false,
-              fillColor: AppColor.TRANSPARENT,
-              value: _value,
-              autoFocus: true,
-              textFieldType: TextfieldType.DEFAULT,
-              title: '',
-              hintText: '',
-              inputType: TextInputType.text,
-              keyboardAction: TextInputAction.done,
-              maxLength: 20,
-              onChange: (value) {
-                _value = value;
-                setState(() {});
-                Provider.of<CustomerVaInsertProvider>(context, listen: false)
-                    .updateMerchantName(value);
-              },
-              decoration: const InputDecoration(
-                hintText: 'Nhập tên doanh nghiệp / tổ chức ở đây*',
-                hintStyle: TextStyle(
-                  fontSize: 14,
-                  color: AppColor.GREY_TEXT,
-                ),
-                counterText: '',
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+              const Text(
+                'Đầu tiên, vui lòng cung cấp tên\ndoanh nghiệp / tổ chức của bạn',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              inputFormatter: [
-                LengthLimitingTextInputFormatter(50),
-              ],
-            ),
-            Consumer<CustomerVaInsertProvider>(
-              builder: (context, provider, child) {
-                return (provider.merchantNameErr)
-                    ? Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: const Text(
-                          'Tên doanh nghiệp / tổ chức không đúng định dạng.',
-                          style: TextStyle(
-                            color: AppColor.RED_CALENDAR,
-                            fontSize: 13,
+              const SizedBox(
+                height: 20,
+              ),
+              MTextFieldCustom(
+                isObscureText: false,
+                maxLines: 1,
+                showBorder: false,
+                fillColor: AppColor.TRANSPARENT,
+                value: _value,
+                autoFocus: true,
+                textFieldType: TextfieldType.DEFAULT,
+                title: '',
+                hintText: '',
+                inputType: TextInputType.text,
+                keyboardAction: TextInputAction.done,
+                maxLength: 20,
+                onChange: (value) {
+                  _value = value;
+                  setState(() {});
+                  Provider.of<CustomerVaInsertProvider>(context, listen: false)
+                      .updateMerchantName(value);
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Nhập tên doanh nghiệp / tổ chức ở đây*',
+                  hintStyle: TextStyle(
+                    fontSize: 14,
+                    color: AppColor.GREY_TEXT,
+                  ),
+                  counterText: '',
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                  ),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                  ),
+                ),
+                inputFormatter: [
+                  LengthLimitingTextInputFormatter(50),
+                ],
+              ),
+              Consumer<CustomerVaInsertProvider>(
+                builder: (context, provider, child) {
+                  return (provider.merchantNameErr)
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: const Text(
+                            'Tên doanh nghiệp / tổ chức không đúng định dạng.',
+                            style: TextStyle(
+                              color: AppColor.RED_CALENDAR,
+                              fontSize: 13,
+                            ),
                           ),
-                        ),
-                      )
-                    : const SizedBox();
-              },
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Text(
-              'Lưu ý:',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
+                        )
+                      : const SizedBox();
+                },
               ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            const Text(
-              '- Tên doanh nghiệp từ 4 - 20 ký tự, không chứa khoảng trắng.',
-              style: TextStyle(
-                fontSize: 12,
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            const Text(
-              '- Không chứa dấu Tiếng Việt, và ký tự đặc biệt.',
-              style: TextStyle(
-                fontSize: 12,
+              const Text(
+                'Lưu ý:',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 5,
+              ),
+              const Text(
+                '- Tên doanh nghiệp từ 4 - 20 ký tự, không chứa khoảng trắng.',
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+              const Text(
+                '- Không chứa dấu Tiếng Việt, và ký tự đặc biệt.',
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -151,7 +153,11 @@ class _CustomerVAInsertMerchantView
     return Consumer<CustomerVaInsertProvider>(
       builder: (context, provider, child) {
         return ButtonWidget(
-          margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          margin: EdgeInsets.only(
+              left: 30,
+              right: 30,
+              top: 15,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 15),
           text: 'Tiếp tục',
           textColor: (provider.merchantNameErr ||
                   provider.merchantName.toString().trim().isEmpty)

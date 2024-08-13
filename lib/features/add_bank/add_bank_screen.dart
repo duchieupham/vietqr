@@ -216,11 +216,13 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               if (!mounted) return;
               _addBankProvider.updateEnableName(true);
             }
+
             if (state.request == AddBankType.ERROR) {
               await DialogWidget.instance.openMsgDialog(
                   title: state.titleMsg ?? 'Không thể thêm TK',
                   msg: state.msg ?? '');
             }
+            
             if (state.request == AddBankType.ERROR_OTP) {
               await DialogWidget.instance.openMsgDialog(
                   title: state.titleMsg ?? 'Thông báo',

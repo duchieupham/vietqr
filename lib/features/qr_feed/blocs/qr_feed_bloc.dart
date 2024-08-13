@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -212,6 +211,12 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
 
         final result = await _qrFeedRepository.getQrFeedPopupDetail(
             qrWalletId: event.qrWalletId);
+
+        emit(state.copyWith(
+            status: BlocStatus.LOADING,
+            request: QrFeed.GET_QR_FEED_POPUP_DETAIL));
+
+
         if (result != null) {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,

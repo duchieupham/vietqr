@@ -171,21 +171,23 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           );
           _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
         }
-        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
-            state.status == BlocStatus.SUCCESS) {
-          final qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
-          if (qrFeedPopupDetailDTO != null) {
-            DialogWidget.instance.showModelBottomSheet(
-              borderRadius: BorderRadius.circular(16),
-              widget: PopUpQrDetail(
-                qrType: qrType,
-                dto: qrFeedPopupDetailDTO,
-              ),
-              // height: MediaQuery.of(context).size.height * 0.6,
-            );
-          }
-          // updateState();
-        }
+        
+        // if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
+        //     state.status == BlocStatus.SUCCESS) {
+        //   final qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
+        //   if (qrFeedPopupDetailDTO != null) {
+        //     isTapped = false;
+        //     DialogWidget.instance.showModelBottomSheet(
+        //       borderRadius: BorderRadius.circular(16),
+        //       widget: PopUpQrDetail(
+        //         qrType: qrType,
+        //         dto: qrFeedPopupDetailDTO,
+        //       ),
+        //       // height: MediaQuery.of(context).size.height * 0.6,
+        //     );
+        //   }
+        //   // updateState();
+        // }
 
         if (state.request == QrFeed.GET_DETAIL_QR &&
             state.status == BlocStatus.SUCCESS) {
@@ -1234,8 +1236,9 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 if (!isLoading)
                   InkWell(
                     onTap: () {
-                      _bloc.add(
-                          GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
+                      DialogWidget.instance.showModelBottomSheet(
+                          borderRadius: BorderRadius.circular(16),
+                          widget: PopUpQrDetail(id: widget.id, qrType: qrType));
                     },
                     child: Container(
                       padding: const EdgeInsets.all(4),

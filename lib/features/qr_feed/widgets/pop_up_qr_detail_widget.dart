@@ -1,32 +1,64 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
+import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
+import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
+import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_feed_popup_detail_dto.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopUpQrDetail extends StatefulWidget {
-  final QrFeedPopupDetailDTO dto;
+  final String id;
   final String qrType;
-  const PopUpQrDetail({super.key, required this.dto, required this.qrType});
+  const PopUpQrDetail({super.key, required this.id, required this.qrType});
 
   @override
   State<PopUpQrDetail> createState() => _PopUpQrDetailState();
 }
 
 class _PopUpQrDetailState extends State<PopUpQrDetail> {
+  final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
+
+  @override
+  void initState() {
+    _bloc.add(GetQrFeedPopupDetailEvent(qrWalletId: widget.id));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return widget.qrType == '0'
-        ? _buildQrLink(widget.dto)
-        : widget.qrType == '1'
-            ? _buildQrText(widget.dto)
-            : widget.qrType == '2'
-                ? _buildVCard(widget.dto)
-                : _buildVietQr(widget.dto);
+    return BlocBuilder<QrFeedBloc, QrFeedState>(
+      bloc: _bloc,
+      builder: (context, state) {
+        if (state.request == QrFeed.GET_QR_FEED_POPUP_DETAIL &&
+            state.status == BlocStatus.SUCCESS) {
+          final qrFeedPopupDetailDTO = state.qrFeedPopupDetail;
+          if (qrFeedPopupDetailDTO != null) {
+            return widget.qrType == '0'
+                ? _buildQrLink(qrFeedPopupDetailDTO)
+                : widget.qrType == '1'
+                    ? _buildQrText(qrFeedPopupDetailDTO)
+                    : widget.qrType == '2'
+                        ? _buildVCard(qrFeedPopupDetailDTO)
+                        : _buildVietQr(qrFeedPopupDetailDTO);
+          }
+        }
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: const Center(
+              child: CircularProgressIndicator(
+            color: AppColor.BLUE_TEXT,
+          )),
+        );
+      },
+    );
   }
 
   Widget _buildVCard(QrFeedPopupDetailDTO dto) {
@@ -152,7 +184,8 @@ class _PopUpQrDetailState extends State<PopUpQrDetail> {
                 flex: 4,
                 child: Text(
                   dto.value!,
-                  style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
