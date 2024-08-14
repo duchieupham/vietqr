@@ -27,6 +27,8 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
   List<VietQRStoreDTO> list = [];
   MetaDataDTO? metadata;
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -54,8 +56,14 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
     return BlocConsumer<VietQRStoreBloc, VietQRStoreState>(
       bloc: _bloc,
       listener: (context, state) {
+        if (state.request == VietQrStore.GET_LIST &&
+            state.status == BlocStatus.LOADING) {
+          isLoading = true;
+        }
+
         if (state.status == BlocStatus.SUCCESS &&
             state.request == VietQrStore.GET_LIST) {
+          isLoading = false;
           list = [...state.listStore];
           metadata = state.metadata;
         }
@@ -91,65 +99,72 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
               ),
             ),
             const SizedBox(height: 25),
-            Expanded(
-              child: ListView(
-                controller: _controller,
-                padding: EdgeInsets.zero,
-                children: [
-                  ...List.generate(
-                    state.listStore.length,
-                    (index) {
-                      VietQRStoreDTO dto = state.listStore[index];
-                      return Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 18),
-                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          gradient: VietQRTheme.gradientColor.lilyLinear,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              dto.merchantName,
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 15),
-                            const MySeparator(color: AppColor.GREY_DADADA),
-                            ...List.generate(
-                              dto.terminals.length,
-                              (index) {
-                                TerminalDTO terminalDTO = dto.terminals[index];
-                                return InkWell(
-                                  onTap: () {
-                                    _bloc.add(
-                                        SetTerminalEvent(dto: terminalDTO));
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: _buildItem(dto.terminals[index]),
-                                );
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  if (state.status == BlocStatus.LOAD_MORE)
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10),
-                          child: CircularProgressIndicator(),
-                        ),
-                      ],
+            if (isLoading)
+              const Expanded(
+                  child: Center(
+                child: CircularProgressIndicator(),
+              ))
+            else
+              Expanded(
+                child: ListView(
+                  controller: _controller,
+                  padding: EdgeInsets.zero,
+                  children: [
+                    ...List.generate(
+                      state.listStore.length,
+                      (index) {
+                        VietQRStoreDTO dto = state.listStore[index];
+                        return Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 18),
+                          padding: const EdgeInsets.fromLTRB(18, 18, 18, 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            gradient: VietQRTheme.gradientColor.lilyLinear,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                dto.merchantName,
+                                style: const TextStyle(
+                                    fontSize: 14, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 15),
+                              const MySeparator(color: AppColor.GREY_DADADA),
+                              ...List.generate(
+                                dto.terminals.length,
+                                (index) {
+                                  TerminalDTO terminalDTO =
+                                      dto.terminals[index];
+                                  return InkWell(
+                                    onTap: () {
+                                      _bloc.add(
+                                          SetTerminalEvent(dto: terminalDTO));
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: _buildItem(dto.terminals[index]),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                ],
+                    if (state.status == BlocStatus.LOAD_MORE)
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: CircularProgressIndicator(),
+                          ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
-            ),
           ],
         );
       },

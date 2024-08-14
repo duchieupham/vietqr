@@ -45,12 +45,17 @@ class VietQRStoreBloc extends Bloc<VietqrStoreEvent, VietQRStoreState> {
               terminalDTO = listTer.first;
             }
           }
+          await Future.delayed(const Duration(milliseconds: 500));
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,
             request: VietQrStore.GET_LIST,
             listStore: result,
             storeSelect: result.isNotEmpty ? result.first : null,
-            terminal: terminalDTO,
+            terminal: state.terminal == null
+                ? terminalDTO
+                : state.terminal!.terminalId.isNotEmpty
+                    ? state.terminal
+                    : terminalDTO,
             metadata: _repository.metaDataDTO,
           ));
         } else {
