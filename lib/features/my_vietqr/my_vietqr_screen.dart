@@ -197,9 +197,7 @@ class _MyVietQRScreenState extends State<MyVietQRScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
                               child: InkWell(
-                                onTap: () {
-                                  onSelectStore();
-                                },
+                                onTap: onSelectStore,
                                 child: Row(
                                   children: [
                                     Text(
