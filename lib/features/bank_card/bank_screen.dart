@@ -137,7 +137,7 @@ class _BankScreenState extends State<BankScreen> {
   }
 
   void getListBank(BuildContext context) {
-    _bloc.add(BankCardEventGetList());
+    _bloc.add(const BankCardEventGetList());
   }
 
   void getListQR(BuildContext context, List<QRCreateDTO> list) {
@@ -152,7 +152,6 @@ class _BankScreenState extends State<BankScreen> {
   @override
   void dispose() {
     super.dispose();
-    print('dispose');
     widget.scrollController.removeListener(_onScroll);
   }
 
@@ -176,100 +175,57 @@ class _BankScreenState extends State<BankScreen> {
       onTap: () {
         _focusNode.unfocus();
       },
-      child: Column(
-        children: [
-          Expanded(
-            child: CustomScrollView(
-              controller: widget.scrollController,
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                BankAppbarWidget(
-                  notifier: _opacityNotifier,
-                ),
-                CupertinoSliverRefreshControl(
-                  builder: (context, refreshState, pulledExtent,
-                      refreshTriggerPullDistance, refreshIndicatorExtent) {
-                    return Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      width: 25,
-                      height: 25,
-                      child: rive.RiveAnimation.asset(
-                        'assets/rives/loading_ani',
-                        fit: BoxFit.contain,
-                        antialiasing: false,
-                        animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
-                        onInit: _onRiveInit,
-                      ),
-                    );
-                  },
-                  onRefresh: () => _refresh(),
-                ),
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      ListBankWidget(),
-                      BankStatistic(
-                        textFielddKey: _textFieldKey,
-                        focusNode: _focusNode,
-                        onStore: () {
-                          widget.onStore.call();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+      child: Container(
+        // color: AppColor.WHITE.withOpacity(0.6),
+        child: CustomScrollView(
+          controller: widget.scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            BankAppbarWidget(
+              notifier: _opacityNotifier,
             ),
-          )
-          // Expanded(
-          //   child: RefreshIndicator(
-          //     onRefresh: _refresh,
-          //     child: ListView(
-          //       padding:
-          //           const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          //       children: [
-          //         const SizedBox(height: 20),
-          //         NotiVerifyEmailWidget(
-          //           isVerify: isVerify,
-          //         ),
-          //         const SizedBox(height: 20),
-          //         const ExtendAnnualFee(),
-          //         const BanksAuthenticated(),
-          //         const BanksUnAuthenticated(),
-          //         _loading(),
-          //         const BanksView(),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(height: 4),
-          // const BottomSection(),
-        ],
-      ),
-    );
-  }
-
-  Widget _loading() {
-    return BlocSelector<BankBloc, BankState, BlocStatus>(
-      bloc: _bloc,
-      selector: (state) => state.status,
-      builder: (context, state) {
-        if (state == BlocStatus.LOADING) {
-          return const SizedBox(
-            height: 120,
-            child: Center(
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(
-                  color: AppColor.BLUE_TEXT,
-                ),
+            CupertinoSliverRefreshControl(
+              builder: (context, refreshState, pulledExtent,
+                  refreshTriggerPullDistance, refreshIndicatorExtent) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  width: 25,
+                  height: 25,
+                  child: rive.RiveAnimation.asset(
+                    'assets/rives/loading_ani',
+                    fit: BoxFit.contain,
+                    antialiasing: false,
+                    animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
+                    onInit: _onRiveInit,
+                  ),
+                );
+              },
+              onRefresh: () => _refresh(),
+            ),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
+                  const ListBankWidget(),
+                  BankStatistic(
+                    textFielddKey: _textFieldKey,
+                    focusNode: _focusNode,
+                    onStore: () {
+                      widget.onStore.call();
+                    },
+                  )
+                ],
               ),
             ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
+
+            // SliverFillRemaining(
+            //   hasScrollBody: true,
+            //   child: Container(
+            //     color: AppColor.WHITE.withOpacity(0.6),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
     );
   }
 
