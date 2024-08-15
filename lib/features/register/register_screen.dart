@@ -170,11 +170,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               AccountLoginDTO dto = AccountLoginDTO(
                 phoneNo: Provider.of<RegisterProvider>(context, listen: false)
                     .phoneNoController
-                    .text,
+                    .text
+                    .replaceAll(' ', ''),
                 password: EncryptUtils.instance.encrypted(
                   Provider.of<RegisterProvider>(context, listen: false)
                       .phoneNoController
-                      .text,
+                      .text
+                      .replaceAll(' ', ''),
                   Provider.of<RegisterProvider>(context, listen: false)
                       .passwordController
                       .text,
