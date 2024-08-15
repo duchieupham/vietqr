@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/repositories/register_repository.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
@@ -10,17 +11,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
-
   final RegisterRepository registerRepository;
 
-  RegisterBloc(this.registerRepository)
-      : super(const RegisterState()) {
+  RegisterBloc(this.registerRepository) : super(const RegisterState()) {
     on<RegisterEventSubmit>(_register);
     on<RegisterEventSentOTP>(_sentOtp);
     on<RegisterEventUpdateHeight>(_updateHeight);
     // on<RegisterEventReSentOTP>(_reSentOtp);
     on<RegisterEventPhoneAuthentication>(_phoneAuthentication);
     on<RegisterEventVerifyOTP>(_verifyOTP);
+    on<RegisterEventUpdatePage>(_updatePage);
+    on<RegisterEventUpdatePhone>(_updatePhone);
+    on<RegisterEventUpdatePassword>(_updatePassword);
+    on<RegisterEventUpdateConfirmPassword>(_updateConfirmPassword);
+    on<RegisterEventUpdateIntroduce>(_updateIntroduce);
+    on<RegisterEventReset>(_reset);
+    on<RegisterEventResetPassword>(_resetPassword);
+    on<RegisterEventResetConfirmPassword>(_resetConfirmPassword);
+    on<RegisterEventUpdateErrs>(_updateErrs);
   }
 
   // RegisterBloc() : super(RegisterInitialState()) {
@@ -87,6 +95,201 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             request: RegisterType.UPDATE_HEIGHT,
             height: event.height,
             isShowButton: event.showBT));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _updatePage(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventUpdatePage) {
+        emit(state.copyWith(
+            page: event.page,
+            status: BlocStatus.UNLOADING,
+            request: RegisterType.UPDATE_PAGE));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _updatePhone(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventUpdatePhone) {
+        String phone = event.phone.replaceAll(" ", "");
+        if (phone.isNotEmpty) {
+          var isValid = StringUtils.instance.isValidatePhone(phone);
+          emit(state.copyWith(
+              phoneNumber: phone,
+              isPhoneErr: !isValid,
+              status: BlocStatus.UNLOADING,
+              request: RegisterType.UPDATE_PHONE));
+        } else {
+          emit(state.copyWith(
+              phoneNumber: phone,
+              isPhoneErr: false,
+              status: BlocStatus.ERROR,
+              request: RegisterType.UPDATE_PHONE));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _updatePassword(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventUpdatePassword) {
+        String password = event.password;
+        if (password.isNotEmpty) {
+          emit(state.copyWith(
+              password: password,
+              isPasswordErr: false,
+              status: BlocStatus.UNLOADING,
+              request: RegisterType.UPDATE_PASSWORD));
+        } else {
+          emit(state.copyWith(
+              isPasswordErr: true,
+              status: BlocStatus.ERROR,
+              request: RegisterType.UPDATE_PASSWORD));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _updateConfirmPassword(
+      RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventUpdateConfirmPassword) {
+        String confirmPass = event.confirmPassword;
+        String password = event.password;
+        if (confirmPass.isNotEmpty && password.isNotEmpty) {
+          if (confirmPass == password) {
+            emit(state.copyWith(
+                confirmPassword: confirmPass,
+                isPasswordErr: false,
+                status: BlocStatus.UNLOADING,
+                request: RegisterType.UPDATE_PASSWORD));
+          }
+        } else {
+          emit(state.copyWith(
+              isPasswordErr: true,
+              status: BlocStatus.ERROR,
+              request: RegisterType.UPDATE_PASSWORD));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _updateIntroduce(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventUpdateIntroduce) {
+        String introduce = event.introduce;
+        if (introduce.isNotEmpty) {
+          emit(state.copyWith(
+              introduce: introduce,
+              status: BlocStatus.UNLOADING,
+              request: RegisterType.UPDATE_INTRODUCE));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _updateErrs(RegisterEvent event, Emitter<RegisterState> emit) {
+    // _isPhoneErr = phoneErr;
+    // _isPasswordErr = passErr;
+    // _isConfirmPassErr = confirmPassErr;
+    // notifyListeners();
+    try {
+      if (event is RegisterEventUpdateErrs) {
+        emit(state.copyWith(
+            isPhoneErr: event.phoneErr,
+            isPasswordErr: event.passErr,
+            isConfirmPassErr: event.confirmPassErr,
+            status: BlocStatus.UNLOADING,
+            request: RegisterType.UPDATE_ERROR));
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _reset(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventReset) {
+        emit(
+          state.copyWith(
+              status: BlocStatus.UNLOADING,
+              request: RegisterType.RESET,
+              isPhoneErr: false,
+              isPasswordErr: false,
+              isConfirmPassErr: false),
+        );
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _resetPassword(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventResetPassword) {
+        emit(
+          state.copyWith(
+            status: BlocStatus.UNLOADING,
+            request: RegisterType.RESET,
+            password: '',
+          ),
+        );
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
+  void _resetConfirmPassword(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventReset) {
+        emit(
+          state.copyWith(
+              status: BlocStatus.UNLOADING,
+              request: RegisterType.RESET,
+              confirmPassword: ''),
+        );
       }
     } catch (e) {
       emit(state.copyWith(

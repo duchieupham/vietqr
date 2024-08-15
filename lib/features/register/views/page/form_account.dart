@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
+import 'package:vierqr/features/register/states/register_state.dart';
+import 'package:vierqr/features/register/utils/register_utils.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 
 import '../../../../commons/widgets/phone_widget.dart';
@@ -22,12 +28,14 @@ class FormAccount extends StatefulWidget {
 }
 
 class _FormAccountState extends State<FormAccount> {
+  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   final repassFocus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      bloc: _registerBloc,
+      builder: (context, state) {
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -53,12 +61,14 @@ class _FormAccountState extends State<FormAccount> {
                 ),
               ),
               PhoneWidget(
-                onChanged: provider.updatePhone,
+                onChanged: (value) {
+                  _registerBloc.add(RegisterEventUpdatePhone(phone: value));
+                },
                 phoneController: widget.phoneController,
                 autoFocus: widget.isFocus,
               ),
               Visibility(
-                visible: provider.phoneErr,
+                visible: state.isPhoneErr,
                 child: Container(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.only(left: 5, top: 5, right: 30),
@@ -96,7 +106,8 @@ class _FormAccountState extends State<FormAccount> {
                   autoFocus: true,
                   obscureText: true,
                   onChanged: (value) {
-                    provider.updatePassword(value);
+                    _registerBloc
+                        .add(RegisterEventUpdatePassword(password: value));
                     Future.delayed(const Duration(seconds: 1), () {
                       if (value.length == 6) {
                         repassFocus.requestFocus();
@@ -106,7 +117,7 @@ class _FormAccountState extends State<FormAccount> {
                 ),
               ),
               Visibility(
-                visible: provider.passwordErr,
+                visible: state.isPasswordErr,
                 child: const Padding(
                   padding: EdgeInsets.only(top: 6),
                   child: Text(
@@ -143,12 +154,14 @@ class _FormAccountState extends State<FormAccount> {
                   obscureText: true,
                   focusNode: repassFocus,
                   onChanged: (value) {
-                    provider.updateConfirmPassword(value);
+                    // provider.updateConfirmPassword(value);
+                    _registerBloc.add(RegisterEventUpdateConfirmPassword(
+                        confirmPassword: value, password: state.password));
                   },
                 ),
               ),
               Visibility(
-                visible: provider.confirmPassErr,
+                visible: state.isConfirmPassErr,
                 child: const Padding(
                   padding: EdgeInsets.only(top: 6),
                   child: Text(
@@ -162,13 +175,25 @@ class _FormAccountState extends State<FormAccount> {
                 alignment: Alignment.center,
                 child: GestureDetector(
                   onTap: () async {
-                    if (provider.isEnableButton()) {
+                    if (RegisterUtils.instance.isEnableButton(
+                        state.phoneNumber,
+                        state.password,
+                        state.confirmPassword,
+                        state.isPhoneErr,
+                        state.isPasswordErr,
+                        state.isConfirmPassErr)) {
                       widget.onEnterIntro(1);
                     } else {
-                      provider.updatePhone(provider.phoneNoController.text);
-                      provider.updatePassword(provider.passwordController.text);
-                      provider.updateConfirmPassword(
-                          provider.confirmPassController.text);
+                      // provider.updatePhone(provider.phoneNoController.text);
+                      _registerBloc.add(
+                          RegisterEventUpdatePhone(phone: state.phoneNumber));
+                      _registerBloc.add(RegisterEventUpdatePassword(
+                          password: state.password));
+                      _registerBloc.add(RegisterEventUpdateConfirmPassword(
+                          confirmPassword: state.confirmPassword, password: state.password));
+                      // provider.updatePassword(provider.passwordController.text);
+                      // provider.updateConfirmPassword(
+                      //     provider.confirmPassController.text);
                     }
                   },
                   child: const Text(

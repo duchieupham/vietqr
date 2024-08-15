@@ -24,54 +24,58 @@ class BlocModule extends DIModule {
   @override
   Future<void> provides() async {
     getIt
-      ..registerLazySingleton(
-        () => NetworkBloc(connectivity: Connectivity()),
-      )
-      ..registerLazySingleton(
-        () => ConnectMediaBloc(),
-      )
-      ..registerLazySingleton(
-        () => EmailBloc(),
-      )
-      ..registerLazySingleton(
-        () => QrFeedBloc(),
-      )
-      ..registerLazySingleton(
-        () => VietQRStoreBloc(),
-      )
-      ..registerLazySingleton(
-        // (param1, param2) => BankBloc(param1 as BuildContext),
-        () => BankBloc(NavigationService.context!),
-      )
-      ..registerLazySingleton(
-        () => NewTransactionBloc(),
-      )
-      ..registerLazySingleton(
-        () => DashBoardBloc(
-          NavigationService.context!,
-          getIt.get<LoginRepository>(),
-        ),
-      )
-      ..registerFactoryParam(
-        (param1, param2) =>
-            BankCardBloc(param1 as String, isLoading: param2 as bool),
-      )
-      ..registerFactoryParam(
-        (param1, param2) => TransactionBloc(
-          transactionId: param1 as String,
-          transactionRepository: getIt.get<TransactionRepository>(),
-        ),
-      )
-      ..registerFactoryParam(
-        (param1, param2) => LoginBloc(
-          param1 as BuildContext,
-          getIt.get<LoginRepository>(),
-        ),
-      )
-      ..registerFactoryParam(
-        (param1, param2) => RegisterBloc(
-          getIt.get<RegisterRepository>(),
-        ),
-      );
+          ..registerLazySingleton(
+            () => NetworkBloc(connectivity: Connectivity()),
+          )
+          ..registerLazySingleton(
+            () => ConnectMediaBloc(),
+          )
+          ..registerLazySingleton(
+            () => EmailBloc(),
+          )
+          ..registerLazySingleton(
+            () => QrFeedBloc(),
+          )
+          ..registerLazySingleton(
+            () => VietQRStoreBloc(),
+          )
+          ..registerLazySingleton(
+            // (param1, param2) => BankBloc(param1 as BuildContext),
+            () => BankBloc(NavigationService.context!),
+          )
+          ..registerLazySingleton(
+            () => NewTransactionBloc(),
+          )
+          ..registerLazySingleton(
+            () => DashBoardBloc(
+              NavigationService.context!,
+              getIt.get<LoginRepository>(),
+            ),
+          )
+          ..registerLazySingleton(
+            () => RegisterBloc(getIt.get<RegisterRepository>()),
+          )
+          ..registerFactoryParam(
+            (param1, param2) =>
+                BankCardBloc(param1 as String, isLoading: param2 as bool),
+          )
+          ..registerFactoryParam(
+            (param1, param2) => TransactionBloc(
+              transactionId: param1 as String,
+              transactionRepository: getIt.get<TransactionRepository>(),
+            ),
+          )
+          ..registerFactoryParam(
+            (param1, param2) => LoginBloc(
+              param1 as BuildContext,
+              getIt.get<LoginRepository>(),
+            ),
+          )
+        // ..registerFactoryParam(
+        //   (param1, param2) => RegisterBloc(
+        //     getIt.get<RegisterRepository>(),
+        //   ),
+        // );
+        ;
   }
 }
