@@ -14,6 +14,7 @@ import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart'
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_overview_dto.dart';
 
 class OverviewStatistic extends StatefulWidget {
   final BankAccountDTO bankDto;
@@ -46,22 +47,24 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
   final BankBloc bankBloc = getIt.get<BankBloc>();
 
   BankAccountDTO? dto;
+  bool isTapped = false;
 
   @override
   void initState() {
     super.initState();
     dto = widget.bankDto;
-    // bankBloc.add(GetOverviewEvent(
-    //     bankId: widget.bankDto.id,
-    //     fromDate: selected.fromDate!,
-    //     toDate: selected.toDate!));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<BankBloc, BankState>(
       bloc: bankBloc,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.request == BankType.GET_OVERVIEW &&
+            state.status == BlocStatus.SUCCESS) {
+          isTapped = false;
+        }
+      },
       builder: (context, state) {
         return Container(
           width: double.infinity,
@@ -76,17 +79,21 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                       bool isSelect = selected.type == list[index].type;
 
                       return InkWell(
-                        onTap: () {
-                          setState(() {
-                            selected = list[index];
-                          });
-                          bankBloc.add(SelectTimeEvent(timeSelect: selected));
-                          bankBloc.add(GetOverviewEvent(
-                            bankId: widget.bankDto.id,
-                            fromDate: list[index].fromDate,
-                            toDate: list[index].toDate,
-                          ));
-                        },
+                        onTap: !isTapped
+                            ? () {
+                                setState(() {
+                                  isTapped = true;
+                                  selected = list[index];
+                                });
+                                bankBloc
+                                    .add(SelectTimeEvent(timeSelect: selected));
+                                bankBloc.add(GetOverviewEvent(
+                                  bankId: widget.bankDto.id,
+                                  fromDate: list[index].fromDate,
+                                  toDate: list[index].toDate,
+                                ));
+                              }
+                            : null,
                         child: Container(
                           height: 30,
                           margin: EdgeInsets.only(left: index == 0 ? 0 : 8),

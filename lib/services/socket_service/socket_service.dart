@@ -28,7 +28,6 @@ class SocketService {
   BuildContext get context => NavigationService.context!;
 
   static const int _port = 8443;
-
   Socket? _socket;
   bool _isConnected = false;
 
@@ -68,7 +67,11 @@ class SocketService {
           MediaHelper.instance.playAudio(data);
         }
         notificationController.sink.add(true);
-      });
+      }).onError(
+        (error) {
+          debugPrint('ws error $error');
+        },
+      );
     }
   }
 

@@ -176,7 +176,7 @@ class _BankScreenState extends State<BankScreen> {
         _focusNode.unfocus();
       },
       child: Container(
-        // color: AppColor.WHITE.withOpacity(0.6),
+        color: AppColor.WHITE.withOpacity(0.6),
         child: CustomScrollView(
           controller: widget.scrollController,
           physics: const BouncingScrollPhysics(),
@@ -187,17 +187,37 @@ class _BankScreenState extends State<BankScreen> {
             CupertinoSliverRefreshControl(
               builder: (context, refreshState, pulledExtent,
                   refreshTriggerPullDistance, refreshIndicatorExtent) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  width: 25,
-                  height: 25,
-                  child: rive.RiveAnimation.asset(
-                    'assets/rives/loading_ani',
-                    fit: BoxFit.contain,
-                    antialiasing: false,
-                    animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
-                    onInit: _onRiveInit,
-                  ),
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: VietQRTheme.gradientColor.lilyLinear,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: SizedBox(
+                        width: 25,
+                        height: 25,
+                        child: rive.RiveAnimation.asset(
+                          'assets/rives/loading_ani',
+                          fit: BoxFit.contain,
+                          antialiasing: false,
+                          animations: const [
+                            Stringify.SUCCESS_ANI_INITIAL_STATE
+                          ],
+                          onInit: _onRiveInit,
+                        ),
+                      ),
+                    )
+                  ],
                 );
               },
               onRefresh: () => _refresh(),
