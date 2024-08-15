@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/pin_code_input.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
+import 'package:vierqr/features/register/states/register_state.dart';
+import 'package:vierqr/features/register/utils/register_utils.dart';
 
-import '../../../../commons/constants/configurations/numeral.dart';
 import '../../../../commons/constants/configurations/theme.dart';
-import '../../../../commons/widgets/pin_widget_register.dart';
 import '../../../../services/providers/pin_provider.dart';
-import '../../../../services/providers/register_provider.dart';
 
 class FormPassword extends StatefulWidget {
   bool isFocus;
@@ -22,19 +25,19 @@ class FormPassword extends StatefulWidget {
 class _FormPasswordState extends State<FormPassword> {
   final repassFocus = FocusNode();
   final PageController pageController = PageController();
+  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
 
   @override
   void initState() {
     super.initState();
-    Provider.of<RegisterProvider>(context, listen: false)
-        .passwordController
-        .text = '';
+    _registerBloc.add(const RegisterEventResetPassword());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      bloc: _registerBloc,
+      builder: (context, state) {
         return SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
@@ -43,7 +46,7 @@ class _FormPasswordState extends State<FormPassword> {
               RichText(
                 text: TextSpan(
                   children: [
-                    TextSpan(
+                    const TextSpan(
                       text: 'Thiết lập ',
                       style: TextStyle(
                         color: AppColor.BLACK,
@@ -57,17 +60,17 @@ class _FormPasswordState extends State<FormPassword> {
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         foreground: Paint()
-                          ..shader = LinearGradient(
+                          ..shader = const LinearGradient(
                             colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           ).createShader(
-                            Rect.fromLTWH(
+                            const Rect.fromLTWH(
                                 0, 0, 200, 40), // Adjust size as needed
                           ),
                       ),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: '*',
                       style: TextStyle(
                         color: AppColor.BLACK,
@@ -79,8 +82,9 @@ class _FormPasswordState extends State<FormPassword> {
                 ),
               ),
               Text(
-                'cho tài khoản ${provider.phoneNoController.text}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                'cho tài khoản ${state.phoneNumber}',
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 0, right: 40),
@@ -97,14 +101,22 @@ class _FormPasswordState extends State<FormPassword> {
                     focusNode: repassFocus,
                     onChanged: (text) {},
                     onCompleted: (value) {
-                      provider.updatePassword(value);
+                      _registerBloc
+                          .add(RegisterEventUpdatePassword(password: value));
                       if (value.length == 6) {
                         repassFocus.requestFocus();
                       }
-                      if (provider.isEnableButtonPassword()) {
+                      if (RegisterUtils.instance.isEnableButtonPassword(
+                          state.phoneNumber,
+                          value,
+                          state.isPhoneErr,
+                          state.isPasswordErr)) {
                         Provider.of<PinProvider>(context, listen: false)
                             .reset();
-                        provider.updatePage(3);
+
+                        _registerBloc
+                            .add(const RegisterEventUpdatePage(page: 3));
+
                         pageController.animateToPage(3,
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.ease);

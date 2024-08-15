@@ -87,11 +87,13 @@ class RegisterEventUpdatePassword extends RegisterEvent {
 
 class RegisterEventUpdateConfirmPassword extends RegisterEvent {
   final String confirmPassword;
+  final String password;
 
-  const RegisterEventUpdateConfirmPassword({required this.confirmPassword});
+  const RegisterEventUpdateConfirmPassword(
+      {required this.confirmPassword, required this.password});
 
   @override
-  List<Object?> get props => [confirmPassword];
+  List<Object?> get props => [confirmPassword, password];
 }
 
 class RegisterEventUpdateErrs extends RegisterEvent {
@@ -115,6 +117,20 @@ class RegisterEventUpdateErrs extends RegisterEvent {
 
 class RegisterEventReset extends RegisterEvent {
   const RegisterEventReset();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class RegisterEventResetPassword extends RegisterEvent {
+  const RegisterEventResetPassword();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class RegisterEventResetConfirmPassword extends RegisterEvent {
+  const RegisterEventResetConfirmPassword();
 
   @override
   List<Object?> get props => [];

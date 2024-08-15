@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 
 // class RegisterState extends Equatable {
@@ -56,13 +57,13 @@ class RegisterState extends Equatable {
   final bool isConfirmPassErr;
   final String verificationId;
   final int? resendToken;
-  final int page;
+  final int? page;
   final double height;
   final bool isShowButton;
-  final String? phoneNumber;
-  final String? password;
-  final String? confirmPassword;
-  final String? introduce;
+  final String phoneNumber;
+  final String password;
+  final String confirmPassword;
+  final String introduce;
   final TypeOTP? typeOTP;
   final String msgVerifyOTP;
 
@@ -78,10 +79,10 @@ class RegisterState extends Equatable {
     this.page = 0,
     this.height = 0,
     this.isShowButton = false,
-    this.phoneNumber,
-    this.password,
-    this.confirmPassword,
-    this.introduce,
+    this.phoneNumber = '',
+    this.password = '',
+    this.confirmPassword = '',
+    this.introduce = '',
     this.typeOTP,
     this.msgVerifyOTP = '',
   });
@@ -99,6 +100,7 @@ class RegisterState extends Equatable {
       double? height,
       bool? isShowButton,
       String? phoneNumber,
+      String? password,
       String? confirmPassword,
       String? introduce,
       TypeOTP? typeOTP,
@@ -116,6 +118,7 @@ class RegisterState extends Equatable {
       height: height ?? this.height,
       isShowButton: isShowButton ?? this.isShowButton,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       introduce: introduce ?? this.introduce,
       typeOTP: typeOTP ?? this.typeOTP,

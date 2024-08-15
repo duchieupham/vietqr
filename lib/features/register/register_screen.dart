@@ -20,6 +20,7 @@ import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/cubits/pin_cubit.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
+import 'package:vierqr/features/register/utils/register_utils.dart';
 import 'package:vierqr/features/register/views/page/confirm_email.register.dart';
 import 'package:vierqr/features/register/views/page/form_confirm_password.dart';
 import 'package:vierqr/features/register/views/page/form_password.dart';
@@ -84,13 +85,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final controller = ScrollController();
 
-  late RegisterProvider _registerProvider;
+  // late RegisterProvider _registerProvider;
 
   // final auth = FirebaseAuth.instance;
 
   void initialServices(BuildContext context) {
     if (StringUtils.instance.isNumeric(widget.phoneNo)) {
-      _registerProvider.updatePhone(widget.phoneNo);
+      // _registerProvider.updatePhone(widget.phoneNo);
 
       _registerBloc.add(RegisterEventUpdatePhone(phone: widget.phoneNo));
 
@@ -108,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.initState();
     // _registerBloc = BlocProvider.of(context);
     // _pinCubit = PinCubit();
-    _registerProvider = Provider.of<RegisterProvider>(context, listen: false);
+    // _registerProvider = Provider.of<RegisterProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
     });
@@ -128,513 +129,595 @@ class _RegisterScreenState extends State<RegisterScreen> {
       heights = viewInsets.bottom;
     }
 
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
-        return BlocConsumer<RegisterBloc, RegisterState>(
-          bloc: _registerBloc,
-          listener: (context, state) async {
-            // if (state is RegisterLoadingState ||
-            //     state is RegisterSentOTPLoadingState) {
-            //   DialogWidget.instance.openLoadingDialog();
-            // }
-            if ((state.status == BlocStatus.LOADING &&
-                    state.request == RegisterType.REGISTER) ||
-                (state.status == BlocStatus.LOADING &&
-                    state.request == RegisterType.SENT_OPT)) {
-              DialogWidget.instance.openLoadingDialog();
-            }
-            // if (state is RegisterSentOTPSuccessState) {
-            //   Navigator.pop(context);
-            //   DialogWidget.instance
-            //       .showModalBottomContent(
-            //         widget: VerifyOTPView(
-            //           phone: _phoneNoController.text,
-            //           onChangePage: (index) async {
-            //             onRegister(provider, height);
-            //           },
-            //           onVerifyOTP: provider.verifyOTP,
-            //           onResendOTP: provider.phoneAuthentication(
-            //               _phoneNoController.text, onSentOtp: (type) {
-            //             _registerBloc.add(RegisterEventSentOTP(typeOTP: type));
-            //           }),
-            //         ),
-            //         height: height * 0.5,
-            //       )
-            //       .then((value) => isOpenOTP = false);
-            // }
-            if (state.status == BlocStatus.SUCCESS &&
-                state.request == RegisterType.SENT_OPT) {
-              Navigator.pop(context);
-              DialogWidget.instance
-                  .showModalBottomContent(
-                    widget: VerifyOTPView(
-                      phone: _phoneNoController.text,
-                      onChangePage: (index) async {
-                        onRegister(provider, height, _registerBloc);
-                      },
-                      registerBloc: _registerBloc,
-                      // onVerifyOTP: provider.verifyOTP,
-                      // onResendOTP: provider.phoneAuthentication(
-                      //     _phoneNoController.text, onSentOtp: (type) {
-                      //   _registerBloc.add(RegisterEventSentOTP(typeOTP: type));
-                      // }),
-                    ),
-                    height: height * 0.5,
-                  )
-                  .then((value) => isOpenOTP = false);
-            }
-
-            // if (state is RegisterSentOTPFailedState) {
-            //   Navigator.pop(context);
-            //   onRegister(provider, height);
-            // }
-
-            if (state.status == BlocStatus.ERROR &&
-                state.request == RegisterType.SENT_OPT) {
-              Navigator.pop(context);
-              onRegister(provider, height, _registerBloc);
-            }
-
-            // if (state is RegisterFailedState) {
-            //   Navigator.pop(context);
-            //   provider.updatePage(0);
-            //   DialogWidget.instance.openMsgDialog(
-            //     title: 'Không thể đăng ký',
-            //     msg: state.msg,
-            //   );
-            // }
-            if (state.status == BlocStatus.ERROR &&
-                state.request == RegisterType.REGISTER) {
-              final msg = state.msg;
-              if (msg != null) {
-                Navigator.pop(context);
-                provider.updatePage(0);
-                DialogWidget.instance.openMsgDialog(
-                  title: 'Không thể đăng ký',
-                  msg: msg,
-                );
-              }
-            }
-
-            // if (state is RegisterSuccessState) {
-            //   AccountLoginDTO dto = AccountLoginDTO(
-            //     phoneNo: Provider.of<RegisterProvider>(context, listen: false)
-            //         .phoneNoController
-            //         .text,
-            //     password: EncryptUtils.instance.encrypted(
-            //       Provider.of<RegisterProvider>(context, listen: false)
-            //           .phoneNoController
-            //           .text,
-            //       Provider.of<RegisterProvider>(context, listen: false)
-            //           .passwordController
-            //           .text,
-            //     ),
-            //   );
-            //   _loginBloc.add(LoginEventByPhone(
-            //     dto: dto,
-            //     isToast: true,
-            //   ));
-            //   Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //       builder: (context) => ConfirmEmailRegisterScreen(
-            //         phoneNum:
-            //             Provider.of<RegisterProvider>(context, listen: false)
-            //                 .phoneNoController
-            //                 .text
-            //                 .replaceAll(' ', ''),
-            //       ),
-            //     ),
-            //   );
-            // }
-
-            if (state.status == BlocStatus.SUCCESS &&
-                state.request == RegisterType.REGISTER) {
-              Navigator.of(context).pop();
-              AccountLoginDTO dto = AccountLoginDTO(
-                phoneNo: Provider.of<RegisterProvider>(context, listen: false)
-                    .phoneNoController
-                    .text
-                    .replaceAll(' ', ''),
-                password: EncryptUtils.instance.encrypted(
-                  Provider.of<RegisterProvider>(context, listen: false)
-                      .phoneNoController
-                      .text
-                      .replaceAll(' ', ''),
-                  Provider.of<RegisterProvider>(context, listen: false)
-                      .passwordController
-                      .text,
-                ),
-              );
-              _loginBloc.add(LoginEventByPhone(
-                dto: dto,
-                isToast: true,
-              ));
-
-              Navigator.of(context).pushReplacementNamed(
-                  Routes.CONFIRM_EMAIL_SCREEN,
-                  arguments: {
-                    'phoneNum':
-                        Provider.of<RegisterProvider>(context, listen: false)
-                            .phoneNoController
-                            .text
-                            .replaceAll(' ', '')
-                  });
-            }
-          },
-          builder: (context, state) {
-            return GestureDetector(
-              onTap: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-              },
-              child: Scaffold(
-                appBar: RegisterAppBar(
-                  isLeading: provider.page == 0 ? false : true,
-                  title: '',
-                  onPressed: () {
-                    // Provider.of<PinProvider>(context, listen: false).reset();
-                    // FocusManager.instance.primaryFocus?.unfocus();
-                    // Navigator.of(context).pop();
-                    if (provider.page == 0) {
-                      Provider.of<PinProvider>(context, listen: false).reset();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Navigator.of(context).pop();
-                    }
-                    if (provider.page == 1) {
-                      Provider.of<PinProvider>(context, listen: false).reset();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      provider.updatePage(0);
-                    }
-                    if (provider.page == 2) {
-                      Provider.of<PinProvider>(context, listen: false).reset();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      provider.updatePage(0);
-                    }
-                    if (provider.page == 3) {
-                      Provider.of<PinProvider>(context, listen: false).reset();
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      provider.updatePage(2);
-                    }
+    return BlocConsumer<RegisterBloc, RegisterState>(
+      bloc: _registerBloc,
+      listener: (context, state) async {
+        // if (state is RegisterLoadingState ||
+        //     state is RegisterSentOTPLoadingState) {
+        //   DialogWidget.instance.openLoadingDialog();
+        // }
+        if ((state.status == BlocStatus.LOADING &&
+                state.request == RegisterType.REGISTER) ||
+            (state.status == BlocStatus.LOADING &&
+                state.request == RegisterType.SENT_OPT)) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        // if (state is RegisterSentOTPSuccessState) {
+        //   Navigator.pop(context);
+        //   DialogWidget.instance
+        //       .showModalBottomContent(
+        //         widget: VerifyOTPView(
+        //           phone: _phoneNoController.text,
+        //           onChangePage: (index) async {
+        //             onRegister(provider, height);
+        //           },
+        //           onVerifyOTP: provider.verifyOTP,
+        //           onResendOTP: provider.phoneAuthentication(
+        //               _phoneNoController.text, onSentOtp: (type) {
+        //             _registerBloc.add(RegisterEventSentOTP(typeOTP: type));
+        //           }),
+        //         ),
+        //         height: height * 0.5,
+        //       )
+        //       .then((value) => isOpenOTP = false);
+        // }
+        if (state.status == BlocStatus.SUCCESS &&
+            state.request == RegisterType.SENT_OPT) {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .showModalBottomContent(
+                widget: VerifyOTPView(
+                  phone: _phoneNoController.text,
+                  onChangePage: (index) async {
+                    onRegister(height, _registerBloc, state);
                   },
+                  registerBloc: _registerBloc,
+                  // onVerifyOTP: provider.verifyOTP,
+                  // onResendOTP: provider.phoneAuthentication(
+                  //     _phoneNoController.text, onSentOtp: (type) {
+                  //   _registerBloc.add(RegisterEventSentOTP(typeOTP: type));
+                  // }),
                 ),
-                backgroundColor: AppColor.WHITE,
-                resizeToAvoidBottomInset: true,
-                bottomNavigationBar:
-                    _bottom(width, height, viewInsets, provider, state),
-                body: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: [
-                      provider.page == 0
-                          ? BlocConsumer<LoginBloc, LoginState>(
-                              bloc: _loginBloc,
-                              builder: (context, state) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 0),
-                                  child: FormPhone(
-                                    pageController: widget.pageController,
-                                    phoneController: provider.phoneNoController,
-                                    isFocus: widget.isFocus,
-                                    onExistPhone: (value) {
-                                      _loginBloc.add(
-                                          CheckExitsPhoneEvent(phone: value));
-                                    },
-                                  ),
-                                );
-                              },
-                              listener: (context, state) {
-                                if (state.request == LoginType.NONE &&
-                                    state.status == BlocStatus.LOADING) {
-                                  DialogWidget.instance.openLoadingDialog();
-                                }
-                                if (state.status == BlocStatus.UNLOADING) {
-                                  Navigator.of(context).pop();
-                                }
-                                if (state.request == LoginType.CHECK_EXIST) {
-                                  if (state.infoUserDTO != null) {
-                                    Navigator.of(context)
-                                        .pop(state.infoUserDTO);
-                                  }
-                                }
-                                if (state.request == LoginType.REGISTER) {
-                                  provider.updatePage(2);
-                                  widget.pageController.animateToPage(2,
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.ease);
-                                }
-                              },
-                            )
-                          : const SizedBox.shrink(),
-                      provider.page == 1
-                          ? const ReferralCode()
-                          : const SizedBox.shrink(),
-                      provider.page == 2
-                          ? FormPassword(
-                              isFocus: true,
-                            )
-                          : const SizedBox.shrink(),
-                      provider.page == 3
-                          ? FormConfirmPassword(
-                              isFocus: true,
-                              onEnterIntro: (value) {
-                                provider.updatePage(value);
-                                widget.pageController.animateToPage(value,
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.ease);
-                              },
-                            )
-                          : const SizedBox.shrink(),
-                    ],
-                  ),
-                ),
-              ),
+                height: height * 0.5,
+              )
+              .then((value) => isOpenOTP = false);
+        }
+
+        // if (state is RegisterSentOTPFailedState) {
+        //   Navigator.pop(context);
+        //   onRegister(provider, height);
+        // }
+
+        if (state.status == BlocStatus.ERROR &&
+            state.request == RegisterType.SENT_OPT) {
+          Navigator.pop(context);
+          onRegister(height, _registerBloc, state);
+        }
+
+        // if (state is RegisterFailedState) {
+        //   Navigator.pop(context);
+        //   provider.updatePage(0);
+        //   DialogWidget.instance.openMsgDialog(
+        //     title: 'Không thể đăng ký',
+        //     msg: state.msg,
+        //   );
+        // }
+        if (state.status == BlocStatus.ERROR &&
+            state.request == RegisterType.REGISTER) {
+          final msg = state.msg;
+          if (msg != null) {
+            Navigator.pop(context);
+            // provider.updatePage(0);
+            _registerBloc.add(const RegisterEventUpdatePage(page: 0));
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không thể đăng ký',
+              msg: msg,
             );
+          }
+        }
+
+        // if (state is RegisterSuccessState) {
+        //   AccountLoginDTO dto = AccountLoginDTO(
+        //     phoneNo: Provider.of<RegisterProvider>(context, listen: false)
+        //         .phoneNoController
+        //         .text,
+        //     password: EncryptUtils.instance.encrypted(
+        //       Provider.of<RegisterProvider>(context, listen: false)
+        //           .phoneNoController
+        //           .text,
+        //       Provider.of<RegisterProvider>(context, listen: false)
+        //           .passwordController
+        //           .text,
+        //     ),
+        //   );
+        //   _loginBloc.add(LoginEventByPhone(
+        //     dto: dto,
+        //     isToast: true,
+        //   ));
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => ConfirmEmailRegisterScreen(
+        //         phoneNum:
+        //             Provider.of<RegisterProvider>(context, listen: false)
+        //                 .phoneNoController
+        //                 .text
+        //                 .replaceAll(' ', ''),
+        //       ),
+        //     ),
+        //   );
+        // }
+
+        if (state.status == BlocStatus.SUCCESS &&
+            state.request == RegisterType.REGISTER) {
+          AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: state.phoneNumber.replaceAll(' ', ''),
+            password: EncryptUtils.instance.encrypted(
+              state.phoneNumber.replaceAll(' ', ''),
+              state.password,
+            ),
+          );
+          _loginBloc.add(LoginEventByPhone(
+            dto: dto,
+            isToast: true,
+          ));
+
+          Navigator.of(context).pushNamed(Routes.CONFIRM_EMAIL_SCREEN,
+              arguments: {'phoneNum': state.phoneNumber.replaceAll(' ', '')});
+        }
+      },
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
           },
+          child: Scaffold(
+            appBar: RegisterAppBar(
+              // isLeading: provider.page == 0 ? false : true,
+              isLeading: state.page == 0 ? false : true,
+              title: '',
+              onPressed: () {
+                // Provider.of<PinProvider>(context, listen: false).reset();
+                // FocusManager.instance.primaryFocus?.unfocus();
+                // Navigator.of(context).pop();
+                // if (provider.page == 0) {
+                //   Provider.of<PinProvider>(context, listen: false).reset();
+                //   FocusManager.instance.primaryFocus?.unfocus();
+                //   Navigator.of(context).pop();
+                // }
+                // if (provider.page == 1) {
+                //   Provider.of<PinProvider>(context, listen: false).reset();
+                //   FocusManager.instance.primaryFocus?.unfocus();
+                //   provider.updatePage(0);
+                // }
+                // if (provider.page == 2) {
+                //   Provider.of<PinProvider>(context, listen: false).reset();
+                //   FocusManager.instance.primaryFocus?.unfocus();
+                //   provider.updatePage(0);
+                // }
+                // if (provider.page == 3) {
+                //   Provider.of<PinProvider>(context, listen: false).reset();
+                //   FocusManager.instance.primaryFocus?.unfocus();
+                //   provider.updatePage(2);
+                // }
+                if (state.page == 0) {
+                  _registerBloc.add(const RegisterEventReset());
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  Navigator.of(context).pop();
+                }
+                if (state.page == 1) {
+                  _registerBloc.add(const RegisterEventReset());
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  _registerBloc.add(const RegisterEventUpdatePage(page: 0));
+                }
+                if (state.page == 2) {
+                  _registerBloc.add(const RegisterEventReset());
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  _registerBloc.add(const RegisterEventUpdatePage(page: 0));
+                }
+                if (state.page == 3) {
+                  _registerBloc.add(const RegisterEventReset());
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  _registerBloc.add(const RegisterEventUpdatePage(page: 2));
+                }
+              },
+            ),
+            backgroundColor: AppColor.WHITE,
+            resizeToAvoidBottomInset: true,
+            bottomNavigationBar:
+                _bottom(width, height, viewInsets, state, _phoneNoController),
+            body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  state.page == 0
+                      ? BlocConsumer<LoginBloc, LoginState>(
+                          bloc: _loginBloc,
+                          builder: (context, state) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 0),
+                              child: FormPhone(
+                                pageController: widget.pageController,
+                                phoneController: _phoneNoController,
+                                isFocus: widget.isFocus,
+                                onExistPhone: (value) {
+                                  _loginBloc
+                                      .add(CheckExitsPhoneEvent(phone: value));
+                                },
+                              ),
+                            );
+                          },
+                          listener: (context, state) {
+                            if (state.request == LoginType.NONE &&
+                                state.status == BlocStatus.LOADING) {
+                              DialogWidget.instance.openLoadingDialog();
+                            }
+                            if (state.status == BlocStatus.UNLOADING) {
+                              Navigator.of(context).pop();
+                            }
+                            if (state.request == LoginType.CHECK_EXIST) {
+                              if (state.infoUserDTO != null) {
+                                Navigator.of(context).pop(state.infoUserDTO);
+                              }
+                            }
+                            if (state.request == LoginType.REGISTER) {
+                              // provider.updatePage(2);
+                              _registerBloc
+                                  .add(const RegisterEventUpdatePage(page: 2));
+                              widget.pageController.animateToPage(2,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.ease);
+                            }
+                          },
+                        )
+                      : const SizedBox.shrink(),
+                  // provider.page == 1
+                  state.page == 1
+                      ? const ReferralCode()
+                      : const SizedBox.shrink(),
+                  // provider.page == 2
+                  state.page == 2
+                      ? FormPassword(
+                          isFocus: true,
+                        )
+                      : const SizedBox.shrink(),
+                  // provider.page == 3
+                  state.page == 3
+                      ? FormConfirmPassword(
+                          isFocus: true,
+                          onEnterIntro: (value) {
+                            // provider.updatePage(value);
+                            _registerBloc
+                                .add(RegisterEventUpdatePage(page: value));
+                            widget.pageController.animateToPage(value,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.ease);
+                          },
+                        )
+                      : const SizedBox.shrink(),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _bottom(double width, double height, EdgeInsets viewInsets,
-      RegisterProvider provider, RegisterState state) {
+  Widget _bottom(
+      double width,
+      double height,
+      EdgeInsets viewInsets,
+      // RegisterProvider provider,
+      RegisterState state,
+      TextEditingController phoneNoController) {
     return (PlatformUtils.instance.checkResize(width))
         ? const SizedBox()
-        : Consumer<RegisterProvider>(
-            builder: (context, provider, child) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (provider.page == 0) ...[
-                      _buildButtonSubmitFormPhone(
-                        height,
-                        () {
-                          _loginBloc.add(CheckExitsPhoneEvent(
-                              phone: provider.phoneNoController.text
-                                  .replaceAll(' ', '')));
-                          // provider.updatePage(2);
-                          // widget.pageController.animateToPage(2,
-                          //     duration: const Duration(milliseconds: 300),
-                          //     curve: Curves.ease);
-                        },
-                      ),
-                    ],
-                    if (provider.page == 2) ...[
-                      _buildButtonSubmitFormPassword(
-                        heights,
-                        () {
-                          Provider.of<PinProvider>(context, listen: false)
-                              .reset();
-                          provider.updatePage(3);
-                          widget.pageController.animateToPage(3,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease);
-                        },
-                      ),
-                    ],
-                    if (provider.page == 1) ...[
-                      _buildButtonSubmit(context, heights),
-                    ],
-                    if (provider.page == 3) ...[
-                      _buildButtonSubmitFormConfirmPassword(height),
-                    ],
+        // : Consumer<RegisterProvider>(
+        //     builder: (context, provider, child) {
 
-                    // if (!provider.isShowButton)
-                    SizedBox(height: viewInsets.bottom),
-                    const SizedBox(height: 10),
-                    // if (!state.isShowButton)
-                    //   SizedBox(height: viewInsets.bottom),
-                    // const SizedBox(height: 10),
-                  ],
-                ),
-              );
-            },
+        //     },
+        //   );
+        : Padding(
+            padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (state.page == 0) ...[
+                  _buildButtonSubmitFormPhone(height, () {
+                    _loginBloc.add(
+                      CheckExitsPhoneEvent(
+                          // phone: provider.phoneNoController.text
+                          //     .replaceAll(' ', ''),
+                          phone: phoneNoController.text),
+                    );
+                    // provider.updatePage(2);
+                    // widget.pageController.animateToPage(2,
+                    //     duration: const Duration(milliseconds: 300),
+                    //     curve: Curves.ease);
+                  }, state),
+                ],
+                if (state.page == 2) ...[
+                  _buildButtonSubmitFormPassword(heights, () {
+                    Provider.of<PinProvider>(context, listen: false).reset();
+                    // provider.updatePage(3);
+                    _registerBloc.add(const RegisterEventUpdatePage(page: 3));
+                    widget.pageController.animateToPage(3,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                  }, state),
+                ],
+                if (state.page == 1) ...[
+                  _buildButtonSubmit(context, heights, state),
+                ],
+                if (state.page == 3) ...[
+                  _buildButtonSubmitFormConfirmPassword(height, state),
+                ],
+
+                // if (!provider.isShowButton)
+                SizedBox(height: viewInsets.bottom),
+                const SizedBox(height: 10),
+                // if (!state.isShowButton)
+                //   SizedBox(height: viewInsets.bottom),
+                // const SizedBox(height: 10),
+              ],
+            ),
           );
   }
 
-  void backToPreviousPage(BuildContext context, bool isRegisterSuccess) {
+  void backToPreviousPage(
+      BuildContext context, bool isRegisterSuccess, RegisterState state) {
     Navigator.pop(context, {
-      'phone': Provider.of<RegisterProvider>(context, listen: false)
-          .phoneNoController
-          .text,
-      'password': Provider.of<RegisterProvider>(context, listen: false)
-          .passwordController
-          .text,
+      // 'phone': Provider.of<RegisterProvider>(context, listen: false)
+      //     .phoneNoController
+      //     .text,
+      // 'password': Provider.of<RegisterProvider>(context, listen: false)
+      //     .passwordController
+      //     .text,
+      'phone': state.phoneNumber,
+      'password': state.password
     });
   }
 
-  Widget _buildButtonSubmitFormConfirmPassword(double height) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
-        return VietQRButton.gradient(
-          onPressed: () async {
-            onRegister(provider, height, _registerBloc);
-            Provider.of<PinProvider>(context, listen: false).reset();
-          },
-          isDisabled: !provider.isEnableButton(),
-          child: Center(
-            child: Text(
-              'Đăng ký',
-              style: TextStyle(
-                color:
-                    provider.isEnableButton() ? AppColor.WHITE : AppColor.BLACK,
-              ),
-            ),
-          ),
-        );
+  Widget _buildButtonSubmitFormConfirmPassword(
+      double height, RegisterState state) {
+    // return Consumer<RegisterProvider>(
+    //   builder: (context, provider, child) {
+    //     return VietQRButton.gradient(
+    //       onPressed: () async {
+    //         onRegister(provider, height, _registerBloc);
+    //         Provider.of<PinProvider>(context, listen: false).reset();
+    //       },
+    //       isDisabled: !provider.isEnableButton(),
+    //       child: Center(
+    //         child: Text(
+    //           'Đăng ký',
+    //           style: TextStyle(
+    //             color:
+    //                 provider.isEnableButton() ? AppColor.WHITE : AppColor.BLACK,
+    //           ),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
+    return VietQRButton.gradient(
+      onPressed: () async {
+        onRegister(height, _registerBloc, state);
+        Provider.of<PinProvider>(context, listen: false).reset();
       },
+      isDisabled: !RegisterUtils.instance.isEnableButton(
+          state.phoneNumber,
+          state.password,
+          state.confirmPassword,
+          state.isPhoneErr,
+          state.isPasswordErr,
+          state.isConfirmPassErr),
+      child: Center(
+        child: Text(
+          'Đăng ký',
+          style: TextStyle(
+            color: RegisterUtils.instance.isEnableButton(
+                    state.phoneNumber,
+                    state.password,
+                    state.confirmPassword,
+                    state.isPhoneErr,
+                    state.isPasswordErr,
+                    state.isConfirmPassErr)
+                ? AppColor.WHITE
+                : AppColor.BLACK,
+          ),
+        ),
+      ),
     );
   }
 
-  Widget _buildButtonSubmitFormPhone(double height, Function() callback) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
-        bool isEnable = provider.isEnableButtonPhone();
+  Widget _buildButtonSubmitFormPhone(
+      double height, Function() callback, RegisterState state) {
+    // return Consumer<RegisterProvider>(
+    //   builder: (context, provider, child) {
 
-        return VietQRButton.gradient(
-          onPressed: () {
-            if (isEnable) {
-              callback();
-            }
-          },
-          isDisabled: !isEnable,
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Icon(
-                  Icons.abc,
-                  size: 18,
-                  color: AppColor.TRANSPARENT,
-                ),
-                Text(
-                  'Tiếp tục',
-                  style: TextStyle(
-                    color: isEnable ? AppColor.WHITE : AppColor.BLACK,
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_outlined,
-                  size: 18,
-                  color: provider.isEnableButtonPhone()
-                      ? AppColor.WHITE
-                      : AppColor.BLACK,
-                ),
-              ],
-            ),
-          ),
-        );
+    //   },
+    // );
+    bool isEnable =
+        RegisterUtils.instance.isEnableButtonPhone(state.phoneNumber);
+
+    return VietQRButton.gradient(
+      onPressed: () {
+        if (isEnable) {
+          callback();
+        }
       },
-    );
-  }
-
-  Widget _buildButtonSubmitFormPassword(double height, Function() callback) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
-        return VietQRButton.gradient(
-          onPressed: () {
-            callback;
-          },
-          isDisabled: !provider.isEnableButtonPassword(),
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Icon(
-                  Icons.abc,
-                  size: 18,
-                  color: AppColor.TRANSPARENT,
-                ),
-                Text(
-                  'Tiếp tục',
-                  style: TextStyle(
-                    color: (provider.isEnableButtonPassword() &&
-                            provider.passwordController.text.isNotEmpty)
-                        ? AppColor.WHITE
-                        : AppColor.BLACK,
-                  ),
-                ),
-                Icon(
-                  Icons.arrow_forward_outlined,
-                  size: 18,
-                  color: (provider.isEnableButtonPassword() &&
-                          provider.passwordController.text.isNotEmpty)
-                      ? AppColor.WHITE
-                      : AppColor.BLACK,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildButtonSubmit(BuildContext context, double height) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
-        return Column(
+      isDisabled: !isEnable,
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              child: MButtonWidget(
-                title: 'Bỏ qua',
-                isEnable: true,
-                height: 50,
-                margin: const EdgeInsets.only(bottom: 15, left: 40, right: 40),
-                colorEnableBgr: AppColor.WHITE,
-                colorEnableText: AppColor.BLUE_TEXT,
-                border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
-                onTap: () async {
-                  onRegister(provider, height, _registerBloc);
-                  Provider.of<PinProvider>(context, listen: false).reset();
-                },
+            const Icon(
+              Icons.abc,
+              size: 18,
+              color: AppColor.TRANSPARENT,
+            ),
+            Text(
+              'Tiếp tục',
+              style: TextStyle(
+                color: isEnable ? AppColor.WHITE : AppColor.BLACK,
               ),
             ),
-            const SizedBox(
-              width: 12,
-            ),
-            Container(
-              child: MButtonWidget(
-                title: 'Đăng ký',
-                isEnable: provider.isEnableButton(),
-                margin: const EdgeInsets.only(bottom: 2, left: 40, right: 40),
-                height: 50,
-                onTap: () async {
-                  onRegister(provider, height, _registerBloc);
-                  Provider.of<PinProvider>(context, listen: false).reset();
-                },
-              ),
+            Icon(
+              Icons.arrow_forward_outlined,
+              size: 18,
+              color:
+                  RegisterUtils.instance.isEnableButtonPhone(state.phoneNumber)
+                      ? AppColor.WHITE
+                      : AppColor.BLACK,
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 
-  onRegister(provider, height, RegisterBloc bloc) async {
+  Widget _buildButtonSubmitFormPassword(
+      double height, Function() callback, RegisterState state) {
+    // return Consumer<RegisterProvider>(
+    //   builder: (context, provider, child) {
+
+    //   },
+    // );
+    return VietQRButton.gradient(
+      onPressed: () {
+        callback;
+      },
+      isDisabled: !RegisterUtils.instance.isEnableButtonPassword(
+          state.phoneNumber,
+          state.password,
+          state.isPhoneErr,
+          state.isPasswordErr),
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Icon(
+              Icons.abc,
+              size: 18,
+              color: AppColor.TRANSPARENT,
+            ),
+            Text(
+              'Tiếp tục',
+              style: TextStyle(
+                color: (RegisterUtils.instance.isEnableButtonPassword(
+                            state.phoneNumber,
+                            state.password,
+                            state.isPhoneErr,
+                            state.isPasswordErr) &&
+                        state.password.isNotEmpty)
+                    ? AppColor.WHITE
+                    : AppColor.BLACK,
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_outlined,
+              size: 18,
+              color: (RegisterUtils.instance.isEnableButtonPassword(
+                          state.phoneNumber,
+                          state.password,
+                          state.isPhoneErr,
+                          state.isPasswordErr) &&
+                      state.password.isNotEmpty)
+                  ? AppColor.WHITE
+                  : AppColor.BLACK,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtonSubmit(
+      BuildContext context, double height, RegisterState state) {
+    // return Consumer<RegisterProvider>(
+    //   builder: (context, provider, child) {
+
+    //   },
+    // );
+    return Column(
+      children: [
+        Container(
+          child: MButtonWidget(
+            title: 'Bỏ qua',
+            isEnable: true,
+            height: 50,
+            margin: const EdgeInsets.only(bottom: 15, left: 40, right: 40),
+            colorEnableBgr: AppColor.WHITE,
+            colorEnableText: AppColor.BLUE_TEXT,
+            border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
+            onTap: () async {
+              onRegister(height, _registerBloc, state);
+              Provider.of<PinProvider>(context, listen: false).reset();
+            },
+          ),
+        ),
+        const SizedBox(
+          width: 12,
+        ),
+        Container(
+          child: MButtonWidget(
+            title: 'Đăng ký',
+            // isEnable: provider.isEnableButton(),
+            isEnable: RegisterUtils.instance.isEnableButton(
+                state.phoneNumber,
+                state.password,
+                state.confirmPassword,
+                state.isPhoneErr,
+                state.isPasswordErr,
+                state.isConfirmPassErr),
+            margin: const EdgeInsets.only(bottom: 2, left: 40, right: 40),
+            height: 50,
+            onTap: () async {
+              onRegister(height, _registerBloc, state);
+              Provider.of<PinProvider>(context, listen: false).reset();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  onRegister(height, RegisterBloc bloc, RegisterState state) async {
     // provider.updateHeight(height, true);
     bloc.add(RegisterEventUpdateHeight(height: height, showBT: true));
 
-    String phone = provider.phoneNoController.text.replaceAll(' ', '');
+    // String phone = provider.phoneNoController.text.replaceAll(' ', '');
+    String phone = state.phoneNumber.replaceAll(' ', '');
 
-    String password = provider.passwordController.text;
-    String confirmPassword = provider.confirmPassController.text;
+    // String password = provider.passwordController.text;
+    // String confirmPassword = provider.confirmPassController.text;
+    String password = state.password;
+    String confirmPassword = state.confirmPassword;
 
-    String sharingCode = provider.introduceController.text;
+    // String sharingCode = provider.introduceController.text;
+    String sharingCode = state.introduce;
 
-    provider.updateErrs(
-      phoneErr: !(StringUtils.instance.isValidatePhone(phone)),
-      passErr:
-          (!StringUtils.instance.isNumeric(password) || (password.length != 6)),
-      confirmPassErr:
-          !StringUtils.instance.isValidConfirmText(password, confirmPassword),
-    );
+    // provider.updateErrs(
+    //   phoneErr: !(StringUtils.instance.isValidatePhone(phone)),
+    //   passErr:
+    //       (!StringUtils.instance.isNumeric(password) || (password.length != 6)),
+    //   confirmPassErr:
+    //       !StringUtils.instance.isValidConfirmText(password, confirmPassword),
+    // );
 
-    if (provider.isValidValidation()) {
+    bloc.add(RegisterEventUpdateErrs(
+        phoneErr: !(StringUtils.instance.isValidatePhone(phone)),
+        passErr: (!StringUtils.instance.isNumeric(password) ||
+            (password.length != 6)),
+        confirmPassErr: !StringUtils.instance
+            .isValidConfirmText(password, confirmPassword)));
+
+    if (RegisterUtils.instance.isValidValidation(
+        state.isPhoneErr, state.isPasswordErr, state.isConfirmPassErr)) {
       String userIP = await UserInformationUtils.instance.getIPAddress();
 
       AccountLoginDTO dto = AccountLoginDTO(

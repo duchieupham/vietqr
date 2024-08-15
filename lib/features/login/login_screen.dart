@@ -34,6 +34,8 @@ import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/widgets/login_account_screen.dart';
 import 'package:vierqr/features/login/widgets/quick_login_screen.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -80,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
 
   Map<String, dynamic>? additionalData;
   final BankBloc _bankBloc = getIt.get<BankBloc>();
+  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   late final LoginBloc _bloc = getIt.get<LoginBloc>(param1: context);
   late AuthProvider _authProvider;
   var controller = StreamController<AccountLoginDTO?>.broadcast();
@@ -735,8 +738,10 @@ extension _LoginScreenFunction on _LoginScreenState {
     }
 
     if (state.request == LoginType.LOGIN) {
-      Provider.of<RegisterProvider>(context, listen: false)
-          .updateErrs(phoneErr: false, passErr: false, confirmPassErr: false);
+      // Provider.of<RegisterProvider>(context, listen: false)
+      //     .updateErrs(phoneErr: false, passErr: false, confirmPassErr: false);
+      _registerBloc.add(const RegisterEventUpdateErrs(
+          phoneErr: false, passErr: false, confirmPassErr: false));
       _authProvider.updateRenderUI(isLogout: true);
       UserProfile userProfile = SharePrefUtils.getProfile();
 
@@ -808,7 +813,8 @@ extension _LoginScreenFunction on _LoginScreenState {
 
       if (!mounted) return;
       if (state.phone != '') {
-        Provider.of<RegisterProvider>(context, listen: false).updatePage(2);
+        // Provider.of<RegisterProvider>(context, listen: false).updatePage(2);
+        _registerBloc.add(const RegisterEventUpdatePage(page: 2));
       }
       final data = await Navigator.of(context).push(
         MaterialPageRoute(
@@ -1066,8 +1072,8 @@ extension _LoginScreenFunction on _LoginScreenState {
 
   void _onRegister() async {
     updateInfoUser(null);
-    Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
-
+    // Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
+    _registerBloc.add(const RegisterEventUpdatePage(page: 0));
     final data =
         await Navigator.of(context).pushNamed(Routes.REGISTER, arguments: {
       'pageController': pageController,
