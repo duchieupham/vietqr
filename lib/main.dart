@@ -94,7 +94,7 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.PROD);
+  await Injection.inject(env: EnvType.STG);
   // await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
@@ -119,11 +119,7 @@ void main() async {
       (options) {
         options.dsn =
             'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
-        // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-        // We recommend adjusting this value in production.
         options.tracesSampleRate = 0.01;
-        // The sampling rate for profiling is relative to tracesSampleRate
-        // Setting to 1.0 will profile 100% of sampled transactions:
         options.profilesSampleRate = 1.0;
       },
       appRunner: () => runApp(const VietQRApp()),
