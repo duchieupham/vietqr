@@ -6,7 +6,7 @@ class RegisterUtils {
   static const RegisterUtils _instance = RegisterUtils._privateConsrtructor();
 
   static RegisterUtils get instance => _instance;
-  
+
   bool isValidValidation(
       bool isPhoneErr, bool isPasswordErr, bool isConfirmPassErr) {
     return !isPhoneErr && !isPasswordErr && !isConfirmPassErr;

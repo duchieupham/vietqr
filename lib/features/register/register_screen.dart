@@ -31,6 +31,7 @@ import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/n_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../layouts/register_app_bar.dart';
@@ -261,9 +262,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             dto: dto,
             isToast: true,
           ));
-
-          Navigator.of(context).pushNamed(Routes.CONFIRM_EMAIL_SCREEN,
+          NavigationService.pushAndRemoveUntil(Routes.CONFIRM_EMAIL_SCREEN,
               arguments: {'phoneNum': state.phoneNumber.replaceAll(' ', '')});
+          // Navigator.of(context).pushReplacementNamed(
+          //     Routes.CONFIRM_EMAIL_SCREEN,
+          //     arguments: {'phoneNum': state.phoneNumber.replaceAll(' ', '')});
         }
       },
       builder: (context, state) {
@@ -431,7 +434,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       CheckExitsPhoneEvent(
                           // phone: provider.phoneNoController.text
                           //     .replaceAll(' ', ''),
-                          phone: phoneNoController.text),
+                          phone: phoneNoController.text.replaceAll(' ', '')),
                     );
                     // provider.updatePage(2);
                     // widget.pageController.animateToPage(2,
