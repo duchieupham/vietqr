@@ -117,7 +117,7 @@ class _ConfirmEmailRegisterScreenState
                   RichText(
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'Xác thực thông tin ',
                           style: TextStyle(
                             color: AppColor.BLACK,
@@ -131,11 +131,11 @@ class _ConfirmEmailRegisterScreenState
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             foreground: Paint()
-                              ..shader = LinearGradient(
+                              ..shader = const LinearGradient(
                                 colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
-                              ).createShader(Rect.fromLTWH(0, 0, 200, 40)),
+                              ).createShader(const Rect.fromLTWH(0, 0, 200, 40)),
                           ),
                         ),
                       ],
@@ -143,7 +143,7 @@ class _ConfirmEmailRegisterScreenState
                   ),
                   Text(
                     'cho tài khoản ${widget.phoneNum}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style:const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   MTextFieldCustom(
                     controller: _emailController,
@@ -202,7 +202,7 @@ class _ConfirmEmailRegisterScreenState
                   RichText(
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'Nhận ngay ưu đãi sử dụng dịch vụ VietQR ',
                           style: TextStyle(
                             color: Colors.black,
@@ -215,7 +215,7 @@ class _ConfirmEmailRegisterScreenState
                           style: TextStyle(
                             fontSize: 20,
                             foreground: Paint()
-                              ..shader = LinearGradient(
+                              ..shader =const LinearGradient(
                                 colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
@@ -226,13 +226,13 @@ class _ConfirmEmailRegisterScreenState
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
+                  const Row(
                     children: [
                       XImage(
                         imagePath: 'assets/images/ic-noti-bdsd-black.png',
                         width: 40,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'Nhận thông báo biến động số dư',
                         style: TextStyle(fontSize: 12),
@@ -243,13 +243,13 @@ class _ConfirmEmailRegisterScreenState
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
+                  const Row(
                     children: [
                       XImage(
                         imagePath: 'assets/images/ic-earth-black.png',
                         width: 40,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'Chuyển khoản nhanh chóng, mọi lúc mọi nơi',
                         style: TextStyle(fontSize: 12),
@@ -260,13 +260,13 @@ class _ConfirmEmailRegisterScreenState
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
+                  const Row(
                     children: [
                       XImage(
                         imagePath: 'assets/images/ic-store-black.png',
                         width: 40,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'Quản lý doanh thu các cửa hàng',
                         style: TextStyle(fontSize: 12),

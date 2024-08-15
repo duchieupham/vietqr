@@ -191,7 +191,7 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                     RichText(
                       text: TextSpan(
                         children: [
-                          TextSpan(
+                          const TextSpan(
                             text: 'Thông tin xác thực đã được gửi đến email ',
                             style: TextStyle(
                               color: AppColor.BLACK,
@@ -200,7 +200,7 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                           ),
                           TextSpan(
                             text: widget.email,
-                            style: TextStyle(
+                            style:const TextStyle(
                               fontSize: 15,
                               color: AppColor.BLACK,
                               fontWeight: FontWeight.bold,
