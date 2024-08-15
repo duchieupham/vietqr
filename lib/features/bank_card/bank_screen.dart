@@ -136,16 +136,13 @@ class _BankScreenState extends State<BankScreen> {
     }
   }
 
-  void getListBank(BuildContext context) {
-    _bloc.add(const BankCardEventGetList());
-  }
-
   void getListQR(BuildContext context, List<QRCreateDTO> list) {
     _bloc.add(QREventGenerateList(list: list));
   }
 
   Future<void> _refresh() async {
-    _bloc.add(const BankCardEventGetList(isGetOverview: true));
+    _bloc.add(
+        const BankCardEventGetList(isGetOverview: true, isLoadInvoice: false));
     // _bloc.add(GetInvoiceOverview());
   }
 

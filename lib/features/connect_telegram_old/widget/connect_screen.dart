@@ -84,7 +84,8 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const ConnectTelegramSuccess()));
+                          builder: (context) =>
+                              const ConnectTelegramSuccess()));
                 }
                 if (state is InsertTeleFailedState) {
                   Navigator.pop(context);
@@ -103,7 +104,7 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                       controller: pageController,
                       physics: const NeverScrollableScrollPhysics(),
                       children: const [
-                        ChooseBankPage(),
+                        // ChooseBankPage(),
                         AddVietQrPage(),
                         SettingTelegramPage(),
                       ],

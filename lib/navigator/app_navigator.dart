@@ -81,8 +81,6 @@ class NavigationService {
 
   static Route<dynamic>? onIniRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Routes.SPLASH:
-        return _buildRoute(settings, const SplashScreen());
       case Routes.APP:
         return _buildRoute(settings, const VietQRApp());
       case Routes.LOGIN:
@@ -146,6 +144,14 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
+      case Routes.SPLASH:
+        Map map = settings.arguments as Map;
+        bool isFromLogin = map['isFromLogin'] ?? false;
+        return _buildRoute(
+            settings,
+            SplashScreen(
+              isFromLogin: isFromLogin,
+            ));
       case Routes.REGISTER:
         Map map = settings.arguments as Map;
         PageController pageController = map['pageController'];

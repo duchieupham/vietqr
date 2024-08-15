@@ -26,7 +26,7 @@ class _BottomSheetAddBankAccountState extends State<BottomSheetAddBankAccount> {
   @override
   void initState() {
     super.initState();
-    _bankBloc.add(BankCardEventGetList());
+    // _bankBloc.add(BankCardEventGetList());
   }
 
   @override

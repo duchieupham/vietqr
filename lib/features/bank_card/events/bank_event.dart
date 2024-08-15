@@ -72,11 +72,13 @@ class SelectTimeEvent extends BankEvent {
 
 class BankCardEventGetList extends BankEvent {
   final bool isGetOverview;
+  final bool isLoadInvoice;
 
-  const BankCardEventGetList({this.isGetOverview = false});
+  const BankCardEventGetList(
+      {this.isGetOverview = false, required this.isLoadInvoice});
 
   @override
-  List<Object?> get props => [isGetOverview];
+  List<Object?> get props => [isGetOverview, isLoadInvoice];
 }
 
 class GetKeyFreeEvent extends BankEvent {

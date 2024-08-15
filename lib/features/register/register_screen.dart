@@ -250,6 +250,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
             if (state.status == BlocStatus.SUCCESS &&
                 state.request == RegisterType.REGISTER) {
+              Navigator.of(context).pop();
               AccountLoginDTO dto = AccountLoginDTO(
                 phoneNo: Provider.of<RegisterProvider>(context, listen: false)
                     .phoneNoController
@@ -270,14 +271,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 isToast: true,
               ));
 
-              Navigator.of(context)
-                  .pushNamed(Routes.CONFIRM_EMAIL_SCREEN, arguments: {
-                'phoneNum':
-                    Provider.of<RegisterProvider>(context, listen: false)
-                        .phoneNoController
-                        .text
-                        .replaceAll(' ', '')
-              });
+              Navigator.of(context).pushReplacementNamed(
+                  Routes.CONFIRM_EMAIL_SCREEN,
+                  arguments: {
+                    'phoneNum':
+                        Provider.of<RegisterProvider>(context, listen: false)
+                            .phoneNoController
+                            .text
+                            .replaceAll(' ', '')
+                  });
             }
           },
           builder: (context, state) {

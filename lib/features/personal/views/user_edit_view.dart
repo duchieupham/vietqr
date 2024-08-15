@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -10,6 +9,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -365,7 +365,7 @@ class _UserEditViewState extends State<UserEditView> {
                                     width: width,
                                     textfieldType: TextfieldType.LABEL,
                                     isObscureText: false,
-                                    title: 'Tên',
+                                    title: 'Tên*',
                                     hintText: '',
                                     controller: _firstNameController,
                                     inputType: TextInputType.text,
@@ -498,8 +498,9 @@ class _UserEditViewState extends State<UserEditView> {
                                 isObscureText: false,
                                 title: 'Email',
                                 hintText: 'user@gmail.com',
+                                inputFormatters: [EmailInputFormatter()],
                                 controller: _emailController,
-                                inputType: TextInputType.text,
+                                inputType: TextInputType.emailAddress,
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);

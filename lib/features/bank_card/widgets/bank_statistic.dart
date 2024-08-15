@@ -148,7 +148,8 @@ class _BankStatisticState extends State<BankStatistic>
 
         if (state.request == BankType.ARRANGE &&
             state.status == BlocStatus.SUCCESS) {
-          _bloc.add(const BankCardEventGetList(isGetOverview: true));
+          _bloc.add(const BankCardEventGetList(
+              isGetOverview: true, isLoadInvoice: false));
           _bloc.add(GetInvoiceOverview());
         }
 

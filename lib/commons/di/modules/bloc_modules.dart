@@ -40,7 +40,6 @@ class BlocModule extends DIModule {
         () => VietQRStoreBloc(),
       )
       ..registerLazySingleton(
-        // (param1, param2) => BankBloc(param1 as BuildContext),
         () => BankBloc(NavigationService.context!),
       )
       ..registerLazySingleton(

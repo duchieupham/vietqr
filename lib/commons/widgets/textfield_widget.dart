@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 
@@ -15,6 +16,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool isObscureText;
   final double? fontSize;
   final TextfieldType? textfieldType;
+  final List<TextInputFormatter>? inputFormatters;
   final String? title;
   final double? titleWidth;
   final bool? autoFocus;
@@ -34,6 +36,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.onChange,
     required this.inputType,
     required this.isObscureText,
+    this.inputFormatters,
     this.fontSize,
     this.textfieldType,
     this.title,
@@ -84,6 +87,7 @@ class TextFieldWidget extends StatelessWidget {
                     focusNode: focusNode,
                     keyboardType: inputType,
                     maxLines: (maxLines == null) ? 1 : maxLines,
+                    inputFormatters: inputFormatters,
                     textInputAction: keyboardAction,
                     decoration: InputDecoration(
                       hintText: hintText,

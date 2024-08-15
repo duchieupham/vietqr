@@ -47,3 +47,53 @@ class UrlInputFormatter extends TextInputFormatter {
     return oldValue;
   }
 }
+
+class UppercaseBankNameInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Remove all characters except letters and spaces, and convert to uppercase
+    String newText =
+        newValue.text.replaceAll(RegExp(r'[^A-Za-z\s]'), '').toUpperCase();
+
+    // Return the formatted value with the cursor at the correct position
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
+class BankAccountInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Remove all characters except digits
+    String newText = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    // Group the digits as per a bank account format (e.g., "xxxx xxxx xxxx xxxx")
+    String formattedText = _formatBankAccount(newText);
+
+    // Maintain the selection position
+    return newValue.copyWith(
+      text: formattedText,
+      selection: TextSelection.collapsed(offset: formattedText.length),
+    );
+  }
+
+  // Format the bank account number (e.g., 4 digits separated by spaces)
+  String _formatBankAccount(String input) {
+    final buffer = StringBuffer();
+    for (int i = 0; i < input.length; i++) {
+      if (i > 0 && i % 4 == 0) {
+        buffer.write(' ');
+      }
+      buffer.write(input[i]);
+    }
+    return buffer.toString();
+  }
+}

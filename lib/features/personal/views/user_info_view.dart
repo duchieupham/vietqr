@@ -163,7 +163,7 @@ class _UserInfoViewState extends State<UserInfoView> {
         //   },
         // ),
         appBar: AppBar(
-          leadingWidth: appbarNotifier.value ? 400 : 120,
+          leadingWidth: 250,
           elevation: 0,
           backgroundColor: Colors.white,
           forceMaterialTransparency: true,
@@ -1015,7 +1015,12 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                     left: 8),
                                                 child: InkWell(
                                                   onTap: () {
-                                                    'haha';
+                                                    NavigatorUtils.navigatePage(
+                                                        context,
+                                                        const VerifyEmailScreen(),
+                                                        routeName:
+                                                            VerifyEmailScreen
+                                                                .routeName);
                                                   },
                                                   child: ClipOval(
                                                     child: Container(
