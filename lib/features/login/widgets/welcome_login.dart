@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/features/login/login_screen.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 class WelcomeLoginScreen extends StatefulWidget {
   const WelcomeLoginScreen({Key? key}) : super(key: key);
@@ -21,14 +22,15 @@ class _WelcomeLoginScreenState extends State<WelcomeLoginScreen> {
       });
     });
     Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-            settings: const RouteSettings(
-              name: Routes.LOGIN,
-            )),
-        (Route<dynamic> route) => false,
-      );
+      NavigationService.pushAndRemoveUntil(Routes.LOGIN);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //   MaterialPageRoute(
+      //       builder: (context) => const LoginScreen(),
+      //       settings: const RouteSettings(
+      //         name: Routes.LOGIN,
+      //       )),
+      //   (Route<dynamic> route) => false,
+      // );
     });
   }
 
