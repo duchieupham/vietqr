@@ -110,7 +110,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
                 ),
               ),
               DefaultTextStyle(
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColor.BLACK,
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -173,10 +173,11 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
                 child: Container(
                   width: double.infinity,
                   height: 50,
-                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                           colors: [
                             Color(0xFFE1EFFF),
                             Color(0xFFE5F9FF),
@@ -185,7 +186,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
                           end: Alignment.centerRight)),
                   child: Center(
                     child: DefaultTextStyle(
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppColor.BLACK,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

@@ -17,6 +17,7 @@ import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/cubits/pin_cubit.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/page/confirm_email.register.dart';
@@ -49,13 +50,10 @@ class Register extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<RegisterBloc>(
-      create: (BuildContext context) => RegisterBloc(),
-      child: RegisterScreen(
-        phoneNo: phoneNo,
-        isFocus: isFocus,
-        pageController: pageController,
-      ),
+    return RegisterScreen(
+      phoneNo: phoneNo,
+      isFocus: isFocus,
+      pageController: pageController,
     );
   }
 }
@@ -76,12 +74,16 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late RegisterBloc _bloc;
-  late LoginBloc _loginBloc;
+  late final LoginBloc _loginBloc = getIt.get<LoginBloc>(
+      param1: context, param2: getIt.get<LoginRepository>());
+
+  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
+
   final _phoneNoController = TextEditingController();
   final focusNode = FocusNode();
-  // final PageController pageController = PageController();
+
   final controller = ScrollController();
+
   late RegisterProvider _registerProvider;
 
   // final auth = FirebaseAuth.instance;
@@ -89,6 +91,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initialServices(BuildContext context) {
     if (StringUtils.instance.isNumeric(widget.phoneNo)) {
       _registerProvider.updatePhone(widget.phoneNo);
+
+      _registerBloc.add(RegisterEventUpdatePhone(phone: widget.phoneNo));
+
       _phoneNoController.value =
           _phoneNoController.value.copyWith(text: widget.phoneNo);
     }
@@ -101,9 +106,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    _bloc = BlocProvider.of(context);
-    _loginBloc = getIt.get<LoginBloc>(
-        param1: context, param2: getIt.get<LoginRepository>());
+    // _registerBloc = BlocProvider.of(context);
+    // _pinCubit = PinCubit();
     _registerProvider = Provider.of<RegisterProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
@@ -127,46 +131,125 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return BlocConsumer<RegisterBloc, RegisterState>(
+          bloc: _registerBloc,
           listener: (context, state) async {
-            if (state is RegisterLoadingState ||
-                state is RegisterSentOTPLoadingState) {
+            // if (state is RegisterLoadingState ||
+            //     state is RegisterSentOTPLoadingState) {
+            //   DialogWidget.instance.openLoadingDialog();
+            // }
+            if ((state.status == BlocStatus.LOADING &&
+                    state.request == RegisterType.REGISTER) ||
+                (state.status == BlocStatus.LOADING &&
+                    state.request == RegisterType.SENT_OPT)) {
               DialogWidget.instance.openLoadingDialog();
             }
-
-            if (state is RegisterSentOTPSuccessState) {
+            // if (state is RegisterSentOTPSuccessState) {
+            //   Navigator.pop(context);
+            //   DialogWidget.instance
+            //       .showModalBottomContent(
+            //         widget: VerifyOTPView(
+            //           phone: _phoneNoController.text,
+            //           onChangePage: (index) async {
+            //             onRegister(provider, height);
+            //           },
+            //           onVerifyOTP: provider.verifyOTP,
+            //           onResendOTP: provider.phoneAuthentication(
+            //               _phoneNoController.text, onSentOtp: (type) {
+            //             _registerBloc.add(RegisterEventSentOTP(typeOTP: type));
+            //           }),
+            //         ),
+            //         height: height * 0.5,
+            //       )
+            //       .then((value) => isOpenOTP = false);
+            // }
+            if (state.status == BlocStatus.SUCCESS &&
+                state.request == RegisterType.SENT_OPT) {
               Navigator.pop(context);
               DialogWidget.instance
                   .showModalBottomContent(
                     widget: VerifyOTPView(
                       phone: _phoneNoController.text,
                       onChangePage: (index) async {
-                        onRegister(provider, height);
+                        onRegister(provider, height, _registerBloc);
                       },
-                      onVerifyOTP: provider.verifyOTP,
-                      onResendOTP: provider.phoneAuthentication(
-                          _phoneNoController.text, onSentOtp: (type) {
-                        _bloc.add(RegisterEventSentOTP(typeOTP: type));
-                      }),
+                      registerBloc: _registerBloc,
+                      // onVerifyOTP: provider.verifyOTP,
+                      // onResendOTP: provider.phoneAuthentication(
+                      //     _phoneNoController.text, onSentOtp: (type) {
+                      //   _registerBloc.add(RegisterEventSentOTP(typeOTP: type));
+                      // }),
                     ),
                     height: height * 0.5,
                   )
                   .then((value) => isOpenOTP = false);
             }
 
-            if (state is RegisterSentOTPFailedState) {
+            // if (state is RegisterSentOTPFailedState) {
+            //   Navigator.pop(context);
+            //   onRegister(provider, height);
+            // }
+
+            if (state.status == BlocStatus.ERROR &&
+                state.request == RegisterType.SENT_OPT) {
               Navigator.pop(context);
-              onRegister(provider, height);
+              onRegister(provider, height, _registerBloc);
             }
 
-            if (state is RegisterFailedState) {
-              Navigator.pop(context);
-              provider.updatePage(0);
-              DialogWidget.instance.openMsgDialog(
-                title: 'Không thể đăng ký',
-                msg: state.msg,
-              );
+            // if (state is RegisterFailedState) {
+            //   Navigator.pop(context);
+            //   provider.updatePage(0);
+            //   DialogWidget.instance.openMsgDialog(
+            //     title: 'Không thể đăng ký',
+            //     msg: state.msg,
+            //   );
+            // }
+            if (state.status == BlocStatus.ERROR &&
+                state.request == RegisterType.REGISTER) {
+              final msg = state.msg;
+              if (msg != null) {
+                Navigator.pop(context);
+                provider.updatePage(0);
+                DialogWidget.instance.openMsgDialog(
+                  title: 'Không thể đăng ký',
+                  msg: msg,
+                );
+              }
             }
-            if (state is RegisterSuccessState) {
+
+            // if (state is RegisterSuccessState) {
+            //   AccountLoginDTO dto = AccountLoginDTO(
+            //     phoneNo: Provider.of<RegisterProvider>(context, listen: false)
+            //         .phoneNoController
+            //         .text,
+            //     password: EncryptUtils.instance.encrypted(
+            //       Provider.of<RegisterProvider>(context, listen: false)
+            //           .phoneNoController
+            //           .text,
+            //       Provider.of<RegisterProvider>(context, listen: false)
+            //           .passwordController
+            //           .text,
+            //     ),
+            //   );
+            //   _loginBloc.add(LoginEventByPhone(
+            //     dto: dto,
+            //     isToast: true,
+            //   ));
+            //   Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //       builder: (context) => ConfirmEmailRegisterScreen(
+            //         phoneNum:
+            //             Provider.of<RegisterProvider>(context, listen: false)
+            //                 .phoneNoController
+            //                 .text
+            //                 .replaceAll(' ', ''),
+            //       ),
+            //     ),
+            //   );
+            // }
+
+            if (state.status == BlocStatus.SUCCESS &&
+                state.request == RegisterType.REGISTER) {
               AccountLoginDTO dto = AccountLoginDTO(
                 phoneNo: Provider.of<RegisterProvider>(context, listen: false)
                     .phoneNoController
@@ -235,7 +318,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 backgroundColor: AppColor.WHITE,
                 resizeToAvoidBottomInset: true,
                 bottomNavigationBar:
-                    _bottom(width, height, viewInsets, provider),
+                    _bottom(width, height, viewInsets, provider, state),
                 body: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   height: MediaQuery.of(context).size.height,
@@ -314,7 +397,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _bottom(double width, double height, EdgeInsets viewInsets,
-      RegisterProvider provider) {
+      RegisterProvider provider, RegisterState state) {
     return (PlatformUtils.instance.checkResize(width))
         ? const SizedBox()
         : Consumer<RegisterProvider>(
@@ -361,6 +444,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     // if (!provider.isShowButton)
                     SizedBox(height: viewInsets.bottom),
                     const SizedBox(height: 10),
+                    // if (!state.isShowButton)
+                    //   SizedBox(height: viewInsets.bottom),
+                    // const SizedBox(height: 10),
                   ],
                 ),
               );
@@ -384,7 +470,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       builder: (context, provider, child) {
         return VietQRButton.gradient(
           onPressed: () async {
-            onRegister(provider, height);
+            onRegister(provider, height, _registerBloc);
             Provider.of<PinProvider>(context, listen: false).reset();
           },
           isDisabled: !provider.isEnableButton(),
@@ -501,7 +587,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 colorEnableText: AppColor.BLUE_TEXT,
                 border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
                 onTap: () async {
-                  onRegister(provider, height);
+                  onRegister(provider, height, _registerBloc);
                   Provider.of<PinProvider>(context, listen: false).reset();
                 },
               ),
@@ -516,7 +602,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 margin: const EdgeInsets.only(bottom: 2, left: 40, right: 40),
                 height: 50,
                 onTap: () async {
-                  onRegister(provider, height);
+                  onRegister(provider, height, _registerBloc);
                   Provider.of<PinProvider>(context, listen: false).reset();
                 },
               ),
@@ -527,8 +613,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  onRegister(provider, height) async {
-    provider.updateHeight(height, true);
+  onRegister(provider, height, RegisterBloc bloc) async {
+    // provider.updateHeight(height, true);
+    bloc.add(RegisterEventUpdateHeight(height: height, showBT: true));
 
     String phone = provider.phoneNoController.text.replaceAll(' ', '');
 
@@ -557,7 +644,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         platform: PlatformUtils.instance.isIOsApp() ? 'MOBILE' : 'MOBILE_ADR',
       );
       if (!mounted) return;
-      context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));
+      // context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));
+      _registerBloc.add(RegisterEventSubmit(dto: dto));
     }
   }
 

@@ -11,6 +11,8 @@ import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/my_vietqr/bloc/vietqr_store_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/repositories/register_repository.dart';
 import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
@@ -64,6 +66,11 @@ class BlocModule extends DIModule {
         (param1, param2) => LoginBloc(
           param1 as BuildContext,
           getIt.get<LoginRepository>(),
+        ),
+      )
+      ..registerFactoryParam(
+        (param1, param2) => RegisterBloc(
+          getIt.get<RegisterRepository>(),
         ),
       );
   }

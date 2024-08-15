@@ -287,7 +287,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
               : const SizedBox.shrink(),
           const SizedBox(height: 8),
           VietQRButton.gradient(
-              margin: EdgeInsets.symmetric(horizontal: 30),
+              margin: const EdgeInsets.symmetric(horizontal: 30),
               onPressed: widget.onRegister!,
               isDisabled: false,
               child: const Center(
@@ -582,7 +582,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             // const SizedBox(height: 16),
             const Spacer(),
             ShaderMask(
-              shaderCallback: (bounds) => LinearGradient(
+              shaderCallback: (bounds) => const LinearGradient(
                 colors: [
                   Color(0xFF9CD740),
                   Color(0xFF2BACE6),
