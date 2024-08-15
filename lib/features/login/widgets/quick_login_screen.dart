@@ -565,6 +565,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 );
                 widget.onLogin(dto);
               },
+              isDisabled: !(widget.pinController.text.length >= 6),
               child: Center(
                 child: Text(
                   'Đăng nhập',
@@ -575,7 +576,6 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                   ),
                 ),
               ),
-              isDisabled: !(widget.pinController.text.length >= 6),
             ),
           ),
           SizedBox(height: height < 800 ? 0 : 16),

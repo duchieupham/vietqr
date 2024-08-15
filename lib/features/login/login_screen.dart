@@ -1068,15 +1068,11 @@ extension _LoginScreenFunction on _LoginScreenState {
     updateInfoUser(null);
     Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
 
-    final data = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) =>
-            Register(pageController: pageController, isFocus: true),
-        settings: const RouteSettings(
-          name: Routes.REGISTER,
-        ),
-      ),
-    );
+    final data =
+        await Navigator.of(context).pushNamed(Routes.REGISTER, arguments: {
+      'pageController': pageController,
+      'isFocus': true,
+    });
 
     if (data is Map) {
       AccountLoginDTO dto = AccountLoginDTO(

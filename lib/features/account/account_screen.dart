@@ -1,7 +1,11 @@
 import 'dart:io';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/features/login/blocs/login_bloc.dart';
+import 'package:vierqr/features/login/events/login_event.dart';
+import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -647,7 +651,8 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
                 const Divider(),
                 _buildItem(
                   onTap: () async {
-                    NavigatorUtils.navigatePage(context, const VietQRIDCardView(),
+                    NavigatorUtils.navigatePage(
+                        context, const VietQRIDCardView(),
                         routeName: VietQRIDCardView.routeName);
                   },
                   urlImage: 'assets/images/ic-vietqr-id-setting.png',

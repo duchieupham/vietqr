@@ -24,6 +24,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
     super.initState();
     if (kDebugMode) {
       phoneNoController.text = '0373568944';
+      isEnableButton.value = true;
     }
   }
 

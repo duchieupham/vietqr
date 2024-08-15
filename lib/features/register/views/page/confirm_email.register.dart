@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/register/views/page/confirm_otp_register.dart';
 import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
@@ -14,6 +16,7 @@ import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/layouts/register_app_bar.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
@@ -58,7 +61,7 @@ class _ConfirmEmailRegisterScreenState
   }
 
   String get userId => SharePrefUtils.getProfile().userId.trim();
-  bool _onHomeCalled = false;
+  // bool _onHomeCalled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -312,28 +315,23 @@ class _ConfirmEmailRegisterScreenState
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => FormRegisterSuccessSplash(
-                          onHome: () {
-                            _onHomeCalled = true;
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                            backToPreviousPage(context, true);
-                          },
-                        ),
-                      ),
-                    );
-                    Future.delayed(const Duration(seconds: 15), () {
-                      if (!_onHomeCalled) {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        backToPreviousPage(context, true);
-                      }
-                    });
+                    NavigationService.push(Routes.REGISTER_SPLASH_SCREEN);
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => FormRegisterSuccessSplash(
+                    //         // onHome: () {
+                    //         //   _onHomeCalled = true;
+                    //         //   // Navigator.of(context).popUntil((route) => route.,);
+                    //         //   // Navigator.of(context).pop();
+                    //         //   // Navigator.of(context).pop();
+                    //         //   // Navigator.of(context).pop();
+                    //         //   // backToPreviousPage(context, true);
+
+                    //         // },
+                    //         ),
+                    //   ),
+                    // );
                   },
                   child: ShaderMask(
                     shaderCallback: (bounds) => const LinearGradient(
@@ -360,7 +358,8 @@ class _ConfirmEmailRegisterScreenState
     Navigator.pop(context, {
       'phone': Provider.of<RegisterProvider>(context, listen: false)
           .phoneNoController
-          .text,
+          .text
+          .replaceAll(' ', ''),
       'password': Provider.of<RegisterProvider>(context, listen: false)
           .passwordController
           .text,
