@@ -90,6 +90,8 @@ class NavigationService {
 
       case Routes.DASHBOARD:
         return _buildRoute(settings, const DashBoardScreen());
+      case Routes.ACCOUNT:
+        return _buildRoute(settings, const AccountScreen());
       case Routes.USER_EDIT:
         return _buildRoute(settings, const UserEditView());
       case Routes.USER_INFO:
