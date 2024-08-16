@@ -58,7 +58,7 @@ class UserEditProvider with ChangeNotifier {
   void checkValidEmail(String email) {
     final emailRegex = RegExp(
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
-    _isEmailErr = emailRegex.hasMatch(email);
+    _isEmailErr = !emailRegex.hasMatch(email);
     notifyListeners();
   }
 

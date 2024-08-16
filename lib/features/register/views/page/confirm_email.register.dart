@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/page/confirm_otp_register.dart';
@@ -164,6 +165,7 @@ class _ConfirmEmailRegisterScreenState
                     hintText: '',
                     inputType: TextInputType.emailAddress,
                     keyboardAction: TextInputAction.next,
+                    inputFormatter: [EmailInputFormatter()],
                     onSubmitted: (value) {
                       validateEmail(_emailController.text);
                       bool isValidEmail = _emailError == null &&
