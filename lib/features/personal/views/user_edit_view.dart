@@ -342,6 +342,9 @@ class _UserEditViewState extends State<UserEditView> {
                                     hintText: '',
                                     controller: _lastNameController,
                                     inputType: TextInputType.text,
+                                    inputFormatters: [
+                                      VietnameseNameOnlyTextInputFormatter()
+                                    ],
                                     keyboardAction: TextInputAction.next,
                                     onChange: (value) {
                                       provider.setAvailableUpdate(true);
@@ -356,6 +359,9 @@ class _UserEditViewState extends State<UserEditView> {
                                     hintText: '',
                                     controller: _middleNameController,
                                     inputType: TextInputType.text,
+                                    inputFormatters: [
+                                      VietnameseNameOnlyTextInputFormatter()
+                                    ],
                                     keyboardAction: TextInputAction.next,
                                     onChange: (value) {
                                       provider.setAvailableUpdate(true);
@@ -371,6 +377,9 @@ class _UserEditViewState extends State<UserEditView> {
                                     controller: _firstNameController,
                                     inputType: TextInputType.text,
                                     keyboardAction: TextInputAction.next,
+                                    inputFormatters: [
+                                      VietnameseNameOnlyTextInputFormatter()
+                                    ],
                                     onChange: (value) {
                                       provider.setAvailableUpdate(true);
                                     },
@@ -505,7 +514,22 @@ class _UserEditViewState extends State<UserEditView> {
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);
+                                  provider
+                                      .checkValidEmail(_emailController.text);
                                 },
+                              ),
+                            ),
+                            Visibility(
+                              visible: !provider.isValidEmail,
+                              child: const Padding(
+                                padding: EdgeInsets.only(top: 5, left: 5),
+                                child: Text(
+                                  'Email không hợp lệ.',
+                                  style: TextStyle(
+                                    color: AppColor.RED_TEXT,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(top: 10)),
@@ -522,7 +546,7 @@ class _UserEditViewState extends State<UserEditView> {
                                 hintText: 'Nhập CCCD',
                                 maxLength: 12,
                                 controller: _nationalIdController,
-                                inputType: TextInputType.text,
+                                inputType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
                                     RegExp(
@@ -555,7 +579,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   ),
                                 ],
                                 controller: _oldNationalIdController,
-                                inputType: TextInputType.text,
+                                inputType: TextInputType.number,
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);
@@ -633,7 +657,7 @@ class _UserEditViewState extends State<UserEditView> {
                                         textInputAction: TextInputAction.done,
                                         maxLength: 1000,
                                         inputFormatters: [
-                                          VietnameseNameInputFormatter()
+                                          VietnameseNameLongTextInputFormatter()
                                         ],
                                         decoration:
                                             const InputDecoration.collapsed(
@@ -703,7 +727,7 @@ class _UserEditViewState extends State<UserEditView> {
                     child: Consumer<UserEditProvider>(
                       builder: (context, provider, child) {
                         return Visibility(
-                          visible: provider.availableUpdate,
+                          visible: (provider.availableUpdate && provider.isValidEmail),
                           child: ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật',

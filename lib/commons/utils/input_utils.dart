@@ -9,13 +9,44 @@ class VietnameseNameInputFormatter extends TextInputFormatter {
     final RegExp regExp = RegExp(
       r'^[a-zA-ZÀ-ỹẠ-ỵ0-9\s]*$',
     );
-
     if (regExp.hasMatch(newValue.text)) {
       return newValue;
     }
     return oldValue;
   }
 }
+class VietnameseNameOnlyTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final RegExp regExp = RegExp(
+      r'^[a-zA-ZÀ-ỹẠ-ỵ\s]*$',
+    );
+    if (regExp.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
+class VietnameseNameLongTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final RegExp regExp = RegExp(
+      r'^[a-zA-ZÀ-ỹẠ-ỵ0-9\s,.]*$',
+    );
+    if (regExp.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
 
 class EmailInputFormatter extends TextInputFormatter {
   final RegExp _emailRegExp = RegExp(r'[a-zA-Z0-9@._-]*$');

@@ -74,6 +74,7 @@ class TextFieldWidget extends StatelessWidget {
                 Flexible(
                   child: TextField(
                     obscureText: isObscureText,
+                   
                     controller: controller,
                     onChanged: onChange,
                     textAlign:
