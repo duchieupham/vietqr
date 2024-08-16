@@ -39,7 +39,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
   Widget build(BuildContext context) {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, page, child) {
         File file = page.bannerApp;
         return Container(
@@ -181,7 +181,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         });
   }
 
-  _buildAvatar(AuthProvider provider) {
+  _buildAvatar(AuthenProvider provider) {
     String imgId = SharePrefUtils.getProfile().imgId;
     return GestureDetector(
       onTap: () => NavigatorUtils.navigatePage(

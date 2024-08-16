@@ -13,23 +13,18 @@ import 'package:vierqr/commons/utils/user_information_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
-import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
-import 'package:vierqr/features/register/cubits/pin_cubit.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/utils/register_utils.dart';
-import 'package:vierqr/features/register/views/page/confirm_email.register.dart';
 import 'package:vierqr/features/register/views/page/form_confirm_password.dart';
 import 'package:vierqr/features/register/views/page/form_password.dart';
 import 'package:vierqr/features/register/views/page/form_phone.dart';
-import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/register/views/page/referral_code.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/n_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
@@ -137,10 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         //     state is RegisterSentOTPLoadingState) {
         //   DialogWidget.instance.openLoadingDialog();
         // }
-        if ((state.status == BlocStatus.LOADING &&
-                state.request == RegisterType.REGISTER) ||
-            (state.status == BlocStatus.LOADING &&
-                state.request == RegisterType.SENT_OPT)) {
+        if (state.status == BlocStatus.LOADING) {
           DialogWidget.instance.openLoadingDialog();
         }
         // if (state is RegisterSentOTPSuccessState) {
@@ -262,8 +254,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             dto: dto,
             isToast: true,
           ));
-          NavigationService.pushAndRemoveUntil(Routes.CONFIRM_EMAIL_SCREEN,
-              arguments: {'phoneNum': state.phoneNumber.replaceAll(' ', '')});
+          await NavigationService.pushAndRemoveUntil(Routes.CONFIRM_EMAIL_SCREEN,
+              arguments: {
+                'phoneNum': state.phoneNumber.replaceAll(' ', ''),
+                'registerBloc': _registerBloc
+              });
           // Navigator.of(context).pushReplacementNamed(
           //     Routes.CONFIRM_EMAIL_SCREEN,
           //     arguments: {'phoneNum': state.phoneNumber.replaceAll(' ', '')});
@@ -345,6 +340,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 pageController: widget.pageController,
                                 phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
+                                registerBloc: _registerBloc,
                                 onExistPhone: (value) {
                                   _loginBloc
                                       .add(CheckExitsPhoneEvent(phone: value));
@@ -378,18 +374,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       : const SizedBox.shrink(),
                   // provider.page == 1
                   state.page == 1
-                      ? const ReferralCode()
+                      ? ReferralCode(
+                          bloc: _registerBloc,
+                        )
                       : const SizedBox.shrink(),
                   // provider.page == 2
                   state.page == 2
                       ? FormPassword(
                           isFocus: true,
+                          registerBloc: _registerBloc,
                         )
                       : const SizedBox.shrink(),
                   // provider.page == 3
                   state.page == 3
                       ? FormConfirmPassword(
                           isFocus: true,
+                          registerBloc: _registerBloc,
                           onEnterIntro: (value) {
                             // provider.updatePage(value);
                             _registerBloc
@@ -470,42 +470,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
           );
   }
 
-  void backToPreviousPage(
-      BuildContext context, bool isRegisterSuccess, RegisterState state) {
-    Navigator.pop(context, {
-      // 'phone': Provider.of<RegisterProvider>(context, listen: false)
-      //     .phoneNoController
-      //     .text,
-      // 'password': Provider.of<RegisterProvider>(context, listen: false)
-      //     .passwordController
-      //     .text,
-      'phone': state.phoneNumber,
-      'password': state.password
-    });
-  }
+  // void backToPreviousPage(
+  //     BuildContext context, bool isRegisterSuccess, RegisterState state) {
+  //   Navigator.pop(context, {
+  //     // 'phone': Provider.of<RegisterProvider>(context, listen: false)
+  //     //     .phoneNoController
+  //     //     .text,
+  //     // 'password': Provider.of<RegisterProvider>(context, listen: false)
+  //     //     .passwordController
+  //     //     .text,
+  //     'phone': state.phoneNumber,
+  //     'password': state.password
+  //   });
+  // }
 
   Widget _buildButtonSubmitFormConfirmPassword(
       double height, RegisterState state) {
-    // return Consumer<RegisterProvider>(
-    //   builder: (context, provider, child) {
-    //     return VietQRButton.gradient(
-    //       onPressed: () async {
-    //         onRegister(provider, height, _registerBloc);
-    //         Provider.of<PinProvider>(context, listen: false).reset();
-    //       },
-    //       isDisabled: !provider.isEnableButton(),
-    //       child: Center(
-    //         child: Text(
-    //           'Đăng ký',
-    //           style: TextStyle(
-    //             color:
-    //                 provider.isEnableButton() ? AppColor.WHITE : AppColor.BLACK,
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
     return VietQRButton.gradient(
       onPressed: () async {
         onRegister(height, _registerBloc, state);

@@ -46,6 +46,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/splash_screen.dart';
@@ -84,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
   final BankBloc _bankBloc = getIt.get<BankBloc>();
   final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   late final LoginBloc _bloc = getIt.get<LoginBloc>(param1: context);
-  late AuthProvider _authProvider;
+  late AuthenProvider _authProvider;
   var controller = StreamController<AccountLoginDTO?>.broadcast();
 
   //0: trang login ban đầu
@@ -105,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
 
     init();
 
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _authProvider = Provider.of<AuthenProvider>(context, listen: false);
     code = uuid.v1();
 
     controller.stream.listen((value) async {
@@ -163,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                 renderFormLogin(),
                 renderLoginByAccountBeforeThat(),
                 renderPasswordBeforeThat(),
-                Consumer<AuthProvider>(
+                Consumer<AuthenProvider>(
                   builder: (context, provider, child) {
                     return Positioned(
                       bottom: 80,
@@ -757,13 +758,15 @@ extension _LoginScreenFunction on _LoginScreenState {
         updateInfoUser(infoUser);
         _saveAccount();
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SplashScreen(isFromLogin: true),
-          settings: RouteSettings(name: SplashScreen.routeName),
-        ),
-      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => const SplashScreen(isFromLogin: true),
+      //     settings: RouteSettings(name: SplashScreen.routeName),
+      //   ),
+      // );
+      NavigationService.pushAndRemoveUntil(Routes.SPLASH,
+          arguments: {'isFromLogin': true});
       // Navigator.pushAndRemoveUntil(
       //     context,
       //     MaterialPageRoute(

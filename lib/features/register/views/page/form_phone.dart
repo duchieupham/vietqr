@@ -13,31 +13,35 @@ class FormPhone extends StatefulWidget {
   final PageController pageController;
   final bool isFocus;
   final Function(String) onExistPhone;
+  final RegisterBloc registerBloc;
 
   const FormPhone(
       {super.key,
       required this.pageController,
       required this.phoneController,
       required this.isFocus,
-      required this.onExistPhone});
+      required this.onExistPhone, required this.registerBloc});
 
   @override
   State<FormPhone> createState() => _FormPhoneState();
 }
 
 class _FormPhoneState extends State<FormPhone> {
-  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
+  // final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   @override
   void initState() {
     super.initState();
-    widget.phoneController.text = '';
+    // widget.phoneController.text = '';
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterBloc, RegisterState>(
-      bloc: _registerBloc,
+      bloc: widget.registerBloc,
       builder: (context, state) {
+        if (state.phoneNumber.isEmpty) {
+          widget.phoneController.text = '';
+        }
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +90,7 @@ class _FormPhoneState extends State<FormPhone> {
               ),
               PhoneWidget(
                 onChanged: (value) {
-                  _registerBloc.add(RegisterEventUpdatePhone(phone: value));
+                  widget.registerBloc.add(RegisterEventUpdatePhone(phone: value));
                 },
                 onSubmit: (value) {
                   String text = value.replaceAll(' ', '');

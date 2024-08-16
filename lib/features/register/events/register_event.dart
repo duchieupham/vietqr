@@ -171,3 +171,20 @@ class RegisterEventVerifyOTP extends RegisterEvent {
   @override
   List<Object?> get props => [otp];
 }
+
+class RegisterEventRefresh extends RegisterEvent {
+  const RegisterEventRefresh();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class RegisterEventLoginAfterRegister extends RegisterEvent {
+  final bool isToast;
+
+  const RegisterEventLoginAfterRegister(
+      {this.isToast = false});
+
+  @override
+  List<Object?> get props => [];
+}

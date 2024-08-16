@@ -63,7 +63,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+      Provider.of<AuthenProvider>(context, listen: false).initThemeDTO();
       Provider.of<PinProvider>(context, listen: false).reset();
     });
   }

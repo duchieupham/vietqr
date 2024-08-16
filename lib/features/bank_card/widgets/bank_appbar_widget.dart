@@ -206,7 +206,7 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
 
   Widget _buildAvatar() {
     String imgId = SharePrefUtils.getProfile().imgId;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return InkWell(
             onTap: () async {

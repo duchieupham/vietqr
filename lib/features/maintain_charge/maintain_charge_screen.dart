@@ -1,4 +1,3 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -145,14 +144,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
 
   void onSubmit() {
     isClear = false;
-    Provider.of<AuthProvider>(context, listen: false).checkStateLogin(false);
+    Provider.of<AuthenProvider>(context, listen: false).checkStateLogin(false);
     String phone = SharePrefUtils.getPhone();
     DialogWidget.instance.openConfirmPassDialog(
       editingController: _editingController,
       title: "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
       onClose: () {
         Provider.of<PinProvider>(context, listen: false).reset();
-        Provider.of<AuthProvider>(context, listen: false)
+        Provider.of<AuthenProvider>(context, listen: false)
             .checkStateLogin(false);
         Navigator.of(context).pop();
       },
@@ -523,7 +522,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   ),
                   Text(
                     "TK ${value.bankName} - ${value.bankAccount}",
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ],
               );
@@ -584,7 +584,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   onPressed: () {
                     _controller.clear();
                     isClear = true;
-                    Provider.of<AuthProvider>(context, listen: false)
+                    Provider.of<AuthenProvider>(context, listen: false)
                         .checkStateLogin(false);
                     setState(() {
                       keyValue = '';
@@ -710,7 +710,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Provider.of<AuthProvider>(context, listen: false)
+                          Provider.of<AuthenProvider>(context, listen: false)
                               .checkStateLogin(false);
                           String phone = SharePrefUtils.getPhone();
                           DialogWidget.instance.openConfirmPassDialog(
@@ -719,7 +719,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                             onClose: () {
                               Provider.of<PinProvider>(context, listen: false)
                                   .reset();
-                              Provider.of<AuthProvider>(context, listen: false)
+                              Provider.of<AuthenProvider>(context,
+                                      listen: false)
                                   .checkStateLogin(false);
                               Navigator.of(context).pop();
                             },

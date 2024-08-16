@@ -63,7 +63,7 @@ class _BodyWidget extends StatefulWidget {
 
 class _BodyWidgetState extends State<_BodyWidget> {
   late TransactionBloc _bloc;
-  late AuthProvider authProvider;
+  late AuthenProvider authProvider;
 
   final noteController = TextEditingController();
 
@@ -76,7 +76,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
     super.initState();
     // _bloc = BlocProvider.of(context);
     _bloc = getIt.get<TransactionBloc>(param1: widget.transactionId);
-    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider = Provider.of<AuthenProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
     });
@@ -266,8 +266,9 @@ class _BodyWidgetState extends State<_BodyWidget> {
                                       isObscureText: false,
                                       fillColor: AppColor.WHITE,
                                       title: '',
-                                      contentPadding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 16),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 16),
                                       controller: noteController,
                                       hintText: 'Nhập ghi chú tại đây',
                                       inputType: TextInputType.text,

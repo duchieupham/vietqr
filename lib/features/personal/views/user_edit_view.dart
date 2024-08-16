@@ -733,7 +733,7 @@ class _UserEditViewState extends State<UserEditView> {
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
     String imgId = SharePrefUtils.getProfile().imgId;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return (provider.avatarUser.path.isNotEmpty)
             ? AmbientAvatarWidget(

@@ -476,6 +476,7 @@ enum RegisterType {
   UPDATE_PAGE,
   VERIFY_OTP,
   PHONE_AUTHENTICATION,
+  LOGIN_AFTER_REGISTER
 }
 
 enum TransactionType {

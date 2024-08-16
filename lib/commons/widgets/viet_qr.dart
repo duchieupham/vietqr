@@ -35,7 +35,7 @@ class _VietQrState extends State<VietQr> {
   void initState() {
     super.initState();
     // Bật chế độ giữ màn hình sáng
-    if (Provider.of<AuthProvider>(context, listen: false)
+    if (Provider.of<AuthenProvider>(context, listen: false)
         .settingDTO
         .keepScreenOn) {
       Wakelock.enable();

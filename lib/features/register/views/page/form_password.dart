@@ -13,9 +13,11 @@ import '../../../../services/providers/pin_provider.dart';
 
 class FormPassword extends StatefulWidget {
   bool isFocus;
+  final RegisterBloc registerBloc;
   FormPassword({
     super.key,
     required this.isFocus,
+    required this.registerBloc
   });
 
   @override
@@ -25,18 +27,18 @@ class FormPassword extends StatefulWidget {
 class _FormPasswordState extends State<FormPassword> {
   final repassFocus = FocusNode();
   final PageController pageController = PageController();
-  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
+  // final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
 
   @override
   void initState() {
     super.initState();
-    _registerBloc.add(const RegisterEventResetPassword());
+    widget.registerBloc.add(const RegisterEventResetPassword());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterBloc, RegisterState>(
-      bloc: _registerBloc,
+      bloc: widget.registerBloc,
       builder: (context, state) {
         return SingleChildScrollView(
           physics: const NeverScrollableScrollPhysics(),
@@ -101,7 +103,7 @@ class _FormPasswordState extends State<FormPassword> {
                     focusNode: repassFocus,
                     onChanged: (text) {},
                     onCompleted: (value) {
-                      _registerBloc
+                      widget.registerBloc
                           .add(RegisterEventUpdatePassword(password: value));
                       if (value.length == 6) {
                         repassFocus.requestFocus();
@@ -114,7 +116,7 @@ class _FormPasswordState extends State<FormPassword> {
                         Provider.of<PinProvider>(context, listen: false)
                             .reset();
 
-                        _registerBloc
+                        widget.registerBloc
                             .add(const RegisterEventUpdatePage(page: 3));
 
                         pageController.animateToPage(3,

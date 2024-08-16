@@ -13,7 +13,7 @@ class CustomerVaHeaderWidget extends StatelessWidget
 
   const CustomerVaHeaderWidget({
     super.key,
-  })  : preferredSize = const Size.fromHeight(60);
+  }) : preferredSize = const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class CustomerVaHeaderWidget extends StatelessWidget
               height: 40,
               margin: const EdgeInsets.only(right: 20),
               child: CachedNetworkImage(
-                imageUrl: Provider.of<AuthProvider>(context, listen: false)
+                imageUrl: Provider.of<AuthenProvider>(context, listen: false)
                     .settingDTO
                     .logoUrl,
                 height: 40,

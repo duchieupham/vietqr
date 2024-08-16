@@ -1,18 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/pin_code_input.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 
-import '../../../../commons/constants/configurations/numeral.dart';
 import '../../../../commons/constants/configurations/theme.dart';
-import '../../../../commons/widgets/pin_widget_register.dart';
-import '../../../../services/providers/register_provider.dart';
 
 class FormConfirmPassword extends StatefulWidget {
+  final RegisterBloc registerBloc;
   final Function(int) onEnterIntro;
   bool isFocus;
 
@@ -20,6 +17,7 @@ class FormConfirmPassword extends StatefulWidget {
     super.key,
     required this.onEnterIntro,
     required this.isFocus,
+    required this.registerBloc,
   });
 
   @override
@@ -27,7 +25,7 @@ class FormConfirmPassword extends StatefulWidget {
 }
 
 class _FormConfirmPasswordState extends State<FormConfirmPassword> {
-  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
+  // final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   final repassFocus = FocusNode();
 
   @override
@@ -36,13 +34,13 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
     // Provider.of<RegisterProvider>(context, listen: false)
     //     .confirmPassController
     //     .text = '';
-    _registerBloc.add(const RegisterEventResetConfirmPassword());
+    widget.registerBloc.add(const RegisterEventResetConfirmPassword());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterBloc, RegisterState>(
-      bloc: _registerBloc,
+      bloc: widget.registerBloc,
       builder: (context, state) {
         return Column(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,13 +102,13 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
                   autoFocus: widget.isFocus,
                   onChanged: (text) {
                     if (text.isEmpty) {
-                      _registerBloc.add(RegisterEventUpdateConfirmPassword(
+                      widget.registerBloc.add(RegisterEventUpdateConfirmPassword(
                           confirmPassword: text, password: state.password));
                     }
                   },
                   onCompleted: (value) {
-                     _registerBloc.add(RegisterEventUpdateConfirmPassword(
-                          confirmPassword: value, password: state.password));
+                    widget.registerBloc.add(RegisterEventUpdateConfirmPassword(
+                        confirmPassword: value, password: state.password));
                   },
                 ),
               ),

@@ -49,12 +49,12 @@ class WidgetQr extends StatefulWidget {
 
 class _VietQrState extends State<WidgetQr> {
   bool get small => MediaQuery.of(context).size.width < 400;
-  late AuthProvider _provider;
+  late AuthenProvider _provider;
 
   @override
   void initState() {
     super.initState();
-    _provider = Provider.of<AuthProvider>(context, listen: false);
+    _provider = Provider.of<AuthenProvider>(context, listen: false);
     // Bật chế độ giữ màn hình sáng
     if (_provider.settingDTO.keepScreenOn) {
       Wakelock.enable();

@@ -41,7 +41,7 @@ class _NFCWidgetState extends State<NFCWidget> {
                 ),
               ),
               const SizedBox(height: 30),
-              Consumer<AuthProvider>(
+              Consumer<AuthenProvider>(
                 builder: (context, provider, child) {
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 30),
@@ -61,8 +61,8 @@ class _NFCWidgetState extends State<NFCWidget> {
                         children: [
                           const TextSpan(text: 'Số dư: '),
                           TextSpan(
-                            text:
-                                CurrencyUtils.instance.getCurrencyFormatted(provider.introduceDTO?.amount ?? '0'),
+                            text: CurrencyUtils.instance.getCurrencyFormatted(
+                                provider.introduceDTO?.amount ?? '0'),
                             style: const TextStyle(
                               fontSize: 18,
                               color: AppColor.BLUE_TEXT,

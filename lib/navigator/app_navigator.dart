@@ -54,6 +54,7 @@ import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/views/qr_update_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/save_share_qr_widget.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/features/register/views/page/confirm_email.register.dart';
 import 'package:vierqr/features/register/views/page/form_success_splash.dart';
@@ -85,11 +86,9 @@ class NavigationService {
         return _buildRoute(settings, const VietQRApp());
       case Routes.LOGIN:
         return _buildRoute(settings, const LoginScreen());
-      case Routes.REGISTER_SPLASH_SCREEN:
-        return _buildRoute(settings, const FormRegisterSuccessSplash());
+
       case Routes.DASHBOARD:
         return _buildRoute(settings, const DashBoardScreen());
-
       case Routes.USER_EDIT:
         return _buildRoute(settings, const UserEditView());
       case Routes.USER_INFO:
@@ -152,6 +151,15 @@ class NavigationService {
             SplashScreen(
               isFromLogin: isFromLogin,
             ));
+
+      case Routes.REGISTER_SPLASH_SCREEN:
+        Map map = settings.arguments as Map;
+        RegisterBloc registerBloc = map['registerBloc'];
+        return _buildRoute(
+            settings,
+            FormRegisterSuccessSplash(
+              registerBloc: registerBloc,
+            ));
       case Routes.REGISTER:
         Map map = settings.arguments as Map;
         PageController pageController = map['pageController'];
@@ -165,10 +173,12 @@ class NavigationService {
       case Routes.CONFIRM_EMAIL_SCREEN:
         Map map = settings.arguments as Map;
         String phoneNum = map['phoneNum'];
+        RegisterBloc registerBloc = map['registerBloc'];
         return _buildRoute(
             settings,
             ConfirmEmailRegisterScreen(
               phoneNum: phoneNum,
+              registerBloc: registerBloc,
             ));
       case Routes.MY_VIETQR_SCREEN:
         Map map = settings.arguments as Map;

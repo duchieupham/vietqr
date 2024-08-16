@@ -64,7 +64,7 @@ class _ListBankWidgetState extends State<ListBankWidget>
         if (state.status == BlocStatus.LOADING_PAGE &&
             state.request == BankType.BANK) {
         } else {
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .updateBanks(state.listBanks);
         }
         if (state.status == BlocStatus.LOADING_PAGE &&

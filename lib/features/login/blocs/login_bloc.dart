@@ -46,13 +46,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
               isToast: event.isToast,
               request: LoginType.LOGIN,
               status: BlocStatus.UNLOADING));
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .checkStateLogin(false);
         } else {
           emit(state.copyWith(
               request: LoginType.ERROR,
               msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .checkStateLogin(true);
         }
       }

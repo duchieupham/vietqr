@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/page/confirm_otp_register.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
@@ -19,7 +20,9 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 class ConfirmEmailRegisterScreen extends StatefulWidget {
   final String phoneNum;
-  const ConfirmEmailRegisterScreen({super.key, required this.phoneNum});
+  final RegisterBloc registerBloc;
+  const ConfirmEmailRegisterScreen(
+      {super.key, required this.phoneNum, required this.registerBloc});
 
   @override
   State<ConfirmEmailRegisterScreen> createState() =>
@@ -80,6 +83,7 @@ class _ConfirmEmailRegisterScreenState
               builder: (context) => ConfirmOtpRegisterScreen(
                 email: _emailController.text,
                 isFocus: true,
+                registerBloc: widget.registerBloc,
               ),
             ),
           );
@@ -314,8 +318,10 @@ class _ConfirmEmailRegisterScreenState
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
+                    Map<String, dynamic> param = Map();
+                    param['registerBloc'] = widget.registerBloc;
                     NavigationService.pushAndRemoveUntil(
-                        Routes.REGISTER_SPLASH_SCREEN);
+                        Routes.REGISTER_SPLASH_SCREEN, arguments: param);
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
@@ -354,10 +360,10 @@ class _ConfirmEmailRegisterScreenState
     );
   }
 
-  void backToPreviousPage(BuildContext context, bool isRegisterSuccess, RegisterState state) {
+  void backToPreviousPage(
+      BuildContext context, bool isRegisterSuccess, RegisterState state) {
     Navigator.pop(context, {
-      'phone': state.phoneNumber
-          .replaceAll(' ', ''),
+      'phone': state.phoneNumber.replaceAll(' ', ''),
       'password': state.password
     });
   }

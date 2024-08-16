@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
@@ -10,31 +9,32 @@ import 'package:vierqr/features/register/utils/register_utils.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 
 import '../../../../commons/widgets/phone_widget.dart';
-import '../../../../services/providers/register_provider.dart';
 
 class FormAccount extends StatefulWidget {
   final TextEditingController phoneController;
   final bool isFocus;
   final Function(int) onEnterIntro;
+  final RegisterBloc registerBloc;
 
   const FormAccount(
       {super.key,
       required this.phoneController,
       required this.isFocus,
-      required this.onEnterIntro});
+      required this.onEnterIntro,
+      required this.registerBloc});
 
   @override
   State<FormAccount> createState() => _FormAccountState();
 }
 
 class _FormAccountState extends State<FormAccount> {
-  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
+  // final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   final repassFocus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RegisterBloc, RegisterState>(
-      bloc: _registerBloc,
+      bloc: widget.registerBloc,
       builder: (context, state) {
         return SingleChildScrollView(
           child: Column(
@@ -62,7 +62,7 @@ class _FormAccountState extends State<FormAccount> {
               ),
               PhoneWidget(
                 onChanged: (value) {
-                  _registerBloc.add(RegisterEventUpdatePhone(phone: value));
+                  widget.registerBloc.add(RegisterEventUpdatePhone(phone: value));
                 },
                 phoneController: widget.phoneController,
                 autoFocus: widget.isFocus,
@@ -106,7 +106,7 @@ class _FormAccountState extends State<FormAccount> {
                   autoFocus: true,
                   obscureText: true,
                   onChanged: (value) {
-                    _registerBloc
+                    widget.registerBloc
                         .add(RegisterEventUpdatePassword(password: value));
                     Future.delayed(const Duration(seconds: 1), () {
                       if (value.length == 6) {
@@ -155,7 +155,7 @@ class _FormAccountState extends State<FormAccount> {
                   focusNode: repassFocus,
                   onChanged: (value) {
                     // provider.updateConfirmPassword(value);
-                    _registerBloc.add(RegisterEventUpdateConfirmPassword(
+                    widget.registerBloc.add(RegisterEventUpdateConfirmPassword(
                         confirmPassword: value, password: state.password));
                   },
                 ),
@@ -185,12 +185,13 @@ class _FormAccountState extends State<FormAccount> {
                       widget.onEnterIntro(1);
                     } else {
                       // provider.updatePhone(provider.phoneNoController.text);
-                      _registerBloc.add(
+                      widget.registerBloc.add(
                           RegisterEventUpdatePhone(phone: state.phoneNumber));
-                      _registerBloc.add(RegisterEventUpdatePassword(
+                      widget.registerBloc.add(RegisterEventUpdatePassword(
                           password: state.password));
-                      _registerBloc.add(RegisterEventUpdateConfirmPassword(
-                          confirmPassword: state.confirmPassword, password: state.password));
+                      widget.registerBloc.add(RegisterEventUpdateConfirmPassword(
+                          confirmPassword: state.confirmPassword,
+                          password: state.password));
                       // provider.updatePassword(provider.passwordController.text);
                       // provider.updateConfirmPassword(
                       //     provider.confirmPassController.text);

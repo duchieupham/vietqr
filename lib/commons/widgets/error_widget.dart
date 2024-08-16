@@ -26,7 +26,7 @@ class ErrorDialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, value, child) {
         return Stack(
           children: [
@@ -37,7 +37,8 @@ class ErrorDialogWidget extends StatelessWidget {
                 Text(
                   // "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
                   title,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
                 Container(
@@ -66,8 +67,8 @@ class ErrorDialogWidget extends StatelessWidget {
                     ? Center(
                         child: Text(
                           text,
-                          style:
-                              const TextStyle(fontSize: 13, color: AppColor.RED_TEXT),
+                          style: const TextStyle(
+                              fontSize: 13, color: AppColor.RED_TEXT),
                         ),
                       )
                     : const SizedBox.shrink(),

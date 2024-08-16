@@ -9,6 +9,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/pin_code_input.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
 import 'package:vierqr/features/verify_email/events/verify_email_event.dart';
@@ -21,10 +22,12 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class ConfirmOtpRegisterScreen extends StatefulWidget {
   String email;
   bool isFocus;
+  final RegisterBloc registerBloc;
   ConfirmOtpRegisterScreen({
     super.key,
     required this.email,
     required this.isFocus,
+    required this.registerBloc,
   });
 
   @override
@@ -108,7 +111,9 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
             textColor: Theme.of(context).hintColor,
             fontSize: 15,
           );
-          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN);
+
+          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN,
+              arguments: {'registerBloc': widget.registerBloc});
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(

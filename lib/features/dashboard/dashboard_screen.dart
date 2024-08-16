@@ -197,7 +197,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final BankBloc _bankBloc = getIt.get<BankBloc>();
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
 
-  late AuthProvider _provider;
+  late AuthenProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
   StreamSubscription<Uri>? _linkSubscription;
@@ -217,7 +217,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     getInitUniLinks();
     initUniLinks();
 
-    _provider = Provider.of<AuthProvider>(context, listen: false);
+    _provider = Provider.of<AuthenProvider>(context, listen: false);
     _isolateStream = IsolateStream(context, getIt.get<AppConfig>());
     _pageController =
         PageController(initialPage: _provider.pageSelected, keepPage: true);
@@ -276,7 +276,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     return BlocListener<DashBoardBloc, DashBoardState>(
       bloc: _bloc,
       listener: onListening,
-      child: Consumer<AuthProvider>(builder: (context, provider, _) {
+      child: Consumer<AuthenProvider>(builder: (context, provider, _) {
         // if (!provider.isRenderUI) {
         //   return SplashScreen(isFromLogin: widget.isFromLogin);
         // }
@@ -399,7 +399,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   /// poppup bên dưới hiển thị khi có bản cập nhật mới
-  Positioned renderUpdateDialog(AuthProvider provider) {
+  Positioned renderUpdateDialog(AuthenProvider provider) {
     return Positioned(
       child: FloatBubble(
         show: provider.isUpdateVersion,
@@ -636,7 +636,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     if (!isFromLogin) _bloc.add(const TokenFcmUpdateEvent());
   }
 
-  void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
+  void _onHandleAppSystem(AppInfoDTO dto, AuthenProvider authProvider) async {
     String logoApp = SharePrefUtils.getLogoApp();
     bool isEvent = SharePrefUtils.getBannerEvent();
     ThemeDTO themeDTO = await SharePrefUtils.getSingleTheme() ?? ThemeDTO();

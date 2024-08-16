@@ -52,7 +52,7 @@ class BlocModule extends DIModule {
               getIt.get<LoginRepository>(),
             ),
           )
-          ..registerLazySingleton(
+          ..registerFactory(
             () => RegisterBloc(getIt.get<RegisterRepository>()),
           )
           ..registerFactoryParam(

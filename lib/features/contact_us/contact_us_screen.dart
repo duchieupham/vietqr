@@ -24,7 +24,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+    Provider.of<AuthenProvider>(context, listen: false).initThemeDTO();
   }
 
   @override

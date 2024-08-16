@@ -437,7 +437,7 @@ class SharePrefUtils {
   static Future<void> resetServices() async {
     BuildContext context = NavigationService.context!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
-    Provider.of<AuthProvider>(context, listen: false).reset();
+    Provider.of<AuthenProvider>(context, listen: false).reset();
     await saveProfileToCache(UserProfile());
     await setTokenInfo('');
     AppDataHelper.instance.clearListQRDetailBank();
@@ -445,8 +445,17 @@ class SharePrefUtils {
     //   builder: (context) => Login(),
     // ));
     // Navigator.of(context).popUntil((route) => route.isFirst);
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => false);
+    // Navigator.of(context)
+    //     .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => false);
+    NavigationService.pushAndRemoveUntil(
+      Routes.LOGIN,
+    );
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => const LoginScreen(),
+    //   ),
+    // );
     // Navigator.pushReplacement(
     //   context,
     //   MaterialPageRoute(

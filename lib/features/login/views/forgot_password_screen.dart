@@ -48,7 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     countdownProvider = CountDownOTPNotifier(120);
-    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+    Provider.of<AuthenProvider>(context, listen: false).initThemeDTO();
   }
 
   @override
@@ -88,14 +88,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   image: NetworkImage(
                                       widget.appInfoDTO.themeImgUrl),
                                   fit: BoxFit.cover)
-                              : Provider.of<AuthProvider>(context,
+                              : Provider.of<AuthenProvider>(context,
                                           listen: false)
                                       .bannerApp
                                       .path
                                       .isNotEmpty
                                   ? DecorationImage(
                                       image: FileImage(
-                                          Provider.of<AuthProvider>(context,
+                                          Provider.of<AuthenProvider>(context,
                                                   listen: false)
                                               .bannerApp),
                                       fit: BoxFit.cover)

@@ -1,19 +1,31 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/base_manager.dart';
+import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/repositories/register_repository.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/models/account_login_dto.dart';
+import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
+  // @override
+  // final BuildContext context;
+
   final RegisterRepository registerRepository;
 
-  RegisterBloc(this.registerRepository) : super(const RegisterState()) {
+  RegisterBloc(this.registerRepository)
+      : super(const RegisterState()) {
     on<RegisterEventSubmit>(_register);
     on<RegisterEventSentOTP>(_sentOtp);
     on<RegisterEventUpdateHeight>(_updateHeight);
@@ -29,6 +41,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterEventResetPassword>(_resetPassword);
     on<RegisterEventResetConfirmPassword>(_resetConfirmPassword);
     on<RegisterEventUpdateErrs>(_updateErrs);
+    on<RegisterEventRefresh>(_refresh);
+    on<RegisterEventLoginAfterRegister>(_loginAfterRegister);
   }
 
   // RegisterBloc() : super(RegisterInitialState()) {
@@ -44,12 +58,28 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     try {
       if (event is RegisterEventSubmit) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING, request: RegisterType.NONE));
+            status: BlocStatus.LOADING, request: RegisterType.REGISTER));
         ResponseMessageDTO responseMessageDTO =
             await registerRepository.register(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              status: BlocStatus.SUCCESS, request: RegisterType.REGISTER));
+            status: BlocStatus.SUCCESS,
+            request: RegisterType.REGISTER,
+            isPhoneErr: false,
+            isPasswordErr: false,
+            isConfirmPassErr: false,
+            verificationId: '',
+            resendToken: null,
+            page: 0,
+            height: 0,
+            isShowButton: false,
+            // phoneNumber: '',
+            // password: '',
+            // confirmPassword: '',
+            introduce: '',
+            typeOTP: null,
+            msgVerifyOTP: '',
+          ));
         } else {
           String msg =
               ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
@@ -182,13 +212,18 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           if (confirmPass == password) {
             emit(state.copyWith(
                 confirmPassword: confirmPass,
-                isPasswordErr: false,
+                isConfirmPassErr: false,
+                status: BlocStatus.UNLOADING,
+                request: RegisterType.UPDATE_PASSWORD));
+          } else {
+            emit(state.copyWith(
+                isConfirmPassErr: true,
                 status: BlocStatus.UNLOADING,
                 request: RegisterType.UPDATE_PASSWORD));
           }
         } else {
           emit(state.copyWith(
-              isPasswordErr: true,
+              isConfirmPassErr: true,
               status: BlocStatus.ERROR,
               request: RegisterType.UPDATE_PASSWORD));
         }
@@ -221,10 +256,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   }
 
   void _updateErrs(RegisterEvent event, Emitter<RegisterState> emit) {
-    // _isPhoneErr = phoneErr;
-    // _isPasswordErr = passErr;
-    // _isConfirmPassErr = confirmPassErr;
-    // notifyListeners();
     try {
       if (event is RegisterEventUpdateErrs) {
         emit(state.copyWith(
@@ -262,6 +293,38 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     }
   }
 
+  void _refresh(RegisterEvent event, Emitter<RegisterState> emit) {
+    try {
+      if (event is RegisterEventRefresh) {
+        emit(
+          state.copyWith(
+            status: BlocStatus.NONE,
+            request: RegisterType.NONE,
+            isPhoneErr: false,
+            isPasswordErr: false,
+            isConfirmPassErr: false,
+            verificationId: '',
+            resendToken: null,
+            page: 0,
+            height: 0,
+            isShowButton: false,
+            phoneNumber: '',
+            password: '',
+            confirmPassword: '',
+            introduce: '',
+            typeOTP: null,
+            msgVerifyOTP: '',
+          ),
+        );
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+          status: BlocStatus.ERROR,
+          request: RegisterType.ERROR));
+    }
+  }
+
   void _resetPassword(RegisterEvent event, Emitter<RegisterState> emit) {
     try {
       if (event is RegisterEventResetPassword) {
@@ -286,16 +349,18 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       if (event is RegisterEventReset) {
         emit(
           state.copyWith(
-              status: BlocStatus.UNLOADING,
-              request: RegisterType.RESET,
-              confirmPassword: ''),
+            status: BlocStatus.UNLOADING,
+            request: RegisterType.RESET,
+            confirmPassword: '',
+          ),
         );
       }
     } catch (e) {
       emit(state.copyWith(
-          msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
-          status: BlocStatus.ERROR,
-          request: RegisterType.ERROR));
+        msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
+        status: BlocStatus.ERROR,
+        request: RegisterType.ERROR,
+      ));
     }
   }
 
@@ -358,6 +423,80 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.',
           status: BlocStatus.ERROR,
           request: RegisterType.ERROR));
+    }
+  }
+
+  Future<void> _loginAfterRegister(RegisterEvent event, Emitter emit) async {
+    try {
+      final LoginRepository loginRepository = getIt.get<LoginRepository>();
+      if (event is RegisterEventLoginAfterRegister) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: RegisterType.NONE));
+        AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: state.phoneNumber,
+            password:
+                'c9b6800dcc470c39048c8e53259044092751d7905ca4693879175b4cdff6a5b6');
+
+        AccountLoginDTO accountDTO = AccountLoginDTO(
+          phoneNo: state.phoneNumber,
+          password: EncryptUtils.instance.encrypted(
+            state.phoneNumber,
+            state.password,
+          ),
+          device: '',
+          fcmToken: '',
+          platform: '',
+          sharingCode: '',
+        );
+        bool check = await loginRepository.login(accountDTO);
+
+        if (check) {
+          await loginRepository.checkExistPhone(state.phoneNumber).then(
+            (value) {
+              if (value is InfoUserDTO) {
+                emit(state.copyWith(
+                    isToast: event.isToast,
+                    infoUserDTO: value,
+                    isPhoneErr: false,
+                    isPasswordErr: false,
+                    isConfirmPassErr: false,
+                    verificationId: '',
+                    resendToken: null,
+                    page: 0,
+                    height: 0,
+                    isShowButton: false,
+                    phoneNumber: '',
+                    password: '',
+                    confirmPassword: '',
+                    introduce: '',
+                    typeOTP: null,
+                    msgVerifyOTP: '',
+                    request: RegisterType.NONE,
+                    status: BlocStatus.UNLOADING));
+                // ignore: use_build_context_synchronously
+                // Provider.of<AuthenProvider>(context, listen: false)
+                //     .checkStateLogin(false);
+              }
+            },
+          ).catchError((onError) {
+            emit(
+              state.copyWith(
+                request: RegisterType.NONE,
+                status: BlocStatus.ERROR,
+                phoneNumber: state.phoneNumber,
+              ),
+            );
+          });
+        } else {
+          emit(state.copyWith(
+              request: RegisterType.ERROR,
+              msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
+          // Provider.of<AuthenProvider>(context, listen: false)
+          //     .checkStateLogin(true);
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(request: RegisterType.ERROR));
     }
   }
 

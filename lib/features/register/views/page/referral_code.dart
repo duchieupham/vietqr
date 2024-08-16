@@ -10,11 +10,12 @@ import '../../../../commons/constants/configurations/theme.dart';
 import '../../../../commons/widgets/textfield_custom.dart';
 
 class ReferralCode extends StatelessWidget {
-  const ReferralCode({super.key});
+  final RegisterBloc bloc;
+  const ReferralCode({super.key, required this.bloc});
 
   @override
   Widget build(BuildContext context) {
-    final bloc = getIt.get<RegisterBloc>();
+    // final bloc = getIt.get<RegisterBloc>();
     final TextEditingController introducController = TextEditingController();
 
     return BlocBuilder<RegisterBloc, RegisterState>(
