@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -177,16 +178,16 @@ class _UserEditViewState extends State<UserEditView> {
                     DialogWidget.instance.openMsgDialog(
                         title: 'Không thể cập nhật thông tin', msg: state.msg);
                   }
-                  if (state is UserEditSuccessfulState) {
-                    //pop loading dialog
-                    Navigator.of(context).pop();
-                    Provider.of<UserEditProvider>(context, listen: false)
-                        .reset();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const DashBoardScreen()),
-                        (Route<dynamic> route) => false);
-                  }
+                  // if (state is UserEditSuccessfulState) {
+                  //   //pop loading dialog
+                  //   Navigator.of(context).pop();
+                  //   Provider.of<UserEditProvider>(context, listen: false)
+                  //       .reset();
+                  //   Navigator.of(context).pushAndRemoveUntil(
+                  //       MaterialPageRoute(
+                  //           builder: (context) => const DashBoardScreen()),
+                  //       (Route<dynamic> route) => false);
+                  // }
                   if (state is UserEditPasswordFailedState) {
                     if (PlatformUtils.instance.isWeb()) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -519,8 +520,15 @@ class _UserEditViewState extends State<UserEditView> {
                                 isObscureText: false,
                                 title: 'CCCD',
                                 hintText: 'Nhập CCCD',
+                                maxLength: 12,
                                 controller: _nationalIdController,
                                 inputType: TextInputType.text,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(
+                                        r'[a-zA-Z0-9]'), // Only allows letters and numbers
+                                  ),
+                                ],
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);
@@ -537,8 +545,15 @@ class _UserEditViewState extends State<UserEditView> {
                                 width: width,
                                 textfieldType: TextfieldType.LABEL,
                                 isObscureText: false,
+                                maxLength: 12,
                                 title: 'CMND(cũ)',
                                 hintText: 'Nhập cmnd',
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                    RegExp(
+                                        r'[a-zA-Z0-9]'), // Only allows letters and numbers
+                                  ),
+                                ],
                                 controller: _oldNationalIdController,
                                 inputType: TextInputType.text,
                                 keyboardAction: TextInputAction.next,
@@ -617,6 +632,9 @@ class _UserEditViewState extends State<UserEditView> {
                                         controller: _addressController,
                                         textInputAction: TextInputAction.done,
                                         maxLength: 1000,
+                                        inputFormatters: [
+                                          VietnameseNameInputFormatter()
+                                        ],
                                         decoration:
                                             const InputDecoration.collapsed(
                                           hintText: 'Nhập địa chỉ thường trú',
@@ -795,13 +813,14 @@ class _UserEditViewState extends State<UserEditView> {
     _birthDate = '';
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).resetPasswordErr();
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    // Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).pop();
   }
 
-  void backToHome(BuildContext context) {
-    Provider.of<UserEditProvider>(context, listen: false).reset();
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-        (Route<dynamic> route) => false);
-  }
+  // void backToHome(BuildContext context) {
+  //   Provider.of<UserEditProvider>(context, listen: false).reset();
+  //   Navigator.of(context).pushAndRemoveUntil(
+  //       MaterialPageRoute(builder: (context) => const HomeScreen()),
+  //       (Route<dynamic> route) => false);
+  // }
 }

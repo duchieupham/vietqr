@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -17,6 +18,7 @@ import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_arrange_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'reorder_list_bank_widget.dart';
@@ -210,8 +212,9 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
       builder: (context, provider, child) {
         return InkWell(
             onTap: () async {
-              await NavigatorUtils.navigatePage(context, const AccountScreen(),
-                  routeName: AccountScreen.routeName);
+              await NavigationService.push(Routes.ACCOUNT);
+              // await NavigatorUtils.navigatePage(context, const AccountScreen(),
+              //     routeName: AccountScreen.routeName);
             },
             child: SizedBox(
               width: 40,
