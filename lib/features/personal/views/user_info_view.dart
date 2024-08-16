@@ -306,6 +306,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                     //pop loading dialog
                     // Navigator.of(context).pop();
                     // NavigationService.popUntil(Routes.DASHBOARD);
+
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     // Navigator.of(context).pop();
                     // Provider.of<UserEditProvider>(context, listen: false)
@@ -1579,6 +1580,8 @@ class _UserInfoViewState extends State<UserInfoView> {
                                     dto: accountInformationDTO,
                                   ),
                                 );
+
+                                provider.reset();
                               }
                             },
                           ),

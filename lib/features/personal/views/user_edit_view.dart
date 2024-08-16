@@ -520,7 +520,7 @@ class _UserEditViewState extends State<UserEditView> {
                               ),
                             ),
                             Visibility(
-                              visible: !provider.isValidEmail,
+                              visible: provider.isEmailErr,
                               child: const Padding(
                                 padding: EdgeInsets.only(top: 5, left: 5),
                                 child: Text(
@@ -727,7 +727,8 @@ class _UserEditViewState extends State<UserEditView> {
                     child: Consumer<UserEditProvider>(
                       builder: (context, provider, child) {
                         return Visibility(
-                          visible: (provider.availableUpdate && provider.isValidEmail),
+                          visible: (provider.availableUpdate &&
+                              !provider.isEmailErr),
                           child: ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật',
@@ -759,6 +760,7 @@ class _UserEditViewState extends State<UserEditView> {
                                     dto: accountInformationDTO,
                                   ),
                                 );
+                                provider.reset();
                               }
                             },
                           ),
