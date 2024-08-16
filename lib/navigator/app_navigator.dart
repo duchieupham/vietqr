@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/save_share_qr.dart';
@@ -90,6 +91,8 @@ class NavigationService {
       case Routes.DASHBOARD:
         return _buildRoute(settings, const DashBoardScreen());
 
+      case Routes.ACCOUNT:
+        return _buildRoute(settings, const AccountScreen());
       case Routes.USER_EDIT:
         return _buildRoute(settings, const UserEditView());
       case Routes.USER_INFO:
