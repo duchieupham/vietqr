@@ -546,12 +546,9 @@ class _UserEditViewState extends State<UserEditView> {
                                 hintText: 'Nhập CCCD',
                                 maxLength: 12,
                                 controller: _nationalIdController,
-                                inputType: TextInputType.number,
+                                inputType: TextInputType.text,
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(
-                                        r'[a-zA-Z0-9]'), // Only allows letters and numbers
-                                  ),
+                                  VietnameseNameInputFormatter()
                                 ],
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
@@ -573,13 +570,10 @@ class _UserEditViewState extends State<UserEditView> {
                                 title: 'CMND(cũ)',
                                 hintText: 'Nhập cmnd',
                                 inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(
-                                        r'[a-zA-Z0-9]'), // Only allows letters and numbers
-                                  ),
+                                  VietnameseNameInputFormatter()
                                 ],
                                 controller: _oldNationalIdController,
-                                inputType: TextInputType.number,
+                                inputType: TextInputType.text,
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);
