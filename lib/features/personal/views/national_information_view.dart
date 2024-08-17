@@ -49,7 +49,7 @@ class NationalInformationView extends StatelessWidget {
             ),
             BoxLayout(
               width: width - 40,
-              height: 250,
+              height: 270,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
