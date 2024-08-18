@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 
 class UserEditState extends Equatable {
@@ -33,7 +35,14 @@ class UserEditPasswordFailedState extends UserEditState {
   List<Object?> get props => [msg];
 }
 
-class UserEditAvatarSuccessState extends UserEditState {}
+class UserEditAvatarSuccessState extends UserEditState {
+  final File? imageFile;
+
+  const UserEditAvatarSuccessState({this.imageFile});
+
+  @override
+  List<Object?> get props => [imageFile];
+}
 
 class UserEditAvatarFailedState extends UserEditState {
   final String message;

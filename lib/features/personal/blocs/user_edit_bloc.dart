@@ -71,7 +71,7 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
           event.image,
         );
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(UserEditAvatarSuccessState());
+          emit(UserEditAvatarSuccessState(imageFile: event.image));
         } else {
           emit(
             UserEditAvatarFailedState(

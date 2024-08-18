@@ -283,8 +283,11 @@ class _UserInfoViewState extends State<UserInfoView> {
                   }
                   if (state is UserEditAvatarSuccessState) {
                     //pop loading dialog
+                    
                     Navigator.pop(context);
                     Navigator.pop(context);
+                              Provider.of<AuthenProvider>(context, listen: false)
+              .setImage(state.imageFile);
                   }
                   if (state is UserEditAvatarFailedState) {
                     //pop loading dialog

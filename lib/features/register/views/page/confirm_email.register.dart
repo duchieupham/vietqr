@@ -320,10 +320,12 @@ class _ConfirmEmailRegisterScreenState
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     Map<String, dynamic> param = Map();
                     param['registerBloc'] = widget.registerBloc;
                     NavigationService.pushAndRemoveUntil(
-                        Routes.REGISTER_SPLASH_SCREEN, arguments: param);
+                        Routes.REGISTER_SPLASH_SCREEN,
+                        arguments: param);
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
