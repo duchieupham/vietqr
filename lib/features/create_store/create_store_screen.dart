@@ -43,6 +43,7 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: MAppBar(
         title: 'Trở về',
         centerTitle: false,

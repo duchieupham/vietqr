@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 
@@ -82,6 +83,7 @@ class _InputNameStoreViewState extends State<InputNameStoreView> {
               ),
               inputFormatter: [
                 LengthLimitingTextInputFormatter(50),
+                VietnameseNameLongTextInputFormatter(),
               ],
             ),
             const SizedBox(height: 16),
@@ -109,7 +111,8 @@ class _InputNameStoreViewState extends State<InputNameStoreView> {
             const Spacer(),
             MButtonWidget(
               title: 'Tiếp tục',
-              margin: EdgeInsets.zero,
+              margin: EdgeInsets.fromLTRB(
+                  20, 0, 20, MediaQuery.of(context).viewInsets.bottom),
               isEnable: _value.isNotEmpty,
               onTap: () {
                 _hideKeyBoard();
