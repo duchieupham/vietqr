@@ -148,158 +148,172 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
         }
       },
       builder: (context, state) {
-        return Scaffold(
-          body: Container(
-            decoration: const BoxDecoration(
-              color: AppColor.WHITE,
-            ),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 90),
-                    child: Image.asset(
-                      AppImages.icLogoVietQr,
-                      width: 160,
-                      height: 66,
-                      fit: BoxFit.fitWidth,
-                    ),
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: AppColor.WHITE,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0),
-                    child: Image.asset(
-                      AppImages.icRegisterSuccessful,
-                      width: 236,
-                      height: 200,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                  DefaultTextStyle(
-                    style: const TextStyle(
-                      color: AppColor.BLACK,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    child: ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [
-                          Color(0xFF9CD740),
-                          Color(0xFF2BACE6),
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ).createShader(bounds),
-                      child: const Text(
-                        'Đăng ký thành công!',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 25,
-                          color: Colors.white,
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 90),
+                          child: Image.asset(
+                            AppImages.icLogoVietQr,
+                            width: 160,
+                            height: 66,
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10,),
-                  DefaultTextStyle(
-                    style: const TextStyle(fontSize: 15, color: AppColor.BLACK),
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Hệ thống tự động điều hướng sau ',
-                        style: const TextStyle(
-                            fontSize: 15, color: AppColor.BLACK),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: '$_start',
-                            style: const TextStyle(
-                                fontSize: 15, color: AppColor.BLUE_TEXT),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 0),
+                          child: Image.asset(
+                            AppImages.icRegisterSuccessful,
+                            width: 236,
+                            height: 200,
+                            fit: BoxFit.fitWidth,
                           ),
-                          const TextSpan(
-                            text: 's.',
-                            style:
-                                TextStyle(fontSize: 15, color: AppColor.BLACK),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  renderSuggestion(),
-                  InkWell(
-                    onTap: () async {
-                      // setState(() {
-                      //   _onHomeCalled = true;
-                      // });
-                      // Navigator.popUntil(context, ((route) {
-                      //   if (route.settings.name != null &&
-                      //       route.settings.name == Routes.REGISTER) {
-                      //     return true;
-                      //   } else {
-                      //     return false;
-                      //   }
-                      // }));
-                      // backToPreviousPage(context, true, state);
-                      widget.registerBloc
-                          .add(const RegisterEventLoginAfterRegister());
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      height: 50,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFFE1EFFF),
-                                Color(0xFFE5F9FF),
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight)),
-                      child: Center(
-                        child: DefaultTextStyle(
+                        ),
+                        DefaultTextStyle(
                           style: const TextStyle(
                             color: AppColor.BLACK,
-                            fontSize: 15,
+                            fontSize: 25,
                             fontWeight: FontWeight.bold,
                           ),
                           child: ShaderMask(
                             shaderCallback: (bounds) => const LinearGradient(
                               colors: [
-                                Color(0xFF00C6FF),
-                                Color(0xFF0072FF),
+                                Color(0xFF9CD740),
+                                Color(0xFF2BACE6),
                               ],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
                             ).createShader(bounds),
                             child: const Text(
-                              'Trang chủ VietQR.VN',
+                              'Đăng ký thành công!',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 25,
                                 color: Colors.white,
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        DefaultTextStyle(
+                          style: const TextStyle(
+                              fontSize: 15, color: AppColor.BLACK),
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Hệ thống tự động điều hướng sau ',
+                              style: const TextStyle(
+                                  fontSize: 15, color: AppColor.BLACK),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '$_start',
+                                  style: const TextStyle(
+                                      fontSize: 15, color: AppColor.BLUE_TEXT),
+                                ),
+                                const TextSpan(
+                                  text: 's.',
+                                  style: TextStyle(
+                                      fontSize: 15, color: AppColor.BLACK),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        InkWell(
+                          onTap: () async {
+                            // setState(() {
+                            //   _onHomeCalled = true;
+                            // });
+                            // Navigator.popUntil(context, ((route) {
+                            //   if (route.settings.name != null &&
+                            //       route.settings.name == Routes.REGISTER) {
+                            //     return true;
+                            //   } else {
+                            //     return false;
+                            //   }
+                            // }));
+                            // backToPreviousPage(context, true, state);
+                            widget.registerBloc
+                                .add(const RegisterEventLoginAfterRegister());
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(50),
+                                gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFE1EFFF),
+                                      Color(0xFFE5F9FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight)),
+                            child: Center(
+                              child: DefaultTextStyle(
+                                style: const TextStyle(
+                                  color: AppColor.BLACK,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ).createShader(bounds),
+                                  child: const Text(
+                                    'Trang chủ VietQR.VN',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Container(
+                        //   child: DefaultTextStyle(
+                        //     style: TextStyle(fontSize: 15),
+                        //     child: MButtonWidget(
+                        //       title: 'Truy cập trang chủ VietQR VN',
+                        //       isEnable: true,
+                        //       margin: EdgeInsets.only(left: 40, right: 40),
+                        //       height: 50,
+                        //       onTap: widget.onHome,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
                     ),
                   ),
-                  // Container(
-                  //   child: DefaultTextStyle(
-                  //     style: TextStyle(fontSize: 15),
-                  //     child: MButtonWidget(
-                  //       title: 'Truy cập trang chủ VietQR VN',
-                  //       isEnable: true,
-                  //       margin: EdgeInsets.only(left: 40, right: 40),
-                  //       height: 50,
-                  //       onTap: widget.onHome,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
+                ),
+                // renderSuggestion(),
+              ],
             ),
           ),
         );
@@ -309,132 +323,130 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
 
   Widget renderSuggestion() {
     final height = MediaQuery.of(context).size.height;
- return Positioned(
-              bottom: height < 800 ? 50 : 66,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const XImage(
-                          imagePath: 'assets/images/ic-suggest.png',
-                          width: 30,
-                        ),
-                        ShaderMask(
-                          shaderCallback: (bounds) => const LinearGradient(
-                            colors: [
-                              Color(0xFF458BF8),
-                              Color(0xFFFF8021),
-                              Color(0xFFFF3751),
-                              Color(0xFFC958DB),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            'Gợi ý cho bạn',
-                            style: TextStyle(
-                              fontSize: 15,
-                              foreground: Paint()
-                                ..shader = const LinearGradient(
-                                  colors: [
-                                    Color(0xFF458BF8),
-                                    Color(0xFFFF8021),
-                                    Color(0xFFFF3751),
-                                    Color(0xFFC958DB),
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ).createShader(
-                                    const Rect.fromLTWH(0, 0, 200, 30)),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    //  const SizedBox(height: 12),
-                    InkWell(
-                      onTap: () {
-                        // onLoginCard();
-                      },
-                      child: Container(
-                        height: 40,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        width: 270,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFD8ECF8),
-                              Color(0xFFFFEAD9),
-                              Color(0xFFF5C9D1),
-                            ],
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Row(
-                          children: [
-                            XImage(
-                              imagePath: 'assets/images/ic-password-black.png',
-                              width: 30,
-                            ),
-                            Text(
-                              'Bạn có muốn cập nhật thông tin cá nhân?',
-                              style: TextStyle(fontSize: 11),
-                            ),
+    print(height);
+    return Positioned(
+      bottom: height < 800 ? 60 : 85,
+      left: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const XImage(
+                  imagePath: 'assets/images/ic-suggest.png',
+                  width: 30,
+                ),
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [
+                      Color(0xFF458BF8),
+                      Color(0xFFFF8021),
+                      Color(0xFFFF3751),
+                      Color(0xFFC958DB),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ).createShader(bounds),
+                  child: Text(
+                    'Gợi ý cho bạn',
+                    style: TextStyle(
+                      fontSize: 15,
+                      foreground: Paint()
+                        ..shader = const LinearGradient(
+                          colors: [
+                            Color(0xFF458BF8),
+                            Color(0xFFFF8021),
+                            Color(0xFFFF3751),
+                            Color(0xFFC958DB),
                           ],
-                        ),
-                      ),
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                        ).createShader(const Rect.fromLTWH(0, 0, 200, 30)),
                     ),
-                    const SizedBox(height: 12),
-                    InkWell(
-                      onTap: () {
-                     
-                      },
-                      child: Container(
-                        width: 240,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFD8ECF8),
-                              Color(0xFFFFEAD9),
-                              Color(0xFFF5C9D1),
-                            ],
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              XImage(
-                                imagePath: 'assets/images/ic-person@-black.png',
-                                width: 30,
-                              ),
-                              Text(
-                                'Thêm tài khoản ngân hàng của bạn',
-                                style: TextStyle(fontSize: 11),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            //  const SizedBox(height: 12),
+            InkWell(
+              onTap: () {
+                // onLoginCard();
+              },
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                width: 270,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFFD8ECF8),
+                      Color(0xFFFFEAD9),
+                      Color(0xFFF5C9D1),
+                    ],
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: const Row(
+                  children: [
+                    XImage(
+                      imagePath: 'assets/images/ic-password-black.png',
+                      width: 30,
                     ),
-                    SizedBox(height: height < 800 ? 16 : 5),
+                    Text(
+                      'Bạn có muốn cập nhật thông tin cá nhân?',
+                      style: TextStyle(fontSize: 11),
+                    ),
                   ],
                 ),
               ),
-            );
+            ),
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: () {},
+              child: Container(
+                width: 240,
+                height: 40,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(0xFFD8ECF8),
+                      Color(0xFFFFEAD9),
+                      Color(0xFFF5C9D1),
+                    ],
+                    begin: Alignment.bottomLeft,
+                    end: Alignment.topRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      XImage(
+                        imagePath: 'assets/images/ic-person@-black.png',
+                        width: 30,
+                      ),
+                      Text(
+                        'Thêm tài khoản ngân hàng của bạn',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: height < 800 ? 16 : 5),
+          ],
+        ),
+      ),
+    );
   }
 
   void _saveAccount(RegisterState state) async {
