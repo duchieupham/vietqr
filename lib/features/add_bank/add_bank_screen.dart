@@ -146,7 +146,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         transferType = 'NAPAS';
       }
       BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
-        accountNumber: bankAccountController.text,
+        accountNumber: bankAccountController.text.replaceAll(' ', ''),
         accountType: 'ACCOUNT',
         transferType: transferType,
         bankCode: caiValue,
@@ -623,7 +623,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                           .capitalFirstCharacter(nameController.text));
                   BankCardRequestOTP dto = BankCardRequestOTP(
                     nationalId: cmtController.text,
-                    accountNumber: bankAccountController.text,
+                    accountNumber:
+                        bankAccountController.text.replaceAll(' ', ''),
                     accountName: formattedName,
                     applicationType: 'MOBILE',
                     phoneNumber: phoneController.text,
