@@ -804,7 +804,7 @@ extension _LoginScreenFunction on _LoginScreenState {
         msg: state.msg ?? '',
         // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
       );
-
+      Navigator.of(context).pop();
       passController.clear();
       passFocus.requestFocus();
     }
