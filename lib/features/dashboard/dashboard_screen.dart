@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:float_bubble/float_bubble.dart';
@@ -272,6 +273,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   Widget build(BuildContext context) {
+    double paddingTop = MediaQuery.of(context).viewPadding.top;
+    double width = MediaQuery.of(context).size.width;
     // super.build(context);
     return BlocListener<DashBoardBloc, DashBoardState>(
       bloc: _bloc,
@@ -295,65 +298,92 @@ class _DashBoardScreen extends State<DashBoardScreen>
           body: Stack(
             children: [
               if (provider.pageSelected != 3 && provider.pageSelected != 0)
-                const BackgroundAppBarHome(),
-              Container(
-                padding: EdgeInsets.only(
-                    top:
-                        provider.pageSelected == 3 || provider.pageSelected == 0
-                            ? 0
-                            : kToolbarHeight * 2),
-                decoration: BoxDecoration(
+                Consumer<AuthenProvider>(builder: (context, page, child) {
+                  File file = page.bannerApp;
+                  return Container(
+                    height: 240,
+                    width: width,
+                    padding: EdgeInsets.only(top: paddingTop + 4),
+                    alignment: Alignment.topCenter,
+                    decoration: BoxDecoration(
+                      image: file.path.isNotEmpty
+                          ? DecorationImage(
+                              image: FileImage(file),
+                              fit: BoxFit.fitWidth,
+                            )
+                          : const DecorationImage(
+                              image: AssetImage(ImageConstant.bgrHeader),
+                              fit: BoxFit.fitWidth,
+                            ),
+                    ),
+                  );
+                }),
+              IgnorePointer(
+                ignoring: false,
+                child: Container(
+                  padding: EdgeInsets.only(
+                      top: provider.pageSelected == 3 ||
+                              provider.pageSelected == 0
+                          ? 0
+                          : kToolbarHeight * 2),
+                  decoration: BoxDecoration(
                     gradient: provider.pageSelected == 0
                         ? VietQRTheme.gradientColor.lilyLinear
-                        : null),
-                child: NotificationListener<ScrollNotification>(
-                  onNotification: (scrollNotification) {
-                    if (scrollNotification is ScrollUpdateNotification) {
-                      scrollToTopNotifier.value = scrollController.offset > 200;
-                      if (scrollController.offset > 150 &&
-                          scrollController.position.userScrollDirection ==
-                              ScrollDirection.reverse) {
-                        if (scrollNotifier.value) {
-                          scrollNotifier.value = false;
-                        }
-                      } else if (scrollController
-                              .position.userScrollDirection ==
-                          ScrollDirection.forward) {
-                        if (!scrollNotifier.value) {
-                          scrollNotifier.value = true;
+                        : null,
+                    // color: Colors.red
+                  ),
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (scrollNotification) {
+                      if (scrollNotification is ScrollUpdateNotification) {
+                        scrollToTopNotifier.value =
+                            scrollController.offset > 200;
+                        if (scrollController.offset > 150 &&
+                            scrollController.position.userScrollDirection ==
+                                ScrollDirection.reverse) {
+                          if (scrollNotifier.value) {
+                            scrollNotifier.value = false;
+                          }
+                        } else if (scrollController
+                                .position.userScrollDirection ==
+                            ScrollDirection.forward) {
+                          if (!scrollNotifier.value) {
+                            scrollNotifier.value = true;
+                          }
                         }
                       }
-                    }
-                    return true;
-                  },
-                  child: PageView(
-                    key: const PageStorageKey('PAGE_VIEW'),
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (index) async {
-                      // if (index != PageType.STORE.pageIndex) {
-                      provider.updateIndex(index);
-                      sendDataFromBottomBar(index);
-                      // }
+                      return true;
                     },
-                    children: [
-                      BankScreen(
-                        scrollController: scrollController,
-                        key: const PageStorageKey('QR_GENERATOR_PAGE'),
-                        onStore: () {
-                          onTapPage(5);
-                          // provider.updateIndex(5, isOnTap: true, isHome: false);
-                        },
-                      ),
-                      const HomeScreen(key: PageStorageKey('HOME_PAGE')),
-                      // const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-                      const QrFeedScreen(key: PageStorageKey('QR_WALLET')),
+                    child: PageView(
+                      key: const PageStorageKey('PAGE_VIEW'),
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _pageController,
+                      onPageChanged: (index) async {
+                        // if (index != PageType.STORE.pageIndex) {
+                        provider.updateIndex(index);
+                        sendDataFromBottomBar(index);
+                        // }
+                      },
+                      children: [
+                        BankScreen(
+                          scrollController: scrollController,
+                          key: const PageStorageKey('QR_GENERATOR_PAGE'),
+                          onStore: () {
+                            onTapPage(5);
+                            // provider.updateIndex(5, isOnTap: true, isHome: false);
+                          },
+                        ),
+                        const HomeScreen(key: PageStorageKey('HOME_PAGE')),
+                        // const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
+                        const QrFeedScreen(key: PageStorageKey('QR_WALLET')),
 
-                      const StoreScreen(key: PageStorageKey('STORE_PAGE')),
-                    ],
+                        const StoreScreen(key: PageStorageKey('STORE_PAGE')),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              if (provider.pageSelected != 3 && provider.pageSelected != 0)
+                const BackgroundAppBarHome(),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
               ValueListenableBuilder<bool>(
