@@ -7,6 +7,7 @@ import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/connect_media/blocs/connect_media_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/login/blocs/forgot_password_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/my_vietqr/bloc/vietqr_store_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
@@ -54,6 +55,9 @@ class BlocModule extends DIModule {
           )
           ..registerFactory(
             () => RegisterBloc(getIt.get<RegisterRepository>()),
+          )
+          ..registerFactory(
+            () => ForgotPasswordBloc(),
           )
           ..registerFactoryParam(
             (param1, param2) =>

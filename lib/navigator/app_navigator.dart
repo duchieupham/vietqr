@@ -32,6 +32,7 @@ import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/invoice/widgets/invoice_detail_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
+import 'package:vierqr/features/login/views/forgot_password_screen.dart';
 import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/active_success_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/annual_fee_screen.dart';
@@ -146,6 +147,16 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
+      case Routes.FORGOT_PASSWORD:
+        Map map = settings.arguments as Map;
+        String userName = map['userName'] ?? '';
+        String phone = map['phone'] ?? '';
+        AppInfoDTO appInfoDTO = map['appInfoDTO'];
+        String imageId = map['imageId'] ?? '';
+        return _buildRoute(
+            settings,
+            ForgotPasswordScreen(
+                userName: userName, phone: phone, appInfoDTO: appInfoDTO, imageId: imageId,));
       case Routes.SPLASH:
         Map map = settings.arguments as Map;
         bool isFromLogin = map['isFromLogin'] ?? false;

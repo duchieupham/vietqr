@@ -11,7 +11,6 @@ import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../dashboard/blocs/auth_provider.dart';
 

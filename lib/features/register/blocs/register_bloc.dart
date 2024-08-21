@@ -1,14 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/repositories/register_repository.dart';
@@ -29,7 +25,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterEventSubmit>(_register);
     on<RegisterEventSentOTP>(_sentOtp);
     on<RegisterEventUpdateHeight>(_updateHeight);
-    // on<RegisterEventReSentOTP>(_reSentOtp);
     on<RegisterEventPhoneAuthentication>(_phoneAuthentication);
     on<RegisterEventVerifyOTP>(_verifyOTP);
     on<RegisterEventUpdatePage>(_updatePage);
@@ -45,11 +40,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterEventLoginAfterRegister>(_loginAfterRegister);
   }
 
-  // RegisterBloc() : super(RegisterInitialState()) {
-  //   on<RegisterEventSubmit>(_register);
-  //   on<RegisterEventSentOTP>(_sentOtp);
-  //   // on<RegisterEventReSentOTP>(_reSentOtp);
-  // }
 
   final auth = FirebaseAuth.instance;
   static const String countryCode = '+84';
