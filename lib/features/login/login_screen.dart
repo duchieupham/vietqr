@@ -27,7 +27,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
@@ -500,40 +499,59 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                     ),
                     const SizedBox(height: 12),
                     //  const SizedBox(height: 12),
-                    InkWell(
-                      onTap: () {
-                        // onLoginCard();
-                      },
-                      child: Container(
-                        height: 40,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        width: 230,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFD8ECF8),
-                              Color(0xFFFFEAD9),
-                              Color(0xFFF5C9D1),
-                            ],
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Row(
-                          children: [
-                            XImage(
-                              imagePath: 'assets/images/ic-password-black.png',
-                              width: 30,
-                            ),
-                            Text(
-                              'Bạn quên mật khẩu đăng nhập?',
-                              style: TextStyle(fontSize: 11),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    ValueListenableBuilder<InfoUserDTO?>(
+                        valueListenable: infoUserDTO,
+                        builder: (context, user, _) {
+                          if (user != null) {
+                            return InkWell(
+                              onTap: () {
+                                // onLoginCard();
+                                Map<String, dynamic> paramMap = Map();
+                                paramMap['userName'] = user.fullName;
+                                paramMap['phone'] = user.phoneNo;
+                                paramMap['appInfoDTO'] =
+                                    _authProvider.appInfoDTO;
+                                paramMap['imageId'] = user.imgId;
+                                NavigationService.push(Routes.FORGOT_PASSWORD,
+                                    arguments: paramMap);
+                              },
+                              child: Container(
+                                height: 40,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                width: 230,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFD8ECF8),
+                                      Color(0xFFFFEAD9),
+                                      Color(0xFFF5C9D1),
+                                    ],
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    XImage(
+                                      imagePath:
+                                          'assets/images/ic-password-black.png',
+                                      width: 30,
+                                    ),
+                                    Text(
+                                      'Bạn quên mật khẩu đăng nhập?',
+                                      style: TextStyle(fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox(
+                            height: 20,
+                          );
+                        }),
                     const SizedBox(height: 12),
                     InkWell(
                       onTap: () {
@@ -575,27 +593,6 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                       ),
                     ),
                     const SizedBox(height: 12),
-
-                    // const SizedBox(height: 16),
-                    // Container(
-                    //   margin: const EdgeInsets.symmetric(horizontal: 40),
-                    //   child: MButtonWidget(
-                    //     title: 'Tôi là người dùng mới',
-                    //     isEnable: true,
-                    //     // width: 350,
-                    //     height: 50,
-                    //     colorEnableBgr: AppColor.WHITE,
-                    //     border: Border.all(
-                    //       width: 1,
-                    //       color: AppColor.BLUE_TEXT,
-                    //     ),
-                    //     margin: EdgeInsets.zero,
-                    //     colorEnableText: AppColor.BLUE_TEXT,
-                    //     onTap: () {
-                    //       _onRegister();
-                    //     },
-                    //   ),
-                    // ),
                     const SizedBox(height: 10),
                     SizedBox(height: height < 800 ? 16 : 5),
                   ],
@@ -603,7 +600,159 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
               ),
             );
           }
-
+          if (value == FlowType.NEAREST_LOGIN &&
+              value == FlowType.FIRST_LOGIN) {
+            return Positioned(
+              bottom: height < 800 ? 50 : 66,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              Color(0xFF458BF8),
+                              Color(0xFFFF8021),
+                              Color(0xFFFF3751),
+                              Color(0xFFC958DB),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            'Gợi ý cho bạn',
+                            style: TextStyle(
+                              fontSize: 15,
+                              foreground: Paint()
+                                ..shader = const LinearGradient(
+                                  colors: [
+                                    Color(0xFF458BF8),
+                                    Color(0xFFFF8021),
+                                    Color(0xFFFF3751),
+                                    Color(0xFFC958DB),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(
+                                    const Rect.fromLTWH(0, 0, 200, 30)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    //  const SizedBox(height: 12),
+                    ValueListenableBuilder<List<InfoUserDTO>>(
+                        valueListenable: listInfoUsers,
+                        builder: (context, users, _) {
+                          if (users.isNotEmpty) {
+                            return InkWell(
+                              onTap: () {
+                                // onLoginCard();
+                                Map<String, dynamic> paramMap = {};
+                                paramMap['userName'] = users.first.fullName;
+                                paramMap['phone'] = users.first.phoneNo;
+                                paramMap['appInfoDTO'] =
+                                    _authProvider.appInfoDTO;
+                                paramMap['imageId'] = users.first.imgId;
+                                NavigationService.push(Routes.FORGOT_PASSWORD,
+                                    arguments: paramMap);
+                              },
+                              child: Container(
+                                height: 40,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                width: 230,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFD8ECF8),
+                                      Color(0xFFFFEAD9),
+                                      Color(0xFFF5C9D1),
+                                    ],
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    XImage(
+                                      imagePath:
+                                          'assets/images/ic-password-black.png',
+                                      width: 30,
+                                    ),
+                                    Text(
+                                      'Bạn quên mật khẩu đăng nhập?',
+                                      style: TextStyle(fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox(
+                            height: 20,
+                          );
+                        }),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {
+                        passController.clear();
+                        onSetIsQuickLogin(FlowType.FIRST_LOGIN);
+                        updateInfoUser(null);
+                        // _onRegister();
+                      },
+                      child: Container(
+                        width: 270,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD8ECF8),
+                              Color(0xFFFFEAD9),
+                              Color(0xFFF5C9D1),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              XImage(
+                                imagePath: 'assets/images/ic-person@-black.png',
+                                width: 30,
+                              ),
+                              Text(
+                                'Đăng nhập bằng tài khoản VietQR khác',
+                                style: TextStyle(fontSize: 11),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
+                    SizedBox(height: height < 800 ? 16 : 5),
+                  ],
+                ),
+              ),
+            );
+          }
           return const SizedBox.shrink();
         });
   }

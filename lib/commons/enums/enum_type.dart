@@ -456,6 +456,24 @@ enum LoginType {
   APP_VERSION,
 }
 
+enum ForgotPasswordType {
+  NONE,
+  SUCCESS,
+  SEND_OTP,
+  RESEND_OTP,
+  ERROR,
+  UPDATE_VERIFY_ID,
+  UPDATE_RESEND_TOKEN,
+  UDPATE_RESSEND_OTP,
+  VERIFY_OTP,
+  FREE_TOKEN,
+  APP_VERSION,
+  FORGOT_PASS,
+  CONFIRM_PASS,
+  NEW_PASS,
+  CHANGE_PASS
+}
+
 enum RegisterType {
   NONE,
   SUCCESS,

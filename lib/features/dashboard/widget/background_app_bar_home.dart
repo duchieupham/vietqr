@@ -41,23 +41,23 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
     double width = MediaQuery.of(context).size.width;
     return Consumer<AuthenProvider>(
       builder: (context, page, child) {
-        // File file = page.bannerApp;
+        File file = page.bannerApp;
         return Container(
-          // height: 240,
-          // width: width,
+          height: 240,
+          width: width,
           padding: EdgeInsets.only(top: paddingTop + 4),
-          // alignment: Alignment.topCenter,
-          // decoration: BoxDecoration(
-          //   image: file.path.isNotEmpty
-          //       ? DecorationImage(
-          //           image: FileImage(file),
-          //           fit: BoxFit.fitWidth,
-          //         )
-          //       : const DecorationImage(
-          //           image: AssetImage(ImageConstant.bgrHeader),
-          //           fit: BoxFit.fitWidth,
-          //         ),
-          // ),
+          alignment: Alignment.topCenter,
+          decoration: BoxDecoration(
+            image: file.path.isNotEmpty
+                ? DecorationImage(
+                    image: FileImage(file),
+                    fit: BoxFit.fitWidth,
+                  )
+                : const DecorationImage(
+                    image: AssetImage(ImageConstant.bgrHeader),
+                    fit: BoxFit.fitWidth,
+                  ),
+          ),
           child: Stack(
             children: [
               ///blur chân của tấm hình
@@ -184,7 +184,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
   _buildAvatar(AuthenProvider provider) {
     String imgId = SharePrefUtils.getProfile().imgId;
     return GestureDetector(
-       behavior: HitTestBehavior.translucent,
+      behavior: HitTestBehavior.translucent,
       onTap: () => NavigatorUtils.navigatePage(
         context,
         const AccountScreen(),

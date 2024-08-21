@@ -341,8 +341,8 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(Routes.REGISTER_SPLASH_SCREEN);
+                          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN,
+                              arguments: {'registerBloc': widget.registerBloc});
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
