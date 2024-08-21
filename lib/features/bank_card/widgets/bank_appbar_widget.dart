@@ -105,10 +105,19 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                           right: 0,
                           curve: Curves.easeInOut,
                           duration: const Duration(milliseconds: 300),
-                          child: const XImage(
-                            imagePath: 'assets/images/ic-viet-qr.png',
-                            height: 35,
-                            fit: BoxFit.fitHeight,
+                          child: InkWell(
+                            onTap: () {
+                              getIt.get<BankBloc>().add(
+                                  const BankCardEventGetList(
+                                      isGetOverview: true,
+                                      isLoadInvoice: false));
+                            },
+                            child: const XImage(
+                              imagePath: 'assets/images/ic-viet-qr.png',
+                              height: 35,
+                              width: 92,
+                              fit: BoxFit.fitHeight,
+                            ),
                           )),
                       if (opacity == 0.0)
                         Positioned(
