@@ -78,7 +78,7 @@ class _CardWalletState extends State<CardWallet> {
                     },
                   ),
                   const SizedBox(width: 4),
-                  InkWell(
+                  GestureDetector(
                     onTap: () {
                       isHide.value = !isHide.value;
                     },
