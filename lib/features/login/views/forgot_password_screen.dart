@@ -360,7 +360,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
-                        'Mã xác nhận*',
+                        'Mã xác nhận',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -413,32 +413,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   valueListenable: _timerNotifier,
                                   builder: (context, time, child) {
                                     return ShaderMask(
-                                      shaderCallback: (bounds) =>
-                                          const LinearGradient(
-                                        colors: [
-                                          Color(0xFF00C6FF),
-                                          Color(0xFF0072FF),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(bounds),
+                                      shaderCallback: (bounds) => VietQRTheme
+                                          .gradientColor.brightBlueLinear
+                                          .createShader(bounds),
                                       child: Text(
                                         _formatTime(time),
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          decorationThickness: 2,
-                                          foreground: Paint()
-                                            ..shader = const LinearGradient(
-                                              colors: [
-                                                Color(0xFF00C6FF),
-                                                Color(0xFF0072FF),
-                                              ],
-                                              begin: Alignment.centerLeft,
-                                              end: Alignment.centerRight,
-                                            ).createShader(const Rect.fromLTWH(
-                                                0, 0, 200, 30)),
-                                        ),
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColor.WHITE),
                                       ),
                                     );
                                   },
@@ -499,40 +482,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               ? !state.isVerified
                               : state.isVerified,
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const XImage(
                                 imagePath: 'assets/images/ic-suggest.png',
                                 width: 30,
                               ),
                               ShaderMask(
-                                shaderCallback: (bounds) =>
-                                    const LinearGradient(
-                                  colors: [
-                                    Color(0xFF458BF8),
-                                    Color(0xFFFF8021),
-                                    Color(0xFFFF3751),
-                                    Color(0xFFC958DB),
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ).createShader(bounds),
+                                shaderCallback: (bounds) => VietQRTheme
+                                    .gradientColor.aiTextColor
+                                    .createShader(bounds),
                                 child: Text(
                                   'Gửi mã về ${widget.email}',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    foreground: Paint()
-                                      ..shader = const LinearGradient(
-                                        colors: [
-                                          Color(0xFF458BF8),
-                                          Color(0xFFFF8021),
-                                          Color(0xFFFF3751),
-                                          Color(0xFFC958DB),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(
-                                          const Rect.fromLTWH(0, 0, 200, 30)),
-                                  ),
+                                  style: const TextStyle(
+                                      fontSize: 13,
+                                      color: AppColor.WHITE,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ],
@@ -556,7 +521,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 Container(
                   margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
                   child: const Text(
-                    'Mật khẩu mới*',
+                    'Mật khẩu mới',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.normal,
@@ -573,7 +538,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       border: Border.all(
                           color: isPassFocus
                               ? AppColor.BLUE_TEXT
-                              : AppColor.GREY_TEXT,
+                              : AppColor.GREY_DADADA,
                           width: 1.5)),
                   child: PinNewPasswordWidget(
                     width: MediaQuery.of(context).size.width,
@@ -605,7 +570,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 Container(
                   margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
                   child: Text(
-                    'Xác nhận lại*',
+                    'Xác nhận lại',
                     style: TextStyle(
                       color: isSamePass ? Colors.red : Colors.black,
                       fontSize: 15,
@@ -625,7 +590,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               ? isSamePass
                                   ? Colors.red
                                   : AppColor.BLUE_TEXT
-                              : AppColor.GREY_TEXT,
+                              : AppColor.GREY_DADADA,
                           width: 1.5)),
                   child: PinConfirmPasswordWidget(
                     readOnly: readOnly,
@@ -719,7 +684,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           // width: double.infinity,
           color: Colors.transparent,
           margin: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom + 15,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 20,
               right: 20,
               left: 20),
           child: GestureDetector(
