@@ -342,10 +342,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                     ],
                                   ),
                                 ),
-                                Image.asset(
-                                  'assets/images/ic-viet-qr.png',
-                                  height: 40,
-                                ),
+                                const XImage(
+                                  imagePath: 'assets/images/ic-viet-qr.png',
+                                  height: 35,
+                                  fit: BoxFit.fitHeight,
+                                )
                               ],
                             ),
                           ],
