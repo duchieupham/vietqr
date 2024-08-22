@@ -8,6 +8,7 @@ class InfoUserDTO {
   String? imgId;
   String id;
   String? createdTime;
+  String? email;
 
   get fullName => '${lastName ?? ''} ${middleName ?? ''} ${firstName ?? ''}';
 
@@ -21,6 +22,7 @@ class InfoUserDTO {
       lastName: json['lastName'] ?? '',
       imgId: json['imgId'] ?? '',
       id: json['id'],
+      email: json['email'] ?? '',
       createdTime: DateTime.now().toIso8601String(),
     );
   }
@@ -33,6 +35,7 @@ class InfoUserDTO {
     data['"lastName"'] = (lastName == '') ? '""' : '"$lastName"';
     data['"phoneNo"'] = (phoneNo == '') ? '""' : '"$phoneNo"';
     data['"imgId"'] = (imgId == '') ? '""' : '"$imgId"';
+    data['"email"'] = (email == '') ? '""' : '"$email"';
     data['"createdTime"'] = (createdTime == '') ? '""' : '"$createdTime"';
     return data;
   }
@@ -45,6 +48,7 @@ class InfoUserDTO {
     data['lastName'] = lastName;
     data['phoneNo'] = phoneNo;
     data['imgId'] = imgId;
+    data['email'] = email;
     data['createdTime'] = createdTime;
     return data;
   }
@@ -56,6 +60,7 @@ class InfoUserDTO {
       this.lastName,
       this.imgId,
       this.createdTime,
+      this.email,
       required this.id});
 }
 

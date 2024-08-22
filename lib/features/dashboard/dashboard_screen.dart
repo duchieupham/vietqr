@@ -298,28 +298,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           body: Stack(
             children: [
               if (provider.pageSelected != 3 && provider.pageSelected != 0)
-                // Consumer<AuthenProvider>(builder: (context, page, child) {
-                //   File file = page.bannerApp;
-                //   return Container(
-                //     height: 240,
-                //     width: width,
-                //     padding: EdgeInsets.only(top: paddingTop + 4),
-                //     alignment: Alignment.topCenter,
-                //     decoration: BoxDecoration(
-                //       image: file.path.isNotEmpty
-                //           ? DecorationImage(
-                //               image: FileImage(file),
-                //               fit: BoxFit.fitWidth,
-                //             )
-                //           : const DecorationImage(
-                //               image: AssetImage(ImageConstant.bgrHeader),
-                //               fit: BoxFit.fitWidth,
-                //             ),
-                //     ),
-                //     // child: BackgroundAppBarHome(),
-                //   );
-                // }),
-                BackgroundAppBarHome(),
+                const BackgroundAppBarHome(),
               Container(
                 padding: EdgeInsets.only(
                     top:

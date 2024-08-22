@@ -25,6 +25,7 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
+import 'package:vierqr/commons/widgets/popup_forgot_password_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
@@ -136,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
     controller.close();
     isQuickLogin.dispose();
     listInfoUsers.dispose();
+    infoUserDTO.dispose();
     super.dispose();
   }
 
@@ -506,14 +508,23 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                             return InkWell(
                               onTap: () {
                                 // onLoginCard();
-                                Map<String, dynamic> paramMap = Map();
-                                paramMap['userName'] = user.fullName;
-                                paramMap['phone'] = user.phoneNo;
-                                paramMap['appInfoDTO'] =
-                                    _authProvider.appInfoDTO;
-                                paramMap['imageId'] = user.imgId;
-                                NavigationService.push(Routes.FORGOT_PASSWORD,
-                                    arguments: paramMap);
+                                final email = user.email;
+                                if (email == null || email.isEmpty) {
+                                  DialogWidget.instance.showModelBottomSheet(
+                                      borderRadius: BorderRadius.circular(16),
+                                      widget:
+                                          const PopUpForgotPasswordWidget());
+                                } else {
+                                  Map<String, dynamic> paramMap = {};
+                                  paramMap['userName'] = user.fullName;
+                                  paramMap['phone'] = user.phoneNo;
+                                  paramMap['appInfoDTO'] =
+                                      _authProvider.appInfoDTO;
+                                  paramMap['email'] = email;
+                                  paramMap['imageId'] = user.imgId;
+                                  NavigationService.push(Routes.FORGOT_PASSWORD,
+                                      arguments: paramMap);
+                                }
                               },
                               child: Container(
                                 height: 40,
@@ -548,7 +559,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                               ),
                             );
                           }
-                          return SizedBox(
+                          return const SizedBox(
                             height: 20,
                           );
                         }),
@@ -659,14 +670,23 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                             return InkWell(
                               onTap: () {
                                 // onLoginCard();
-                                Map<String, dynamic> paramMap = {};
-                                paramMap['userName'] = users.first.fullName;
-                                paramMap['phone'] = users.first.phoneNo;
-                                paramMap['appInfoDTO'] =
-                                    _authProvider.appInfoDTO;
-                                paramMap['imageId'] = users.first.imgId;
-                                NavigationService.push(Routes.FORGOT_PASSWORD,
-                                    arguments: paramMap);
+                                final email = users.first.email;
+                                if (email == null || email.isEmpty) {
+                                  DialogWidget.instance.showModelBottomSheet(
+                                      borderRadius: BorderRadius.circular(16),
+                                      widget:
+                                          const PopUpForgotPasswordWidget());
+                                } else {
+                                  Map<String, dynamic> paramMap = {};
+                                  paramMap['userName'] = users.first.fullName;
+                                  paramMap['phone'] = users.first.phoneNo;
+                                  paramMap['appInfoDTO'] =
+                                      _authProvider.appInfoDTO;
+                                  paramMap['imageId'] = users.first.imgId;
+                                  paramMap['email'] = email;
+                                  NavigationService.push(Routes.FORGOT_PASSWORD,
+                                      arguments: paramMap);
+                                }
                               },
                               child: Container(
                                 height: 40,
@@ -701,7 +721,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                               ),
                             );
                           }
-                          return SizedBox(
+                          return const SizedBox(
                             height: 20,
                           );
                         }),
@@ -903,6 +923,7 @@ extension _LoginScreenFunction on _LoginScreenState {
         infoUser.middleName = userProfile.middleName;
         infoUser.lastName = userProfile.lastName;
         infoUser.middleName = userProfile.middleName;
+        infoUser.email = userProfile.email;
 
         updateInfoUser(infoUser);
         _saveAccount();

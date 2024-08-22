@@ -153,10 +153,16 @@ class NavigationService {
         String phone = map['phone'] ?? '';
         AppInfoDTO appInfoDTO = map['appInfoDTO'];
         String imageId = map['imageId'] ?? '';
+        String email = map['email'] ?? '';
         return _buildRoute(
             settings,
             ForgotPasswordScreen(
-                userName: userName, phone: phone, appInfoDTO: appInfoDTO, imageId: imageId,));
+              userName: userName,
+              phone: phone,
+              appInfoDTO: appInfoDTO,
+              email: email,
+              imageId: imageId,
+            ));
       case Routes.SPLASH:
         Map map = settings.arguments as Map;
         bool isFromLogin = map['isFromLogin'] ?? false;

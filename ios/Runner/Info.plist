@@ -386,5 +386,10 @@
 		<string>E828BD080F</string>
 		<string>F0000000030001</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  <string>sms</string>
+  <string>tel</string>
+	</array>
 </dict>
 </plist>

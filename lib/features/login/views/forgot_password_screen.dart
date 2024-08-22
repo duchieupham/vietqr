@@ -16,12 +16,10 @@ import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/pin_confirm_password_widget.dart';
 import 'package:vierqr/commons/widgets/pin_new_password_widget.dart';
-import 'package:vierqr/commons/widgets/pin_widget_register.dart';
 import 'package:vierqr/features/login/blocs/forgot_password_bloc.dart';
 import 'package:vierqr/features/login/events/forgot_password_event.dart';
 import 'package:vierqr/features/login/states/forgot_password_state.dart';
 import 'package:vierqr/features/login/widgets/text_field_code.dart';
-import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -32,6 +30,7 @@ class ForgotPasswordScreen extends StatefulWidget {
   final String userName;
   final String phone;
   final String imageId;
+  final String email;
   final AppInfoDTO appInfoDTO;
 
   // static String routeName = '/forgot_password';
@@ -41,6 +40,7 @@ class ForgotPasswordScreen extends StatefulWidget {
       required this.userName,
       required this.phone,
       required this.appInfoDTO,
+      required this.email,
       required this.imageId});
 
   @override
@@ -73,11 +73,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   bool isSuccess = false;
   bool readOnly = false;
 
-  Map<String, dynamic> param = {
-    'recipient': 'hieu.vh@vietqr.vn',
-    'userId': SharePrefUtils.getProfile().userId,
-  };
-
   @override
   void initState() {
     Provider.of<AuthenProvider>(context, listen: false).initThemeDTO();
@@ -88,6 +83,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
 
+    Map<String, dynamic> param = {
+      'recipient': widget.email,
+      'userId': SharePrefUtils.getProfile().userId,
+    };
     _bloc.add(ForgotPasswordEventSendOTP(param: param));
 
     _startTimer();
@@ -216,8 +215,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == ForgotPasswordType.CHANGE_PASS) {
-            Navigator.pop(context);
-            Navigator.pop(context);
+            isSuccess = false;
+            isCircle = false;
+            DialogWidget.instance.openMsgDialog(
+              title: 'Thay đổi thất bại!',
+              msg: state.msg ?? '',
+              // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
+            );
             Navigator.pop(context);
           }
         },
@@ -318,9 +322,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const Text(
-                                        'ownhieu0804@gmail.com',
-                                        style: TextStyle(
+                                      Text(
+                                        widget.email,
+                                        style: const TextStyle(
                                           color: AppColor.GREY_TEXT,
                                           fontSize: 13,
                                           fontWeight: FontWeight.normal,
@@ -359,6 +363,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           return isExpired
                               ? InkWell(
                                   onTap: () {
+                                    Map<String, dynamic> param = {
+                                      'recipient': widget.email,
+                                      'userId':
+                                          SharePrefUtils.getProfile().userId,
+                                    };
                                     _resetTimer();
                                     _bloc.add(ForgotPasswordEventResendOTP(
                                         param: param));
@@ -443,7 +452,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         Map<String, dynamic> param = {
                           'otp': _otpController.text,
                           'userId': SharePrefUtils.getProfile().userId,
-                          'email': 'hieu.vh@vietqr.vn',
+                          'email': widget.email,
                         };
                         _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
                       }
@@ -458,7 +467,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       Map<String, dynamic> param = {
                         'otp': _otpController.text,
                         'userId': SharePrefUtils.getProfile().userId,
-                        'email': 'hieu.vh@vietqr.vn',
+                        'email': widget.email,
                       };
                       _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
                     },
@@ -501,7 +510,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   end: Alignment.centerRight,
                                 ).createShader(bounds),
                                 child: Text(
-                                  'Gửi mã về ownhieu0804@gmail.com',
+                                  'Gửi mã về ${widget.email}',
                                   style: TextStyle(
                                     fontSize: 15,
                                     foreground: Paint()
