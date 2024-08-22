@@ -72,12 +72,15 @@ class TextFormFieldCode extends StatelessWidget {
       maxLines: (maxLines == null) ? 1 : maxLines,
       inputFormatters: inputFormatters,
       decoration: InputDecoration(
-        suffixIcon: const Padding(
-          padding: EdgeInsets.only(left: 20),
-          child: Icon(
-            Icons.clear,
-            color: Colors.black,
-            size: 20,
+        suffixIcon: Padding(
+          padding: const EdgeInsets.only(left: 20),
+          child: GestureDetector(
+            onTap: !readOnly ? () {} : () => controller.clear,
+            child: const Icon(
+              Icons.clear,
+              color: Colors.black,
+              size: 20,
+            ),
           ),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 0),
