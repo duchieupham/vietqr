@@ -29,7 +29,6 @@ class ForgotPasswordState extends Equatable {
     bool? isOldPass,
     bool? isErrVerify,
     bool? isSamePass,
-    bool? isVerifiedPass,
     bool? isTimeOut,
   }) {
     return ForgotPasswordState(
