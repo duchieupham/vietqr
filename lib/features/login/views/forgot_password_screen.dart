@@ -236,7 +236,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         },
         builder: (context, state) {
           return Scaffold(
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true,
             backgroundColor: Colors.white,
             bottomNavigationBar: _buildButtonSubmit(height, width, () {
               _bloc.add(
@@ -247,264 +247,410 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 ),
               );
             }, isSuccess, isCircle, state.isVerified, state.isSamePass),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 150,
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: 150,
-                        padding:
-                            const EdgeInsets.only(top: 70, left: 40, right: 40),
-                        width: MediaQuery.of(context).size.width,
-                        color: Colors.white,
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 0, sigmaY: 30),
-                            child: Container(
-                              color: Colors.white.withOpacity(0.0),
-                              height: 40,
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    height: 150,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 150,
+                          padding:
+                              const EdgeInsets.only(top: 50, left: 40, right: 40),
+                          width: MediaQuery.of(context).size.width,
+                          color: Colors.white,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: ClipRect(
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 0, sigmaY: 30),
+                              child: Container(
+                                color: Colors.white.withOpacity(0.0),
+                                height: 40,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Container(
-                        height: 150,
-                        padding: const EdgeInsets.only(
-                            top: kToolbarHeight, left: 20, right: 20),
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    Provider.of<PinProvider>(context,
-                                            listen: false)
-                                        .resetPinNewPass();
-                                    Provider.of<PinProvider>(context,
-                                            listen: false)
-                                        .resetPinConfirmNewPass();
-                                  },
-                                  child: const Icon(
-                                    Icons.arrow_back_ios,
-                                    size: 20,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                XImage(
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: BorderRadius.circular(20),
-                                  imagePath: _authenProvider
-                                          .avatarUser.path.isEmpty
-                                      ? widget.imageId.isNotEmpty
-                                          ? widget.imageId.getPathIMageNetwork
-                                          : ImageConstant.icAvatar
-                                      : _authenProvider.avatarUser.path,
-                                  errorWidget: const XImage(
-                                    imagePath: ImageConstant.icAvatar,
-                                    width: 40,
-                                    height: 40,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        widget.userName,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        widget.email,
-                                        style: const TextStyle(
-                                          color: AppColor.GREY_TEXT,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Image.asset(
-                                  'assets/images/ic-viet-qr.png',
-                                  height: 40,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Mã xác nhận',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: _expriedNotifer,
-                        builder: (context, isExpired, child) {
-                          return isExpired
-                              ? InkWell(
-                                  onTap: () {
-                                    Map<String, dynamic> param = {
-                                      'phoneNo': widget.phone,
-                                      'email': widget.email,
-                                    };
-                                    _resetTimer();
-                                    _bloc.add(ForgotPasswordEventResendOTP(
-                                        param: param));
-                                  },
-                                  child: ShaderMask(
-                                    shaderCallback: (bounds) =>
-                                        const LinearGradient(
-                                      colors: [
-                                        Color(0xFF00C6FF),
-                                        Color(0xFF0072FF),
-                                      ],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                    ).createShader(bounds),
-                                    child: Text(
-                                      'Gửi lại mã',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        foreground: Paint()
-                                          ..shader = const LinearGradient(
-                                            colors: [
-                                              Color(0xFF00C6FF),
-                                              Color(0xFF0072FF),
-                                            ],
-                                            begin: Alignment.centerLeft,
-                                            end: Alignment.centerRight,
-                                          ).createShader(const Rect.fromLTWH(
-                                              0, 0, 200, 30)),
-                                      ),
+                        Container(
+                          height: 150,
+                          padding: const EdgeInsets.only(
+                              top: kToolbarHeight, left: 20, right: 20),
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Provider.of<PinProvider>(context,
+                                              listen: false)
+                                          .resetPinNewPass();
+                                      Provider.of<PinProvider>(context,
+                                              listen: false)
+                                          .resetPinConfirmNewPass();
+                                    },
+                                    child: const Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 20,
                                     ),
                                   ),
-                                )
-                              : ValueListenableBuilder<int>(
-                                  valueListenable: _timerNotifier,
-                                  builder: (context, time, child) {
-                                    return ShaderMask(
-                                      shaderCallback: (bounds) => VietQRTheme
-                                          .gradientColor.brightBlueLinear
-                                          .createShader(bounds),
-                                      child: Text(
-                                        _formatTime(time),
-                                        style: const TextStyle(
-                                            fontSize: 15,
+                                  const SizedBox(width: 8),
+                                  XImage(
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: BorderRadius.circular(20),
+                                    imagePath: _authenProvider
+                                            .avatarUser.path.isEmpty
+                                        ? widget.imageId.isNotEmpty
+                                            ? widget.imageId.getPathIMageNetwork
+                                            : ImageConstant.icAvatar
+                                        : _authenProvider.avatarUser.path,
+                                    errorWidget: const XImage(
+                                      imagePath: ImageConstant.icAvatar,
+                                      width: 40,
+                                      height: 40,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          widget.userName,
+                                          style: const TextStyle(
+                                            fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColor.WHITE),
-                                      ),
-                                    );
-                                  },
-                                );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: TextFormFieldCode(
-                    readOnly: state.isVerified,
-                    hintText: 'Nhập mã xác nhận',
-                    controller: _otpController,
-                    keyboardAction: TextInputAction.send,
-                    onChange: (value) {
-                      if (_otpController.text.length == 6) {
-                        Map<String, dynamic> param = {
-                          'phoneNo': widget.phone,
-                          'otp': _otpController.text,
-                        };
-                        _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
-                      }
-                    },
-                    inputType: TextInputType.number,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(6),
-                    ],
-                    isObscureText: false,
-                    autoFocus: true,
-                    onSubmitted: (value) {
-                      Map<String, dynamic> param = {
-                        'otp': _otpController.text,
-                        'userId': SharePrefUtils.getProfile().userId,
-                        'email': widget.email,
-                      };
-                      _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
-                    },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 20, left: 20),
-                  height: 1,
-                  color: AppColor.GREY_LIGHT,
-                  width: double.infinity,
-                ),
-                Container(
-                    margin:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 15),
-                    child: Row(
-                      mainAxisAlignment: !state.isErrVerify
-                          ? MainAxisAlignment.start
-                          : MainAxisAlignment.end,
-                      children: [
-                        Visibility(
-                          visible: !state.isErrVerify
-                              ? !state.isVerified
-                              : state.isVerified,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const XImage(
-                                imagePath: 'assets/images/ic-suggest.png',
-                                width: 30,
-                              ),
-                              ShaderMask(
-                                shaderCallback: (bounds) => VietQRTheme
-                                    .gradientColor.aiTextColor
-                                    .createShader(bounds),
-                                child: Text(
-                                  'Gửi mã về ${widget.email}',
-                                  style: const TextStyle(
-                                      fontSize: 13,
-                                      color: AppColor.WHITE,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                          ),
+                                        ),
+                                        Text(
+                                          widget.email,
+                                          style: const TextStyle(
+                                            color: AppColor.GREY_TEXT,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Image.asset(
+                                    'assets/images/ic-viet-qr.png',
+                                    height: 40,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Mã xác nhận',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        ValueListenableBuilder<bool>(
+                          valueListenable: _expriedNotifer,
+                          builder: (context, isExpired, child) {
+                            return isExpired
+                                ? InkWell(
+                                    onTap: () {
+                                      Map<String, dynamic> param = {
+                                        'phoneNo': widget.phone,
+                                        'email': widget.email,
+                                      };
+                                      _resetTimer();
+                                      _bloc.add(ForgotPasswordEventResendOTP(
+                                          param: param));
+                                    },
+                                    child: ShaderMask(
+                                      shaderCallback: (bounds) =>
+                                          const LinearGradient(
+                                        colors: [
+                                          Color(0xFF00C6FF),
+                                          Color(0xFF0072FF),
+                                        ],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ).createShader(bounds),
+                                      child: Text(
+                                        'Gửi lại mã',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          foreground: Paint()
+                                            ..shader = const LinearGradient(
+                                              colors: [
+                                                Color(0xFF00C6FF),
+                                                Color(0xFF0072FF),
+                                              ],
+                                              begin: Alignment.centerLeft,
+                                              end: Alignment.centerRight,
+                                            ).createShader(const Rect.fromLTWH(
+                                                0, 0, 200, 30)),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : ValueListenableBuilder<int>(
+                                    valueListenable: _timerNotifier,
+                                    builder: (context, time, child) {
+                                      return ShaderMask(
+                                        shaderCallback: (bounds) => VietQRTheme
+                                            .gradientColor.brightBlueLinear
+                                            .createShader(bounds),
+                                        child: Text(
+                                          _formatTime(time),
+                                          style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColor.WHITE),
+                                        ),
+                                      );
+                                    },
+                                  );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: TextFormFieldCode(
+                      readOnly: state.isVerified,
+                      hintText: 'Nhập mã xác nhận',
+                      controller: _otpController,
+                      keyboardAction: TextInputAction.send,
+                      onChange: (value) {
+                        if (_otpController.text.length == 6) {
+                          Map<String, dynamic> param = {
+                            'phoneNo': widget.phone,
+                            'otp': _otpController.text,
+                          };
+                          _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
+                        }
+                      },
+                      inputType: TextInputType.number,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                      ],
+                      isObscureText: false,
+                      autoFocus: true,
+                      onSubmitted: (value) {
+                        Map<String, dynamic> param = {
+                          'otp': _otpController.text,
+                          'userId': SharePrefUtils.getProfile().userId,
+                          'email': widget.email,
+                        };
+                        _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(right: 20, left: 20),
+                    height: 1,
+                    color: AppColor.GREY_LIGHT,
+                    width: double.infinity,
+                  ),
+                  Container(
+                      margin:
+                          const EdgeInsets.only(left: 20, right: 20, bottom: 15),
+                      child: Row(
+                        mainAxisAlignment: !state.isErrVerify
+                            ? MainAxisAlignment.start
+                            : MainAxisAlignment.end,
+                        children: [
+                          Visibility(
+                            visible: !state.isErrVerify
+                                ? !state.isVerified
+                                : state.isVerified,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const XImage(
+                                  imagePath: 'assets/images/ic-suggest.png',
+                                  width: 30,
+                                ),
+                                ShaderMask(
+                                  shaderCallback: (bounds) => VietQRTheme
+                                      .gradientColor.aiTextColor
+                                      .createShader(bounds),
+                                  child: Text(
+                                    'Gửi mã về ${widget.email}',
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        color: AppColor.WHITE,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Visibility(
+                            visible: state.isErrVerify,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                state.msg,
+                                maxLines: 2,
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                                style: Styles.errorStyle(fontSize: 13),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                    child: const Text(
+                      'Mật khẩu mới',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    height: 50,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            color: isPassFocus
+                                ? AppColor.BLUE_TEXT
+                                : AppColor.GREY_DADADA,
+                            width: 1.5)),
+                    child: PinNewPasswordWidget(
+                      width: MediaQuery.of(context).size.width,
+                      pinSize: 15,
+                      readOnly: readOnly,
+                      pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                      editingController: _passwordController,
+                      focusNode: passNode,
+                      onChanged: (value) {
+                        Provider.of<PinProvider>(context, listen: false)
+                            .updatePinNewPassLength(value.length);
+              
+                        if (value.length == Numeral.DEFAULT_PIN_LENGTH) {
+                          _bloc.add(const ForgotPasswordEventNewPass());
+                        }
+                      },
+                      // autoFocus: true,
+                      onDone: (value) {
+                        if (_passwordController.text.length ==
+                            Numeral.DEFAULT_PIN_LENGTH) {
+                          _bloc.add(const ForgotPasswordEventNewPass());
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
+                    child: Text(
+                      'Xác nhận lại',
+                      style: TextStyle(
+                        color: isSamePass ? Colors.red : Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    height: 50,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            color: isConfirmPassFocus
+                                ? isSamePass
+                                    ? Colors.red
+                                    : AppColor.BLUE_TEXT
+                                : AppColor.GREY_DADADA,
+                            width: 1.5)),
+                    child: PinConfirmPasswordWidget(
+                      readOnly: readOnly,
+                      width: MediaQuery.of(context).size.width,
+                      pinSize: 15,
+                      pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                      editingController: _confirmPasswordController,
+                      focusNode: confirmPassNode,
+                      // autoFocus: true,
+                      onChanged: (value) {
+                        Provider.of<PinProvider>(context, listen: false)
+                            .updatePinConfirmPassLength(value.length);
+              
+                        if (value.length == Numeral.DEFAULT_PIN_LENGTH) {
+                          // _bloc.add(const ForgotPasswordEventNewPass());
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          _bloc.add(
+                            ForgotPasswordEventConfirmPassword(
+                              password: _passwordController.text,
+                              confirmPassword: _confirmPasswordController.text,
+                            ),
+                          );
+                        }
+              
+                        if (value.isEmpty) {
+                          setState(() {
+                            isSamePass = false;
+                          });
+                          _bloc.add(
+                            ForgotPasswordEventConfirmPassword(
+                              password: _passwordController.text,
+                              confirmPassword: _confirmPasswordController.text,
+                            ),
+                          );
+                        }
+                      },
+                      // autoFocus: true,
+                      onDone: (value) {
+                        if (_confirmPasswordController.text.length ==
+                            Numeral.DEFAULT_PIN_LENGTH) {
+                          // _bloc.add(const ForgotPasswordEventNewPass());
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          _bloc.add(
+                            ForgotPasswordEventConfirmPassword(
+                              password: _passwordController.text,
+                              confirmPassword: _confirmPasswordController.text,
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
                         Visibility(
-                          visible: state.isErrVerify,
+                          visible: isSamePass,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
@@ -517,154 +663,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           ),
                         ),
                       ],
-                    )),
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                  child: const Text(
-                    'Mật khẩu mới',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
                     ),
                   ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  height: 50,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: isPassFocus
-                              ? AppColor.BLUE_TEXT
-                              : AppColor.GREY_DADADA,
-                          width: 1.5)),
-                  child: PinNewPasswordWidget(
-                    width: MediaQuery.of(context).size.width,
-                    pinSize: 15,
-                    readOnly: readOnly,
-                    pinLength: Numeral.DEFAULT_PIN_LENGTH,
-                    editingController: _passwordController,
-                    focusNode: passNode,
-                    onChanged: (value) {
-                      Provider.of<PinProvider>(context, listen: false)
-                          .updatePinNewPassLength(value.length);
-
-                      if (value.length == Numeral.DEFAULT_PIN_LENGTH) {
-                        _bloc.add(const ForgotPasswordEventNewPass());
-                      }
-                    },
-                    // autoFocus: true,
-                    onDone: (value) {
-                      if (_passwordController.text.length ==
-                          Numeral.DEFAULT_PIN_LENGTH) {
-                        _bloc.add(const ForgotPasswordEventNewPass());
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 25,
-                ),
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20, bottom: 5),
-                  child: Text(
-                    'Xác nhận lại',
-                    style: TextStyle(
-                      color: isSamePass ? Colors.red : Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  height: 50,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: isConfirmPassFocus
-                              ? isSamePass
-                                  ? Colors.red
-                                  : AppColor.BLUE_TEXT
-                              : AppColor.GREY_DADADA,
-                          width: 1.5)),
-                  child: PinConfirmPasswordWidget(
-                    readOnly: readOnly,
-                    width: MediaQuery.of(context).size.width,
-                    pinSize: 15,
-                    pinLength: Numeral.DEFAULT_PIN_LENGTH,
-                    editingController: _confirmPasswordController,
-                    focusNode: confirmPassNode,
-                    // autoFocus: true,
-                    onChanged: (value) {
-                      Provider.of<PinProvider>(context, listen: false)
-                          .updatePinConfirmPassLength(value.length);
-
-                      if (value.length == Numeral.DEFAULT_PIN_LENGTH) {
-                        // _bloc.add(const ForgotPasswordEventNewPass());
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        _bloc.add(
-                          ForgotPasswordEventConfirmPassword(
-                            password: _passwordController.text,
-                            confirmPassword: _confirmPasswordController.text,
-                          ),
-                        );
-                      }
-
-                      if (value.isEmpty) {
-                        setState(() {
-                          isSamePass = false;
-                        });
-                        _bloc.add(
-                          ForgotPasswordEventConfirmPassword(
-                            password: _passwordController.text,
-                            confirmPassword: _confirmPasswordController.text,
-                          ),
-                        );
-                      }
-                    },
-                    // autoFocus: true,
-                    onDone: (value) {
-                      if (_confirmPasswordController.text.length ==
-                          Numeral.DEFAULT_PIN_LENGTH) {
-                        // _bloc.add(const ForgotPasswordEventNewPass());
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        _bloc.add(
-                          ForgotPasswordEventConfirmPassword(
-                            password: _passwordController.text,
-                            confirmPassword: _confirmPasswordController.text,
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Visibility(
-                        visible: isSamePass,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            state.msg,
-                            maxLines: 2,
-                            textAlign: TextAlign.start,
-                            overflow: TextOverflow.ellipsis,
-                            style: Styles.errorStyle(fontSize: 13),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
