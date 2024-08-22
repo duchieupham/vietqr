@@ -71,7 +71,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   bool isSamePass = false;
   bool isCircle = false;
   bool isSuccess = false;
-  bool readOnly = false;
+  bool readOnly = true;
 
   @override
   void initState() {
@@ -84,8 +84,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {});
 
     Map<String, dynamic> param = {
-      'recipient': widget.email,
-      'userId': SharePrefUtils.getProfile().userId,
+      'phoneNo': widget.phone,
+      'email': widget.email,
     };
     _bloc.add(ForgotPasswordEventSendOTP(param: param));
 
@@ -148,6 +148,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           if (state.status == BlocStatus.ERROR &&
               (state.request == ForgotPasswordType.SEND_OTP ||
                   state.request == ForgotPasswordType.RESEND_OTP)) {
+            Fluttertoast.showToast(
+              msg: state.msg ?? '',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
             _expriedNotifer.value = true;
             _timer.cancel();
           }
@@ -159,6 +167,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
           if (state.status == BlocStatus.SUCCESS &&
               state.request == ForgotPasswordType.VERIFY_OTP) {
+            readOnly = false;
             otpNode.unfocus();
             if (!otpNode.hasFocus) {
               isPassFocus = true;
@@ -187,7 +196,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               state.request == ForgotPasswordType.CHANGE_PASS) {
             // DialogWidget.instance.openLoadingDialog();
             isCircle = true;
-            readOnly = false;
+            readOnly = true;
             FocusManager.instance.primaryFocus?.unfocus();
           }
 
@@ -364,9 +373,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               ? InkWell(
                                   onTap: () {
                                     Map<String, dynamic> param = {
-                                      'recipient': widget.email,
-                                      'userId':
-                                          SharePrefUtils.getProfile().userId,
+                                      'phoneNo': widget.phone,
+                                      'email': widget.email,
                                     };
                                     _resetTimer();
                                     _bloc.add(ForgotPasswordEventResendOTP(
@@ -450,9 +458,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     onChange: (value) {
                       if (_otpController.text.length == 6) {
                         Map<String, dynamic> param = {
+                          'phoneNo': widget.phone,
                           'otp': _otpController.text,
-                          'userId': SharePrefUtils.getProfile().userId,
-                          'email': widget.email,
                         };
                         _bloc.add(ForgotPasswordEventVerifyOTP(param: param));
                       }
@@ -481,7 +488,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 ),
                 Container(
                     margin:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 30),
+                        const EdgeInsets.only(left: 20, right: 20, bottom: 15),
                     child: Row(
                       mainAxisAlignment: !state.isErrVerify
                           ? MainAxisAlignment.start

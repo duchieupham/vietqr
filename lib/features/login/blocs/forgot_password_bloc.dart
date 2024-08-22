@@ -25,7 +25,7 @@ class ForgotPasswordBloc
     ResponseMessageDTO dto = const ResponseMessageDTO(status: '', message: '');
     try {
       if (event is ForgotPasswordEventSendOTP) {
-        dto = await emailRepository.sendOTP(event.param);
+        dto = await emailRepository.requestOTP(event.param);
         if (dto.status == "SUCCESS") {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,
@@ -33,7 +33,7 @@ class ForgotPasswordBloc
           ));
         } else {
           emit(state.copyWith(
-              msg: 'Không thể gửi OTP. Vui lòng kiểm tra lại kết nối.',
+              msg: 'Gửi mã OTP không thành công.',
               status: BlocStatus.ERROR,
               request: ForgotPasswordType.SEND_OTP));
         }
@@ -56,7 +56,7 @@ class ForgotPasswordBloc
           isVerified: false,
           isErrVerify: false,
         ));
-        dto = await emailRepository.sendOTP(event.param);
+        dto = await emailRepository.requestOTP(event.param);
         if (dto.status == "SUCCESS") {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,
@@ -64,7 +64,7 @@ class ForgotPasswordBloc
           ));
         } else {
           emit(state.copyWith(
-              msg: 'Không thể gửi OTP. Vui lòng kiểm tra lại kết nối.',
+              msg: 'Gửi mã OTP không thành công.',
               status: BlocStatus.ERROR,
               request: ForgotPasswordType.RESEND_OTP));
         }
@@ -81,7 +81,7 @@ class ForgotPasswordBloc
     ResponseMessageDTO dto = const ResponseMessageDTO(status: '', message: '');
     try {
       if (event is ForgotPasswordEventVerifyOTP) {
-        dto = await emailRepository.confirmOTP(event.param);
+        dto = await emailRepository.confirmOTPInForgetPassword(event.param);
 
         if (dto.status == "SUCCESS") {
           emit(state.copyWith(
@@ -96,10 +96,18 @@ class ForgotPasswordBloc
               isTimeOut: true,
               isVerified: false,
               isErrVerify: true,
-              msg: 'Mã OTP đã hết hạn.'));
+              msg: 'Mã OTP đã hết hiệu lực.'));
+        } else if (dto.message == 'E177') {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR,
+              request: ForgotPasswordType.VERIFY_OTP,
+              isTimeOut: true,
+              isVerified: false,
+              isErrVerify: true,
+              msg: 'Mã OTP không chính xác.'));
         } else {
           emit(state.copyWith(
-              msg: 'Mã OTP không hợp lệ.',
+              msg: 'Không thể xác thực OTP. Vui lòng thử lại.',
               status: BlocStatus.ERROR,
               isErrVerify: true,
               request: ForgotPasswordType.VERIFY_OTP,
@@ -176,12 +184,11 @@ class ForgotPasswordBloc
     LoginRepository loginRepo = getIt.get<LoginRepository>();
     ResponseMessageDTO dto = const ResponseMessageDTO(status: '', message: '');
     try {
-      
       if (event is ForgotPasswordEventChangePassword) {
-         emit(state.copyWith(
-            status: BlocStatus.LOADING,
-            request: ForgotPasswordType.CHANGE_PASS,
-          ));
+        emit(state.copyWith(
+          status: BlocStatus.LOADING,
+          request: ForgotPasswordType.CHANGE_PASS,
+        ));
 
         final body = {
           'phoneNo': event.phoneNo,
