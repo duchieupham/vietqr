@@ -298,7 +298,28 @@ class _DashBoardScreen extends State<DashBoardScreen>
           body: Stack(
             children: [
               if (provider.pageSelected != 3 && provider.pageSelected != 0)
-                const BackgroundAppBarHome(),
+                Consumer<AuthenProvider>(builder: (context, page, child) {
+                  File file = page.bannerApp;
+                  return Container(
+                    height: 240,
+                    width: width,
+                    padding: EdgeInsets.only(top: paddingTop + 4),
+                    alignment: Alignment.topCenter,
+                    decoration: BoxDecoration(
+                      image: file.path.isNotEmpty
+                          ? DecorationImage(
+                              image: FileImage(file),
+                              fit: BoxFit.fitWidth,
+                            )
+                          : const DecorationImage(
+                              image: AssetImage(ImageConstant.bgrHeader),
+                              fit: BoxFit.fitWidth,
+                            ),
+                    ),
+                  );
+                }),
+              // const BackgroundAppBarHome(),
+
               Container(
                 padding: EdgeInsets.only(
                     top:
@@ -359,10 +380,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   ),
                 ),
               ),
-              // if (provider.pageSelected != 3 && provider.pageSelected != 0)
-              //   Positioned(
-              //     top: 0,
-              //     child: const BackgroundAppBarHome()),
+              Positioned(
+                top: MediaQuery.of(context).viewPadding.top + 4,
+                child: const BackgroundAppBarHome(),
+              ),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
               ValueListenableBuilder<bool>(
