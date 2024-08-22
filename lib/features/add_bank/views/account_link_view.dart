@@ -1,5 +1,6 @@
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -111,6 +112,9 @@ class AccountLinkView extends StatelessWidget {
           // controller: provider.introduceController,
           inputType: TextInputType.number,
           keyboardAction: TextInputAction.next,
+          inputFormatter: [
+            LengthLimitingTextInputFormatter(12),
+          ],
           suffixIcon: GestureDetector(
             onTap: onScan,
             child: Image.asset(

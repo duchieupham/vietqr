@@ -688,7 +688,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
   Widget _buildAvatar() {
     String imgId = SharePrefUtils.getProfile().imgId;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return GestureDetector(
             onTap: () => NavigatorUtils.navigatePage(

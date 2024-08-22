@@ -50,7 +50,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> onStartUp() async {
     // _bankBloc.add(GetInvoiceOverview());
-    _bankBloc.add(const BankCardEventGetList(isGetOverview: true));
+    _bankBloc.add(
+        const BankCardEventGetList(isGetOverview: true, isLoadInvoice: true));
     _bankBloc.add(LoadDataBankEvent());
   }
 

@@ -11,7 +11,6 @@ import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../dashboard/blocs/auth_provider.dart';
 
@@ -46,13 +45,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
               isToast: event.isToast,
               request: LoginType.LOGIN,
               status: BlocStatus.UNLOADING));
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .checkStateLogin(false);
         } else {
           emit(state.copyWith(
               request: LoginType.ERROR,
               msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .checkStateLogin(true);
         }
       }

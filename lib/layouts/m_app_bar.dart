@@ -25,11 +25,11 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.callBackHome,
     this.showBG = true,
     this.centerTitle = true,
-  })  : preferredSize = const Size.fromHeight(60);
+  }) : preferredSize = const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(builder: (context, page, child) {
+    return Consumer<AuthenProvider>(builder: (context, page, child) {
       String url = page.settingDTO.themeImgUrl;
       return Container(
         decoration: showBG

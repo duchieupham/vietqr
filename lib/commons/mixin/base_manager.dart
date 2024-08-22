@@ -27,7 +27,7 @@ mixin BaseManager {
   String get userId => userRes.userId;
 
   PackageInfo? get packageInfo =>
-      Provider.of<AuthProvider>(context, listen: false).packageInfo;
+      Provider.of<AuthenProvider>(context, listen: false).packageInfo;
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {

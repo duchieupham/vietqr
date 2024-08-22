@@ -158,7 +158,7 @@ class _ContactStateState extends State<_ContactState>
   }
 
   void _onUpdateContact() async {
-    Provider.of<AuthProvider>(context, listen: false).updateSync(true);
+    Provider.of<AuthenProvider>(context, listen: false).updateSync(true);
     final data = await _fetchContacts();
 
     eventBus.fire(SyncContactEvent(data));
@@ -339,7 +339,7 @@ class _ContactStateState extends State<_ContactState>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Consumer<AuthProvider>(
+                    Consumer<AuthenProvider>(
                       builder: (context, dashProvider, child) {
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),

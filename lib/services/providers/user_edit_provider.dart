@@ -8,6 +8,7 @@ class UserEditProvider with ChangeNotifier {
   bool _isOldPassErr = false;
   bool _isNewPassErr = false;
   bool _isConfirmPassErr = false;
+  bool _isEmailErr = false;
 
   get availableUpdate => _isAvailableUpdate;
 
@@ -20,6 +21,8 @@ class UserEditProvider with ChangeNotifier {
   get newPassErr => _isNewPassErr;
 
   get confirmPassErr => _isConfirmPassErr;
+
+  get isEmailErr => _isEmailErr;
 
   void setAvailableUpdate(bool value) {
     _isAvailableUpdate = value;
@@ -52,6 +55,13 @@ class UserEditProvider with ChangeNotifier {
     return !_isFirstNameErr;
   }
 
+  void checkValidEmail(String email) {
+    final emailRegex = RegExp(
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$');
+    _isEmailErr = !emailRegex.hasMatch(email);
+    notifyListeners();
+  }
+
   void resetPasswordErr() {
     _isOldPassErr = false;
     _isNewPassErr = false;
@@ -62,6 +72,7 @@ class UserEditProvider with ChangeNotifier {
   void reset() {
     _isAvailableUpdate = false;
     _isFirstNameErr = false;
+    _isEmailErr = false;
     _gender = SharePrefUtils.getProfile().gender;
     notifyListeners();
   }

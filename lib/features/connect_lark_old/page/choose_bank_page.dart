@@ -28,7 +28,7 @@ class _ChooseBankPageState extends State<ChooseBankPage> {
   @override
   void initState() {
     super.initState();
-    _bankBloc.add(BankCardEventGetList());
+    _bankBloc.add(BankCardEventGetList(isLoadInvoice: false));
   }
 
   @override

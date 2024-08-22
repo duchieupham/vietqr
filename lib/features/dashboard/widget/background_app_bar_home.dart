@@ -39,74 +39,98 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
   Widget build(BuildContext context) {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, page, child) {
         File file = page.bannerApp;
         return Container(
-          height: 240,
+          // height: 240,
           width: width,
-          padding: EdgeInsets.only(top: paddingTop + 4),
-          alignment: Alignment.topCenter,
-          decoration: BoxDecoration(
-            image: file.path.isNotEmpty
-                ? DecorationImage(
-                    image: FileImage(file),
-                    fit: BoxFit.fitWidth,
-                  )
-                : const DecorationImage(
-                    image: AssetImage(ImageConstant.bgrHeader),
-                    fit: BoxFit.fitWidth,
-                  ),
-          ),
-          child: Stack(
-            children: [
-              ///blur chân của tấm hình
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 40,
-                  width: width,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          Theme.of(context).scaffoldBackgroundColor,
-                          Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.1),
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        tileMode: TileMode.clamp),
-                  ),
-                ),
-              ),
+          // padding: EdgeInsets.only(top: paddingTop + 4),
+          // alignment: Alignment.topCenter,
+          // decoration: BoxDecoration(
+          //   image: file.path.isNotEmpty
+          //       ? DecorationImage(
+          //           image: FileImage(file),
+          //           fit: BoxFit.fitWidth,
+          //         )
+          //       : const DecorationImage(
+          //           image: AssetImage(ImageConstant.bgrHeader),
+          //           fit: BoxFit.fitWidth,
+          //         ),
+          // ),
+          // child: Stack(
+          //   children: [
+          //     ///blur chân của tấm hình
+          //     Align(
+          //       alignment: Alignment.bottomCenter,
+          //       child: Container(
+          //         height: 40,
+          //         width: width,
+          //         decoration: BoxDecoration(
+          //           gradient: LinearGradient(
+          //               colors: [
+          //                 Theme.of(context).scaffoldBackgroundColor,
+          //                 Theme.of(context)
+          //                     .scaffoldBackgroundColor
+          //                     .withOpacity(0.1),
+          //               ],
+          //               begin: Alignment.bottomCenter,
+          //               end: Alignment.topCenter,
+          //               tileMode: TileMode.clamp),
+          //         ),
+          //       ),
+          //     ),
 
-              ///các tính năng trên thanh appbar
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    _buildAvatar(page),
-                    const SizedBox(width: 12),
-                    _buildNotification(),
-                    const SizedBox(width: 12),
-                    _getSearchPage(context, page.pageSelected),
-                    const Spacer(),
-                    SizedBox(
-                      width: 96,
-                      height: 56,
-                      child: XImage(
-                        imagePath: page.logoApp.path.isEmpty
-                            ? page.settingDTO.logoUrl
-                            : page.logoApp.path,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ],
+          //     ///các tính năng trên thanh appbar
+          //     Container(
+          //       padding: const EdgeInsets.symmetric(horizontal: 25),
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.start,
+          //         children: [
+          //           _buildAvatar(page),
+          //           const SizedBox(width: 12),
+          //           _buildNotification(),
+          //           const SizedBox(width: 12),
+          //           _getSearchPage(context, page.pageSelected),
+          //           const Spacer(),
+          //           SizedBox(
+          //             width: 96,
+          //             height: 56,
+          //             child: XImage(
+          //               imagePath: page.logoApp.path.isEmpty
+          //                   ? page.settingDTO.logoUrl
+          //                   : page.logoApp.path,
+          //               borderRadius: BorderRadius.circular(10),
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                _buildAvatar(page),
+                const SizedBox(width: 12),
+                _buildNotification(),
+                const SizedBox(width: 12),
+                _getSearchPage(context, page.pageSelected),
+                const Spacer(),
+                SizedBox(
+                  width: 96,
+                  height: 56,
+                  child: XImage(
+                    imagePath: page.logoApp.path.isEmpty
+                        ? page.settingDTO.logoUrl
+                        : page.logoApp.path,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -181,9 +205,10 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         });
   }
 
-  _buildAvatar(AuthProvider provider) {
+  Widget _buildAvatar(AuthenProvider provider) {
     String imgId = SharePrefUtils.getProfile().imgId;
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: () => NavigatorUtils.navigatePage(
         context,
         const AccountScreen(),

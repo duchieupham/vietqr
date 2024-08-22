@@ -1,6 +1,6 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +10,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -177,16 +178,16 @@ class _UserEditViewState extends State<UserEditView> {
                     DialogWidget.instance.openMsgDialog(
                         title: 'Không thể cập nhật thông tin', msg: state.msg);
                   }
-                  if (state is UserEditSuccessfulState) {
-                    //pop loading dialog
-                    Navigator.of(context).pop();
-                    Provider.of<UserEditProvider>(context, listen: false)
-                        .reset();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const DashBoardScreen()),
-                        (Route<dynamic> route) => false);
-                  }
+                  // if (state is UserEditSuccessfulState) {
+                  //   //pop loading dialog
+                  //   Navigator.of(context).pop();
+                  //   Provider.of<UserEditProvider>(context, listen: false)
+                  //       .reset();
+                  //   Navigator.of(context).pushAndRemoveUntil(
+                  //       MaterialPageRoute(
+                  //           builder: (context) => const DashBoardScreen()),
+                  //       (Route<dynamic> route) => false);
+                  // }
                   if (state is UserEditPasswordFailedState) {
                     if (PlatformUtils.instance.isWeb()) {
                       FocusManager.instance.primaryFocus?.unfocus();
@@ -341,6 +342,9 @@ class _UserEditViewState extends State<UserEditView> {
                                     hintText: '',
                                     controller: _lastNameController,
                                     inputType: TextInputType.text,
+                                    inputFormatters: [
+                                      VietnameseNameOnlyTextInputFormatter()
+                                    ],
                                     keyboardAction: TextInputAction.next,
                                     onChange: (value) {
                                       provider.setAvailableUpdate(true);
@@ -355,6 +359,9 @@ class _UserEditViewState extends State<UserEditView> {
                                     hintText: '',
                                     controller: _middleNameController,
                                     inputType: TextInputType.text,
+                                    inputFormatters: [
+                                      VietnameseNameOnlyTextInputFormatter()
+                                    ],
                                     keyboardAction: TextInputAction.next,
                                     onChange: (value) {
                                       provider.setAvailableUpdate(true);
@@ -365,11 +372,14 @@ class _UserEditViewState extends State<UserEditView> {
                                     width: width,
                                     textfieldType: TextfieldType.LABEL,
                                     isObscureText: false,
-                                    title: 'Tên',
+                                    title: 'Tên*',
                                     hintText: '',
                                     controller: _firstNameController,
                                     inputType: TextInputType.text,
                                     keyboardAction: TextInputAction.next,
+                                    inputFormatters: [
+                                      VietnameseNameOnlyTextInputFormatter()
+                                    ],
                                     onChange: (value) {
                                       provider.setAvailableUpdate(true);
                                     },
@@ -498,12 +508,28 @@ class _UserEditViewState extends State<UserEditView> {
                                 isObscureText: false,
                                 title: 'Email',
                                 hintText: 'user@gmail.com',
+                                inputFormatters: [EmailInputFormatter()],
                                 controller: _emailController,
-                                inputType: TextInputType.text,
+                                inputType: TextInputType.emailAddress,
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);
+                                  provider
+                                      .checkValidEmail(_emailController.text);
                                 },
+                              ),
+                            ),
+                            Visibility(
+                              visible: provider.isEmailErr,
+                              child: const Padding(
+                                padding: EdgeInsets.only(top: 5, left: 5),
+                                child: Text(
+                                  'Email không hợp lệ.',
+                                  style: TextStyle(
+                                    color: AppColor.RED_TEXT,
+                                    fontSize: 13,
+                                  ),
+                                ),
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(top: 10)),
@@ -518,8 +544,12 @@ class _UserEditViewState extends State<UserEditView> {
                                 isObscureText: false,
                                 title: 'CCCD',
                                 hintText: 'Nhập CCCD',
+                                maxLength: 12,
                                 controller: _nationalIdController,
                                 inputType: TextInputType.text,
+                                inputFormatters: [
+                                  VietnameseNameInputFormatter()
+                                ],
                                 keyboardAction: TextInputAction.next,
                                 onChange: (vavlue) {
                                   provider.setAvailableUpdate(true);
@@ -536,8 +566,12 @@ class _UserEditViewState extends State<UserEditView> {
                                 width: width,
                                 textfieldType: TextfieldType.LABEL,
                                 isObscureText: false,
+                                maxLength: 12,
                                 title: 'CMND(cũ)',
                                 hintText: 'Nhập cmnd',
+                                inputFormatters: [
+                                  VietnameseNameInputFormatter()
+                                ],
                                 controller: _oldNationalIdController,
                                 inputType: TextInputType.text,
                                 keyboardAction: TextInputAction.next,
@@ -616,6 +650,9 @@ class _UserEditViewState extends State<UserEditView> {
                                         controller: _addressController,
                                         textInputAction: TextInputAction.done,
                                         maxLength: 1000,
+                                        inputFormatters: [
+                                          VietnameseNameLongTextInputFormatter()
+                                        ],
                                         decoration:
                                             const InputDecoration.collapsed(
                                           hintText: 'Nhập địa chỉ thường trú',
@@ -684,7 +721,8 @@ class _UserEditViewState extends State<UserEditView> {
                     child: Consumer<UserEditProvider>(
                       builder: (context, provider, child) {
                         return Visibility(
-                          visible: provider.availableUpdate,
+                          visible: (provider.availableUpdate &&
+                              !provider.isEmailErr),
                           child: ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật',
@@ -716,6 +754,7 @@ class _UserEditViewState extends State<UserEditView> {
                                     dto: accountInformationDTO,
                                   ),
                                 );
+                                provider.reset();
                               }
                             },
                           ),
@@ -732,7 +771,7 @@ class _UserEditViewState extends State<UserEditView> {
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
     String imgId = SharePrefUtils.getProfile().imgId;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return (provider.avatarUser.path.isNotEmpty)
             ? AmbientAvatarWidget(
@@ -794,13 +833,14 @@ class _UserEditViewState extends State<UserEditView> {
     _birthDate = '';
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).resetPasswordErr();
-    Navigator.of(context).popUntil((route) => route.isFirst);
+    // Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context).pop();
   }
 
-  void backToHome(BuildContext context) {
-    Provider.of<UserEditProvider>(context, listen: false).reset();
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-        (Route<dynamic> route) => false);
-  }
+  // void backToHome(BuildContext context) {
+  //   Provider.of<UserEditProvider>(context, listen: false).reset();
+  //   Navigator.of(context).pushAndRemoveUntil(
+  //       MaterialPageRoute(builder: (context) => const HomeScreen()),
+  //       (Route<dynamic> route) => false);
+  // }
 }

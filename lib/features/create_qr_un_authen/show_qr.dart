@@ -122,7 +122,7 @@ class _ShowQrState extends State<ShowQr> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+    Provider.of<AuthenProvider>(context, listen: false).initThemeDTO();
   }
 
   @override
@@ -138,13 +138,12 @@ class _ShowQrState extends State<ShowQr> {
                   ? DecorationImage(
                       image: NetworkImage(widget.appInfo.themeImgUrl),
                       fit: BoxFit.cover)
-                  : Provider.of<AuthProvider>(context, listen: false)
+                  : Provider.of<AuthenProvider>(context, listen: false)
                           .bannerApp
                           .path
                           .isNotEmpty
                       ? DecorationImage(
-                          image: FileImage(Provider.of<AuthProvider>(
-                                  context,
+                          image: FileImage(Provider.of<AuthenProvider>(context,
                                   listen: false)
                               .bannerApp),
                           fit: BoxFit.cover)

@@ -94,7 +94,8 @@ class DialogWidget {
     BuildContext? context,
   ) {
     DialogWidget.instance.showModelBottomSheet(
-        borderRadius: BorderRadius.circular(16), widget: const PopupNotiWidget());
+        borderRadius: BorderRadius.circular(16),
+        widget: const PopupNotiWidget());
     // context ??= NavigationService.context;
     // return showDialog(
     //     context: context!,
@@ -724,73 +725,137 @@ class DialogWidget {
   }
 
   void openLoadingDialog({String msg = ''}) async {
-    if (!isPopLoading) {
-      isPopLoading = true;
-      return await showDialog(
-          barrierDismissible: false,
-          context: NavigationService.context!,
-          builder: (BuildContext context) {
-            return Material(
-              color: AppColor.TRANSPARENT,
-              child: Center(
-                child: (PlatformUtils.instance.isWeb())
-                    ? Container(
-                        width: 200,
-                        height: 200,
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              color: AppColor.BLUE_TEXT,
-                            ),
-                            Padding(padding: EdgeInsets.only(top: 30)),
-                            Text(
-                              'Đang tải',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        width: 250,
-                        height: 200,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const CircularProgressIndicator(
-                              color: AppColor.BLUE_TEXT,
-                            ),
-                            if (msg.isNotEmpty) ...[
-                              const Padding(padding: EdgeInsets.only(top: 30)),
-                              Text(
-                                msg,
-                                textAlign: TextAlign.center,
-                              ),
-                            ]
-                          ],
-                        ),
+    // if (!isPopLoading) {
+    //   isPopLoading = true;
+    //   return await showDialog(
+    //       barrierDismissible: false,
+    //       context: NavigationService.context!,
+    //       builder: (BuildContext context) {
+    //         return Material(
+    //           color: AppColor.TRANSPARENT,
+    //           child: Center(
+    //             child: (PlatformUtils.instance.isWeb())
+    //                 ? Container(
+    //                     width: 200,
+    //                     height: 200,
+    //                     alignment: Alignment.center,
+    //                     padding: const EdgeInsets.symmetric(
+    //                         horizontal: 10, vertical: 10),
+    //                     decoration: BoxDecoration(
+    //                       color: Theme.of(context).cardColor,
+    //                       borderRadius: BorderRadius.circular(10),
+    //                     ),
+    //                     child: const Column(
+    //                       mainAxisAlignment: MainAxisAlignment.center,
+    //                       crossAxisAlignment: CrossAxisAlignment.center,
+    //                       children: [
+    //                         CircularProgressIndicator(
+    //                           color: AppColor.BLUE_TEXT,
+    //                         ),
+    //                         Padding(padding: EdgeInsets.only(top: 30)),
+    //                         Text(
+    //                           'Đang tải',
+    //                           textAlign: TextAlign.center,
+    //                           style: TextStyle(
+    //                             fontSize: 16,
+    //                             fontWeight: FontWeight.bold,
+    //                           ),
+    //                         ),
+    //                       ],
+    //                     ),
+    //                   )
+    //                 : Container(
+    //                     width: 250,
+    //                     height: 200,
+    //                     alignment: Alignment.center,
+    //                     decoration: BoxDecoration(
+    //                       color: Theme.of(context).cardColor.withOpacity(0.9),
+    //                       borderRadius: BorderRadius.circular(20),
+    //                     ),
+    //                     child: Column(
+    //                       mainAxisAlignment: MainAxisAlignment.center,
+    //                       children: [
+    //                         const CircularProgressIndicator(
+    //                           color: AppColor.BLUE_TEXT,
+    //                         ),
+    //                         if (msg.isNotEmpty) ...[
+    //                           const Padding(padding: EdgeInsets.only(top: 30)),
+    //                           Text(
+    //                             msg,
+    //                             textAlign: TextAlign.center,
+    //                           ),
+    //                         ]
+    //                       ],
+    //                     ),
+    //                   ),
+    //           ),
+    //         );
+    //       }).then((value) => isPopLoading = false);
+    // }
+    return await showDialog(
+        barrierDismissible: false,
+        context: NavigationService.context!,
+        builder: (BuildContext context) {
+          return Material(
+            color: AppColor.TRANSPARENT,
+            child: Center(
+              child: (PlatformUtils.instance.isWeb())
+                  ? Container(
+                      width: 200,
+                      height: 200,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-              ),
-            );
-          }).then((value) => isPopLoading = false);
-    }
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 30)),
+                          Text(
+                            'Đang tải',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      width: 250,
+                      height: 200,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor.withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircularProgressIndicator(
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                          if (msg.isNotEmpty) ...[
+                            const Padding(padding: EdgeInsets.only(top: 30)),
+                            Text(
+                              msg,
+                              textAlign: TextAlign.center,
+                            ),
+                          ]
+                        ],
+                      ),
+                    ),
+            ),
+          );
+        });
   }
 
   openMsgDialog({
@@ -1163,46 +1228,47 @@ class DialogWidget {
                         ),
                       ),
                     if (buttonColumn == null) const Spacer(),
-                    buttonColumn ?? Container(
-                            margin: const EdgeInsets.only(
-                                left: 12, right: 12, top: 30, bottom: 16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                    buttonColumn ??
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 12, right: 12, top: 30, bottom: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: ButtonWidget(
+                                  height: 40,
+                                  text: buttonExit ?? 'Đóng',
+                                  textColor: isSecondBT
+                                      ? AppColor.BLACK
+                                      : AppColor.WHITE,
+                                  bgColor: isSecondBT
+                                      ? AppColor.GREY_EBEBEB
+                                      : AppColor.BLUE_TEXT,
+                                  borderRadius: 5,
+                                  function: (function != null)
+                                      ? function
+                                      : () {
+                                          Navigator.pop(context);
+                                        },
+                                ),
+                              ),
+                              if (isSecondBT) ...[
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: ButtonWidget(
                                     height: 40,
-                                    text: buttonExit ?? 'Đóng',
-                                    textColor: isSecondBT
-                                        ? AppColor.BLACK
-                                        : AppColor.WHITE,
-                                    bgColor: isSecondBT
-                                        ? AppColor.GREY_EBEBEB
-                                        : AppColor.BLUE_TEXT,
+                                    text: buttonConfirm ?? 'Xác nhận',
+                                    textColor: AppColor.WHITE,
+                                    bgColor: AppColor.BLUE_TEXT,
                                     borderRadius: 5,
-                                    function: (function != null)
-                                        ? function
-                                        : () {
-                                            Navigator.pop(context);
-                                          },
+                                    function: functionConfirm!,
                                   ),
                                 ),
-                                if (isSecondBT) ...[
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: ButtonWidget(
-                                      height: 40,
-                                      text: buttonConfirm ?? 'Xác nhận',
-                                      textColor: AppColor.WHITE,
-                                      bgColor: AppColor.BLUE_TEXT,
-                                      borderRadius: 5,
-                                      function: functionConfirm!,
-                                    ),
-                                  ),
-                                ],
                               ],
-                            ),
+                            ],
                           ),
+                        ),
                     // const Padding(padding: EdgeInsets.only(top: 10)),
                   ],
                 ),

@@ -102,7 +102,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
   void onRole(String bankId) {
     bool isOwner = false;
     final banks = [
-      ...Provider.of<AuthProvider>(context, listen: false).listBank
+      ...Provider.of<AuthenProvider>(context, listen: false).listBank
     ];
     BankAccountDTO bankDTO = banks.firstWhere((element) => element.id == bankId,
         orElse: () => BankAccountDTO());
@@ -113,7 +113,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
     if (isOwner) return;
 
     SettingAccountDTO settingDTO =
-        Provider.of<AuthProvider>(context, listen: false).settingDTO;
+        Provider.of<AuthenProvider>(context, listen: false).settingDTO;
     List<MerchantRole> merchantRoles = [...settingDTO.merchantRoles];
     MerchantRole merchantDTO = merchantRoles.firstWhere(
         (element) => element.bankId == bankDTO.id,

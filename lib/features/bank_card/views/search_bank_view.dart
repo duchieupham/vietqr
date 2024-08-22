@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/box_layout.dart';
@@ -181,6 +182,9 @@ class _SearchBankViewState extends State<SearchBankView> {
                           hintText: 'Nhập để tìm kiếm',
                           controller: searchController,
                           keyboardAction: TextInputAction.done,
+                          inputFormatters: [
+                            VietnameseNameLongTextInputFormatter()
+                          ],
                           autoFocus: false,
                           onChange: (value) {
                             search();

@@ -23,7 +23,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
   void initState() {
     super.initState();
     if (kDebugMode) {
-      phoneNoController.text = '0373568944';
+      phoneNoController.text = '0111111111';
       isEnableButton.value = true;
     }
   }
@@ -220,7 +220,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Nhập ',
                                 style: TextStyle(
                                   color: AppColor.BLACK,
@@ -234,7 +234,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   foreground: Paint()
-                                    ..shader = LinearGradient(
+                                    ..shader = const LinearGradient(
                                       colors: [
                                         Color(0xFF00C6FF),
                                         Color(0xFF0072FF)
@@ -242,12 +242,12 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                                       begin: Alignment.centerLeft,
                                       end: Alignment.centerRight,
                                     ).createShader(
-                                      Rect.fromLTWH(0, 0, 200,
+                                      const Rect.fromLTWH(0, 0, 200,
                                           40), // Adjust size as needed
                                     ),
                                 ),
                               ),
-                              TextSpan(
+                              const TextSpan(
                                 text: '*',
                                 style: TextStyle(
                                   color: AppColor.BLACK,

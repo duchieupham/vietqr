@@ -56,7 +56,7 @@ class _CardWalletState extends State<CardWallet> {
         const Text('Số dư: ',
             style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 13)),
         Expanded(
-          child: Consumer<AuthProvider>(
+          child: Consumer<AuthenProvider>(
             builder: (context, state, child) {
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -78,7 +78,7 @@ class _CardWalletState extends State<CardWallet> {
                     },
                   ),
                   const SizedBox(width: 4),
-                  InkWell(
+                  GestureDetector(
                     onTap: () {
                       isHide.value = !isHide.value;
                     },

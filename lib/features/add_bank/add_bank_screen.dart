@@ -10,6 +10,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -145,7 +146,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         transferType = 'NAPAS';
       }
       BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
-        accountNumber: bankAccountController.text,
+        accountNumber: bankAccountController.text.replaceAll(' ', ''),
         accountType: 'ACCOUNT',
         transferType: transferType,
         bankCode: caiValue,
@@ -222,7 +223,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   title: state.titleMsg ?? 'Không thể thêm TK',
                   msg: state.msg ?? '');
             }
-            
+
             if (state.request == AddBankType.ERROR_OTP) {
               await DialogWidget.instance.openMsgDialog(
                   title: state.titleMsg ?? 'Thông báo',
@@ -434,6 +435,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                                       ? null
                                                       : AppColor.GREY_EBEBEB,
                                               controller: bankAccountController,
+                                              inputFormatter: [
+                                                BankAccountInputFormatter()
+                                              ],
                                               textFieldType:
                                                   TextfieldType.LABEL,
                                               title: 'Số tài khoản',
@@ -484,7 +488,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                               keyboardAction:
                                                   TextInputAction.next,
                                               inputFormatter: [
-                                                UpperCaseTextFormatter(),
+                                                UppercaseBankNameInputFormatter(),
                                               ],
                                               onChange: provider
                                                   .updateValidUserBankName,
@@ -619,7 +623,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                           .capitalFirstCharacter(nameController.text));
                   BankCardRequestOTP dto = BankCardRequestOTP(
                     nationalId: cmtController.text,
-                    accountNumber: bankAccountController.text,
+                    accountNumber:
+                        bankAccountController.text.replaceAll(' ', ''),
                     accountName: formattedName,
                     applicationType: 'MOBILE',
                     phoneNumber: phoneController.text,

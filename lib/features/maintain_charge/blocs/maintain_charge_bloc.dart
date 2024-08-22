@@ -61,7 +61,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             emit(state.copyWith(
                 request: MainChargeType.CONFIRM_ACTIVE_ANNUAL_FEE,
                 status: BlocStatus.SUCCESS));
-            Provider.of<AuthProvider>(context, listen: false)
+            Provider.of<AuthenProvider>(context, listen: false)
                 .checkStateLogin(false);
             Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.pushReplacement(
@@ -91,7 +91,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
               Provider.of<PinProvider>(context, listen: false).reset();
               Navigator.of(context).pop();
             } else if (state.msg == 'E55') {
-              Provider.of<AuthProvider>(context, listen: false)
+              Provider.of<AuthenProvider>(context, listen: false)
                   .checkStateLogin(true);
               Provider.of<PinProvider>(context, listen: false).reset();
             }
@@ -107,7 +107,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.of(context).pop();
           } else if (state.msg == 'E55') {
-            Provider.of<AuthProvider>(context, listen: false)
+            Provider.of<AuthenProvider>(context, listen: false)
                 .checkStateLogin(true);
             Provider.of<PinProvider>(context, listen: false).reset();
           }
@@ -164,7 +164,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           Map<String, dynamic> param = {};
           param['dto'] = state.dto;
           Navigator.of(context).pop();
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .checkStateLogin(false);
           Provider.of<PinProvider>(context, listen: false).reset();
           // Navigator.of(context).push(MaterialPageRoute(
@@ -185,7 +185,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.of(context).pop();
           } else if (state.msg == 'E55') {
-            Provider.of<AuthProvider>(context, listen: false)
+            Provider.of<AuthenProvider>(context, listen: false)
                 .checkStateLogin(true);
             Provider.of<PinProvider>(context, listen: false).reset();
           }

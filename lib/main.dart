@@ -95,6 +95,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Injection.inject(env: EnvType.PROD);
+  // await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
@@ -113,23 +114,28 @@ void main() async {
   UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${appConfig.getEnv}');
-  if (kReleaseMode) {
-    await SentryFlutter.init(
-      (options) {
-        options.dsn =
-            'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
-        // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
-        // We recommend adjusting this value in production.
-        options.tracesSampleRate = 0.01;
-        // The sampling rate for profiling is relative to tracesSampleRate
-        // Setting to 1.0 will profile 100% of sampled transactions:
-        options.profilesSampleRate = 1.0;
-      },
-      appRunner: () => runApp(const VietQRApp()),
-    );
-  } else {
-    runApp(const VietQRApp());
-  }
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
+      options.tracesSampleRate = 0.01;
+      options.profilesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(const VietQRApp()),
+  );
+  // if (kReleaseMode) {
+  //   await SentryFlutter.init(
+  //     (options) {
+  //       options.dsn =
+  //           'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
+  //       options.tracesSampleRate = 0.01;
+  //       options.profilesSampleRate = 1.0;
+  //     },
+  //     appRunner: () => runApp(const VietQRApp()),
+  //   );
+  // } else {
+  //   runApp(const VietQRApp());
+  // }
 }
 
 //true => new transaction
@@ -193,19 +199,19 @@ class _VietQRApp extends State<VietQRApp> {
         ],
         child: MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (context) => AuthProvider()),
+            ChangeNotifierProvider(create: (context) => AuthenProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(
                 create: (context) => MaintainChargeProvider()),
             ChangeNotifierProvider(create: (context) => InvoiceProvider()),
             ChangeNotifierProvider(create: (context) => ConnectMediaProvider()),
             ChangeNotifierProvider(create: (context) => QRBoxProvider()),
-            ChangeNotifierProvider(create: (context) => RegisterProvider()),
+            // ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
             ChangeNotifierProvider(
                 create: (context) => CustomerVaInsertProvider()),
           ],
-          child: Consumer<AuthProvider>(
+          child: Consumer<AuthenProvider>(
             builder: (context, authProvider, child) {
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,

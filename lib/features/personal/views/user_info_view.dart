@@ -34,6 +34,7 @@ import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
@@ -163,7 +164,7 @@ class _UserInfoViewState extends State<UserInfoView> {
         //   },
         // ),
         appBar: AppBar(
-          leadingWidth: appbarNotifier.value ? 400 : 120,
+          leadingWidth: 250,
           elevation: 0,
           backgroundColor: Colors.white,
           forceMaterialTransparency: true,
@@ -282,8 +283,11 @@ class _UserInfoViewState extends State<UserInfoView> {
                   }
                   if (state is UserEditAvatarSuccessState) {
                     //pop loading dialog
+                    
                     Navigator.pop(context);
                     Navigator.pop(context);
+                              Provider.of<AuthenProvider>(context, listen: false)
+              .setImage(state.imageFile);
                   }
                   if (state is UserEditAvatarFailedState) {
                     //pop loading dialog
@@ -303,13 +307,17 @@ class _UserInfoViewState extends State<UserInfoView> {
                   }
                   if (state is UserEditSuccessfulState) {
                     //pop loading dialog
-                    Navigator.of(context).pop();
-                    Provider.of<UserEditProvider>(context, listen: false)
-                        .reset();
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const DashBoardScreen()),
-                        (Route<dynamic> route) => false);
+                    // Navigator.of(context).pop();
+                    // NavigationService.popUntil(Routes.DASHBOARD);
+
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    // Navigator.of(context).pop();
+                    // Provider.of<UserEditProvider>(context, listen: false)
+                    //     .reset();
+                    // Navigator.of(context).pushAndRemoveUntil(
+                    //     MaterialPageRoute(
+                    //         builder: (context) => const DashBoardScreen()),
+                    //     (Route<dynamic> route) => false);
                   }
                   if (state is UserEditPasswordFailedState) {
                     if (PlatformUtils.instance.isWeb()) {
@@ -1575,6 +1583,8 @@ class _UserInfoViewState extends State<UserInfoView> {
                                     dto: accountInformationDTO,
                                   ),
                                 );
+
+                                provider.reset();
                               }
                             },
                           ),
@@ -1591,7 +1601,7 @@ class _UserInfoViewState extends State<UserInfoView> {
   Widget _buildAvatarWidget(BuildContext context, double size) {
     // double size = size;
     String imgId = SharePrefUtils.getProfile().imgId;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return (provider.avatarUser.path.isNotEmpty)
             ? AmbientAvatarWidget(

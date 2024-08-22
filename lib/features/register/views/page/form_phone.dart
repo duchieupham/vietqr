@@ -1,38 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
+import 'package:vierqr/features/register/states/register_state.dart';
 
 import '../../../../commons/constants/configurations/theme.dart';
 import '../../../../commons/widgets/phone_widget.dart';
-import '../../../../services/providers/register_provider.dart';
 
 class FormPhone extends StatefulWidget {
   final TextEditingController phoneController;
   final PageController pageController;
   final bool isFocus;
   final Function(String) onExistPhone;
+  final RegisterBloc registerBloc;
 
   const FormPhone(
       {super.key,
       required this.pageController,
       required this.phoneController,
       required this.isFocus,
-      required this.onExistPhone});
+      required this.onExistPhone, required this.registerBloc});
 
   @override
   State<FormPhone> createState() => _FormPhoneState();
 }
 
 class _FormPhoneState extends State<FormPhone> {
+  // final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   @override
   void initState() {
     super.initState();
-    widget.phoneController.text = '';
+    // widget.phoneController.text = '';
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      bloc: widget.registerBloc,
+      builder: (context, state) {
+        if (state.phoneNumber.isEmpty) {
+          widget.phoneController.text = '';
+        }
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +68,7 @@ class _FormPhoneState extends State<FormPhone> {
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           ).createShader(
-                            Rect.fromLTWH(
+                            const Rect.fromLTWH(
                                 0, 0, 200, 40), // Adjust size as needed
                           ),
                       ),
@@ -80,7 +89,9 @@ class _FormPhoneState extends State<FormPhone> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               PhoneWidget(
-                onChanged: provider.updatePhone,
+                onChanged: (value) {
+                  widget.registerBloc.add(RegisterEventUpdatePhone(phone: value));
+                },
                 onSubmit: (value) {
                   String text = value.replaceAll(' ', '');
                   widget.onExistPhone(text);
@@ -102,7 +113,7 @@ class _FormPhoneState extends State<FormPhone> {
                 width: double.infinity,
               ),
               Visibility(
-                visible: provider.phoneErr,
+                visible: state.isPhoneErr,
                 child: Container(
                   alignment: Alignment.centerRight,
                   padding: const EdgeInsets.only(top: 10),

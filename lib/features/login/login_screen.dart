@@ -25,15 +25,17 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
+import 'package:vierqr/commons/widgets/popup_forgot_password_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/widgets/login_account_screen.dart';
 import 'package:vierqr/features/login/widgets/quick_login_screen.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -44,6 +46,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/splash_screen.dart';
@@ -80,8 +83,9 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
 
   Map<String, dynamic>? additionalData;
   final BankBloc _bankBloc = getIt.get<BankBloc>();
+  final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   late final LoginBloc _bloc = getIt.get<LoginBloc>(param1: context);
-  late AuthProvider _authProvider;
+  late AuthenProvider _authProvider;
   var controller = StreamController<AccountLoginDTO?>.broadcast();
 
   //0: trang login ban đầu
@@ -102,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
 
     init();
 
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    _authProvider = Provider.of<AuthenProvider>(context, listen: false);
     code = uuid.v1();
 
     controller.stream.listen((value) async {
@@ -133,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
     controller.close();
     isQuickLogin.dispose();
     listInfoUsers.dispose();
+    infoUserDTO.dispose();
     super.dispose();
   }
 
@@ -160,7 +165,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                 renderFormLogin(),
                 renderLoginByAccountBeforeThat(),
                 renderPasswordBeforeThat(),
-                Consumer<AuthProvider>(
+                Consumer<AuthenProvider>(
                   builder: (context, provider, child) {
                     return Positioned(
                       bottom: 80,
@@ -496,40 +501,68 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                     ),
                     const SizedBox(height: 12),
                     //  const SizedBox(height: 12),
-                    InkWell(
-                      onTap: () {
-                        // onLoginCard();
-                      },
-                      child: Container(
-                        height: 40,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        width: 230,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFD8ECF8),
-                              Color(0xFFFFEAD9),
-                              Color(0xFFF5C9D1),
-                            ],
-                            begin: Alignment.bottomLeft,
-                            end: Alignment.topRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: const Row(
-                          children: [
-                            XImage(
-                              imagePath: 'assets/images/ic-password-black.png',
-                              width: 30,
-                            ),
-                            Text(
-                              'Bạn quên mật khẩu đăng nhập?',
-                              style: TextStyle(fontSize: 11),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    ValueListenableBuilder<InfoUserDTO?>(
+                        valueListenable: infoUserDTO,
+                        builder: (context, user, _) {
+                          if (user != null) {
+                            return InkWell(
+                              onTap: () {
+                                // onLoginCard();
+                                final email = user.email;
+                                if (email == null || email.isEmpty) {
+                                  DialogWidget.instance.showModelBottomSheet(
+                                      borderRadius: BorderRadius.circular(16),
+                                      widget:
+                                          const PopUpForgotPasswordWidget());
+                                } else {
+                                  Map<String, dynamic> paramMap = {};
+                                  paramMap['userName'] = user.fullName;
+                                  paramMap['phone'] = user.phoneNo;
+                                  paramMap['appInfoDTO'] =
+                                      _authProvider.appInfoDTO;
+                                  paramMap['email'] = email;
+                                  paramMap['imageId'] = user.imgId;
+                                  NavigationService.push(Routes.FORGOT_PASSWORD,
+                                      arguments: paramMap);
+                                }
+                              },
+                              child: Container(
+                                height: 40,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                width: 230,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFD8ECF8),
+                                      Color(0xFFFFEAD9),
+                                      Color(0xFFF5C9D1),
+                                    ],
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    XImage(
+                                      imagePath:
+                                          'assets/images/ic-password-black.png',
+                                      width: 30,
+                                    ),
+                                    Text(
+                                      'Bạn quên mật khẩu đăng nhập?',
+                                      style: TextStyle(fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox(
+                            height: 20,
+                          );
+                        }),
                     const SizedBox(height: 12),
                     InkWell(
                       onTap: () {
@@ -571,27 +604,6 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                       ),
                     ),
                     const SizedBox(height: 12),
-
-                    // const SizedBox(height: 16),
-                    // Container(
-                    //   margin: const EdgeInsets.symmetric(horizontal: 40),
-                    //   child: MButtonWidget(
-                    //     title: 'Tôi là người dùng mới',
-                    //     isEnable: true,
-                    //     // width: 350,
-                    //     height: 50,
-                    //     colorEnableBgr: AppColor.WHITE,
-                    //     border: Border.all(
-                    //       width: 1,
-                    //       color: AppColor.BLUE_TEXT,
-                    //     ),
-                    //     margin: EdgeInsets.zero,
-                    //     colorEnableText: AppColor.BLUE_TEXT,
-                    //     onTap: () {
-                    //       _onRegister();
-                    //     },
-                    //   ),
-                    // ),
                     const SizedBox(height: 10),
                     SizedBox(height: height < 800 ? 16 : 5),
                   ],
@@ -599,7 +611,168 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
               ),
             );
           }
-
+          if (value == FlowType.NEAREST_LOGIN &&
+              value == FlowType.FIRST_LOGIN) {
+            return Positioned(
+              bottom: height < 800 ? 50 : 66,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                        ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [
+                              Color(0xFF458BF8),
+                              Color(0xFFFF8021),
+                              Color(0xFFFF3751),
+                              Color(0xFFC958DB),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            'Gợi ý cho bạn',
+                            style: TextStyle(
+                              fontSize: 15,
+                              foreground: Paint()
+                                ..shader = const LinearGradient(
+                                  colors: [
+                                    Color(0xFF458BF8),
+                                    Color(0xFFFF8021),
+                                    Color(0xFFFF3751),
+                                    Color(0xFFC958DB),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(
+                                    const Rect.fromLTWH(0, 0, 200, 30)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    //  const SizedBox(height: 12),
+                    ValueListenableBuilder<List<InfoUserDTO>>(
+                        valueListenable: listInfoUsers,
+                        builder: (context, users, _) {
+                          if (users.isNotEmpty) {
+                            return InkWell(
+                              onTap: () {
+                                // onLoginCard();
+                                final email = users.first.email;
+                                if (email == null || email.isEmpty) {
+                                  DialogWidget.instance.showModelBottomSheet(
+                                      borderRadius: BorderRadius.circular(16),
+                                      widget:
+                                          const PopUpForgotPasswordWidget());
+                                } else {
+                                  Map<String, dynamic> paramMap = {};
+                                  paramMap['userName'] = users.first.fullName;
+                                  paramMap['phone'] = users.first.phoneNo;
+                                  paramMap['appInfoDTO'] =
+                                      _authProvider.appInfoDTO;
+                                  paramMap['imageId'] = users.first.imgId;
+                                  paramMap['email'] = email;
+                                  NavigationService.push(Routes.FORGOT_PASSWORD,
+                                      arguments: paramMap);
+                                }
+                              },
+                              child: Container(
+                                height: 40,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                width: 230,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFD8ECF8),
+                                      Color(0xFFFFEAD9),
+                                      Color(0xFFF5C9D1),
+                                    ],
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    XImage(
+                                      imagePath:
+                                          'assets/images/ic-password-black.png',
+                                      width: 30,
+                                    ),
+                                    Text(
+                                      'Bạn quên mật khẩu đăng nhập?',
+                                      style: TextStyle(fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox(
+                            height: 20,
+                          );
+                        }),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {
+                        passController.clear();
+                        onSetIsQuickLogin(FlowType.FIRST_LOGIN);
+                        updateInfoUser(null);
+                        // _onRegister();
+                      },
+                      child: Container(
+                        width: 270,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFD8ECF8),
+                              Color(0xFFFFEAD9),
+                              Color(0xFFF5C9D1),
+                            ],
+                            begin: Alignment.bottomLeft,
+                            end: Alignment.topRight,
+                          ),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              XImage(
+                                imagePath: 'assets/images/ic-person@-black.png',
+                                width: 30,
+                              ),
+                              Text(
+                                'Đăng nhập bằng tài khoản VietQR khác',
+                                style: TextStyle(fontSize: 11),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
+                    SizedBox(height: height < 800 ? 16 : 5),
+                  ],
+                ),
+              ),
+            );
+          }
           return const SizedBox.shrink();
         });
   }
@@ -735,8 +908,10 @@ extension _LoginScreenFunction on _LoginScreenState {
     }
 
     if (state.request == LoginType.LOGIN) {
-      Provider.of<RegisterProvider>(context, listen: false)
-          .updateErrs(phoneErr: false, passErr: false, confirmPassErr: false);
+      // Provider.of<RegisterProvider>(context, listen: false)
+      //     .updateErrs(phoneErr: false, passErr: false, confirmPassErr: false);
+      _registerBloc.add(const RegisterEventUpdateErrs(
+          phoneErr: false, passErr: false, confirmPassErr: false));
       _authProvider.updateRenderUI(isLogout: true);
       UserProfile userProfile = SharePrefUtils.getProfile();
 
@@ -748,17 +923,20 @@ extension _LoginScreenFunction on _LoginScreenState {
         infoUser.middleName = userProfile.middleName;
         infoUser.lastName = userProfile.lastName;
         infoUser.middleName = userProfile.middleName;
+        infoUser.email = userProfile.email;
 
         updateInfoUser(infoUser);
         _saveAccount();
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const SplashScreen(isFromLogin: true),
-          settings: RouteSettings(name: SplashScreen.routeName),
-        ),
-      );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => const SplashScreen(isFromLogin: true),
+      //     settings: RouteSettings(name: SplashScreen.routeName),
+      //   ),
+      // );
+      NavigationService.pushAndRemoveUntil(Routes.SPLASH,
+          arguments: {'isFromLogin': true});
       // Navigator.pushAndRemoveUntil(
       //     context,
       //     MaterialPageRoute(
@@ -796,7 +974,7 @@ extension _LoginScreenFunction on _LoginScreenState {
         msg: state.msg ?? '',
         // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
       );
-
+      Navigator.of(context).pop();
       passController.clear();
       passFocus.requestFocus();
     }
@@ -808,7 +986,8 @@ extension _LoginScreenFunction on _LoginScreenState {
 
       if (!mounted) return;
       if (state.phone != '') {
-        Provider.of<RegisterProvider>(context, listen: false).updatePage(2);
+        // Provider.of<RegisterProvider>(context, listen: false).updatePage(2);
+        _registerBloc.add(const RegisterEventUpdatePage(page: 2));
       }
       final data = await Navigator.of(context).push(
         MaterialPageRoute(
@@ -1066,8 +1245,8 @@ extension _LoginScreenFunction on _LoginScreenState {
 
   void _onRegister() async {
     updateInfoUser(null);
-    Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
-
+    // Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
+    _registerBloc.add(const RegisterEventUpdatePage(page: 0));
     final data =
         await Navigator.of(context).pushNamed(Routes.REGISTER, arguments: {
       'pageController': pageController,

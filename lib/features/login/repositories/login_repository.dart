@@ -164,10 +164,22 @@ class LoginRepository {
 
   Future checkExistPhone(String phone) async {
     try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/search/$phone';
+
+      // final response = await BaseAPIClient.getAPI(
+      //   url: url,
+      //   // body: loginDTO.toJson(),
+      //   type: AuthenticationType.SYSTEM,
+      // );
       final response = await authApi.checkPhoneExist(
         type: AuthenticationType.NONE,
         phone: phone,
       );
+      // if (response.statusCode == 200) {
+      //   var data = jsonDecode(response.body);
+
+      //   return InfoUserDTO.fromJson(data);
+      // }
       return InfoUserDTO.fromJson(response);
     } catch (e) {
       LOG.error(e.toString());

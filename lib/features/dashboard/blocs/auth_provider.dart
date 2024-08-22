@@ -18,7 +18,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 
-class AuthProvider with ChangeNotifier {
+class AuthenProvider with ChangeNotifier {
   UserRepository get userRes => UserRepository.instance;
 
   BuildContext? context;

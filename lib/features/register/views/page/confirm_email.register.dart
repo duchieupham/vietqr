@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/page/confirm_otp_register.dart';
-import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
 import 'package:vierqr/features/verify_email/events/verify_email_event.dart';
 import 'package:vierqr/features/verify_email/states/verify_email_state.dart';
@@ -18,11 +18,12 @@ import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/layouts/register_app_bar.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 
 class ConfirmEmailRegisterScreen extends StatefulWidget {
   final String phoneNum;
-  const ConfirmEmailRegisterScreen({super.key, required this.phoneNum});
+  final RegisterBloc registerBloc;
+  const ConfirmEmailRegisterScreen(
+      {super.key, required this.phoneNum, required this.registerBloc});
 
   @override
   State<ConfirmEmailRegisterScreen> createState() =>
@@ -83,6 +84,7 @@ class _ConfirmEmailRegisterScreenState
               builder: (context) => ConfirmOtpRegisterScreen(
                 email: _emailController.text,
                 isFocus: true,
+                registerBloc: widget.registerBloc,
               ),
             ),
           );
@@ -120,7 +122,7 @@ class _ConfirmEmailRegisterScreenState
                   RichText(
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'Xác thực thông tin ',
                           style: TextStyle(
                             color: AppColor.BLACK,
@@ -134,11 +136,12 @@ class _ConfirmEmailRegisterScreenState
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             foreground: Paint()
-                              ..shader = LinearGradient(
+                              ..shader = const LinearGradient(
                                 colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
-                              ).createShader(Rect.fromLTWH(0, 0, 200, 40)),
+                              ).createShader(
+                                  const Rect.fromLTWH(0, 0, 200, 40)),
                           ),
                         ),
                       ],
@@ -146,7 +149,8 @@ class _ConfirmEmailRegisterScreenState
                   ),
                   Text(
                     'cho tài khoản ${widget.phoneNum}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   MTextFieldCustom(
                     controller: _emailController,
@@ -161,6 +165,7 @@ class _ConfirmEmailRegisterScreenState
                     hintText: '',
                     inputType: TextInputType.emailAddress,
                     keyboardAction: TextInputAction.next,
+                    inputFormatter: [EmailInputFormatter()],
                     onSubmitted: (value) {
                       validateEmail(_emailController.text);
                       bool isValidEmail = _emailError == null &&
@@ -205,7 +210,7 @@ class _ConfirmEmailRegisterScreenState
                   RichText(
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'Nhận ngay ưu đãi sử dụng dịch vụ VietQR ',
                           style: TextStyle(
                             color: Colors.black,
@@ -218,7 +223,7 @@ class _ConfirmEmailRegisterScreenState
                           style: TextStyle(
                             fontSize: 20,
                             foreground: Paint()
-                              ..shader = LinearGradient(
+                              ..shader = const LinearGradient(
                                 colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
@@ -229,13 +234,13 @@ class _ConfirmEmailRegisterScreenState
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Row(
+                  const Row(
                     children: [
                       XImage(
                         imagePath: 'assets/images/ic-noti-bdsd-black.png',
                         width: 40,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'Nhận thông báo biến động số dư',
                         style: TextStyle(fontSize: 12),
@@ -246,13 +251,13 @@ class _ConfirmEmailRegisterScreenState
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
+                  const Row(
                     children: [
                       XImage(
                         imagePath: 'assets/images/ic-earth-black.png',
                         width: 40,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'Chuyển khoản nhanh chóng, mọi lúc mọi nơi',
                         style: TextStyle(fontSize: 12),
@@ -263,13 +268,13 @@ class _ConfirmEmailRegisterScreenState
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Row(
+                  const Row(
                     children: [
                       XImage(
                         imagePath: 'assets/images/ic-store-black.png',
                         width: 40,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         'Quản lý doanh thu các cửa hàng',
                         style: TextStyle(fontSize: 12),
@@ -315,7 +320,12 @@ class _ConfirmEmailRegisterScreenState
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
-                    NavigationService.push(Routes.REGISTER_SPLASH_SCREEN);
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    Map<String, dynamic> param = Map();
+                    param['registerBloc'] = widget.registerBloc;
+                    NavigationService.pushAndRemoveUntil(
+                        Routes.REGISTER_SPLASH_SCREEN,
+                        arguments: param);
                     // Navigator.push(
                     //   context,
                     //   MaterialPageRoute(
@@ -354,15 +364,11 @@ class _ConfirmEmailRegisterScreenState
     );
   }
 
-  void backToPreviousPage(BuildContext context, bool isRegisterSuccess) {
+  void backToPreviousPage(
+      BuildContext context, bool isRegisterSuccess, RegisterState state) {
     Navigator.pop(context, {
-      'phone': Provider.of<RegisterProvider>(context, listen: false)
-          .phoneNoController
-          .text
-          .replaceAll(' ', ''),
-      'password': Provider.of<RegisterProvider>(context, listen: false)
-          .passwordController
-          .text,
+      'phone': state.phoneNumber.replaceAll(' ', ''),
+      'password': state.password
     });
   }
 }

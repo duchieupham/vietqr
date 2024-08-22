@@ -71,7 +71,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Consumer<AuthProvider>(builder: (context, provider, _) {
+                    Consumer<AuthenProvider>(builder: (context, provider, _) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -100,7 +100,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
-              Consumer<AuthProvider>(builder: (context, provider, _) {
+              Consumer<AuthenProvider>(builder: (context, provider, _) {
                 provider.loadThemes();
                 return _buildContainer(
                   color: provider.settingDTO.isEvent
@@ -256,7 +256,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
     );
   }
 
-  onSelect(AuthProvider provider, ThemeDTO e) {
+  onSelect(AuthenProvider provider, ThemeDTO e) {
     if (provider.settingDTO.themeType == 0) return;
     provider.updateThemeDTO(e);
     _bloc.add(UpdateThemeEvent(e.type, provider.themes));

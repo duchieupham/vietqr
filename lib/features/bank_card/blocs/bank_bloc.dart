@@ -277,6 +277,9 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           final results = await Future.wait(futures);
           overviewDTO = results[0] as BankOverviewDTO;
           listTrans = results[1] as List<NearestTransDTO>;
+          if (event.isLoadInvoice) {
+            invoiceOverviewDTO = results[2] as InvoiceOverviewDTO;
+          }
           if (!state.isClose) {
             invoiceOverviewDTO = results[2] as InvoiceOverviewDTO;
           }

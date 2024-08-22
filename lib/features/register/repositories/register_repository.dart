@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
@@ -8,8 +9,14 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
+import '../../../commons/enums/enum_type.dart';
+
 class RegisterRepository {
-  const RegisterRepository();
+  RegisterRepository();
+
+  final auth = FirebaseAuth.instance;
+
+  static const String countryCode = '+84';
 
   Future<ResponseMessageDTO> register(AccountLoginDTO dto) async {
     ResponseMessageDTO result =
@@ -33,5 +40,21 @@ class RegisterRepository {
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
+  }
+
+
+  Future<dynamic> verifyOTP(String otp, String verificationId) async {
+    try {
+      var credentials = await auth.signInWithCredential(
+          PhoneAuthProvider.credential(
+              verificationId: verificationId, smsCode: otp));
+      // updateResendToken(null);
+      return credentials.user != null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'session-expired') {
+        // updateResendToken(null);
+      }
+      return e.code;
+    }
   }
 }

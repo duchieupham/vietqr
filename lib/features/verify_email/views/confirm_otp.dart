@@ -108,17 +108,6 @@ class _OTPInputPageState extends State<OTPInputPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      // bottomNavigationBar: Padding(
-      //   padding: const EdgeInsets.all(20),
-      //   child: MButtonWidget(
-      //     title: 'Xác thực',
-      //     height: 50,
-      //     margin: EdgeInsets.zero,
-      //     isEnable: widget.otpController.text.length == 6,
-      //     onTap: widget.onContinue,
-      //     colorDisableBgr: AppColor.GREY_BUTTON,
-      //   ),
-      // ),
       bottomNavigationBar: VietQRButton.gradient(
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         onPressed: () {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:float_bubble/float_bubble.dart';
@@ -197,7 +198,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final BankBloc _bankBloc = getIt.get<BankBloc>();
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
 
-  late AuthProvider _provider;
+  late AuthenProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
   StreamSubscription<Uri>? _linkSubscription;
@@ -217,7 +218,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     getInitUniLinks();
     initUniLinks();
 
-    _provider = Provider.of<AuthProvider>(context, listen: false);
+    _provider = Provider.of<AuthenProvider>(context, listen: false);
     _isolateStream = IsolateStream(context, getIt.get<AppConfig>());
     _pageController =
         PageController(initialPage: _provider.pageSelected, keepPage: true);
@@ -272,11 +273,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   Widget build(BuildContext context) {
+    double paddingTop = MediaQuery.of(context).viewPadding.top;
+    double width = MediaQuery.of(context).size.width;
     // super.build(context);
     return BlocListener<DashBoardBloc, DashBoardState>(
       bloc: _bloc,
       listener: onListening,
-      child: Consumer<AuthProvider>(builder: (context, provider, _) {
+      child: Consumer<AuthenProvider>(builder: (context, provider, _) {
         // if (!provider.isRenderUI) {
         //   return SplashScreen(isFromLogin: widget.isFromLogin);
         // }
@@ -295,7 +298,28 @@ class _DashBoardScreen extends State<DashBoardScreen>
           body: Stack(
             children: [
               if (provider.pageSelected != 3 && provider.pageSelected != 0)
-                const BackgroundAppBarHome(),
+                Consumer<AuthenProvider>(builder: (context, page, child) {
+                  File file = page.bannerApp;
+                  return Container(
+                    height: 240,
+                    width: width,
+                    padding: EdgeInsets.only(top: paddingTop + 4),
+                    alignment: Alignment.topCenter,
+                    decoration: BoxDecoration(
+                      image: file.path.isNotEmpty
+                          ? DecorationImage(
+                              image: FileImage(file),
+                              fit: BoxFit.fitWidth,
+                            )
+                          : const DecorationImage(
+                              image: AssetImage(ImageConstant.bgrHeader),
+                              fit: BoxFit.fitWidth,
+                            ),
+                    ),
+                  );
+                }),
+              // const BackgroundAppBarHome(),
+
               Container(
                 padding: EdgeInsets.only(
                     top:
@@ -303,9 +327,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
                             ? 0
                             : kToolbarHeight * 2),
                 decoration: BoxDecoration(
-                    gradient: provider.pageSelected == 0
-                        ? VietQRTheme.gradientColor.lilyLinear
-                        : null),
+                  gradient: provider.pageSelected == 0
+                      ? VietQRTheme.gradientColor.lilyLinear
+                      : null,
+                  // color: Colors.red
+                ),
                 child: NotificationListener<ScrollNotification>(
                   onNotification: (scrollNotification) {
                     if (scrollNotification is ScrollUpdateNotification) {
@@ -354,6 +380,12 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   ),
                 ),
               ),
+              Positioned(
+                  top: MediaQuery.of(context).viewPadding.top + 4,
+                  child:
+                      (provider.pageSelected != 3 && provider.pageSelected != 0)
+                          ? const BackgroundAppBarHome()
+                          : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
               ValueListenableBuilder<bool>(
@@ -399,7 +431,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   /// poppup bên dưới hiển thị khi có bản cập nhật mới
-  Positioned renderUpdateDialog(AuthProvider provider) {
+  Positioned renderUpdateDialog(AuthenProvider provider) {
     return Positioned(
       child: FloatBubble(
         show: provider.isUpdateVersion,
@@ -636,7 +668,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     if (!isFromLogin) _bloc.add(const TokenFcmUpdateEvent());
   }
 
-  void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
+  void _onHandleAppSystem(AppInfoDTO dto, AuthenProvider authProvider) async {
     String logoApp = SharePrefUtils.getLogoApp();
     bool isEvent = SharePrefUtils.getBannerEvent();
     ThemeDTO themeDTO = await SharePrefUtils.getSingleTheme() ?? ThemeDTO();

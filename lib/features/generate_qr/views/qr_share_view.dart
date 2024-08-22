@@ -27,11 +27,12 @@ class _QRShareViewState extends State<QRShareView> {
   void initialServices(
       BuildContext context, String action, QRGeneratedDTO dto) async {
     bool isShowShareSheet =
-        Provider.of<AuthProvider>(context, listen: false).showActionShare;
+        Provider.of<AuthenProvider>(context, listen: false).showActionShare;
     if (action == 'SHARE') {
       if (!isShowShareSheet) {
         await Future.delayed(const Duration(milliseconds: 0), () {
-          Provider.of<AuthProvider>(context, listen: false).updateAction(true);
+          Provider.of<AuthenProvider>(context, listen: false)
+              .updateAction(true);
         });
 
         _waterMarkProvider.updateWaterMark(true);
@@ -44,7 +45,8 @@ class _QRShareViewState extends State<QRShareView> {
     } else if (action == 'SAVE') {
       if (!isShowShareSheet) {
         await Future.delayed(const Duration(milliseconds: 0), () {
-          Provider.of<AuthProvider>(context, listen: false).updateAction(true);
+          Provider.of<AuthenProvider>(context, listen: false)
+              .updateAction(true);
         });
         _waterMarkProvider.updateWaterMark(true);
         await Future.delayed(const Duration(milliseconds: 300), () async {

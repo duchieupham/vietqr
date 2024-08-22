@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/pin_code_input.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/register/views/page/form_success_splash.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
 import 'package:vierqr/features/verify_email/events/verify_email_event.dart';
 import 'package:vierqr/features/verify_email/states/verify_email_state.dart';
@@ -18,15 +18,16 @@ import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/register_app_bar.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 
 class ConfirmOtpRegisterScreen extends StatefulWidget {
   String email;
   bool isFocus;
+  final RegisterBloc registerBloc;
   ConfirmOtpRegisterScreen({
     super.key,
     required this.email,
     required this.isFocus,
+    required this.registerBloc,
   });
 
   @override
@@ -110,7 +111,9 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
             textColor: Theme.of(context).hintColor,
             fontSize: 15,
           );
-          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN);
+
+          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN,
+              arguments: {'registerBloc': widget.registerBloc});
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(
@@ -181,7 +184,7 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                     RichText(
                       text: TextSpan(
                         children: [
-                          TextSpan(
+                          const TextSpan(
                             text: 'Thông tin xác thực đã được gửi đến email ',
                             style: TextStyle(
                               color: AppColor.BLACK,
@@ -190,7 +193,7 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                           ),
                           TextSpan(
                             text: widget.email,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 15,
                               color: AppColor.BLACK,
                               fontWeight: FontWeight.bold,
@@ -338,8 +341,8 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: GestureDetector(
                         onTap: () {
-                          Navigator.of(context)
-                              .pushNamed(Routes.REGISTER_SPLASH_SCREEN);
+                          NavigationService.push(Routes.REGISTER_SPLASH_SCREEN,
+                              arguments: {'registerBloc': widget.registerBloc});
                           // Navigator.push(
                           //   context,
                           //   MaterialPageRoute(
@@ -388,14 +391,11 @@ class _ConfirmOtpRegisterScreenState extends State<ConfirmOtpRegisterScreen> {
     );
   }
 
-  void backToPreviousPage(BuildContext context, bool isRegisterSuccess) {
+  void backToPreviousPage(
+      BuildContext context, bool isRegisterSuccess, RegisterState state) {
     Navigator.pop(context, {
-      'phone': Provider.of<RegisterProvider>(context, listen: false)
-          .phoneNoController
-          .text,
-      'password': Provider.of<RegisterProvider>(context, listen: false)
-          .passwordController
-          .text,
+      'phone': state.phoneNumber.replaceAll(' ', ''),
+      'password': state.password
     });
   }
 }

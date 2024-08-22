@@ -40,7 +40,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Consumer<AuthProvider>(builder: (context, provider, child) {
+              Consumer<AuthenProvider>(builder: (context, provider, child) {
                 return Expanded(
                   child: provider.userId.isNotEmpty
                       ? CachedNetworkImage(
@@ -62,7 +62,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                 );
               }),
               const Padding(padding: EdgeInsets.only(top: 10)),
-              Consumer<AuthProvider>(
+              Consumer<AuthenProvider>(
                 builder: (context, provider, child) {
                   if (provider.appInfoDTO.isCheckApp) {
                     return Padding(

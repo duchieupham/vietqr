@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/save_share_qr.dart';
@@ -31,6 +32,7 @@ import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/invoice/widgets/invoice_detail_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
+import 'package:vierqr/features/login/views/forgot_password_screen.dart';
 import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/active_success_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/annual_fee_screen.dart';
@@ -54,6 +56,7 @@ import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/views/qr_update_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/save_share_qr_widget.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/features/register/views/page/confirm_email.register.dart';
 import 'package:vierqr/features/register/views/page/form_success_splash.dart';
@@ -81,17 +84,15 @@ class NavigationService {
 
   static Route<dynamic>? onIniRoute(RouteSettings settings) {
     switch (settings.name) {
-      case Routes.SPLASH:
-        return _buildRoute(settings, const SplashScreen());
       case Routes.APP:
         return _buildRoute(settings, const VietQRApp());
       case Routes.LOGIN:
         return _buildRoute(settings, const LoginScreen());
-      case Routes.REGISTER_SPLASH_SCREEN:
-        return _buildRoute(settings, const FormRegisterSuccessSplash());
+
       case Routes.DASHBOARD:
         return _buildRoute(settings, const DashBoardScreen());
-
+      case Routes.ACCOUNT:
+        return _buildRoute(settings, const AccountScreen());
       case Routes.USER_EDIT:
         return _buildRoute(settings, const UserEditView());
       case Routes.USER_INFO:
@@ -146,6 +147,39 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
+      case Routes.FORGOT_PASSWORD:
+        Map map = settings.arguments as Map;
+        String userName = map['userName'] ?? '';
+        String phone = map['phone'] ?? '';
+        AppInfoDTO appInfoDTO = map['appInfoDTO'];
+        String imageId = map['imageId'] ?? '';
+        String email = map['email'] ?? '';
+        return _buildRoute(
+            settings,
+            ForgotPasswordScreen(
+              userName: userName,
+              phone: phone,
+              appInfoDTO: appInfoDTO,
+              email: email,
+              imageId: imageId,
+            ));
+      case Routes.SPLASH:
+        Map map = settings.arguments as Map;
+        bool isFromLogin = map['isFromLogin'] ?? false;
+        return _buildRoute(
+            settings,
+            SplashScreen(
+              isFromLogin: isFromLogin,
+            ));
+
+      case Routes.REGISTER_SPLASH_SCREEN:
+        Map map = settings.arguments as Map;
+        RegisterBloc registerBloc = map['registerBloc'];
+        return _buildRoute(
+            settings,
+            FormRegisterSuccessSplash(
+              registerBloc: registerBloc,
+            ));
       case Routes.REGISTER:
         Map map = settings.arguments as Map;
         PageController pageController = map['pageController'];
@@ -159,10 +193,12 @@ class NavigationService {
       case Routes.CONFIRM_EMAIL_SCREEN:
         Map map = settings.arguments as Map;
         String phoneNum = map['phoneNum'];
+        RegisterBloc registerBloc = map['registerBloc'];
         return _buildRoute(
             settings,
             ConfirmEmailRegisterScreen(
               phoneNum: phoneNum,
+              registerBloc: registerBloc,
             ));
       case Routes.MY_VIETQR_SCREEN:
         Map map = settings.arguments as Map;

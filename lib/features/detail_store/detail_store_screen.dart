@@ -195,7 +195,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, page, child) {
         File file = page.bannerApp;
         return Container(

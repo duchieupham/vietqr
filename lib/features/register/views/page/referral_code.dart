@@ -1,18 +1,26 @@
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
+import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
+import 'package:vierqr/features/register/states/register_state.dart';
 
 import '../../../../commons/constants/configurations/theme.dart';
 import '../../../../commons/widgets/textfield_custom.dart';
 
 class ReferralCode extends StatelessWidget {
-  const ReferralCode({super.key});
+  final RegisterBloc bloc;
+  const ReferralCode({super.key, required this.bloc});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<RegisterProvider>(
-      builder: (context, provider, child) {
+    // final bloc = getIt.get<RegisterBloc>();
+    final TextEditingController introducController = TextEditingController();
+
+    return BlocBuilder<RegisterBloc, RegisterState>(
+      bloc: bloc,
+      builder: (context, state) {
         return Container(
           padding: const EdgeInsets.only(top: 150, left: 20, right: 20),
           alignment: Alignment.center,
@@ -28,10 +36,12 @@ class ReferralCode extends StatelessWidget {
                 hintText: 'Nhập mã giới thiệu ở đây',
                 contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                 fontSize: 15,
-                controller: provider.introduceController,
+                controller: introducController,
                 inputType: TextInputType.text,
                 keyboardAction: TextInputAction.next,
-                onChange: provider.updateIntroduce,
+                onChange: (value) {
+                  bloc.add(RegisterEventUpdateIntroduce(introduce: value));
+                },
               ),
               Container(
                 margin: const EdgeInsets.only(top: 5),

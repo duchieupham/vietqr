@@ -13,7 +13,7 @@ class BackgroundAppBarLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return Consumer<AuthProvider>(builder: (context, provider, _) {
+    return Consumer<AuthenProvider>(builder: (context, provider, _) {
       // File _file = provider.bannerApp;
       // bool isFileNotEmpty = _file.path.isNotEmpty;
       return Container(

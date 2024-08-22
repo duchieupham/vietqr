@@ -60,7 +60,7 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
   }
 
   late CountdownProvider countdownProvider;
-  late AuthProvider authProvider;
+  late AuthenProvider authProvider;
 
   bool isOwner = false;
   MerchantRole role = MerchantRole();
@@ -80,7 +80,7 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
       text = '${widget.dto.amount.replaceAll(',', '')} đồng';
     }
     SocketService.instance.updateConnect(true);
-    authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider = Provider.of<AuthenProvider>(context, listen: false);
     countdownProvider = CountdownProvider(30);
     _speak();
     countdownProvider.countDown(callback: () {

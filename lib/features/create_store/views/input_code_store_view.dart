@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/features/create_store/create_store.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -146,6 +147,9 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                               title: 'Địa chỉ cửa hàng *',
                               hintText: 'Nhập địa chỉ cửa hàng',
                               inputType: TextInputType.text,
+                              inputFormatter: [
+                                VietnameseNameLongTextInputFormatter(),
+                              ],
                               keyboardAction: TextInputAction.next,
                               onChange: (value) {
                                 bloc.add(UpdateAddressStoreEvent(value));
@@ -158,7 +162,8 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                     ),
                     MButtonWidget(
                       title: 'Tiếp tục',
-                      margin: EdgeInsets.zero,
+                      margin: EdgeInsets.fromLTRB(
+                          20, 0, 20, MediaQuery.of(context).viewInsets.bottom),
                       isEnable: state.addressStore.isNotEmpty &&
                           state.codeStore.isNotEmpty,
                       onTap: () => widget.callBack

@@ -39,7 +39,7 @@ class _RegisterAppBarState extends State<RegisterAppBar> {
   bool isVNSelected = true;
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(builder: (context, page, child) {
+    return Consumer<AuthenProvider>(builder: (context, page, child) {
       String url = page.settingDTO.themeImgUrl;
       return Container(
         // decoration: showBG

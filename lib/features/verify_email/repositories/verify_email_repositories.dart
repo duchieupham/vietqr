@@ -71,4 +71,44 @@ class EmailRepository {
     }
     return result;
   }
+
+   Future<ResponseMessageDTO> requestOTP(Map<String, dynamic> param) async {
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/request-otp';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+        return result;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+    Future<ResponseMessageDTO> confirmOTPInForgetPassword(Map<String, dynamic> param) async {
+    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/confirm-otp';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: param,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+        return result;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
 }

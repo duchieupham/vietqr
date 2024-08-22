@@ -111,7 +111,7 @@ class _AccountScreenState extends State<_AccountScreen>
         }
 
         if (state.request == AccountType.AVATAR) {
-          Provider.of<AuthProvider>(context, listen: false)
+          Provider.of<AuthenProvider>(context, listen: false)
               .setImage(state.imageFile);
         }
 
@@ -159,7 +159,7 @@ class _AccountScreenState extends State<_AccountScreen>
   Widget _buildLogOutWidget() {
     return Column(
       children: [
-        Consumer<AuthProvider>(
+        Consumer<AuthenProvider>(
           builder: (context, provider, child) {
             return Text('Phiên bản ứng dụng: ${provider.packageInfo.version}');
           },
@@ -196,7 +196,7 @@ class _AccountScreenState extends State<_AccountScreen>
   Widget _buildBannerApp(BuildContext context) {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, authProvider, _) {
         File file = authProvider.bannerApp;
         return Container(
@@ -304,7 +304,7 @@ class _AvatarWidget extends StatelessWidget {
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 80;
     String imgId = SharePrefUtils.getProfile().imgId;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return (provider.avatarUser.path.isNotEmpty)
             ? AmbientAvatarWidget(
@@ -453,7 +453,7 @@ class _IntroduceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Consumer<AuthProvider>(
+    return Consumer<AuthenProvider>(
       builder: (context, provider, child) {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -583,7 +583,7 @@ class _SupportWidget extends StatelessWidget {
                     NavigatorUtils.navigatePage(
                         context,
                         ContactUSScreen(
-                            appInfoDTO: Provider.of<AuthProvider>(context,
+                            appInfoDTO: Provider.of<AuthenProvider>(context,
                                     listen: false)
                                 .appInfoDTO),
                         routeName: ContactUSScreen.routeName);
