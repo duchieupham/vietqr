@@ -226,12 +226,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               state.request == ForgotPasswordType.CHANGE_PASS) {
             isSuccess = false;
             isCircle = false;
+            readOnly = false;
             DialogWidget.instance.openMsgDialog(
-              title: 'Thay đổi thất bại!',
-              msg: state.msg ?? '',
-              // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
-            );
-            Navigator.pop(context);
+                title: 'Thay đổi thất bại!',
+                msg: state.msg ?? '',
+                // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
+                function: () {
+                  Navigator.pop(context);
+                  Provider.of<PinProvider>(context, listen: false)
+                      .resetPinNewPass();
+                  Provider.of<PinProvider>(context, listen: false)
+                      .resetPinConfirmNewPass();
+                  _passwordController.clear();
+                  _confirmPasswordController.clear();
+                });
+            // Provider.of<PinProvider>(context, listen: false).resetPinNewPass();
+            // Provider.of<PinProvider>(context, listen: false)
+            //     .resetPinConfirmNewPass();
           }
         },
         builder: (context, state) {

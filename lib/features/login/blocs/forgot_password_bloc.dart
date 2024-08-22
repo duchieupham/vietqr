@@ -208,19 +208,29 @@ class ForgotPasswordBloc
               status: BlocStatus.ERROR,
               request: ForgotPasswordType.CHANGE_PASS,
               msg: 'Không thể thay đổi mật khẩu.Vui lòng kiểm tra lại kết nối.',
+              isSamePass: true,
             ),
           );
+        } else if (dto.message == 'E182') {
+          emit(state.copyWith(
+            status: BlocStatus.ERROR,
+            request: ForgotPasswordType.CHANGE_PASS,
+            msg: 'Mật khẩu mới không được trùng mật khẩu cũ.',
+            isSamePass: true,
+          ));
         } else {
           emit(state.copyWith(
             msg: 'Không thể thay đổi mật khẩu.Vui lòng kiểm tra lại kết nối.',
             status: BlocStatus.ERROR,
             request: ForgotPasswordType.CHANGE_PASS,
+            isSamePass: true,
           ));
         }
       }
     } catch (e) {
       emit(state.copyWith(
           msg: 'Không thể thay đổi mật khẩu.Vui lòng kiểm tra lại kết nối.',
+          isSamePass: true,
           status: BlocStatus.ERROR,
           request: ForgotPasswordType.ERROR));
     }
