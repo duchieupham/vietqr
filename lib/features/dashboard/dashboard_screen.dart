@@ -381,9 +381,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).viewPadding.top + 4,
-                child: const BackgroundAppBarHome(),
-              ),
+                  top: MediaQuery.of(context).viewPadding.top + 4,
+                  child:
+                      (provider.pageSelected != 3 && provider.pageSelected != 0)
+                          ? const BackgroundAppBarHome()
+                          : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
               ValueListenableBuilder<bool>(
