@@ -77,18 +77,24 @@ class ConnectMediaProvider extends ChangeNotifier {
   void validateInput(String value, TypeConnect type) {
     if (type == TypeConnect.GG_CHAT || type == TypeConnect.LARK) {
       if (value.isNotEmpty) {
-        if (type == TypeConnect.GG_CHAT) {
-          final regex = RegExp(
-              r"^https://chat\.googleapis\.com/v1/spaces/[A-Za-z0-9\-]+/messages\?key=[^&]+&token=[^&]+$");
-          isValidWebhook = regex.hasMatch(value);
-        } else {
-          String pattern = r'^(https?:\/\/)?' // Optional protocol
-              r'((([a-zA-Z0-9$-_@.&+!*"(),]|(%[0-9a-fA-F]{2}))+\.)+[a-zA-Z]{2,})' // Domain name
-              r'(:\d+)?(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$'; // Port and path
+        // if (type == TypeConnect.GG_CHAT) {
+        //   final regex = RegExp(
+        //       r"^https://chat\.googleapis\.com/v1/spaces/[A-Za-z0-9\-]+/messages\?key=[^&]+&token=[^&]+$");
+        //   isValidWebhook = regex.hasMatch(value);
+        // } else {
+        //   String pattern = r'^(https?:\/\/)?' // Optional protocol
+        //       r'((([a-zA-Z0-9$-_@.&+!*"(),]|(%[0-9a-fA-F]{2}))+\.)+[a-zA-Z]{2,})' // Domain name
+        //       r'(:\d+)?(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$'; // Port and path
 
-          RegExp regExp = RegExp(pattern);
-          isValidWebhook = regExp.hasMatch(value);
-        }
+        //   RegExp regExp = RegExp(pattern);
+        //   isValidWebhook = regExp.hasMatch(value);
+        // }
+        String pattern = r'^(https?:\/\/)?' // Optional protocol
+            r'((([a-zA-Z0-9$-_@.&+!*"(),]|(%[0-9a-fA-F]{2}))+\.)+[a-zA-Z]{2,})' // Domain name
+            r'(:\d+)?(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?$'; // Port and path
+
+        RegExp regExp = RegExp(pattern);
+        isValidWebhook = regExp.hasMatch(value);
       } else {
         isValidWebhook = true;
       }

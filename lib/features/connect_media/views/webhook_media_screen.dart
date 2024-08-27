@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_media/widgets/popup_confirm_widget.dart';
@@ -611,6 +612,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                   focusNode: value.focusNode,
                   controller: widget.textController,
                   textInputAction: TextInputAction.next,
+                  // inputFormatters: [UrlInputFormatter()],
                   keyboardType: TextInputType.multiline,
                   onSubmitted: widget.onSubmitInput,
                   onChanged: widget.onChangeInput,

@@ -216,12 +216,6 @@ class QRScannerUtils {
                 if (match != null && match.groupCount >= 1) {
                   Navigator.pushNamed(context, Routes.DYNAMIC_ACTIVE_KEY_SCREEN,
                       arguments: {"activeKey": match.group(1)!});
-                  // NavigatorUtils.navigatePage(
-                  //     context,
-                  //     DynamicActiveKeyScreen(
-                  //       activeKey: match.group(1)!,
-                  //     ),
-                  //     routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
                 }
               } else {
                 await DialogWidget.instance.showModelBottomSheet(
