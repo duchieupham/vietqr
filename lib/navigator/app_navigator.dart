@@ -63,6 +63,7 @@ import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/transaction_wallet/trans_wallet_screen.dart';
@@ -147,6 +148,10 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
+
+      case Routes.SCAN_QR_VIEW_SCREEN:
+        return _buildRoute(settings, const ScanQrViewScreenWidget());
+
       case Routes.FORGOT_PASSWORD:
         Map map = settings.arguments as Map;
         String userName = map['userName'] ?? '';

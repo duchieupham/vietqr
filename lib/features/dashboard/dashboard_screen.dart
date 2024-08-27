@@ -48,6 +48,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/invoice_provider.dart';
 import 'package:vierqr/splash_screen.dart';
@@ -903,11 +904,13 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       if (SharePrefUtils.getQrIntro()) {
         startBarcodeScanStream();
       } else {
-        await DialogWidget.instance.showFullModalBottomContent(
-          widget: const QRScanWidget(),
-          color: AppColor.BLACK,
-        );
-        startBarcodeScanStream();
+        // await DialogWidget.instance.showFullModalBottomContent(
+        //   widget: const QRScanWidget(),
+        //   color: AppColor.BLACK,
+        // );
+        NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN);
+
+        // startBarcodeScanStream();
       }
     }
   }

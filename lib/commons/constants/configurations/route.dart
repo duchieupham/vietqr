@@ -103,4 +103,6 @@ class Routes {
   static const String CUSTOMER_VA_LIST = 'customer_va/list';
 
   static const String MY_VIETQR_SCREEN = 'my_vietqr_screen';
+
+  static const String SCAN_QR_VIEW_SCREEN = '/scan_qr_view_screen';
 }

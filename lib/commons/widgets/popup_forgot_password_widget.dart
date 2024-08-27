@@ -13,7 +13,7 @@ class PopUpForgotPasswordWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String emailSupport = 'itsupport@vietqr.vn ';
+    const String emailSupport = 'itsupport@vietqr.vn';
     return Container(
       height: MediaQuery.of(context).size.height * 0.25,
       decoration: BoxDecoration(
@@ -59,19 +59,26 @@ class PopUpForgotPasswordWidget extends StatelessWidget {
                   text: emailSupport,
                   recognizer: TapGestureRecognizer()
                     ..onTap = () async {
-                      FlutterClipboard.copy(emailSupport).then(
-                        (value) => Fluttertoast.showToast(
-                          msg: 'Đã sao chép',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          textColor: Theme.of(context).hintColor,
-                          fontSize: 15,
-                          webBgColor: 'rgba(255, 255, 255, 0.5)',
-                          webPosition: 'center',
-                        ),
+                      String? encodeQueryParameters(
+                          Map<String, String> params) {
+                        return params.entries
+                            .map((MapEntry<String, String> e) =>
+                                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                            .join('&');
+                      }
+
+// ···
+                      final Uri emailLaunchUri = Uri(
+                        scheme: 'mailto',
+                        path: emailSupport,
+                        query: encodeQueryParameters(<String, String>{
+                          'subject': 'Quên mật khẩu VietQR',
+                        }),
                       );
+                    
+                      if (await canLaunchUrl(emailLaunchUri)) {
+                        await launchUrl(emailLaunchUri);
+                      }
                     },
                   style: TextStyle(
                     fontSize: 13,
@@ -88,7 +95,7 @@ class PopUpForgotPasswordWidget extends StatelessWidget {
                   ),
                 ),
                 const TextSpan(
-                  text: 'để được hỗ trợ đổi mật khẩu.',
+                  text: ' để được hỗ trợ đổi mật khẩu.',
                   style: TextStyle(
                     color: AppColor.BLACK,
                     fontSize: 13,
