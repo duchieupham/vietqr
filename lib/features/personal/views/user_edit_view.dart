@@ -27,11 +27,13 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
@@ -794,32 +796,40 @@ class _UserEditViewState extends State<UserEditView> {
 
   // Future<void> _openDatePicker() async {
   Future<void> startBarcodeScanStream(BuildContext context) async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-        return;
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+    // String data = await FlutterBarcodeScanner.scanBarcode(
+    //     '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.USER_EDIT_VIEW;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
+    if (data is Map<String, dynamic>) {
+      if (data['isScaned']) {
+        if (data.isNotEmpty) {
+          if (data['code'] == TypeQR.NEGATIVE_ONE.value) {
+            return;
+          } else if (data['code'] == TypeQR.NEGATIVE_TWO.value) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không thể xác nhận mã QR',
+              msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+              function: () {
+                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          } else {
+            if (data['code'].contains('|')) {
+              NationalScannerDTO nationalScannerDTO =
+                  dashBoardRepository.getNationalInformation(data['code']);
+              if (!mounted) return;
+              Navigator.pushNamed(
+                context,
+                Routes.NATIONAL_INFORMATION,
+                arguments: {'dto': nationalScannerDTO, 'isPop': true},
+              );
             }
-          },
-        );
-      } else {
-        if (data.contains('|')) {
-          NationalScannerDTO nationalScannerDTO =
-              dashBoardRepository.getNationalInformation(data);
-          if (!mounted) return;
-          Navigator.pushNamed(
-            context,
-            Routes.NATIONAL_INFORMATION,
-            arguments: {'dto': nationalScannerDTO, 'isPop': true},
-          );
+          }
         }
       }
     }

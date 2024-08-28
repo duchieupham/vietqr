@@ -150,7 +150,14 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaListView());
 
       case Routes.SCAN_QR_VIEW_SCREEN:
-        return _buildRoute(settings, const ScanQrViewScreenWidget());
+        Map map = settings.arguments as Map;
+        TypeScan typeScan = map['typeScan'];
+        return _buildRoute(
+          settings,
+          ScanQrViewScreenWidget(
+            typeScan: typeScan,
+          ),
+        );
 
       case Routes.FORGOT_PASSWORD:
         Map map = settings.arguments as Map;

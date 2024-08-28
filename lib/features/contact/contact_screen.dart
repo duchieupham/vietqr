@@ -20,10 +20,12 @@ import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'repostiroties/contact_repository.dart';
@@ -493,8 +495,11 @@ class _ContactStateState extends State<_ContactState>
                   right: 20,
                   child: GestureDetector(
                     onTap: () async {
-                      final data = await Navigator.pushNamed(
-                          context, Routes.SCAN_QR_VIEW);
+                      Map<String, dynamic> param = {};
+                      param['typeScan'] = TypeScan.DASHBOARD_SCAN;
+                      final data = await NavigationService.push(
+                          Routes.SCAN_QR_VIEW_SCREEN,
+                          arguments: param);
                       if (data is Map<String, dynamic>) {
                         if (!mounted) return;
                         await QRScannerUtils.instance.onScanNavi(data, context,

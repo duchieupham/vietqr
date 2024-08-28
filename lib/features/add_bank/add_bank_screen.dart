@@ -24,6 +24,7 @@ import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
 import 'package:vierqr/features/add_bank/views/policy_view.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
@@ -35,6 +36,7 @@ import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'views/bank_input_widget.dart';
@@ -403,7 +405,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                           onScan: () {
                                             FocusManager.instance.primaryFocus
                                                 ?.unfocus();
-                                            startBarcodeScanStream(context);
+                                            // startBarcodeScanStream(context);
+                                            scanBarcode();
                                           },
                                           onEdit: () {
                                             phoneController.clear();
@@ -730,6 +733,22 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     }
   }
 
+  Future<void> scanBarcode() async {
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.ADD_BANK;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
+    if (data is Map<String, dynamic>) {
+      if (data['isScaned']) {
+        _bloc.add(
+          ScanQrEventGetBankType(
+            code: data['code'],
+          ),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -834,8 +853,13 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   }
 
   void _onScanQR() async {
-    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW,
-        arguments: {'isScanAll': false});
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.ADD_BANK_SCAN_QR;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
+
+    // final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW,
+    //     arguments: {'isScanAll': false});
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
       final type = data['type'];

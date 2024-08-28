@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
@@ -8,6 +9,7 @@ import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../scan_qr/widgets/qr_scan_widget.dart';
@@ -187,7 +189,10 @@ class _CardWalletState extends State<CardWallet> {
   }
 
   void startBarcodeScanStream() async {
-    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.DASHBOARD_SCAN;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
       QRScannerUtils.instance.onScanNavi(data, context);

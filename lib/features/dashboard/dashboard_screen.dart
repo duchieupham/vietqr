@@ -41,6 +41,7 @@ import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
 import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/store/store_screen.dart';
 import 'package:vierqr/main.dart';
@@ -908,17 +909,28 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       _animatedToPage(index);
     } else {
       if (SharePrefUtils.getQrIntro()) {
-        startBarcodeScanStream();
-        // NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN);
+        // startBarcodeScanStream();
+        scanBarcode();
       } else {
         await DialogWidget.instance.showFullModalBottomContent(
           widget: const QRScanWidget(),
           color: AppColor.BLACK,
         );
-        // NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN);
+        scanBarcode();
 
-        startBarcodeScanStream();
+        // startBarcodeScanStream();
       }
+    }
+  }
+
+  void scanBarcode() async {
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.DASHBOARD_SCAN;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(data, context);
     }
   }
 

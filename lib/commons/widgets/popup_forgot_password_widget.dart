@@ -105,7 +105,37 @@ class PopUpForgotPasswordWidget extends StatelessWidget {
                                               ),
                                               const SizedBox(width: 8),
                                               GestureDetector(
-                                                onTap: () {},
+                                                onTap: () async {
+                                                  String? encodeQueryParameters(
+                                                      Map<String, String>
+                                                          params) {
+                                                    return params.entries
+                                                        .map((MapEntry<String,
+                                                                    String>
+                                                                e) =>
+                                                            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+                                                        .join('&');
+                                                  }
+
+// ···
+                                                  final Uri emailLaunchUri =
+                                                      Uri(
+                                                    scheme: 'mailto',
+                                                    path: emailSupport,
+                                                    query:
+                                                        encodeQueryParameters(<String,
+                                                            String>{
+                                                      'subject':
+                                                          'Quên mật khẩu đăng nhập VietQR',
+                                                    }),
+                                                  );
+
+                                                  if (await canLaunchUrl(
+                                                      emailLaunchUri)) {
+                                                    await launchUrl(
+                                                        emailLaunchUri);
+                                                  }
+                                                },
                                                 child: const Text(
                                                   emailSupport,
                                                   style: TextStyle(

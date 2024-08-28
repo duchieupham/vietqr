@@ -26,6 +26,7 @@ import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/qr_private_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/metadata_dto.dart';
@@ -177,7 +178,28 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 
   void startBarcodeScanStream() async {
-    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    // final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    // if (data is Map<String, dynamic>) {
+    //   if (!mounted) return;
+    //   QRScannerUtils.instance.onScanNavi(data, context);
+    //   final type = data['type'];
+    //   final typeQR = data['typeQR'] as TypeQR;
+    //   final value = data['data'];
+    //   final bankTypeDTO = data['bankTypeDTO'];
+    //   switch (typeQR) {
+    //     case TypeQR.QR_LINK:
+    //       break;
+    //     case TypeQR.QR_BANK:
+    //       break;
+    //     default:
+    //   }
+    //   print('QrDATA: -------------\n$data');
+    //   // Navigator.of(context).pop();
+    // }
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.DASHBOARD_SCAN;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
       QRScannerUtils.instance.onScanNavi(data, context);
@@ -193,7 +215,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         default:
       }
       print('QrDATA: -------------\n$data');
-      // Navigator.of(context).pop();
     }
   }
 

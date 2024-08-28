@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../models/qr_box_dto.dart';
@@ -376,7 +379,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                 fontSize: 15),
                                           ),
                                         ] else ...[
-                                          const Icon(Icons.keyboard_arrow_up_outlined,
+                                          const Icon(
+                                              Icons.keyboard_arrow_up_outlined,
                                               color: AppColor.BLUE_TEXT),
                                           const Text(
                                             'Đóng tuỳ chọn',
@@ -501,7 +505,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           ),
                         ),
                         Container(
-                          decoration: const BoxDecoration(color: AppColor.WHITE),
+                          decoration:
+                              const BoxDecoration(color: AppColor.WHITE),
                           padding: const EdgeInsets.symmetric(
                               vertical: 20, horizontal: 20),
                           child: Column(
@@ -618,22 +623,31 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
   }
 
   Future<void> startBarcodeScanStream(BuildContext context) async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-        return;
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-          },
-        );
-      } else {
-        if (!mounted) return;
-        _bloc.add(QrEventScanGetBankType(code: data));
+    // String data = await FlutterBarcodeScanner.scanBarcode(
+    //     '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.CREATE_QR;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
+        
+    if (data is Map<String, dynamic>) {
+      if (data['isScaned']) {
+        if (data['code'].isNotEmpty) {
+          if (data['code'] == TypeQR.NEGATIVE_ONE.value) {
+            return;
+          } else if (data['code'] == TypeQR.NEGATIVE_TWO.value) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không thể xác nhận mã QR',
+              msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+              function: () {
+                Navigator.pop(context);
+              },
+            );
+          } else {
+            if (!mounted) return;
+            _bloc.add(QrEventScanGetBankType(code: data['code']));
+          }
+        }
       }
     }
   }
@@ -898,7 +912,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   void _onUpdateMoney() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final data = await NavigatorUtils.navigatePage(context, const CalculatorScreen(),
+    final data = await NavigatorUtils.navigatePage(
+        context, const CalculatorScreen(),
         routeName: CalculatorScreen.routeName);
 
     if (data != null && data is String) {

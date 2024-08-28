@@ -15,6 +15,7 @@ import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/repositories/register_repository.dart';
+import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
@@ -62,6 +63,9 @@ class BlocModule extends DIModule {
           )
           ..registerFactory(
             () => ForgotPasswordBloc(),
+          )
+          ..registerFactoryParam(
+            (param1, param2) => ScanQrBloc(param1 as bool),
           )
           ..registerFactoryParam(
             (param1, param2) =>

@@ -6,6 +6,7 @@ import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 
@@ -367,7 +368,10 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
   }
 
   void startBarcodeScanStream() async {
-    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    Map<String, dynamic> param = {};
+    param['typeScan'] = TypeScan.DASHBOARD_SCAN;
+    final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
+        arguments: param);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
       QRScannerUtils.instance.onScanNavi(data, context);
@@ -383,7 +387,6 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
         default:
       }
       print('QrDATA: -------------\n$data');
-      // Navigator.of(context).pop();
     }
   }
 
