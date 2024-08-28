@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/main.dart';
@@ -38,7 +40,8 @@ class FCMService {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
           DialogWidget.instance.showModelBottomSheet(
-            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+            padding:
+                const EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
             height: 500,
             widget: PopupTopUpSuccess(
               dto: TopUpSuccessDTO.fromJson(message.data),
@@ -50,8 +53,8 @@ class FCMService {
                 Stringify.NOTI_TYPE_MOBILE_RECHARGE) {
           if (message.data['paymentMethod'] == "1") {
             DialogWidget.instance.showModelBottomSheet(
-              padding:
-                  const EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+              padding: const EdgeInsets.only(
+                  left: 12, right: 12, bottom: 32, top: 12),
               height: 500,
               widget: PopupTopUpSuccess(
                 dto: TopUpSuccessDTO.fromJson(message.data),
@@ -92,6 +95,11 @@ class FCMService {
             TransactionDetailScreen(
                 transactionId: message.data['transactionReceiveId']),
             routeName: TransactionDetailScreen.routeName);
+      }
+      if (message.data['notificationType'] != null &&
+          message.data['notificationType'] == 'N19') {
+        NavigatorUtils.navigatePage(context, const InvoiceScreen(),
+            routeName: Routes.INVOICE_SCREEN);
       }
       if (message.notification != null) {
         LOG.info(

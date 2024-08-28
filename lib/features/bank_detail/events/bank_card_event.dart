@@ -34,10 +34,10 @@ class SetQrGenerateEvent extends BankCardEvent {
   List<Object?> get props => [qrGeneratedDTO];
 }
 
-class BankCardEventGetList extends BankCardEvent {
+class BankCardDetailEventGetList extends BankCardEvent {
   final String userId;
 
-  const BankCardEventGetList({required this.userId});
+  const BankCardDetailEventGetList({required this.userId});
 
   @override
   List<Object?> get props => [userId];

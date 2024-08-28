@@ -21,7 +21,8 @@ class AccountRepository {
 
   Future<IntroduceDTO> getPointAccount(String userId) async {
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}account-wallet/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}account-wallet/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -42,7 +43,8 @@ class AccountRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/screen';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/screen';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {
@@ -105,7 +107,8 @@ class AccountRepository {
   Future<UserProfile?> getUserInformation(String userId) async {
     UserProfile result = UserProfile();
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}user/information/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}user/information/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -126,7 +129,8 @@ class AccountRepository {
   Future<SettingAccountDTO?> getSettingAccount(String userId) async {
     SettingAccountDTO result = SettingAccountDTO();
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -146,7 +150,8 @@ class AccountRepository {
 
   Future<bool> updateVoiceSetting(Map<String, dynamic> param) async {
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/voice';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/voice';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -186,7 +191,8 @@ class AccountRepository {
         const ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/cardNumber';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/cardNumber';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -214,7 +220,8 @@ class AccountRepository {
         const ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/theme';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/theme';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -246,6 +253,7 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         result = true;
+
         SocketService.instance.closeListenTransaction();
       }
     } catch (e) {

@@ -19,6 +19,7 @@ import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/services/socket_service/socket_service.dart';
 
 import '../../../navigator/app_navigator.dart';
 import 'secure_storage_service.dart';
@@ -48,6 +49,15 @@ class SharePrefUtils {
     );
 
     return sharedPreferenceService.get() ?? false;
+  }
+
+  ///Web socket
+  static Future<void> setListenTransactionQRWS(bool value) async {
+    await sharedPrefs.setBool('TRANSACTION_QR_WS', value);
+  }
+
+  static bool getListenTransactionQRWS() {
+    return sharedPrefs.getBool('TRANSACTION_QR_WS') ?? false;
   }
 
   /// Access Token

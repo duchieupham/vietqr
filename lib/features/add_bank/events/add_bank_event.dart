@@ -12,10 +12,10 @@ class AddBankEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadDataBankEvent extends AddBankEvent {
+class LoadDataAddBankEvent extends AddBankEvent {
   final bool isLoading;
 
-  const LoadDataBankEvent({this.isLoading = true});
+  const LoadDataAddBankEvent({this.isLoading = true});
 }
 
 class ChangeAccountBankEvent extends AddBankEvent {

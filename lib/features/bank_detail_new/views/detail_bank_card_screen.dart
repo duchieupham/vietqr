@@ -13,6 +13,8 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
@@ -210,13 +212,17 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
             }
 
             if (state.request == BankDetailType.OTP) {
+              getIt.get<BankBloc>().add(const BankCardEventGetList(
+                  isGetOverview: true, isLoadInvoice: true));
               Navigator.of(context).pop();
               widget.bankCardBloc.add(const BankCardGetDetailEvent());
-              eventBus.fire(GetListBankScreen());
+              // eventBus.fire(GetListBankScreen());
             }
 
             if (state.request == BankDetailType.DELETED) {
-              eventBus.fire(GetListBankScreen());
+              // eventBus.fire(GetListBankScreen());
+              getIt.get<BankBloc>().add(const BankCardEventGetList(
+                  isGetOverview: true, isLoadInvoice: true));
               Fluttertoast.showToast(
                 msg: 'Đã xoá TK ngân hàng',
                 toastLength: Toast.LENGTH_SHORT,

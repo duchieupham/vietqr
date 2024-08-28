@@ -357,7 +357,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   ),
                                   Image.asset(
                                     'assets/images/ic-viet-qr.png',
-                                    height: 40,
+                                    height: 30,
                                   ),
                                 ],
                               ),
@@ -372,73 +372,70 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Mã xác nhận',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            const Text(
+                              'Mã xác nhận ',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            ValueListenableBuilder<int>(
+                              valueListenable: _timerNotifier,
+                              builder: (context, time, child) {
+                                if (time == 0) {
+                                  return const SizedBox.shrink();
+                                }
+                                return ShaderMask(
+                                  shaderCallback: (bounds) => VietQRTheme
+                                      .gradientColor.brightBlueLinear
+                                      .createShader(bounds),
+                                  child: Text(
+                                    "${_formatTime(time)}",
+                                    style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.WHITE),
+                                  ),
+                                );
+                              },
+                            )
+                          ],
                         ),
                         ValueListenableBuilder<bool>(
                           valueListenable: _expriedNotifer,
                           builder: (context, isExpired, child) {
-                            return isExpired
-                                ? InkWell(
-                                    onTap: () {
-                                      Map<String, dynamic> param = {
-                                        'phoneNo': widget.phone,
-                                        'email': widget.email,
-                                      };
-                                      _resetTimer();
-                                      _bloc.add(ForgotPasswordEventResendOTP(
-                                          param: param));
-                                    },
-                                    child: ShaderMask(
-                                      shaderCallback: (bounds) =>
-                                          const LinearGradient(
-                                        colors: [
-                                          Color(0xFF00C6FF),
-                                          Color(0xFF0072FF),
-                                        ],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(bounds),
-                                      child: Text(
-                                        'Gửi lại mã',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          foreground: Paint()
-                                            ..shader = const LinearGradient(
-                                              colors: [
-                                                Color(0xFF00C6FF),
-                                                Color(0xFF0072FF),
-                                              ],
-                                              begin: Alignment.centerLeft,
-                                              end: Alignment.centerRight,
-                                            ).createShader(const Rect.fromLTWH(
-                                                0, 0, 200, 30)),
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : ValueListenableBuilder<int>(
-                                    valueListenable: _timerNotifier,
-                                    builder: (context, time, child) {
-                                      return ShaderMask(
-                                        shaderCallback: (bounds) => VietQRTheme
-                                            .gradientColor.brightBlueLinear
-                                            .createShader(bounds),
-                                        child: Text(
-                                          _formatTime(time),
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColor.WHITE),
-                                        ),
-                                      );
-                                    },
-                                  );
+                            return InkWell(
+                              onTap: () {
+                                Map<String, dynamic> param = {
+                                  'phoneNo': widget.phone,
+                                  'email': widget.email,
+                                };
+                                _resetTimer();
+                                _bloc.add(
+                                    ForgotPasswordEventResendOTP(param: param));
+                              },
+                              child: ShaderMask(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
+                                  colors: [
+                                    Color(0xFF00C6FF),
+                                    Color(0xFF0072FF),
+                                  ],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ).createShader(bounds),
+                                child: const Text(
+                                  'Gửi lại mã',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColor.WHITE,
+                                  ),
+                                ),
+                              ),
+                            );
                           },
                         ),
                       ],

@@ -48,7 +48,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
   @override
   void initState() {
     _bloc = AddBankBloc(context)
-      ..add(const LoadDataBankEvent(isLoading: false));
+      ..add(const LoadDataAddBankEvent(isLoading: false));
     super.initState();
   }
 
@@ -89,8 +89,8 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
                   Expanded(
                     child: ListView(
                       controller: scrollController,
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 20),
                       children: [
                         const Text(
                           'Ngân hàng thụ hưởng*',

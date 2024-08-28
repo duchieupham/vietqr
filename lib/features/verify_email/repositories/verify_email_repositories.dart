@@ -12,7 +12,8 @@ class EmailRepository {
   const EmailRepository();
 
   Future<ResponseMessageDTO> sendOTP(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}sendMailWithAttachment';
       final response = await BaseAPIClient.postAPI(
@@ -32,7 +33,8 @@ class EmailRepository {
   }
 
   Future<ResponseMessageDTO> confirmOTP(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}send-mail/confirm-otp';
       final response = await BaseAPIClient.postAPI(
@@ -72,14 +74,15 @@ class EmailRepository {
     return result;
   }
 
-   Future<ResponseMessageDTO> requestOTP(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  Future<ResponseMessageDTO> requestOTP(Map<String, dynamic> param) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/request-otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
-        type: AuthenticationType.SYSTEM,
+        type: AuthenticationType.NONE,
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -92,8 +95,10 @@ class EmailRepository {
     return result;
   }
 
-    Future<ResponseMessageDTO> confirmOTPInForgetPassword(Map<String, dynamic> param) async {
-    ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  Future<ResponseMessageDTO> confirmOTPInForgetPassword(
+      Map<String, dynamic> param) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/confirm-otp';
       final response = await BaseAPIClient.postAPI(

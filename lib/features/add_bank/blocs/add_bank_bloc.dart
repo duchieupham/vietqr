@@ -19,7 +19,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   final BuildContext context;
 
   AddBankBloc(this.context) : super(AddBankState(listBanks: [])) {
-    on<LoadDataBankEvent>(_getBankTypes);
+    on<LoadDataAddBankEvent>(_getBankTypes);
     on<BankCardEventSearchName>(_searchBankName);
     on<BankCardCheckExistedEvent>(_checkExistedBank);
     on<BankCardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
@@ -44,7 +44,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     }
 
     try {
-      if (event is LoadDataBankEvent) {
+      if (event is LoadDataAddBankEvent) {
         if (event.isLoading) {
           emit(state.copyWith(status: BlocStatus.LOADING));
         }

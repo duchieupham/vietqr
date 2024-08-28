@@ -51,6 +51,7 @@ import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/invoice_provider.dart';
+import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
@@ -233,6 +234,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       listenNewNotification();
       onUpdateApp();
       onRenderUI();
+      SocketService.instance.init();
     });
 
     _subscription = eventBus.on<ChangeBottomBarEvent>().listen((data) {
@@ -266,9 +268,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      if (!PlatformUtils.instance.isWeb()) {}
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.paused) {
+      // SocketService.instance.init();
+      await SharePrefUtils.setListenTransactionQRWS(false);
+      SocketService.instance.closeListenTransaction();
+    } else if (state == AppLifecycleState.resumed) {
+      SocketService.instance.init();
     }
   }
 

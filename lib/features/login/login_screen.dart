@@ -512,6 +512,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                                 if (email == null || email.isEmpty) {
                                   DialogWidget.instance.showModelBottomSheet(
                                       borderRadius: BorderRadius.circular(16),
+                                      width: MediaQuery.of(context).size.width,
                                       widget:
                                           const PopUpForgotPasswordWidget());
                                 } else {
@@ -674,6 +675,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
                                 if (email == null || email.isEmpty) {
                                   DialogWidget.instance.showModelBottomSheet(
                                       borderRadius: BorderRadius.circular(16),
+                                      width: MediaQuery.of(context).size.width,
                                       widget:
                                           const PopUpForgotPasswordWidget());
                                 } else {

@@ -58,7 +58,9 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Kích hoạt đến ${timestampToDate(widget.bankDTto.validFeeTo!)}',
+                          widget.bankDTto.isValidService!
+                              ? 'Kích hoạt đến ${timestampToDate(widget.bankDTto.validFeeTo!)}'
+                              : "Chưa kích hoạt",
                           style: const TextStyle(
                             color: Colors.black,
                             fontSize: 10,
@@ -140,7 +142,8 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
 
 class GradientText extends StatelessWidget {
   const GradientText(
-    this.text, {super.key, 
+    this.text, {
+    super.key,
     required this.gradient,
     this.style,
   });

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -21,6 +22,8 @@ import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/add_bank/views/account_link_view.dart';
 import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
 import 'package:vierqr/features/add_bank/views/policy_view.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
@@ -96,9 +99,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     BankTypeDTO? bankTypeDTO = widget.bankTypeDTO;
 
     if (bankTypeDTO == null) {
-      _bloc.add(const LoadDataBankEvent());
+      _bloc.add(const LoadDataAddBankEvent());
     } else {
-      _bloc.add(const LoadDataBankEvent(isLoading: false));
+      _bloc.add(const LoadDataAddBankEvent(isLoading: false));
       String bankAccount = bankTypeDTO.bankAccount;
       String userName = bankTypeDTO.userBankName;
       String bankId = bankTypeDTO.bankId;
@@ -209,7 +212,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
 
             if (state.request == AddBankType.INSERT_BANK) {
               if (!mounted) return;
-              eventBus.fire(GetListBankScreen());
+              getIt.get<BankBloc>().add(const BankCardEventGetList(
+                  isGetOverview: true, isLoadInvoice: true));
+              // eventBus.fire(GetListBankScreen());
               Navigator.of(context).pop(true);
             }
 
