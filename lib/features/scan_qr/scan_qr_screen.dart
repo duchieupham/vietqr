@@ -223,6 +223,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
 
   Future<void> startBarcodeScanStream() async {
     final data = await FlutterBarcodeScanner.scanBarcode(
+    
         '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
 
     if (data.isNotEmpty) {
