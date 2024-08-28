@@ -908,7 +908,8 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       _animatedToPage(index);
     } else {
       if (SharePrefUtils.getQrIntro()) {
-        startBarcodeScanStream();
+        // startBarcodeScanStream();
+        NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN);
       } else {
         // await DialogWidget.instance.showFullModalBottomContent(
         //   widget: const QRScanWidget(),

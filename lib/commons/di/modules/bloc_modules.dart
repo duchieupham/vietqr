@@ -6,6 +6,7 @@ import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/connect_media/blocs/connect_media_bloc.dart';
+import 'package:vierqr/features/create_qr_un_authen/blocs/qrcode_un_authen_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/login/blocs/forgot_password_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -52,6 +53,9 @@ class BlocModule extends DIModule {
               NavigationService.context!,
               getIt.get<LoginRepository>(),
             ),
+          )
+          ..registerFactory(
+            () => QRCodeUnUTBloc(NavigationService.context!),
           )
           ..registerFactory(
             () => RegisterBloc(getIt.get<RegisterRepository>()),
