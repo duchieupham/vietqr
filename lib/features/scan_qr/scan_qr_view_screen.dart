@@ -373,7 +373,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                           Container(
                             margin: const EdgeInsets.only(left: 30, bottom: 5),
                             child: const Text(
-                              'Chúng tôi hỗ trợ mã QR:',
+                              'Hỗ trợ mã VietQR các ngân hàng: ',
                               style: TextStyle(
                                   color: AppColor.WHITE,
                                   fontWeight: FontWeight.bold,
@@ -387,7 +387,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                               items: list.map(
                                 (e) {
                                   return Container(
-                                    margin: const EdgeInsets.only(right: 3),
+                                    // margin: const EdgeInsets.only(right: 3),
                                     child: GradientBorderButton(
                                       borderRadius: BorderRadius.circular(5),
                                       borderWidth: 1,
@@ -402,9 +402,9 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                                 },
                               ).toList(),
                               options: CarouselOptions(
-                                  height: 45,
+                                  height: 50,
                                   autoPlay: true,
-                                  viewportFraction: 0.3,
+                                  viewportFraction: 0.32,
                                   pageSnapping: false,
                                   autoPlayCurve: Curves.linear,
                                   autoPlayInterval: const Duration(seconds: 2),
@@ -421,125 +421,122 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                 ),
               ),
               Positioned(
-                bottom: 0,
+                bottom: 20,
+                left: 55,
+                right: 55,
                 child: Container(
-                  height: 80,
-                  padding: const EdgeInsets.only(top: 5, bottom: 5),
-                  color: Colors.white,
+                  color: Colors.transparent,
                   width: MediaQuery.of(context).size.width,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(left: 55),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ValueListenableBuilder(
-                              valueListenable: controller,
-                              builder: (context, state, child) {
-                                final int? availableCameras =
-                                    (state as MobileScannerState)
-                                        .availableCameras;
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ValueListenableBuilder(
+                            valueListenable: controller,
+                            builder: (context, state, child) {
+                              final int? availableCameras =
+                                  (state as MobileScannerState)
+                                      .availableCameras;
 
-                                if (availableCameras != null &&
-                                    availableCameras < 2) {
-                                  return const SizedBox.shrink();
-                                }
-                                // final Widget icon;
-                                // switch (state.cameraDirection) {
-                                //   case CameraFacing.front:
-                                //     icon = const Icon(Icons.camera_front);
-                                //   case CameraFacing.back:
-                                //     icon = const Icon(Icons.camera_rear);
-                                // }
-                                return InkWell(
-                                  onTap: () async {
-                                    await controller.switchCamera();
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: AppColor.BLUE_BGR,
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                    padding: const EdgeInsets.all(15),
-                                    child: const Icon(
-                                      Icons.flip_camera_android_outlined,
-                                      color: Colors.black,
-                                      size: 15,
-                                    ),
+                              if (availableCameras != null &&
+                                  availableCameras < 2) {
+                                return const SizedBox.shrink();
+                              }
+                              // final Widget icon;
+                              // switch (state.cameraDirection) {
+                              //   case CameraFacing.front:
+                              //     icon = const Icon(Icons.camera_front);
+                              //   case CameraFacing.back:
+                              //     icon = const Icon(Icons.camera_rear);
+                              // }
+                              return InkWell(
+                                onTap: () async {
+                                  await controller.switchCamera();
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColor.BLUE_BGR,
+                                    borderRadius: BorderRadius.circular(50),
                                   ),
-                                );
-                              },
-                            ),
-                            const Text(
-                              'Chuyển camera',
-                              style: TextStyle(
-                                  color: AppColor.BLACK, fontSize: 12),
-                            )
-                          ],
-                        ),
+                                  padding: const EdgeInsets.all(15),
+                                  child: const Icon(
+                                    Icons.flip_camera_android_outlined,
+                                    color: Colors.black,
+                                    size: 20,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            'Chuyển camera',
+                            style:
+                                TextStyle(color: AppColor.WHITE, fontSize: 12),
+                          )
+                        ],
                       ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 55),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () async {
-                                final ImagePicker picker = ImagePicker();
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              final ImagePicker picker = ImagePicker();
 
-                                final XFile? image = await picker.pickImage(
-                                    source: ImageSource.gallery);
+                              final XFile? image = await picker.pickImage(
+                                  source: ImageSource.gallery);
 
-                                if (image == null) return;
+                              if (image == null) return;
 
-                                final BarcodeCapture? barcodes =
-                                    await controller.analyzeImage(image.path);
-                                if (!context.mounted) {
-                                  return;
-                                }
-                                if (barcodes != null) {
-                                  _handleBarcode(barcodes);
-                                } else {
-                                  DialogWidget.instance.openMsgDialog(
-                                    title: 'Không thể xác nhận mã QR',
-                                    msg:
-                                        'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-                                    function: () {
+                              final BarcodeCapture? barcodes =
+                                  await controller.analyzeImage(image.path);
+                              if (!context.mounted) {
+                                return;
+                              }
+                              if (barcodes != null) {
+                                _handleBarcode(barcodes);
+                              } else {
+                                DialogWidget.instance.openMsgDialog(
+                                  title: 'Không thể xác nhận mã QR',
+                                  msg:
+                                      'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+                                  function: () {
+                                    Navigator.pop(context);
+                                    if (Navigator.canPop(context)) {
                                       Navigator.pop(context);
-                                      if (Navigator.canPop(context)) {
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                                  );
-                                }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColor.BLUE_BGR,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                padding: const EdgeInsets.all(15),
-                                child: const Icon(
-                                  Icons.photo_library_outlined,
-                                  color: Colors.black,
-                                  size: 15,
-                                ),
+                                    }
+                                  },
+                                );
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColor.BLUE_BGR,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              padding: const EdgeInsets.all(15),
+                              child: const Icon(
+                                Icons.photo_library_outlined,
+                                color: Colors.black,
+                                size: 20,
                               ),
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            const Text(
-                              'Tải ảnh lên',
-                              style: TextStyle(
-                                  color: AppColor.BLACK, fontSize: 12),
-                            )
-                          ],
-                        ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          const Text(
+                            'Tải ảnh lên',
+                            style:
+                                TextStyle(color: AppColor.WHITE, fontSize: 12),
+                          )
+                        ],
                       ),
                       // ToggleFlashlightButton(controller: controller),
                       // SwitchCameraButton(controller: controller),
