@@ -7,6 +7,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -207,20 +208,29 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
               widget.bankCardBloc.add(const BankCardGetDetailEvent());
             }
             if (state.request == BankDetailType.REQUEST_OTP) {
+              Navigator.pop(context);
               _onShowDialogRequestOTP(state.requestId ?? '',
                   state.bankDetailDTO?.bankAccount ?? '', state.bankDetailDTO);
             }
 
+            if (state.request == BankDetailType.NONE &&
+                state.status == BlocStatus.LOADING) {
+              DialogWidget.instance.openLoadingDialog();
+            }
+
             if (state.request == BankDetailType.OTP) {
+              // Navigator.of(context).pop();
+              Navigator.pop(context);
               getIt.get<BankBloc>().add(const BankCardEventGetList(
                   isGetOverview: true, isLoadInvoice: true));
-              Navigator.of(context).pop();
+              Navigator.pop(context);
               widget.bankCardBloc.add(const BankCardGetDetailEvent());
               // eventBus.fire(GetListBankScreen());
             }
 
             if (state.request == BankDetailType.DELETED) {
               // eventBus.fire(GetListBankScreen());
+              Navigator.pop(context);
               getIt.get<BankBloc>().add(const BankCardEventGetList(
                   isGetOverview: true, isLoadInvoice: true));
               Fluttertoast.showToast(
