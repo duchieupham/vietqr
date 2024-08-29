@@ -12,6 +12,7 @@ import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 
 class FCMService {
@@ -87,20 +88,23 @@ class FCMService {
   }
 
   static void onFcmMessageOpenedApp(BuildContext context) {
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       // Xử lý push notification nếu ứng dụng không đang chạy
-      if (message.data['transactionReceiveId'] != null) {
+      if (message.data['notificationType'] != null &&
+          message.data['notificationType'] == 'N19') {
+        // Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
+        NavigationService.push(Routes.INVOICE_SCREEN);
+        // NavigatorUtils.navigatePage(context, const InvoiceScreen(),
+        //     routeName: Routes.INVOICE_SCREEN);
+        // return;
+      } else if (message.data['transactionReceiveId'] != null) {
         NavigatorUtils.navigatePage(
             context,
             TransactionDetailScreen(
                 transactionId: message.data['transactionReceiveId']),
             routeName: TransactionDetailScreen.routeName);
       }
-      if (message.data['notificationType'] != null &&
-          message.data['notificationType'] == 'N19') {
-        NavigatorUtils.navigatePage(context, const InvoiceScreen(),
-            routeName: Routes.INVOICE_SCREEN);
-      }
+
       if (message.notification != null) {
         LOG.info(
             "Push notification clicked: ${message.notification?.title.toString()} - ${message.notification?.body}");
@@ -112,7 +116,13 @@ class FCMService {
     FirebaseMessaging.instance.getInitialMessage().then(
       (remoteMessage) {
         if (remoteMessage != null) {
-          if (remoteMessage.data['transactionReceiveId'] != null) {
+          if (remoteMessage.data['notificationType'] != null &&
+              remoteMessage.data['notificationType'] == 'N19') {
+            // Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
+            NavigatorUtils.navigatePage(context, const InvoiceScreen(),
+                routeName: Routes.INVOICE_SCREEN);
+            // return;
+          } else if (remoteMessage.data['transactionReceiveId'] != null) {
             NavigatorUtils.navigatePage(
                 context,
                 TransactionDetailScreen(
