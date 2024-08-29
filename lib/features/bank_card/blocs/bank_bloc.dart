@@ -18,6 +18,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/key_free_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
@@ -67,6 +68,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       emit(state.copyWith(listBanner: event.listBanner));
     }
   }
+
+
 
   void _isCloseInvoiceOverview(BankEvent event, Emitter emit) async {
     if (event is CloseInvoiceOverviewEvent) {
@@ -292,7 +295,10 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         }
         if (list.isEmpty) {
           isEmpty = true;
+          invoiceOverviewDTO = InvoiceOverviewDTO(
+              countInvoice: 0, amountUnpaid: 0, invoices: []);
         }
+
         emit(state.copyWith(
             request: BankType.BANK,
             listBanks: list,
