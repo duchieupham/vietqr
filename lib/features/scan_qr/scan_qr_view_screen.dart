@@ -373,7 +373,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                           Container(
                             margin: const EdgeInsets.only(left: 30, bottom: 5),
                             child: const Text(
-                              'Chúng tôi hỗ trợ mã QR:',
+                              'Hỗ trợ mã VietQR các ngân hàng:',
                               style: TextStyle(
                                   color: AppColor.WHITE,
                                   fontWeight: FontWeight.bold,

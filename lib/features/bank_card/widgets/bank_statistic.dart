@@ -159,7 +159,7 @@ class _BankStatisticState extends State<BankStatistic>
         if (state.request == BankType.BANK) {
           isVerify = SharePrefUtils.getProfile().verify;
         }
-        if (state.bankSelect != null) {
+        if (state.bankSelect != null && !state.isEmpty) {
           bankSelect = state.bankSelect;
         }
       },
