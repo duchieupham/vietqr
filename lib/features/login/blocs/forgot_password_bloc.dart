@@ -215,7 +215,7 @@ class ForgotPasswordBloc
           emit(state.copyWith(
             status: BlocStatus.ERROR,
             request: ForgotPasswordType.CHANGE_PASS,
-            msg: 'Mật khẩu mới không được trùng mật khẩu cũ.',
+            msg: 'Mật khẩu đã được sử dụng.',
             isSamePass: true,
           ));
         } else {

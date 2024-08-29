@@ -93,6 +93,8 @@ class UserEditRepository {
           result['msg'] = 'Mật khẩu cũ không khớp.';
         } else if (messageDTO.message == 'E182') {
           result['msg'] = 'Mật khẩu đã được sử dụng.';
+        } else if (messageDTO.message == 'E162') {
+          result['msg'] = 'Tài khoản đã được xác thực Email';
         } else {
           result['msg'] = messageDTO.message;
         }

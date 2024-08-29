@@ -228,7 +228,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             isCircle = false;
             readOnly = false;
             DialogWidget.instance.openMsgDialog(
-                title: 'Thay đổi thất bại!',
+                title: 'Không thể cập nhật Mật khẩu',
                 msg: state.msg ?? '',
                 // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
                 function: () {
