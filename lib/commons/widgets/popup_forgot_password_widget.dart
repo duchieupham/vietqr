@@ -126,7 +126,7 @@ class PopUpForgotPasswordWidget extends StatelessWidget {
                                                         encodeQueryParameters(<String,
                                                             String>{
                                                       'subject':
-                                                          'Quên mật khẩu đăng nhập VietQR',
+                                                          'Hỗ trợ đổi mật khẩu VietQR',
                                                     }),
                                                   );
 
