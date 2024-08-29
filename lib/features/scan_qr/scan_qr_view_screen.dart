@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -40,7 +41,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
   late ScanQrBloc _bloc;
   bool isScanAll = true;
   final MobileScannerController controller = MobileScannerController(
-    autoStart: true,
+    autoStart: false,
     detectionSpeed: DetectionSpeed.noDuplicates,
     useNewCameraSelector: true,
   );
@@ -70,10 +71,6 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
 
   Future<void> _handleBarcode(BarcodeCapture barcodes) async {
     if (mounted) {
-      setState(() {
-        // ignore: sdk_version_since
-        // _barcode = barcodes.barcodes.firstOrNull;
-      });
       if (barcodes.barcodes.isNotEmpty) {
         final barcode = barcodes.barcodes.first;
         final String? data = barcode.rawValue;
@@ -133,6 +130,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
     var locationPermission = await Permission.camera.request();
     int endRequestTime = DateTime.now().millisecondsSinceEpoch;
     if (locationPermission.isGranted) {
+      unawaited(controller.start());
       return true;
     }
 
@@ -309,43 +307,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                 onTap: () {
                   controller.toggleTorch();
                 },
-                child: Container(
-                    margin: const EdgeInsets.only(right: 22, bottom: 10),
-                    decoration: BoxDecoration(
-                      color: AppColor.BLUE_BGR,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    padding: const EdgeInsets.all(8),
-                    child: ValueListenableBuilder(
-                      valueListenable: controller,
-                      builder: (context, state, child) {
-                        switch ((state as MobileScannerState).torchState) {
-                          case TorchState.auto:
-                            return const Icon(
-                              Icons.flash_auto_rounded,
-                              color: Colors.black,
-                              size: 15,
-                            );
-                          case TorchState.on:
-                            return const Icon(
-                              Icons.flashlight_off_outlined,
-                              color: Colors.black,
-                              size: 15,
-                            );
-                          case TorchState.off:
-                            return const Icon(
-                              Icons.flashlight_on_outlined,
-                              color: Colors.black,
-                              size: 15,
-                            );
-                          case TorchState.unavailable:
-                            return const Icon(
-                              Icons.no_flash,
-                              color: Colors.grey,
-                            );
-                        }
-                      },
-                    )),
+                child: _buildFlashButton(),
               )
             ],
             flexibleSpace: FlexibleSpaceBar(
@@ -395,33 +357,9 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                   ),
                 ),
               ),
-              // Positioned(
-              //   top: height * 0.05,
-              //   right: 30,
-              //   left: 30,
-              //   child: _buildScanningEffectAnimation(width, height),
-              // ),
               CustomPaint(
                 painter: ScannerOverlay(scanWindow: scanWindow),
               ),
-              // Align(
-              //   alignment: Alignment.bottomCenter,
-              //   child: Container(
-              //     alignment: Alignment.bottomCenter,
-              //     height: 100,
-              //     color: Colors.black.withOpacity(0.4),
-              //     child: Row(
-              //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //       children: [
-              //         // ToggleFlashlightButton(controller: controller),
-              //         // StartStopMobileScannerButton(controller: controller),
-              //         Expanded(child: Center(child: _buildBarcode(_barcode))),
-              //         // SwitchCameraButton(controller: controller),
-              //         // AnalyzeImageFromGalleryButton(controller: controller),
-              //       ],
-              //     ),
-              //   ),
-              // ),
               Positioned(
                 bottom: 120,
                 child: BlocBuilder<BankBloc, BankState>(
@@ -498,20 +436,45 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.BLUE_BGR,
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              padding: const EdgeInsets.all(15),
-                              child: const Icon(
-                                Icons.flip_camera_android_outlined,
-                                color: Colors.black,
-                                size: 15,
-                              ),
+                            ValueListenableBuilder(
+                              valueListenable: controller,
+                              builder: (context, state, child) {
+                                final int? availableCameras =
+                                    (state as MobileScannerState)
+                                        .availableCameras;
+
+                                if (availableCameras != null &&
+                                    availableCameras < 2) {
+                                  return const SizedBox.shrink();
+                                }
+                                // final Widget icon;
+                                // switch (state.cameraDirection) {
+                                //   case CameraFacing.front:
+                                //     icon = const Icon(Icons.camera_front);
+                                //   case CameraFacing.back:
+                                //     icon = const Icon(Icons.camera_rear);
+                                // }
+                                return InkWell(
+                                  onTap: () async {
+                                    await controller.switchCamera();
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: AppColor.BLUE_BGR,
+                                      borderRadius: BorderRadius.circular(50),
+                                    ),
+                                    padding: const EdgeInsets.all(15),
+                                    child: const Icon(
+                                      Icons.flip_camera_android_outlined,
+                                      color: Colors.black,
+                                      size: 15,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                             const Text(
-                              'Đổi camera',
+                              'Chuyển camera',
                               style: TextStyle(
                                   color: AppColor.BLACK, fontSize: 12),
                             )
@@ -524,16 +487,47 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColor.BLUE_BGR,
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              padding: const EdgeInsets.all(15),
-                              child: const Icon(
-                                Icons.photo_library_outlined,
-                                color: Colors.black,
-                                size: 15,
+                            InkWell(
+                              onTap: () async {
+                                final ImagePicker picker = ImagePicker();
+
+                                final XFile? image = await picker.pickImage(
+                                    source: ImageSource.gallery);
+
+                                if (image == null) return;
+
+                                final BarcodeCapture? barcodes =
+                                    await controller.analyzeImage(image.path);
+                                if (!context.mounted) {
+                                  return;
+                                }
+                                if (barcodes != null) {
+                                  _handleBarcode(barcodes);
+                                } else {
+                                  DialogWidget.instance.openMsgDialog(
+                                    title: 'Không thể xác nhận mã QR',
+                                    msg:
+                                        'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+                                    function: () {
+                                      Navigator.pop(context);
+                                      if (Navigator.canPop(context)) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  );
+                                }
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: AppColor.BLUE_BGR,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                padding: const EdgeInsets.all(15),
+                                child: const Icon(
+                                  Icons.photo_library_outlined,
+                                  color: Colors.black,
+                                  size: 15,
+                                ),
                               ),
                             ),
                             const SizedBox(
@@ -558,6 +552,47 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
         );
       },
     );
+  }
+
+  Widget _buildFlashButton() {
+    return Container(
+        margin: const EdgeInsets.only(right: 22, bottom: 10),
+        decoration: BoxDecoration(
+          color: AppColor.BLUE_BGR,
+          borderRadius: BorderRadius.circular(50),
+        ),
+        padding: const EdgeInsets.all(8),
+        child: ValueListenableBuilder(
+          valueListenable: controller,
+          builder: (context, state, child) {
+            switch ((state as MobileScannerState).torchState) {
+              case TorchState.auto:
+                return const Icon(
+                  Icons.flash_auto_rounded,
+                  color: Colors.black,
+                  size: 15,
+                );
+              case TorchState.on:
+                return const Icon(
+                  Icons.flashlight_off_outlined,
+                  color: Colors.black,
+                  size: 15,
+                );
+              case TorchState.off:
+                return const Icon(
+                  Icons.flashlight_on_outlined,
+                  color: Colors.black,
+                  size: 15,
+                );
+              case TorchState.unavailable:
+                return const Icon(
+                  Icons.no_flash,
+                  size: 13,
+                  color: Colors.grey,
+                );
+            }
+          },
+        ));
   }
 
   // Widget _buildScanningEffectAnimation(width, height) {
