@@ -294,7 +294,7 @@ class _ListBankWidgetState extends State<ListBankWidget>
                                   viewportFraction: 0.9,
                                   pageSnapping: false,
                                   autoPlayCurve: Curves.linear,
-                                  autoPlayInterval: const Duration(seconds: 10),
+                                  autoPlayInterval: const Duration(seconds: 1),
                                   autoPlayAnimationDuration:
                                       const Duration(seconds: 10)),
                             ),
