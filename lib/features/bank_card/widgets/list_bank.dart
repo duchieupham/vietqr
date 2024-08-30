@@ -62,6 +62,7 @@ class _ListBankWidgetState extends State<ListBankWidget>
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     super.build(context);
     return BlocConsumer<BankBloc, BankState>(
       bloc: bankBloc,
@@ -279,9 +280,9 @@ class _ListBankWidgetState extends State<ListBankWidget>
                                     child: Text(
                                       e,
                                       maxLines: 1,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppColor.BLACK,
-                                        fontSize: 10,
+                                        fontSize: width > 380 ? 12 : 10,
                                       ),
                                     ),
                                   );
