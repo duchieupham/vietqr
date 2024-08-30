@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
+import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 
 class DashBoardEvent extends Equatable {
@@ -21,6 +22,15 @@ class DashBoardLoginEvent extends DashBoardEvent {
 }
 
 class CloseMobileNotificationEvent extends DashBoardEvent {}
+
+class UpdateCloseNotiEvent extends DashBoardEvent {
+  final UserConfig userConfig;
+
+  const UpdateCloseNotiEvent({required this.userConfig});
+
+  @override
+  List<Object?> get props => [userConfig];
+}
 
 class DashBoardEventSearchName extends DashBoardEvent {
   final BankNameSearchDTO dto;

@@ -12,7 +12,9 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/sms_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
+import 'package:vierqr/features/dashboard/widget/popup_bidv_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
@@ -31,64 +33,13 @@ class DialogWidget {
 
   static bool isPopLoading = false;
 
-  // openNotificationMobile() {
-  //   return showCupertinoModalPopup(
-  //       context: NavigationService.context!,
-  //       builder: (context) {
-  //         bool _doNotShowAgain = false;
-  //         return Material(
-  //           color: AppColor.BLACK.withOpacity(0.8),
-  //           child: Container(
-  //             margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-  //             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-  //             height: MediaQuery.of(context).size.height,
-  //             width: double.infinity,
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: [
-  //                 Container(
-  //                   height: 300,
-  //                   width: double.infinity,
-  //                   child: Image.asset(
-  //                       'assets/images/popup-notification-mobile.png'),
-  //                 ),
-  //                 SizedBox(
-  //                   height: 30,
-  //                 ),
-  //                 Container(
-  //                   height: 50,
-  //                   width: double.infinity,
-  //                   margin: EdgeInsets.symmetric(horizontal: 20),
-  //                   decoration: BoxDecoration(
-  //                     color: AppColor.BLACK.withOpacity(0.3),
-  //                     borderRadius: BorderRadius.circular(20),
-  //                   ),
-  //                   child: CheckboxListTile(
-  //                     title: Text(
-  //                       'Không hiển thị thông tin này ở lần sau',
-  //                       style: TextStyle(
-  //                           color: Colors.white), // Chỉnh màu chữ nếu cần
-  //                     ),
-  //                     value: _doNotShowAgain,
-  //                     onChanged: (bool? value) {
-  //                       // Cập nhật trạng thái của Checkbox
-  //                       //Navigator.of(context).pop(); // Đóng dialog ngay lập tức
-  //                     },
-  //                     controlAffinity: ListTileControlAffinity
-  //                         .leading, // Checkbox ở bên trái
-  //                     activeColor:
-  //                         Colors.white, // Màu của Checkbox khi được chọn
-  //                     checkColor: AppColor
-  //                         .BLUE_TEXT, // Màu của dấu check trong Checkbox
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       });
-  // }
+  openNotificationBIDV() {
+    return showCupertinoModalPopup(
+        context: NavigationService.context!,
+        builder: (context) {
+          return const PopupBidvWidget();
+        });
+  }
 
   openNotificationMobile(
     BuildContext? context,

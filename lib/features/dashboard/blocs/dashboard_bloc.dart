@@ -51,6 +51,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<GetCountNotifyEvent>(_getCounter);
     on<NotifyUpdateStatusEvent>(_updateNotificationStatus);
     on<CloseMobileNotificationEvent>(_closeNoti);
+    on<UpdateCloseNotiEvent>(_closeNotiPopup);
   }
 
   void _login(DashBoardEvent event, Emitter emit) async {
@@ -77,6 +78,24 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       }
     } catch (e) {
       emit(state.copyWith(request: DashBoardType.ERROR));
+    }
+  }
+
+  void _closeNotiPopup(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateCloseNotiEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        bool? result =
+            await dashBoardRepository.updateViewPopup(event.userConfig);
+
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: DashBoardType.CLOSE_NOTIFICATION));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
     }
   }
 

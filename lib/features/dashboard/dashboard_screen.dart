@@ -37,6 +37,7 @@ import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
+import 'package:vierqr/features/dashboard/widget/popup_noti_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
@@ -739,9 +740,21 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       String themeVerLocal = SharePrefUtils.getThemeVersion();
       String themeSystem = state.appInfoDTO.themeVersion;
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
-      if (!settingAccountDTO.notificationMobile && listBank!.isNotEmpty) {
-        DialogWidget.instance.openNotificationMobile(context);
+      if (settingAccountDTO.userConfig != null &&
+          settingAccountDTO.userConfig!.bidvNotification &&
+          listBank!.isNotEmpty) {
+        await DialogWidget.instance.openNotificationBIDV();
       }
+      if (!settingAccountDTO.notificationMobile && listBank!.isNotEmpty) {
+        await DialogWidget.instance
+            .showModelBottomSheet(
+                borderRadius: BorderRadius.circular(16),
+                widget: const PopupNotiWidget())
+            .whenComplete(
+              () {},
+            );
+      }
+
       if (themeVerLocal != themeSystem || listLocal.isEmpty) {
         _bloc.add(GetListThemeEvent());
       } else {}

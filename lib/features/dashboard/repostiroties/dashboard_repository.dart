@@ -16,6 +16,7 @@ import 'package:vierqr/models/fcm_token_update_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DashboardRepository {
@@ -40,6 +41,25 @@ class DashboardRepository {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
     return result;
+  }
+
+  Future<bool> updateViewPopup(UserConfig userConfig) async {
+    try {
+      Map<String, dynamic> params = {};
+      params['userConfig'] = userConfig.toJson();
+      params['userId'] = userId;
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/data-config';
+      final response = await BaseAPIClient.postAPI(
+        body: params,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
   }
 
   Future<bool?> setNotificationMobile() async {
