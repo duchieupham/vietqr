@@ -31,6 +31,7 @@ class SettingAccountDTO {
   final String logoUrl;
   bool keepScreenOn;
   final int qrShowType;
+  final UserConfig? userConfig;
   final bool notificationMobile;
   final List<MerchantRole> merchantRoles;
 
@@ -51,6 +52,7 @@ class SettingAccountDTO {
     this.keepScreenOn = false,
     this.qrShowType = 0,
     this.notificationMobile = false,
+    this.userConfig,
     this.merchantRoles = const [],
   });
 
@@ -73,6 +75,7 @@ class SettingAccountDTO {
         logoUrl: json["logoUrl"] ?? '',
         keepScreenOn: json["keepScreenOn"] ?? false,
         qrShowType: json["qrShowType"] ?? 0,
+        userConfig: UserConfig.fromJson(json['userConfig']),
         notificationMobile: json["notificationMobile"] ?? false,
         merchantRoles: List<MerchantRole>.from(
             json["merchantRoles"].map((x) => MerchantRole.fromJson(x))),
@@ -94,9 +97,26 @@ class SettingAccountDTO {
         "logoUrl": logoUrl,
         "keepScreenOn": keepScreenOn,
         "qrShowType": qrShowType,
+        "userConfig": userConfig?.toJson(),
         "notificationMobile": notificationMobile,
         "merchantRoles":
             List<dynamic>.from(merchantRoles.map((x) => x.toJson())),
+      };
+}
+
+class UserConfig {
+  final bool bidvNotification;
+
+  UserConfig({
+    this.bidvNotification = false,
+  });
+
+  factory UserConfig.fromJson(Map<String, dynamic> json) => UserConfig(
+        bidvNotification: json["bidvNotification"] ?? false,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'bidvNotification': bidvNotification,
       };
 }
 
