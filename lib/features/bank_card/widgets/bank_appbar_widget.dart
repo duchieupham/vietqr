@@ -146,27 +146,31 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                                 ),
                               ),
                               const SizedBox(width: 10),
-                              VietQRButton.solid(
-                                width: 40,
-                                height: 40,
-                                borderRadius: 100,
-                                onPressed: () {
-                                  if (state.listBanks.isNotEmpty) {
-                                    reorderList(state.listBanks);
-                                  }
-                                },
-                                isDisabled: false,
-                                size: VietQRButtonSize.medium,
-                                child: const Center(
-                                  child: XImage(
-                                    imagePath:
-                                        'assets/images/ic-options-black.png',
-                                    height: 30,
-                                    width: 30,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
+                              (state.listBanks.isNotEmpty &&
+                                      state.bankSelect != null &&
+                                      !state.isEmpty)
+                                  ? VietQRButton.solid(
+                                      width: 40,
+                                      height: 40,
+                                      borderRadius: 100,
+                                      onPressed: () {
+                                        if (state.listBanks.isNotEmpty) {
+                                          reorderList(state.listBanks);
+                                        }
+                                      },
+                                      isDisabled: false,
+                                      size: VietQRButtonSize.medium,
+                                      child: const Center(
+                                        child: XImage(
+                                          imagePath:
+                                              'assets/images/ic-options-black.png',
+                                          height: 30,
+                                          width: 30,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink()
                             ],
                           ),
                         ),
