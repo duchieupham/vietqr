@@ -238,7 +238,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   errorMsg = 'Mã không tồn tại';
                   break;
                 default:
-                  errorMsg = '';
+                  errorMsg = 'Đã xảy ra lỗi. Vui lòng thử lại.';
               }
             }
           } else if (state.status == BlocStatus.SUCCESS) {
@@ -615,7 +615,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
             height: 50,
             width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.only(left: 40, right: 40, bottom: 0),
-            margin: const EdgeInsets.only(bottom: 150),
+            margin:  EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 150),
             child: InkWell(
               onTap: _controller.text.length < 12
                   ? null

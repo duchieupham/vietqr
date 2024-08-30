@@ -107,8 +107,16 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             await bankCardRepository.checkExistedBank(
                 event.bankAccount, event.bankTypeId, event.type, userId);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          if (event.isSaveButton) {
+            emit(state.copyWith(
+                request: AddBankType.EXIST_BANK,
+                status: BlocStatus.UNLOADING,
+                isSaveButton: true));
+          }
           emit(state.copyWith(
-              request: AddBankType.EXIST_BANK, status: BlocStatus.UNLOADING));
+              request: AddBankType.EXIST_BANK,
+              status: BlocStatus.UNLOADING,
+              isSaveButton: false));
         } else if (result.status == Stringify.RESPONSE_STATUS_CHECK) {
           String title = 'Không thể liên kết';
           String msg =

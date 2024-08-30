@@ -134,10 +134,11 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
                   isEnable = !enable;
                   break;
                 case 1:
-                  isEnable = selectedBank != null;
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  isEnable = selectedBank == null;
                   break;
                 case 2:
-                  isEnable = selectedBank != null;
+                  isEnable = selectedBank == null;
                   break;
                 default:
               }
@@ -237,6 +238,7 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
       ),
       body: PageView(
         controller: pageController,
+        physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (value) {
           setState(() {
             currentPage = value;

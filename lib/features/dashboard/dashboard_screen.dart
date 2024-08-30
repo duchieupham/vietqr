@@ -627,13 +627,13 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     }
   }
 
-  void startBarcodeScanStream() async {
-    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-    if (data is Map<String, dynamic>) {
-      if (!mounted) return;
-      QRScannerUtils.instance.onScanNavi(data, context);
-    }
-  }
+  // void startBarcodeScanStream() async {
+  //   final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+  //   if (data is Map<String, dynamic>) {
+  //     if (!mounted) return;
+  //     QRScannerUtils.instance.onScanNavi(data, context);
+  //   }
+  // }
 
   void listenNewNotification() {
     notificationController.listen((isNotificationPushed) {

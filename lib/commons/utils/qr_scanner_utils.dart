@@ -85,6 +85,7 @@ class QRScannerUtils {
 
   Future<TypeQR> checkScan(String code) async {
     String prefix = 'CERT-VVB-';
+    String prefixMER = 'MER-ECM-';
     VietQRScannedDTO vietQRScannedDTO =
         QRScannerUtils.instance.getBankAccountFromQR(code);
     if (vietQRScannedDTO.caiValue.isNotEmpty &&
@@ -104,6 +105,8 @@ class QRScannerUtils {
         code.toUpperCase().trim().contains('TSE') ||
         code.toUpperCase().trim().contains('VTS')) {
       return TypeQR.QR_SALE;
+    } else if (code.trim().startsWith(prefixMER)) {
+      return TypeQR.QR_MER_ECM;
     } else {
       if (code.trim().endsWith('=')) {
         String dec = AESConvert.decrypt(code);
@@ -256,6 +259,11 @@ class QRScannerUtils {
             if (value.isNotEmpty) {
               Navigator.pushNamed(context, Routes.QR_BOX,
                   arguments: {"cert": value});
+            }
+          } else if (typeQR == TypeQR.QR_MER_ECM) {
+            if (value.isNotEmpty) {
+              Navigator.pushNamed(context, Routes.QR_CERTIFICATE_SCREEN,
+                  arguments: {'qrCode': value});
             }
           } else {
             await DialogWidget.instance.showModelBottomSheet(

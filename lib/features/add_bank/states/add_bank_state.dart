@@ -24,6 +24,7 @@ class AddBankState {
   final TypeQR? typeQR;
   final String? ewalletToken;
   final DataObject? responseDataOTP;
+  final bool isSaveButton;
 
   AddBankState({
     this.titleMsg,
@@ -45,6 +46,7 @@ class AddBankState {
     this.barCode,
     this.ewalletToken,
     this.responseDataOTP,
+    this.isSaveButton = false,
   });
 
   AddBankState copyWith({
@@ -67,6 +69,7 @@ class AddBankState {
     TypeQR? typeQR,
     String? ewalletToken,
     DataObject? responseDataOTP,
+    bool? isSaveButton
   }) {
     return AddBankState(
       status: status ?? this.status,
@@ -88,6 +91,7 @@ class AddBankState {
       barCode: barCode ?? this.barCode,
       ewalletToken: ewalletToken ?? this.ewalletToken,
       responseDataOTP: responseDataOTP ?? this.responseDataOTP,
+      isSaveButton: isSaveButton ?? this.isSaveButton
     );
   }
 

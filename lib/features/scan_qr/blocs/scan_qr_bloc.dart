@@ -189,6 +189,16 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
                   request: ScanType.SCAN,
                   typeContact: TypeContact.token_plugin));
               break;
+            case TypeQR.QR_MER_ECM:
+              emit(
+                state.copyWith(
+                  codeQR: event.code,
+                  typeQR: TypeQR.QR_MER_ECM,
+                  request: ScanType.SCAN,
+                  typeContact: TypeContact.Other,
+                ),
+              );
+              break;
             default:
               emit(state.copyWith(request: ScanType.SCAN_ERROR));
           }

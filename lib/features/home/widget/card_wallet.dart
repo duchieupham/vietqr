@@ -158,8 +158,8 @@ class _CardWalletState extends State<CardWallet> {
             ImageConstant.icApplicationHome,
             'Khám phá\nsản phẩm',
             () {
-              Navigator.pushNamed(context, Routes.QR_CERTIFICATE_SCREEN,
-                  arguments: {'qrCode': ''});
+              // Navigator.pushNamed(context, Routes.QR_CERTIFICATE_SCREEN,
+              //     arguments: {'qrCode': ''});
             },
           ),
         ),

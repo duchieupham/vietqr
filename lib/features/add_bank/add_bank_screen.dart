@@ -82,6 +82,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   final cmtController = TextEditingController();
   final otpController = TextEditingController();
 
+  bool saveAccountButton = false;
+
   @override
   void initState() {
     super.initState();
@@ -193,7 +195,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             }
 
             if (state.request == AddBankType.EXIST_BANK) {
-              if (_addBankProvider.isLinkBank) {
+              if (_addBankProvider.isLinkBank && state.isSaveButton == false) {
                 _addBankProvider.updateStep(1);
               } else {
                 String bankTypeId = _addBankProvider.bankTypeDTO!.id;
@@ -560,6 +562,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                               bankAccountController.text,
                                           bankTypeId: bankTypeId,
                                           type: ExitsType.ADD.name,
+                                          isSaveButton: true,
                                         ),
                                       );
                                     },
@@ -588,6 +591,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
           bankAccount: bankAccountController.text,
           bankTypeId: bankTypeId,
           type: ExitsType.ADD.name,
+          isSaveButton: true,
         ));
       },
       onTapLK: () {

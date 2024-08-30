@@ -149,9 +149,9 @@ class VietQRButton extends StatelessWidget {
                   text ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColor.BLACK,
-                    fontSize: 12,
+                    fontSize: size == VietQRButtonSize.small ? 10 : 12,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
