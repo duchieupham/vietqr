@@ -338,7 +338,9 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         height: 42,
