@@ -130,7 +130,12 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
     var locationPermission = await Permission.camera.request();
     int endRequestTime = DateTime.now().millisecondsSinceEpoch;
     if (locationPermission.isGranted) {
-      unawaited(controller.start());
+      Future.delayed(const Duration(seconds: 2)).then(
+        (value) {
+          controller.start();
+        },
+      );
+      // unawaited(controller.start());
       return true;
     }
 
