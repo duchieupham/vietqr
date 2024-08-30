@@ -372,8 +372,8 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   Widget _buildItem(DataModel model) {
     final width = MediaQuery.of(context).size.width;
     final maxWidthItem = widget.isShowIconFirst
-        ? (width - 64) * (1 / (_list.length - 1))
-        : (width - 64) * (1 / (_list.length));
+        ? (width - 76) * (1 / (_list.length - 1))
+        : (width - 76) * (1 / (_list.length));
 
     double size = 15;
     return GestureDetector(
