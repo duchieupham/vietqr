@@ -119,11 +119,18 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
               isSaveButton: false));
         } else if (result.status == Stringify.RESPONSE_STATUS_CHECK) {
           String title = 'Không thể liên kết';
-          String msg =
-              'Tài khoản đã được liên kết trước đó. Quý khách chỉ được lưu tài khoản này.';
+          String msg = '';
+          if (result.message == 'C06') {
+            msg =
+                'Tài khoản ngân hàng đã được thêm trước đó. Vui lòng vào tài khoản đã thêm để liên kết.';
+          } else {
+            msg =
+                'Tài khoản đã được liên kết trước đó. Quý khách chỉ được lưu tài khoản này.';
+          }
+
           if (event.type == ExitsType.ADD.name) {
             title = 'Không thể thêm TK';
-            msg = 'TK đã tồn tại trong danh sách TK ngân hàng của bạn';
+            msg = 'Tài khoản đã tồn tại trong danh sách tài khoản ngân hàng của bạn';
           }
           emit(
             state.copyWith(

@@ -205,7 +205,7 @@ class _BankStatisticState extends State<BankStatistic>
                       ],
                     ),
                   )
-                else if (bankSelect != null && bankSelect?.bankTypeStatus == 1)
+                else if (bankSelect != null && bankSelect?.bankTypeStatus == 1 && state.listBanks.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: BankInfroWidget(dto: bankSelect!),

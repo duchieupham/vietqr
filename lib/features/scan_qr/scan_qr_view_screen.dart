@@ -130,7 +130,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
     var locationPermission = await Permission.camera.request();
     int endRequestTime = DateTime.now().millisecondsSinceEpoch;
     if (locationPermission.isGranted) {
-      Future.delayed(const Duration(seconds: 2)).then(
+      Future.delayed(const Duration(seconds: 1)).then(
         (value) {
           controller.start();
         },
@@ -328,7 +328,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                 // height: 200,
                 color: AppColor.WHITE,
                 child: Container(
-                  margin: const EdgeInsets.only(top: 20),
+                  margin: const EdgeInsets.only(top: 30),
                   child: const Center(
                     child: XImage(
                       imagePath: 'assets/images/ic-viet-qr.png',
@@ -566,7 +566,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
 
   Widget _buildFlashButton() {
     return Container(
-        margin: const EdgeInsets.only(right: 22, bottom: 10),
+        margin: const EdgeInsets.only(right: 22),
         decoration: BoxDecoration(
           color: AppColor.BLUE_BGR,
           borderRadius: BorderRadius.circular(50),
