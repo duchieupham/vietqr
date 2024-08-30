@@ -95,7 +95,7 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.PROD);
+  await Injection.inject(env: EnvType.STG);
   // await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
@@ -116,28 +116,20 @@ void main() async {
   UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${appConfig.getEnv}');
-  await SentryFlutter.init(
-    (options) {
-      options.dsn =
-          'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
-      options.tracesSampleRate = 0.01;
-      options.profilesSampleRate = 1.0;
-    },
-    appRunner: () => runApp(const VietQRApp()),
-  );
-  // if (kReleaseMode) {
-  //   await SentryFlutter.init(
-  //     (options) {
-  //       options.dsn =
-  //           'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
-  //       options.tracesSampleRate = 0.01;
-  //       options.profilesSampleRate = 1.0;
-  //     },
-  //     appRunner: () => runApp(const VietQRApp()),
-  //   );
-  // } else {
-  //   runApp(const VietQRApp());
-  // }
+
+  if (kReleaseMode) {
+    await SentryFlutter.init(
+      (options) {
+        options.dsn =
+            'https://97067aa7d7d216ef9287812a2f0072dc@o4507665766350848.ingest.us.sentry.io/4507665795121153';
+        options.tracesSampleRate = 0.01;
+        options.profilesSampleRate = 1.0;
+      },
+      appRunner: () => runApp(const VietQRApp()),
+    );
+  } else {
+    runApp(const VietQRApp());
+  }
 }
 
 //true => new transaction

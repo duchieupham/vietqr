@@ -34,6 +34,7 @@ class Routes {
   static const String REGISTER_SPLASH_SCREEN = '/register_splash_screen';
 
   static const String SCAN_QR_VIEW = '/scanQRView';
+  static const String QR_CERTIFICATE_SCREEN = '/qrCertificate';
   static const String SEARCH_BANK = '/searchBank';
   static const String NOTIFICATION_VIEW = '/notification';
   static const String NATIONAL_INFORMATION = '/nationalInformation';

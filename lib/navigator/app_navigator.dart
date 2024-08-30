@@ -47,6 +47,7 @@ import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_info_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
+import 'package:vierqr/features/qr_certificate/qr_certificate_screen.dart';
 import 'package:vierqr/features/qr_feed/views/create_folder_screen.dart';
 import 'package:vierqr/features/qr_feed/views/folder_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
@@ -149,6 +150,15 @@ class NavigationService {
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
 
+      case Routes.QR_CERTIFICATE_SCREEN:
+        Map map = settings.arguments as Map;
+        String qrCode = map['qrCode'];
+        return _buildRoute(
+          settings,
+          QrCertificateScreen(
+            qrCode: qrCode,
+          ),
+        );
       case Routes.SCAN_QR_VIEW_SCREEN:
         Map map = settings.arguments as Map;
         TypeScan typeScan = map['typeScan'];

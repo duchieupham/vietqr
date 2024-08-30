@@ -38,52 +38,45 @@ class SocketService {
 
   void init() async {
     if (userId.isEmpty) return;
-    bool isListenWebSocket = SharePrefUtils.getListenTransactionQRWS();
-    if (!isListenWebSocket) {
-      try {
-        await SharePrefUtils.setListenTransactionQRWS(true);
-        Uri wsUrl = Uri.parse('wss://api.vietqr.org/vqr/socket?userId=$userId');
+    try {
+      Uri wsUrl = Uri.parse('wss://dev.vietqr.org/vqr/socket?userId=$userId');
 
-        _channelTransaction = WebSocketChannel.connect(wsUrl);
+      _channelTransaction = WebSocketChannel.connect(wsUrl);
 
-        if (_channelTransaction.closeCode == null) {
-          _channelTransaction.stream.listen((event) async {
-            var data = jsonDecode(event);
+      if (_channelTransaction.closeCode == null) {
+        _channelTransaction.stream.listen((event) async {
+          var data = jsonDecode(event);
 
-            if (_isConnected) {
-              _isConnected = false;
-              Navigator.pop(context);
-            }
+          if (_isConnected) {
+            _isConnected = false;
+            Navigator.pop(context);
+          }
 
-            if (data['notificationType'] != null &&
-                data['notificationType'] ==
-                    Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-              print('---------kaka $data');
+          if (data['notificationType'] != null &&
+              data['notificationType'] ==
+                  Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
+            print('---------kaka $data');
 
-              DialogWidget.instance.showModelBottomSheet(
-                isDismissible: true,
-                margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                height: MediaQuery.of(context).size.height * 0.9,
-                borderRadius: BorderRadius.circular(16),
-                widget: NotifyTransWidget(
-                  dto: NotifyTransDTO.fromJson(data),
-                ),
-              );
-              MediaHelper.instance.playAudio(data);
-            }
-            notificationController.sink.add(true);
-          }).onError(
-            (error) async {
-              debugPrint('ws error $error');
-              await SharePrefUtils.setListenTransactionQRWS(false);
-            },
-          );
-        } else {
-          await SharePrefUtils.setListenTransactionQRWS(false);
-        }
-      } catch (e) {
-        LOG.error('WS: $e');
+            DialogWidget.instance.showModelBottomSheet(
+              isDismissible: true,
+              margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+              height: MediaQuery.of(context).size.height * 0.9,
+              borderRadius: BorderRadius.circular(16),
+              widget: NotifyTransWidget(
+                dto: NotifyTransDTO.fromJson(data),
+              ),
+            );
+            MediaHelper.instance.playAudio(data);
+          }
+          notificationController.sink.add(true);
+        }).onError(
+          (error) async {
+            debugPrint('ws error $error');
+          },
+        );
       }
+    } catch (e) {
+      LOG.error('WS: $e');
     }
   }
 
@@ -92,7 +85,6 @@ class SocketService {
   }
 
   void closeListenTransaction() async {
-    await SharePrefUtils.setListenTransactionQRWS(false);
     _channelTransaction.sink.close();
   }
 }

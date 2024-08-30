@@ -232,7 +232,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       //thực hiện một số thao tác khi frame hình được vẽ xong
 
       _bloc.add(const TokenEventCheckValid());
-      listenNewNotification();
+      // listenNewNotification();
       onUpdateApp();
       onRenderUI();
       SocketService.instance.init();
@@ -269,10 +269,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       // SocketService.instance.init();
-      await SharePrefUtils.setListenTransactionQRWS(false);
+      // await SharePrefUtils.setListenTransactionQRWS(false);
       SocketService.instance.closeListenTransaction();
     } else if (state == AppLifecycleState.resumed) {
       SocketService.instance.init();

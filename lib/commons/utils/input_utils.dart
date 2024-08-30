@@ -48,6 +48,25 @@ class VietnameseNameLongTextInputFormatter extends TextInputFormatter {
   }
 }
 
+class NationalIdInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final String newText = newValue.text;
+
+    // Check for alphanumeric and length up to 10 characters
+    if (newText.length <= 20 && RegExp(r'^[a-zA-Z0-9]*$').hasMatch(newText)) {
+      String newText = newValue.text.toUpperCase();
+      return newValue.copyWith(
+        text: newText,
+        selection: TextSelection.collapsed(offset: newText.length),
+      );
+    } else {
+      return oldValue; // If invalid input, return the old value
+    }
+  }
+}
+
 class EmailInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
