@@ -1,6 +1,7 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
@@ -39,7 +40,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
             const SizedBox(height: 10),
             Container(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-              height: 150,
+              height: 160,
               width: MediaQuery.of(context).size.width,
               child: Swiper(
                 controller: _swiperController,
@@ -163,6 +164,14 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                     );
                   }
                   return InkWell(
+                    onTap: () async {
+                      String url =
+                          "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ3LHREWRRmb24DNqNTapRGTNB";
+                      if (await canLaunchUrl(Uri.parse(url))) {
+                        await launchUrl(Uri.parse(url),
+                            mode: LaunchMode.externalApplication);
+                      }
+                    },
                     child: Container(
                       margin: const EdgeInsets.only(right: 8, bottom: 10),
                       decoration: BoxDecoration(

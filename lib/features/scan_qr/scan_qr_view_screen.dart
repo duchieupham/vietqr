@@ -202,7 +202,7 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
             'bankTypeDTO': state.bankTypeDTO,
             'data': dto,
           });
-        } 
+        }
 
         if (state.request == ScanType.NICK_NAME) {
           Navigator.of(context).pop({
@@ -211,7 +211,6 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
             'data': state.vietQRDTO,
           });
         }
-
 
         if (state.request == ScanType.SCAN) {
           if (state.typeQR == TypeQR.QR_BANK) {
@@ -292,20 +291,19 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
               'typeQR': TypeQR.TOKEN_PLUGIN,
               'data': state.codeQR ?? '',
             });
-          } else if (state.typeQR == TypeQR.QR_MER_ECM){
+          } else if (state.typeQR == TypeQR.QR_MER_ECM) {
             Navigator.of(context).pop({
               'type': state.typeContact,
               'typeQR': TypeQR.QR_MER_ECM,
               'data': state.codeQR ?? '',
             });
           }
-
         }
       },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            toolbarHeight: 40,
+            toolbarHeight: 60,
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
               padding: const EdgeInsets.only(left: 20),
