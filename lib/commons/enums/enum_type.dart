@@ -249,7 +249,8 @@ enum BankDetailType {
   OTP,
   CREATE_QR,
   GET_LIST_GROUP,
-  REQUEST_OTP
+  REQUEST_OTP,
+  SET_QR
 }
 
 enum AccountType { NONE, LOG_OUT, POINT, AVATAR, ERROR }

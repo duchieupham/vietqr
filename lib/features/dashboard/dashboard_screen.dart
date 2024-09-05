@@ -741,8 +741,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       String themeSystem = state.appInfoDTO.themeVersion;
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
       if (settingAccountDTO.userConfig != null &&
-          settingAccountDTO.userConfig!.bidvNotification &&
-          listBank!.isNotEmpty) {
+          settingAccountDTO.userConfig!.bidvNotification) {
         await DialogWidget.instance.openNotificationBIDV();
       }
       if (!settingAccountDTO.notificationMobile && listBank!.isNotEmpty) {

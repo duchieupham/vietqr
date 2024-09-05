@@ -53,7 +53,9 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
 
   void _setQrGenerate(BankCardEvent event, Emitter emit) async {
     if (event is SetQrGenerateEvent) {
-      emit(state.copyWith(qrGenerate: event.qrGeneratedDTO));
+      emit(state.copyWith(
+         request: BankDetailType.SET_QR,
+        qrGenerate: event.qrGeneratedDTO));
     }
   }
 
