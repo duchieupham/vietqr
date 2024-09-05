@@ -193,201 +193,193 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    return StreamBuilder<bool>(
-      builder: (context, AsyncSnapshot<bool> snapshot) {
-        if (snapshot.hasData) {
-          if (snapshot.data == true) {
-            widget.bankCardBloc.add(const BankCardGetDetailEvent());
-          }
+    return BlocConsumer<BankCardBloc, BankCardState>(
+      bloc: widget.bankCardBloc,
+      listener: (context, state) async {
+        if (state.request == BankDetailType.UN_LINK_BIDV) {
+          eventBus.fire(GetListBankScreen());
+          widget.bankCardBloc.add(const BankCardGetDetailEvent());
         }
-        return BlocConsumer<BankCardBloc, BankCardState>(
-          bloc: widget.bankCardBloc,
-          listener: (context, state) async {
-            if (state.request == BankDetailType.UN_LINK_BIDV) {
-              eventBus.fire(GetListBankScreen());
-              widget.bankCardBloc.add(const BankCardGetDetailEvent());
-            }
-            if (state.request == BankDetailType.REQUEST_OTP) {
-              Navigator.pop(context);
-              _onShowDialogRequestOTP(state.requestId ?? '',
-                  state.bankDetailDTO?.bankAccount ?? '', state.bankDetailDTO);
-            }
+        if (state.request == BankDetailType.REQUEST_OTP) {
+          Navigator.pop(context);
+          _onShowDialogRequestOTP(state.requestId ?? '',
+              state.bankDetailDTO?.bankAccount ?? '', state.bankDetailDTO);
+        }
 
-            if (state.request == BankDetailType.NONE &&
-                state.status == BlocStatus.LOADING) {
-              DialogWidget.instance.openLoadingDialog();
-            }
+        if (state.request == BankDetailType.NONE &&
+            state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
+        }
 
-            if (state.request == BankDetailType.OTP) {
-              // Navigator.of(context).pop();
-              Navigator.pop(context);
-              getIt.get<BankBloc>().add(const BankCardEventGetList(
-                  isGetOverview: true, isLoadInvoice: true));
-              Navigator.pop(context);
-              widget.bankCardBloc.add(const BankCardGetDetailEvent());
-              // eventBus.fire(GetListBankScreen());
-            }
+        if (state.request == BankDetailType.OTP) {
+          // Navigator.of(context).pop();
+          Navigator.pop(context);
+          getIt.get<BankBloc>().add(const BankCardEventGetList(
+              isGetOverview: true, isLoadInvoice: true));
+          Navigator.pop(context);
+          widget.bankCardBloc.add(const BankCardGetDetailEvent());
+          // eventBus.fire(GetListBankScreen());
+        }
 
-            if (state.request == BankDetailType.DELETED) {
-              // eventBus.fire(GetListBankScreen());
-              Navigator.pop(context);
-              getIt.get<BankBloc>().add(const BankCardEventGetList(
-                  isGetOverview: true, isLoadInvoice: true));
-              Fluttertoast.showToast(
-                msg: 'Đã xoá TK ngân hàng',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                backgroundColor: Theme.of(context).cardColor,
-                textColor: Theme.of(context).hintColor,
-                fontSize: 15,
-              );
+        if (state.request == BankDetailType.DELETED) {
+          // eventBus.fire(GetListBankScreen());
+          Navigator.pop(context);
+          getIt.get<BankBloc>().add(const BankCardEventGetList(
+              isGetOverview: true, isLoadInvoice: true));
+          Fluttertoast.showToast(
+            msg: 'Đã xoá TK ngân hàng',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
 
-              Navigator.pop(context, true);
-            }
+          Navigator.pop(context, true);
+        }
 
-            if (state.request == BankDetailType.SUCCESS) {
-              if (state.bankDetailDTO != null) {
-                dto = state.bankDetailDTO!;
-              }
-              qrGeneratedDTO = state.qrGenerate;
-            }
-            // if (state.request == BankDetailType.GET_LIST_GROUP) {
-            //   if (state.terminalAccountDto != null) {
-            //     listTerminalAcc = state.terminalAccountDto!;
-            //   }
-            // }
+        if (state.request == BankDetailType.SUCCESS) {
+          if (state.bankDetailDTO != null) {
+            dto = state.bankDetailDTO!;
+          }
+          qrGeneratedDTO = state.qrGenerate;
+        }
+        // if (state.request == BankDetailType.GET_LIST_GROUP) {
+        //   if (state.terminalAccountDto != null) {
+        //     listTerminalAcc = state.terminalAccountDto!;
+        //   }
+        // }
+        if (state.request == BankDetailType.SET_QR) {
+          Navigator.pop(context);
+        }
 
-            if (state.request == BankDetailType.CREATE_QR) {
-              // Navigator.of(context).pop();
-              // qrGeneratedDTO = state.qrGeneratedDTO!;
-              if (state.qrGeneratedDTO!.amount.isNotEmpty &&
-                  state.qrGeneratedDTO!.amount != '0') {
-                qrGeneratedDTO = state.qrGeneratedDTO!;
+        if (state.request == BankDetailType.CREATE_QR) {
+          // Navigator.of(context).pop();
+          // qrGeneratedDTO = state.qrGeneratedDTO!;
+          // Navigator.pop(context);
+          if (state.qrGeneratedDTO!.amount.isNotEmpty) {
+            qrGeneratedDTO = state.qrGeneratedDTO!;
 
-                QRDetailBank qrDetailBank = QRDetailBank(
-                    money: qrGeneratedDTO.amount,
-                    content: qrGeneratedDTO.content,
-                    qrCode: qrGeneratedDTO.qrCode,
-                    bankAccount: qrGeneratedDTO.bankAccount);
-                AppDataHelper.instance.addListQRDetailBank(qrDetailBank);
-                widget.bankCardBloc
-                    .add(SetQrGenerateEvent(qrGeneratedDTO: qrGeneratedDTO));
-              }
-            }
-            if (state.request == BankDetailType.ERROR) {
-              await DialogWidget.instance.openMsgDialog(
-                title: 'Thông báo',
-                msg: state.msg ?? '',
-              );
-            }
-          },
-          builder: (context, state) {
-            // if (state.status == BlocStatus.LOADING_PAGE) {
-            //   return const Center(child: CircularProgressIndicator());
-            // }
+            QRDetailBank qrDetailBank = QRDetailBank(
+                money: qrGeneratedDTO.amount,
+                content: qrGeneratedDTO.content,
+                qrCode: qrGeneratedDTO.qrCode,
+                bankAccount: qrGeneratedDTO.bankAccount);
+            AppDataHelper.instance.addListQRDetailBank(qrDetailBank);
+            widget.bankCardBloc
+                .add(SetQrGenerateEvent(qrGeneratedDTO: qrGeneratedDTO));
+          } 
+        }
+        if (state.request == BankDetailType.ERROR) {
+          await DialogWidget.instance.openMsgDialog(
+            title: 'Thông báo',
+            msg: state.msg ?? '',
+          );
+        }
+      },
+      builder: (context, state) {
+        // if (state.status == BlocStatus.LOADING_PAGE) {
+        //   return const Center(child: CircularProgressIndicator());
+        // }
 
-            return Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFE1EFFF),
-                    Color(0xFFE5F9FF),
-                  ],
-                  end: Alignment.centerRight,
-                  begin: Alignment.centerLeft,
-                ),
-              ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    controller: scrollController,
-                    physics: const ClampingScrollPhysics(),
-                    child: Stack(
+        return Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFFE1EFFF),
+                Color(0xFFE5F9FF),
+              ],
+              end: Alignment.centerRight,
+              begin: Alignment.centerLeft,
+            ),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                physics: const ClampingScrollPhysics(),
+                child: Stack(
+                  children: [
+                    _buildExpandedWidget(),
+                    Column(
                       children: [
-                        _buildExpandedWidget(),
-                        Column(
-                          children: [
-                            const SizedBox(height: 10),
-                            qrGeneratedDTO.qrCode.isNotEmpty
-                                ? RepaintBoundaryWidget(
-                                    globalKey: widget.globalKey,
-                                    builder: (key) {
-                                      return QrWidget(
-                                        dto: qrGeneratedDTO,
-                                      );
-                                    },
-                                  )
-                                : const QrLoadingWidget(),
-                            MeasureSize(
-                              onChange: (size) {
-                                final widgetHeight = size.height;
+                        const SizedBox(height: 10),
+                        qrGeneratedDTO.qrCode.isNotEmpty
+                            ? RepaintBoundaryWidget(
+                                globalKey: widget.globalKey,
+                                builder: (key) {
+                                  return QrWidget(
+                                    dto: qrGeneratedDTO,
+                                  );
+                                },
+                              )
+                            : const QrLoadingWidget(),
+                        MeasureSize(
+                          onChange: (size) {
+                            final widgetHeight = size.height;
 
-                                double itemheight = constraints.maxHeight - 400;
+                            double itemheight = constraints.maxHeight - 400;
 
-                                if (itemheight > widgetHeight) {
-                                  heightNotifier.value =
-                                      constraints.maxHeight - 150;
-                                } else if (itemheight <= widgetHeight) {
-                                  heightNotifier.value =
-                                      (constraints.maxHeight - 150) +
-                                          (widgetHeight - itemheight);
-                                }
-                              },
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                      height: qrGeneratedDTO.amount.isNotEmpty
-                                          ? 10
-                                          : 20),
-                                  if (qrGeneratedDTO.amount.isNotEmpty)
-                                    _contentQr(),
-                                  _updateAmount(),
-                                  if (dto.id.isNotEmpty &&
-                                      !dto.authenticated) ...[
-                                    const SizedBox(height: 20),
-                                    SuggestionWidget(
-                                      bloc: widget.bankCardBloc,
-                                      dto: dto,
-                                    ),
-                                  ],
+                            if (itemheight > widgetHeight) {
+                              heightNotifier.value =
+                                  constraints.maxHeight - 150;
+                            } else if (itemheight <= widgetHeight) {
+                              heightNotifier.value =
+                                  (constraints.maxHeight - 150) +
+                                      (widgetHeight - itemheight);
+                            }
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                  height: qrGeneratedDTO.amount.isNotEmpty
+                                      ? 10
+                                      : 20),
+                              if (qrGeneratedDTO.amount.isNotEmpty || qrGeneratedDTO.amount == '0')
+                                _contentQr(),
+                              _updateAmount(),
+                              if (dto.id.isNotEmpty && !dto.authenticated) ...[
+                                const SizedBox(height: 20),
+                                SuggestionWidget(
+                                  bloc: widget.bankCardBloc,
+                                  dto: dto,
+                                ),
+                              ],
 
-                                  const SizedBox(height: 20),
-                                  // if(qrGeneratedDT)
-                                  ServiceVietqrWidget(
-                                    bankDTto: widget.dto,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  AnimationGraphWidget(
-                                    bloc: widget.bankCardBloc,
-                                    bankId: widget.bankId,
-                                    scrollNotifer: isScrollToChart,
-                                    key: _animatedBarKey,
-                                    onTap: widget.onTap,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  OptionWidget(
-                                    isOwner: widget.dto.isOwner,
-                                    bloc: widget.bankCardBloc,
-                                    bankId: state.bankId ?? '',
-                                    dto: dto,
-                                  ),
-                                  const SizedBox(height: 120),
-                                ],
+                              const SizedBox(height: 20),
+                              // if(qrGeneratedDT)
+                              ServiceVietqrWidget(
+                                bankDTto: widget.dto,
                               ),
-                            )
-                          ],
+                              const SizedBox(height: 20),
+                              AnimationGraphWidget(
+                                bloc: widget.bankCardBloc,
+                                bankId: widget.bankId,
+                                scrollNotifer: isScrollToChart,
+                                key: _animatedBarKey,
+                                onTap: widget.onTap,
+                              ),
+                              const SizedBox(height: 20),
+                              OptionWidget(
+                                isOwner: widget.dto.isOwner,
+                                bloc: widget.bankCardBloc,
+                                bankId: state.bankId ?? '',
+                                dto: dto,
+                              ),
+                              const SizedBox(height: 120),
+                            ],
+                          ),
                         )
                       ],
-                    ),
-                  );
-                },
-              ),
-            );
-          },
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
-      stream: notificationController.stream,
     );
   }
 
