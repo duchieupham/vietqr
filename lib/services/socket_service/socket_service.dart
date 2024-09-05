@@ -39,7 +39,7 @@ class SocketService {
   void init() async {
     if (userId.isEmpty) return;
     try {
-      Uri wsUrl = Uri.parse('wss://dev.vietqr.org/vqr/socket?userId=$userId');
+      Uri wsUrl = Uri.parse('wss://api.vietqr.org/vqr/socket?userId=$userId');
 
       _channelTransaction = WebSocketChannel.connect(wsUrl);
 
