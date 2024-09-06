@@ -389,7 +389,7 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                       keyboardAction: TextInputAction.next,
                       onChange: (value) {
                         notifier.value = value.isNotEmpty;
-                        widget.onInput(isClear && hasInput);
+                        widget.onInput(value.isNotEmpty && hasInput);
                         widget.onChange(EcommerceRequest(
                           fullName: merchantController.text,
                           name: merchantShortController.text,
