@@ -143,6 +143,7 @@ dependencies:
   marquee: ^2.2.3
   animated_reorderable_list: ^1.0.7
   custom_clippers: ^2.0.0
+  animated_text_kit: ^4.2.2
 #  screen_brightness: ^0.2.2+1
 #  audioplayers: ^4.1.0
 dependency_overrides:

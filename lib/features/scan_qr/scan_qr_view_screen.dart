@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:custom_clippers/custom_clippers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,10 +24,13 @@ import 'package:vierqr/features/scan_qr/events/scan_qr_event.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/general_dialog.dart';
 import 'package:vierqr/features/scan_qr/widgets/scan_overlay_widget.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+
+import 'widgets/popup_info_qr.dart';
 
 class ScanQrViewScreenWidget extends StatefulWidget {
   final TypeScan typeScan;
@@ -48,6 +52,9 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
     // detectionTimeoutMs: 2000,
     // useNewCameraSelector: true,
   );
+
+  final GlobalKey _key = GlobalKey();
+  ValueNotifier<bool> hoverNotifier = ValueNotifier<bool>(false);
 
   StreamSubscription<Object?>? _subscription;
 
@@ -378,6 +385,8 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
               ),
               Positioned(
                 bottom: 120,
+                left: 0,
+                right: 0,
                 child: BlocBuilder<BankBloc, BankState>(
                   bloc: getIt.get<BankBloc>(),
                   builder: (context, state) {
@@ -386,14 +395,44 @@ class _ScanQrViewScreenWidgetState extends State<ScanQrViewScreenWidget>
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          PopupInfoQr(
+                            hoverNotifier: hoverNotifier,
+                          ),
                           Container(
-                            margin: const EdgeInsets.only(left: 30, bottom: 5),
-                            child: const Text(
-                              'Hỗ trợ mã VietQR các ngân hàng:',
-                              style: TextStyle(
-                                  color: AppColor.WHITE,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
+                            margin: const EdgeInsets.only(
+                                left: 30, right: 30, bottom: 5),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Hỗ trợ mã VietQR các ngân hàng:',
+                                  style: TextStyle(
+                                      color: AppColor.WHITE,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14),
+                                ),
+                                InkWell(
+                                  key: _key,
+                                  onTap: () {
+                                    hoverNotifier.value = !hoverNotifier.value;
+                                  },
+                                  child: Container(
+                                    width: 25,
+                                    height: 25,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(100),
+                                      gradient:
+                                          VietQRTheme.gradientColor.lilyLinear,
+                                    ),
+                                    child: const XImage(
+                                      imagePath: 'assets/images/ic-i-black.png',
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                                  ),
+                                )
+                              ],
                             ),
                           ),
                           SizedBox(

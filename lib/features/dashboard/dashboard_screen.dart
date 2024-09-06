@@ -988,34 +988,34 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   //   }
   // }
 
-  @override
-  bool get wantKeepAlive => true;
+  // @override
+  // bool get wantKeepAlive => true;
 
-  @override
-  void getInitUri(Uri? uri) {
-    print('object================================= ${uri.toString()}');
-    if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
-      NavigatorUtils.navigatePage(
-          context,
-          DynamicActiveKeyScreen(
-            activeKey: uri!.queryParameters['key']!,
-          ),
-          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-    }
-  }
+  // @override
+  // void getInitUri(Uri? uri) {
+  //   print('object================================= ${uri.toString()}');
+  //   if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
+  //     NavigatorUtils.navigatePage(
+  //         context,
+  //         DynamicActiveKeyScreen(
+  //           activeKey: uri!.queryParameters['key']!,
+  //         ),
+  //         routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+  //   }
+  // }
 
-  @override
-  void onUniLink(Uri uri) {
-    print('object111 ${uri.path.toString()}');
-    if (uri.path == '/service-active' && uri.queryParameters['key'] != null) {
-      NavigatorUtils.navigatePage(
-          context,
-          DynamicActiveKeyScreen(
-            activeKey: uri.queryParameters['key']!,
-          ),
-          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-    }
-  }
+  // @override
+  // void onUniLink(Uri uri) {
+  //   print('object111 ${uri.path.toString()}');
+  //   if (uri.path == '/service-active' && uri.queryParameters['key'] != null) {
+  //     NavigatorUtils.navigatePage(
+  //         context,
+  //         DynamicActiveKeyScreen(
+  //           activeKey: uri.queryParameters['key']!,
+  //         ),
+  //         routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+  //   }
+  // }
 }
 
 // class SaveImageData {

@@ -8,8 +8,9 @@ enum VietQRButtonSize { small, medium, large }
 
 class VietQRButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final Function(bool)? onHover;
+
   final Widget? child;
-  final bool? onHover;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final VietQRButtonType type;
@@ -119,6 +120,7 @@ class VietQRButton extends StatelessWidget {
     switch (type) {
       case VietQRButtonType.suggest:
         return InkWell(
+          onHover: onHover,
           onTap: isDisabled ? null : onPressed,
           child: Container(
             width: width,
@@ -161,7 +163,9 @@ class VietQRButton extends StatelessWidget {
         );
       case VietQRButtonType.solid:
         return InkWell(
-          onHover: (onHover) {},
+          onHover: (value) {
+            onHover!(value);
+          },
           onTap: isDisabled ? null : onPressed,
           child: Container(
               width: width,
@@ -192,6 +196,7 @@ class VietQRButton extends StatelessWidget {
         );
       case VietQRButtonType.gradient:
         return InkWell(
+          onHover: onHover,
           onTap: isDisabled ? null : onPressed,
           child: Container(
               width: width,
@@ -214,7 +219,8 @@ class VietQRButton extends StatelessWidget {
         );
       case VietQRButtonType.outlined:
         return InkWell(
-          onTap: () {},
+          onHover: onHover,
+          onTap: isDisabled ? null : onPressed,
           child: Container(
               width: width,
               height: height ?? 50,
@@ -239,7 +245,8 @@ class VietQRButton extends StatelessWidget {
         );
       default:
         return InkWell(
-          onTap: onPressed,
+          onTap: isDisabled ? null : onPressed,
+          onHover: onHover,
           child: Container(
               width: width,
               height: height,

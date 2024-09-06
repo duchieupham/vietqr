@@ -183,29 +183,70 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                               fit: BoxFit.cover)),
                       child: Stack(
                         children: [
-                          const Positioned(
+                          Positioned(
                             left: 20,
-                            top: 20,
+                            right: 20,
+                            top: 10,
                             bottom: 20,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                XImage(
-                                  imagePath: 'assets/images/ic-bidv-white.png',
-                                  width: 60,
-                                  height: 20,
-                                  fit: BoxFit.fitWidth,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.only(top: 5),
+                                      child: XImage(
+                                        imagePath:
+                                            'assets/images/ic-bidv-white.png',
+                                        width: 60,
+                                        height: 20,
+                                        fit: BoxFit.fitWidth,
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () async {
+                                        final Uri url = Uri(
+                                          scheme: 'tel',
+                                          path: '0989895905',
+                                        );
+                                        if (await canLaunchUrl(url)) {
+                                          await launchUrl(url);
+                                        }
+                                      },
+                                      child: const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.phone,
+                                            size: 15,
+                                            color: AppColor.WHITE,
+                                          ),
+                                          SizedBox(width: 4),
+                                          Text(
+                                            '098.989.5905',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColor.WHITE,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                Spacer(),
-                                Text(
+                                const Spacer(),
+                                const Text(
                                   'Mở tài khoản BIDV',
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: AppColor.WHITE,
                                       fontWeight: FontWeight.bold),
                                 ),
-                                Text(
-                                  'Miễn phí toàn bộ phí chuyển tiền\ntrong nước trên Smartbanking.',
+                                const Text(
+                                  'Nhận ngay ưu đãi miễn phí 2 tháng sử dụng\nMiễn phí mở tài khoản số đẹp.',
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: AppColor.WHITE,
