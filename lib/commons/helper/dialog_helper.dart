@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/dashboard/widget/popup_bidv_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 import '../../features/dashboard/blocs/dashboard_bloc.dart';
@@ -72,6 +73,25 @@ mixin DialogHelper {
       }
       dismissPopup(key: keyDialog, willPop: false);
     });
+  }
+
+  Future<void> showDialogBIDV(
+    BuildContext context, {
+    Key? key,
+  }) async {
+    Key keyDialog = key ?? _keyForPopup();
+    _allPopups[keyDialog] = context;
+    await showCupertinoModalPopup(
+        context: context,
+        builder: (context) {
+          return PopupBidvWidget(
+            key: keyDialog,
+          );
+        }).then(
+      (value) {
+        dismissPopup(key: keyDialog, willPop: false);
+      },
+    );
   }
 
   Future<void> showDialogUpdateApp(

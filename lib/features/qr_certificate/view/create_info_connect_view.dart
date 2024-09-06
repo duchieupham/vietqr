@@ -359,6 +359,7 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
       required FocusNode focus,
       required ValueNotifier<bool> notifier,
       List<TextInputFormatter>? inputFormatter}) {
+    bool isRequired = title == 'Tên đại lý' || title == 'Tên đại lý rút gọn';
     return ValueListenableBuilder<bool>(
       valueListenable: notifier,
       builder: (context, isClear, child) {
@@ -389,7 +390,13 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                       keyboardAction: TextInputAction.next,
                       onChange: (value) {
                         notifier.value = value.isNotEmpty;
-                        widget.onInput(value.isNotEmpty && hasInput);
+                        if (title == 'Tên đại lý') {
+                          widget.onInput(value.isNotEmpty &&
+                              merchantShortController.text.isNotEmpty);
+                        } else if (title == 'Tên đại lý rút gọn') {
+                          widget.onInput(value.isNotEmpty &&
+                              merchantController.text.isNotEmpty);
+                        }
                         widget.onChange(EcommerceRequest(
                           fullName: merchantController.text,
                           name: merchantShortController.text,
@@ -417,8 +424,7 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                                 controller.clear();
                                 notifier.value = false;
                                 focus.requestFocus();
-                                if (title == 'Tên đại lý' ||
-                                    title == 'Tên đại lý rút gọn') {
+                                if (isRequired) {
                                   widget.onInput(false);
                                 }
                                 widget.onChange(EcommerceRequest(
