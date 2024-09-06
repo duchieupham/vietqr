@@ -120,20 +120,6 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
             notifier: merchantShortClearNotifier,
             focus: focusNode2,
             inputFormatter: [VietnameseNameInputFormatter()]),
-        _buildItem(
-            title: 'Website*',
-            hintText: 'Nhập webiste',
-            controller: websiteController,
-            notifier: websiteClearNotifiter,
-            focus: focusNodeWebsite,
-            inputFormatter: [WebsiteTextInputFormatter()]),
-        _buildItem(
-            title: 'Webhook*',
-            hintText: '',
-            controller: webhookController,
-            notifier: webhookClearNotifiter,
-            focus: focusNodeWebhook,
-            inputFormatter: [WebhookTextInputFormatter()]),
         Container(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
@@ -227,11 +213,25 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
             const SizedBox(height: 35),
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              height: isOpen ? 485 : 0,
+              height: isOpen ? 680 : 0,
               child: SingleChildScrollView(
                 physics: const NeverScrollableScrollPhysics(),
                 child: Column(
                   children: [
+                    _buildItem(
+                        title: 'Website*',
+                        hintText: 'Nhập webiste',
+                        controller: websiteController,
+                        notifier: websiteClearNotifiter,
+                        focus: focusNodeWebsite,
+                        inputFormatter: [WebsiteTextInputFormatter()]),
+                    _buildItem(
+                        title: 'Webhook*',
+                        hintText: '',
+                        controller: webhookController,
+                        notifier: webhookClearNotifiter,
+                        focus: focusNodeWebhook,
+                        inputFormatter: [WebhookTextInputFormatter()]),
                     _buildItem(
                         title: 'CCCD/CMND/ĐKKD*',
                         hintText: '',

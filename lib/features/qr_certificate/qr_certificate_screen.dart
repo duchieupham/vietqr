@@ -306,6 +306,7 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
                     return CreateInfoConnectView(
                       ecom: state.ecommerceRequest,
                       qrCode: widget.qrCode,
+                      hasInfo: hasInfo,
                       onChange: (ecom) {
                         ecomNotifier.value = ecom;
                       },
