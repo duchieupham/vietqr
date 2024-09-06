@@ -1,13 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/qr_certificate/blocs/qr_certificate_bloc.dart';
+import 'package:vierqr/features/qr_certificate/events/qr_certificate_event.dart';
+import 'package:vierqr/features/qr_certificate/repositories/qr_certificate_repository.dart';
+import 'package:vierqr/features/qr_certificate/states/qr_certificate_state.dart';
 import 'package:vierqr/features/qr_certificate/view/choose_bank_connect_view.dart';
 import 'package:vierqr/features/qr_certificate/view/create_info_connect_view.dart';
 import 'package:vierqr/features/qr_certificate/widget/qr_cert_appbar.dart';
@@ -30,40 +38,25 @@ class QrCertificateScreen extends StatefulWidget {
 }
 
 class _QrCertificateScreenState extends State<QrCertificateScreen> {
+  late QrCertificateBloc _bloc;
   final PageController pageController = PageController();
   // ValueNotifier<int> pageNotifier = ValueNotifier<int>(0);
   int currentPage = 0;
   ValueNotifier<bool> enableButtonNotifier = ValueNotifier<bool>(false);
+  late QrCertificateRepository qrRepo;
 
   BankAccountDTO? selectedBank;
 
   ValueNotifier<EcommerceRequest> ecomNotifier =
       ValueNotifier<EcommerceRequest>(
           EcommerceRequest(fullName: '', name: '', certificate: ''));
+  @override
+  void initState() {
+    qrRepo = getIt.get<QrCertificateRepository>();
+    _bloc = getIt.get<QrCertificateBloc>();
+    _bloc.add(ScanQrCertificateEvent(qrCode: widget.qrCode));
 
-  Future<ResponseMessageDTO> ecomActive(EcommerceRequest ecom) async {
-    ResponseMessageDTO result =
-        const ResponseMessageDTO(message: '', status: '');
-
-    try {
-      String url = '${getIt.get<AppConfig>().getBaseUrl}ecommerce/active';
-      final response = await BaseAPIClient.postAPI(
-        url: url,
-        body: ecom.toJson(),
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        result = ResponseMessageDTO.fromJson(data);
-      } else {
-        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-    }
-
-    return result;
+    super.initState();
   }
 
   @override
@@ -165,41 +158,24 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
                           curve: Curves.easeInOut);
                       break;
                     case 2:
-                      await ecomActive(EcommerceRequest(
-                        fullName: ecom.fullName,
-                        name: ecom.name,
-                        certificate: widget.qrCode,
-                        bankCode: selectedBank!.bankCode,
-                        bankAccount: selectedBank!.bankAccount,
-                        address: ecom.address,
-                        businessType: ecom.businessType,
-                        career: ecom.career,
-                        email: ecom.email,
-                        nationalId: ecom.nationalId,
-                        phoneNo: ecom.phoneNo,
-                      )).then(
-                        (res) {
-                          if (res.status == 'SUCCESS') {
-                            Fluttertoast.showToast(
-                              msg: 'Kết nối thành công',
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              backgroundColor: Theme.of(context).cardColor,
-                              textColor: Theme.of(context).hintColor,
-                              fontSize: 15,
-                            );
-                            Navigator.of(context).pop();
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: 'Kết nối thất bại',
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              backgroundColor: Theme.of(context).cardColor,
-                              textColor: Theme.of(context).hintColor,
-                              fontSize: 15,
-                            );
-                          }
-                        },
+                      _bloc.add(
+                        EcomActiveQrCertificateEvent(
+                          request: EcommerceRequest(
+                            fullName: ecom.fullName,
+                            name: ecom.name,
+                            certificate: widget.qrCode,
+                            bankCode: selectedBank!.bankCode,
+                            bankAccount: selectedBank!.bankAccount,
+                            address: ecom.address,
+                            businessType: ecom.businessType,
+                            career: ecom.career,
+                            email: ecom.email,
+                            nationalId: ecom.nationalId,
+                            phoneNo: ecom.phoneNo,
+                            webhook: ecom.webhook,
+                            website: ecom.website,
+                          ),
+                        ),
                       );
                       break;
                     default:
@@ -236,60 +212,131 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
           );
         },
       ),
-      body: PageView(
-        controller: pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (value) {
-          setState(() {
-            currentPage = value;
-          });
+      body: BlocConsumer<QrCertificateBloc, QrCertificateState>(
+        bloc: _bloc,
+        listener: (context, state) {
+          if (state.status == BlocStatus.LOADING) {
+            DialogWidget.instance.openLoadingDialog();
+          }
+          if (state.status == BlocStatus.SUCCESS &&
+              state.request == QrCertificateType.SCAN) {
+            Navigator.pop(context);
+            ecomNotifier.value = state.ecommerceRequest;
+            if (state.ecommerceRequest.fullName.isNotEmpty &&
+                state.ecommerceRequest.name.isNotEmpty) {
+              enableButtonNotifier.value = true;
+            }
+          }
+          if (state.status == BlocStatus.ERROR &&
+              state.request == QrCertificateType.SCAN) {
+            final msg = state.msg;
+            Fluttertoast.showToast(
+              msg: msg!,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
+          if (state.status == BlocStatus.ERROR &&
+              state.request == QrCertificateType.ERROR) {
+            final msg = state.msg;
+            Fluttertoast.showToast(
+              msg: msg!,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
+          if (state.status == BlocStatus.SUCCESS &&
+              state.request == QrCertificateType.ECOM_ACTIVE) {
+            final msg = state.msg;
+            Fluttertoast.showToast(
+              msg: 'Kết nối thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+            Navigator.pop(context);
+            Navigator.pop(context);
+          }
         },
-        children: [
-          ValueListenableBuilder<EcommerceRequest>(
-            valueListenable: ecomNotifier,
-            builder: (context, ecom, child) {
-              return CreateInfoConnectView(
-                ecom: ecom,
-                qrCode: widget.qrCode,
-                onChange: (ecom) {
-                  ecomNotifier.value = ecom;
-                },
-                onInput: (isEnable) {
-                  enableButtonNotifier.value = isEnable;
-                },
-              );
-            },
-          ),
-          ChooseBankConnectView(
-            onSelectBank: (bank) {
-              setState(() {
-                selectedBank = bank;
-              });
-            },
-            bankSelect: selectedBank,
-          ),
-          ValueListenableBuilder<EcommerceRequest>(
-            valueListenable: ecomNotifier,
-            builder: (context, ecom, child) {
-              return ConnectionInfoView(
-                dto: EcommerceRequest(
-                  fullName: ecom.fullName,
-                  name: ecom.name,
-                  certificate: widget.qrCode,
-                  bankCode: selectedBank != null ? selectedBank!.bankCode : '',
-                  bankAccount:
-                      selectedBank != null ? selectedBank!.bankAccount : '',
-                  address: ecom.address,
-                  businessType: ecom.businessType,
-                  career: ecom.career,
-                  email: ecom.email,
-                  nationalId: ecom.nationalId,
-                  phoneNo: ecom.phoneNo,
+        builder: (context, state) {
+          if (state.status == BlocStatus.LOADING) {
+            return const SizedBox.shrink();
+          } else if (state.status == BlocStatus.SUCCESS) {
+            return PageView(
+              controller: pageController,
+              physics: const NeverScrollableScrollPhysics(),
+              onPageChanged: (value) {
+                setState(() {
+                  currentPage = value;
+                });
+              },
+              children: [
+                ValueListenableBuilder<EcommerceRequest>(
+                  valueListenable: ecomNotifier,
+                  builder: (context, ecom, child) {
+                    return CreateInfoConnectView(
+                      ecom: state.ecommerceRequest,
+                      qrCode: widget.qrCode,
+                      onChange: (ecom) {
+                        ecomNotifier.value = ecom;
+                      },
+                      onInput: (isEnable) {
+                        enableButtonNotifier.value = isEnable;
+                      },
+                    );
+                  },
                 ),
-              );
-            },
-          )
-        ],
+                ChooseBankConnectView(
+                  onSelectBank: (bank) {
+                    setState(() {
+                      selectedBank = bank;
+                    });
+                  },
+                  bankSelect: selectedBank,
+                ),
+                ValueListenableBuilder<EcommerceRequest>(
+                  valueListenable: ecomNotifier,
+                  builder: (context, ecom, child) {
+                    return ConnectionInfoView(
+                      dto: EcommerceRequest(
+                        fullName: ecom.fullName,
+                        name: ecom.name,
+                        certificate: widget.qrCode,
+                        bankCode:
+                            selectedBank != null ? selectedBank!.bankCode : '',
+                        bankAccount: selectedBank != null
+                            ? selectedBank!.bankAccount
+                            : '',
+                        address: ecom.address,
+                        businessType: ecom.businessType,
+                        career: ecom.career,
+                        email: ecom.email,
+                        nationalId: ecom.nationalId,
+                        phoneNo: ecom.phoneNo,
+                        webhook: ecom.webhook,
+                        website: ecom.website,
+                      ),
+                    );
+                  },
+                )
+              ],
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }

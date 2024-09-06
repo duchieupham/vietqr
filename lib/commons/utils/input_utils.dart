@@ -16,6 +16,39 @@ class VietnameseNameInputFormatter extends TextInputFormatter {
   }
 }
 
+class WebhookTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Regular expression to allow typical URL characters.
+    final RegExp regExp = RegExp(r'^[a-zA-Z0-9\-._~:/?#@!$&\()*+,;=%]*$');
+
+    if (regExp.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
+class WebsiteTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    // Regular expression to allow typical URL characters.
+    final RegExp regExp = RegExp(
+      r'^[a-zA-Z0-9\-._~:/?#\[\]@!$&\()*+,;=%]*$',
+    );
+    if (regExp.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
 class VietnameseNameOnlyTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(

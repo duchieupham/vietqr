@@ -7,6 +7,8 @@ class EcommerceRequest {
   final String nationalId;
   final String email;
   final String phoneNo;
+  final String website; //web của đối tác
+  final String webhook;
   final String address; // Địa chỉ
   final String career; // Ngành nghề
   final int businessType; // 0: cá nhân, 1: doanh nghiệp
@@ -22,6 +24,8 @@ class EcommerceRequest {
     this.phoneNo = '',
     this.address = '',
     this.career = '',
+    this.webhook = '',
+    this.website = '',
     this.businessType = 0,
   });
 
@@ -39,6 +43,8 @@ class EcommerceRequest {
       address: json['address'],
       career: json['career'],
       businessType: json['businessType'],
+      webhook: json['webhook'],
+      website: json['website'],
     );
   }
 
@@ -56,6 +62,8 @@ class EcommerceRequest {
       'address': address,
       'career': career,
       'businessType': businessType,
+      'webhook': webhook,
+      'website': website,
     };
   }
 }

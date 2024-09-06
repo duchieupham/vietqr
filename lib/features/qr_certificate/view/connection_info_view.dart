@@ -20,6 +20,7 @@ class ConnectionInfoView extends StatelessWidget {
         const SizedBox(height: 18),
         _buildItem(title: 'Tên đại lý:', name: dto.fullName),
         _buildItem(title: 'Tên rút gọn:', name: dto.name),
+        _buildItem(title: 'Website:', name: dto.website.isNotEmpty ? dto.website : '-'),
         _buildItem(
             title: 'Loại hình:',
             name: dto.businessType == 0 ? 'Cá nhân' : 'Doanh nghiệp'),
@@ -40,6 +41,7 @@ class ConnectionInfoView extends StatelessWidget {
         _buildItem(
             title: 'SĐT liên hệ:',
             name: dto.phoneNo.isNotEmpty ? dto.phoneNo : '-'),
+        _buildItem(title: 'Webhook:', name: dto.webhook.isNotEmpty ? dto.webhook : '-'),
       ],
     );
   }

@@ -477,6 +477,13 @@ enum ForgotPasswordType {
   CHANGE_PASS
 }
 
+enum QrCertificateType{
+  NONE,
+  SCAN,
+  ECOM_ACTIVE,
+  ERROR
+}
+
 enum RegisterType {
   NONE,
   SUCCESS,

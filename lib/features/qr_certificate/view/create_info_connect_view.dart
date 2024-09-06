@@ -31,6 +31,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
 
   final TextEditingController merchantController = TextEditingController();
   final TextEditingController merchantShortController = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController webhookController = TextEditingController();
   final TextEditingController nationalIdController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController careerController = TextEditingController();
@@ -39,6 +41,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
 
   ValueNotifier<bool> merchantClearNotifier = ValueNotifier<bool>(false);
   ValueNotifier<bool> merchantShortClearNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<bool> websiteClearNotifiter = ValueNotifier<bool>(false);
+  ValueNotifier<bool> webhookClearNotifiter = ValueNotifier<bool>(false);
   ValueNotifier<bool> nationalIdClearNotifier = ValueNotifier<bool>(false);
   ValueNotifier<bool> addressClearNotifier = ValueNotifier<bool>(false);
   ValueNotifier<bool> careerClearNotifier = ValueNotifier<bool>(false);
@@ -47,6 +51,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
 
   final FocusNode focusNode = FocusNode();
   final FocusNode focusNode2 = FocusNode();
+  final FocusNode focusNodeWebsite = FocusNode();
+  final FocusNode focusNodeWebhook = FocusNode();
   final FocusNode focusNode3 = FocusNode();
   final FocusNode focusNode4 = FocusNode();
   final FocusNode focusNode5 = FocusNode();
@@ -75,6 +81,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
     careerController.text = widget.ecom.career;
     emailController.text = widget.ecom.email;
     phoneNoController.text = widget.ecom.phoneNo;
+    websiteController.text = widget.ecom.website;
+    webhookController.text = widget.ecom.webhook;
   }
 
   @override
@@ -100,14 +108,21 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
             controller: merchantController,
             notifier: merchantClearNotifier,
             focus: focusNode,
-            inputFormatter: [VietnameseNameOnlyTextInputFormatter()]),
+            inputFormatter: [VietnameseNameLongTextInputFormatter()]),
         _buildItem(
             title: 'Tên đại lý rút gọn',
             hintText: 'Nhập tên rút gọn',
             controller: merchantShortController,
             notifier: merchantShortClearNotifier,
             focus: focusNode2,
-            inputFormatter: [VietnameseNameOnlyTextInputFormatter()]),
+            inputFormatter: [VietnameseNameInputFormatter()]),
+        _buildItem(
+            title: 'Website*',
+            hintText: 'Nhập webiste',
+            controller: websiteController,
+            notifier: websiteClearNotifiter,
+            focus: focusNodeWebsite,
+            inputFormatter: [WebsiteTextInputFormatter()]),
         Container(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
@@ -247,6 +262,13 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                               defaultCountryCode: 'VN',
                               shouldCorrectNumber: false)
                         ]),
+                    _buildItem(
+                        title: 'Webhook*',
+                        hintText: '',
+                        controller: webhookController,
+                        notifier: webhookClearNotifiter,
+                        focus: focusNodeWebhook,
+                        inputFormatter: [WebhookTextInputFormatter()]),
                   ],
                 ),
               ),
@@ -275,6 +297,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
           certificate: widget.qrCode,
           email: isOpen ? emailController.text : '',
           nationalId: isOpen ? nationalIdController.text : '',
+          website: isOpen ? websiteController.text : '',
+          webhook: isOpen ? webhookController.text : '',
           phoneNo: isOpen ? phoneNoController.text.replaceAll(' ', '') : '',
         ));
       },
@@ -360,12 +384,16 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                         widget.onChange(EcommerceRequest(
                           fullName: merchantController.text,
                           name: merchantShortController.text,
+                          website: websiteController.text.isNotEmpty
+                              ? websiteController.text
+                              : '',
                           address: isOpen ? addressController.text : '',
                           businessType: selectType.id,
                           career: isOpen ? careerController.text : '',
                           certificate: widget.qrCode,
                           email: isOpen ? emailController.text : '',
                           nationalId: isOpen ? nationalIdController.text : '',
+                          webhook: isOpen ? webhookController.text : '',
                           phoneNo: isOpen
                               ? phoneNoController.text.replaceAll(' ', '')
                               : '',
@@ -390,6 +418,9 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                                 widget.onChange(EcommerceRequest(
                                   fullName: merchantController.text,
                                   name: merchantShortController.text,
+                                  website: websiteController.text.isNotEmpty
+                                      ? websiteController.text
+                                      : '',
                                   address:
                                       !isOpen ? addressController.text : '',
                                   businessType: selectType.id,
@@ -398,6 +429,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                                   email: !isOpen ? emailController.text : '',
                                   nationalId:
                                       !isOpen ? nationalIdController.text : '',
+                                  webhook:
+                                      !isOpen ? webhookController.text : '',
                                   phoneNo: !isOpen
                                       ? phoneNoController.text
                                           .replaceAll(' ', '')
