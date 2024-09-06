@@ -65,6 +65,7 @@ class QrCertificateRepository {
       }
     } catch (e) {
       LOG.error(e.toString());
+      return const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
   }
 }

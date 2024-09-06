@@ -41,8 +41,8 @@ class QrCertificateBloc extends Bloc<QrCertificateEvent, QrCertificateState> {
           } else {
             emit(state.copyWith(
                 status: BlocStatus.ERROR,
-                request: QrCertificateType.ERROR,
-                msg: 'Đã có lỗi xảy ra, Vui lòng kiểm tra lại kết nối.'));
+                request: QrCertificateType.SCAN,
+                msg: 'Đã có lỗi xảy ra, Vui lòng thử lại.'));
           }
         }
       }

@@ -259,6 +259,18 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
             NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.ERROR &&
+              state.request == QrCertificateType.SCAN) {
+            Fluttertoast.showToast(
+              msg: 'Đã có lỗi xảy ra, Vui lòng thử lại.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+            NavigatorUtils.navigateToRoot(context);
+          }
+          if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ERROR) {
             Fluttertoast.showToast(
               msg: 'Kết nối thất bại',
@@ -268,8 +280,6 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            // Navigator.pop(context);
-            // Navigator.pop(context);
             NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.SUCCESS &&
