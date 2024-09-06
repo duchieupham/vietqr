@@ -13,12 +13,14 @@ class CreateInfoConnectView extends StatefulWidget {
   final Function(bool) onInput;
   final Function(EcommerceRequest) onChange;
   final String qrCode;
+  final bool hasInfo;
   final EcommerceRequest ecom;
   const CreateInfoConnectView(
       {super.key,
       required this.onInput,
       required this.onChange,
       required this.ecom,
+      this.hasInfo = false,
       required this.qrCode});
 
   @override
@@ -83,6 +85,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
     phoneNoController.text = widget.ecom.phoneNo;
     websiteController.text = widget.ecom.website;
     webhookController.text = widget.ecom.webhook;
+
+    isOpen = widget.hasInfo;
   }
 
   @override
@@ -123,6 +127,13 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
             notifier: websiteClearNotifiter,
             focus: focusNodeWebsite,
             inputFormatter: [WebsiteTextInputFormatter()]),
+        _buildItem(
+            title: 'Webhook*',
+            hintText: '',
+            controller: webhookController,
+            notifier: webhookClearNotifiter,
+            focus: focusNodeWebhook,
+            inputFormatter: [WebhookTextInputFormatter()]),
         Container(
           padding: const EdgeInsets.only(top: 20),
           child: Column(
@@ -166,6 +177,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                   certificate: widget.qrCode,
                   email: isOpen ? emailController.text : '',
                   nationalId: isOpen ? nationalIdController.text : '',
+                  website: websiteController.text,
+                  webhook: webhookController.text,
                   phoneNo:
                       isOpen ? phoneNoController.text.replaceAll(' ', '') : '',
                 ));
@@ -216,6 +229,7 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
               duration: const Duration(milliseconds: 300),
               height: isOpen ? 485 : 0,
               child: SingleChildScrollView(
+                physics: const NeverScrollableScrollPhysics(),
                 child: Column(
                   children: [
                     _buildItem(
@@ -262,13 +276,6 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                               defaultCountryCode: 'VN',
                               shouldCorrectNumber: false)
                         ]),
-                    _buildItem(
-                        title: 'Webhook*',
-                        hintText: '',
-                        controller: webhookController,
-                        notifier: webhookClearNotifiter,
-                        focus: focusNodeWebhook,
-                        inputFormatter: [WebhookTextInputFormatter()]),
                   ],
                 ),
               ),
@@ -297,8 +304,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
           certificate: widget.qrCode,
           email: isOpen ? emailController.text : '',
           nationalId: isOpen ? nationalIdController.text : '',
-          website: isOpen ? websiteController.text : '',
-          webhook: isOpen ? webhookController.text : '',
+          website: websiteController.text,
+          webhook: webhookController.text,
           phoneNo: isOpen ? phoneNoController.text.replaceAll(' ', '') : '',
         ));
       },
@@ -384,16 +391,13 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                         widget.onChange(EcommerceRequest(
                           fullName: merchantController.text,
                           name: merchantShortController.text,
-                          website: websiteController.text.isNotEmpty
-                              ? websiteController.text
-                              : '',
-                          address: isOpen ? addressController.text : '',
+                          website: websiteController.text,
+                          webhook: webhookController.text,
                           businessType: selectType.id,
                           career: isOpen ? careerController.text : '',
                           certificate: widget.qrCode,
                           email: isOpen ? emailController.text : '',
                           nationalId: isOpen ? nationalIdController.text : '',
-                          webhook: isOpen ? webhookController.text : '',
                           phoneNo: isOpen
                               ? phoneNoController.text.replaceAll(' ', '')
                               : '',
@@ -418,9 +422,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                                 widget.onChange(EcommerceRequest(
                                   fullName: merchantController.text,
                                   name: merchantShortController.text,
-                                  website: websiteController.text.isNotEmpty
-                                      ? websiteController.text
-                                      : '',
+                                  website: websiteController.text,
+                                  webhook: webhookController.text,
                                   address:
                                       !isOpen ? addressController.text : '',
                                   businessType: selectType.id,
@@ -429,8 +432,6 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                                   email: !isOpen ? emailController.text : '',
                                   nationalId:
                                       !isOpen ? nationalIdController.text : '',
-                                  webhook:
-                                      !isOpen ? webhookController.text : '',
                                   phoneNo: !isOpen
                                       ? phoneNoController.text
                                           .replaceAll(' ', '')

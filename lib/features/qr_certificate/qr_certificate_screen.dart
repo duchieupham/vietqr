@@ -11,6 +11,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/qr_certificate/blocs/qr_certificate_bloc.dart';
 import 'package:vierqr/features/qr_certificate/events/qr_certificate_event.dart';
@@ -44,7 +45,7 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
   int currentPage = 0;
   ValueNotifier<bool> enableButtonNotifier = ValueNotifier<bool>(false);
   late QrCertificateRepository qrRepo;
-
+  bool hasInfo = false;
   BankAccountDTO? selectedBank;
 
   ValueNotifier<EcommerceRequest> ecomNotifier =
@@ -222,6 +223,7 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               state.request == QrCertificateType.SCAN) {
             Navigator.pop(context);
             ecomNotifier.value = state.ecommerceRequest;
+            hasInfo = true;
             if (state.ecommerceRequest.fullName.isNotEmpty &&
                 state.ecommerceRequest.name.isNotEmpty) {
               enableButtonNotifier.value = true;
@@ -238,8 +240,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            Navigator.pop(context);
-            Navigator.pop(context);
+            // Navigator.pop(context);
+            // Navigator.pop(context);
+            NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ECOM_ACTIVE) {
@@ -251,8 +254,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            Navigator.pop(context);
-            Navigator.pop(context);
+            // Navigator.pop(context);
+            // Navigator.pop(context);
+            NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ERROR) {
@@ -264,8 +268,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            Navigator.pop(context);
-            Navigator.pop(context);
+            // Navigator.pop(context);
+            // Navigator.pop(context);
+            NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.SUCCESS &&
               state.request == QrCertificateType.ECOM_ACTIVE) {
@@ -277,8 +282,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            Navigator.pop(context);
-            Navigator.pop(context);
+            NavigatorUtils.navigateToRoot(context);
+            // Navigator.pop(context);
+            // Navigator.pop(context);
           }
         },
         builder: (context, state) {
