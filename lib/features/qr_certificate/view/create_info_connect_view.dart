@@ -87,6 +87,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
     webhookController.text = widget.ecom.webhook;
 
     isOpen = widget.hasInfo;
+    merchantClearNotifier.value = widget.hasInfo;
+    merchantShortClearNotifier.value = widget.hasInfo;
   }
 
   @override
