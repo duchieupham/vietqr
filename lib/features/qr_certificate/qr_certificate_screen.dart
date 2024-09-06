@@ -240,9 +240,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            // Navigator.pop(context);
-            // Navigator.pop(context);
-            NavigatorUtils.navigateToRoot(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            // NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ECOM_ACTIVE) {
@@ -254,9 +254,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            // Navigator.pop(context);
-            // Navigator.pop(context);
-            NavigatorUtils.navigateToRoot(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            // NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ERROR) {
@@ -268,9 +268,9 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            // Navigator.pop(context);
-            // Navigator.pop(context);
-            NavigatorUtils.navigateToRoot(context);
+            Navigator.pop(context);
+            Navigator.pop(context);
+            // NavigatorUtils.navigateToRoot(context);
           }
           if (state.status == BlocStatus.SUCCESS &&
               state.request == QrCertificateType.ECOM_ACTIVE) {

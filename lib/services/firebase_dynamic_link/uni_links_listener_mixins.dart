@@ -32,15 +32,15 @@ mixin UniLinksListenerMixin<T extends StatefulWidget> on State<T>
       if (uri != null) {
         debugPrint('onUniLink: $uri');
         onUniLink(uri);
-        if (uri.path.contains('/service-active') &&
-            uri.queryParameters['key'] != null) {
-          NavigatorUtils.navigatePage(
-              context,
-              DynamicActiveKeyScreen(
-                activeKey: uri.queryParameters['key']!,
-              ),
-              routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-        }
+        // if (uri.path.contains('/service-active') &&
+        //     uri.queryParameters['key'] != null) {
+        //   NavigatorUtils.navigatePage(
+        //       context,
+        //       DynamicActiveKeyScreen(
+        //         activeKey: uri.queryParameters['key']!,
+        //       ),
+        //       routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+        // }
       }
     }, onError: (err) {
       // Handle exception by warning the user their action did not succeed
@@ -63,15 +63,15 @@ mixin UniLinksListenerMixin<T extends StatefulWidget> on State<T>
       if (initialUri != null) {
         debugPrint('getInitUniLinks: $initialUri');
         getInitUri(initialUri);
-        if (initialUri.path.contains('/service-active') &&
-            initialUri.queryParameters['key'] != null) {
-          NavigatorUtils.navigatePage(
-              context,
-              DynamicActiveKeyScreen(
-                activeKey: initialUri.queryParameters['key']!,
-              ),
-              routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-        }
+        // if (initialUri.path.contains('/service-active') &&
+        //     initialUri.queryParameters['key'] != null) {
+        //   NavigatorUtils.navigatePage(
+        //       context,
+        //       DynamicActiveKeyScreen(
+        //         activeKey: initialUri.queryParameters['key']!,
+        //       ),
+        //       routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+        // }
       }
     } on FormatException {
       // Handle exception by warning the user their action did not succeed
