@@ -66,12 +66,12 @@ class QrCertificateBloc extends Bloc<QrCertificateEvent, QrCertificateState> {
             status: BlocStatus.SUCCESS,
             request: QrCertificateType.ECOM_ACTIVE,
           ));
-        } else if(state.msg == 'E163'){
-            emit(state.copyWith(
+        } else if (state.msg == 'E163') {
+          emit(state.copyWith(
               status: BlocStatus.ERROR,
               request: QrCertificateType.ECOM_ACTIVE,
               msg: 'Mã QR ecommerce không tồn tại.'));
-        }{
+        } else {
           emit(state.copyWith(
               status: BlocStatus.ERROR,
               request: QrCertificateType.ERROR,
