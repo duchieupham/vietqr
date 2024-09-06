@@ -163,8 +163,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                   certificate: widget.qrCode,
                   email: isOpen ? emailController.text : '',
                   nationalId: isOpen ? nationalIdController.text : '',
-                  website: websiteController.text,
-                  webhook: webhookController.text,
+                  website: isOpen ? websiteController.text : '',
+                  webhook: isOpen ? webhookController.text : '',
                   phoneNo:
                       isOpen ? phoneNoController.text.replaceAll(' ', '') : '',
                 ));
@@ -304,8 +304,8 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
           certificate: widget.qrCode,
           email: isOpen ? emailController.text : '',
           nationalId: isOpen ? nationalIdController.text : '',
-          website: websiteController.text,
-          webhook: webhookController.text,
+          website: isOpen ? websiteController.text : '',
+          webhook: isOpen ? webhookController.text : '',
           phoneNo: isOpen ? phoneNoController.text.replaceAll(' ', '') : '',
         ));
       },
@@ -391,13 +391,13 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                         widget.onChange(EcommerceRequest(
                           fullName: merchantController.text,
                           name: merchantShortController.text,
-                          website: websiteController.text,
-                          webhook: webhookController.text,
                           businessType: selectType.id,
                           career: isOpen ? careerController.text : '',
                           certificate: widget.qrCode,
                           email: isOpen ? emailController.text : '',
                           nationalId: isOpen ? nationalIdController.text : '',
+                          website: isOpen ? websiteController.text : '',
+                          webhook: isOpen ? webhookController.text : '',
                           phoneNo: isOpen
                               ? phoneNoController.text.replaceAll(' ', '')
                               : '',
@@ -422,8 +422,10 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                                 widget.onChange(EcommerceRequest(
                                   fullName: merchantController.text,
                                   name: merchantShortController.text,
-                                  website: websiteController.text,
-                                  webhook: webhookController.text,
+                                  website:
+                                      !isOpen ? websiteController.text : '',
+                                  webhook:
+                                      !isOpen ? webhookController.text : '',
                                   address:
                                       !isOpen ? addressController.text : '',
                                   businessType: selectType.id,
