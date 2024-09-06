@@ -24,6 +24,14 @@ class QrCertificateRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
+      } else if (response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+        if (result.message == 'E163') {
+          result = const ResponseMessageDTO(status: 'FAILED', message: 'E163');
+        } else {
+          result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+        }
       } else {
         result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
       }
