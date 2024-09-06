@@ -31,7 +31,7 @@ mixin UniLinksListenerMixin<T extends StatefulWidget> on State<T>
       // Use the uri and warn the user, if it is not correct
       if (uri != null) {
         debugPrint('onUniLink: $uri');
-        onUniLink(uri);
+        // onUniLink(uri);
         if (uri.path.contains('/service-active') &&
             uri.queryParameters['key'] != null) {
           NavigatorUtils.navigatePage(
@@ -62,7 +62,7 @@ mixin UniLinksListenerMixin<T extends StatefulWidget> on State<T>
       // but keep in mind it could be `null`.
       if (initialUri != null) {
         debugPrint('getInitUniLinks: $initialUri');
-        getInitUri(initialUri);
+        // getInitUri(initialUri);
         if (initialUri.path.contains('/service-active') &&
             initialUri.queryParameters['key'] != null) {
           NavigatorUtils.navigatePage(
