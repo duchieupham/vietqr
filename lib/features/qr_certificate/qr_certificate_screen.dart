@@ -243,9 +243,8 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ECOM_ACTIVE) {
-            final msg = state.msg;
             Fluttertoast.showToast(
-              msg: msg!,
+              msg: 'Mã QR ecommerce không tồn tại.',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
@@ -257,9 +256,8 @@ class _QrCertificateScreenState extends State<QrCertificateScreen> {
           }
           if (state.status == BlocStatus.ERROR &&
               state.request == QrCertificateType.ERROR) {
-            final msg = state.msg;
             Fluttertoast.showToast(
-              msg: msg!,
+              msg: 'Kết nối thất bại',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
