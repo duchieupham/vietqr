@@ -152,12 +152,30 @@ class _LatestTransWidgetState extends State<LatestTransWidget> {
                                       style:
                                           TextStyle(color: color, fontSize: 12),
                                     ),
-                                    Text(
-                                      DateFormat('HH:mm').format(
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              transaction.time * 1000)),
-                                      style: const TextStyle(
-                                          color: AppColor.BLACK, fontSize: 12),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          DateFormat('dd/MM/yyyy').format(
+                                              DateTime
+                                                  .fromMillisecondsSinceEpoch(
+                                                      transaction.time * 1000)),
+                                          style: const TextStyle(
+                                              color: AppColor.BLACK,
+                                              fontSize: 12),
+                                        ),
+                                        Text(
+                                          DateFormat('HH:mm').format(DateTime
+                                              .fromMillisecondsSinceEpoch(
+                                                  transaction.time * 1000)),
+                                          style: const TextStyle(
+                                              color: AppColor.BLACK,
+                                              fontSize: 12),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
