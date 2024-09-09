@@ -24,9 +24,7 @@ class ConnectMediaProvider extends ChangeNotifier {
       list.length,
       (index) => BankSelection(bank: list[index], value: false),
     ).toList();
-    // for (var item in list) {
-    //   listBank.add(BankSelection(bank: item, value: false));
-    // }
+
     notifyListeners();
   }
 

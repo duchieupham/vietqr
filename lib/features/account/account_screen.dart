@@ -646,7 +646,7 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
                         routeName: SettingBDSD.routeName);
                   },
                   urlImage: 'assets/images/ic-setting-bdsd.png',
-                  title: 'Nhận biến động số dư',
+                  title: 'Cài đặt hệ thống',
                 ),
                 const Divider(),
                 _buildItem(
@@ -664,18 +664,18 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
                   urlImage: 'assets/images/ic-printer-setting.png',
                   title: 'Máy in',
                 ),
-                const Divider(),
-                _buildItem(
-                  onTap: () async {
-                    NavigatorUtils.navigatePage(
-                      context,
-                      const ThemeSettingView(),
-                      routeName: ThemeSettingView.routeName,
-                    );
-                  },
-                  urlImage: 'assets/images/ic-theme-setting.png',
-                  title: 'Giao diện',
-                ),
+                // const Divider(),
+                // _buildItem(
+                //   onTap: () async {
+                //     NavigatorUtils.navigatePage(
+                //       context,
+                //       const ThemeSettingView(),
+                //       routeName: ThemeSettingView.routeName,
+                //     );
+                //   },
+                //   urlImage: 'assets/images/ic-theme-setting.png',
+                //   title: 'Giao diện',
+                // ),
                 const Divider(),
                 _buildItem(
                   onTap: () => _onCheckAppVersion(context),

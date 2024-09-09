@@ -197,7 +197,9 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
       bloc: widget.bankCardBloc,
       listener: (context, state) async {
         if (state.request == BankDetailType.UN_LINK_BIDV) {
-          eventBus.fire(GetListBankScreen());
+          // eventBus.fire(GetListBankScreen());
+          Navigator.pop(context);
+
           widget.bankCardBloc.add(const BankCardGetDetailEvent());
         }
         if (state.request == BankDetailType.REQUEST_OTP) {
@@ -268,7 +270,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
             AppDataHelper.instance.addListQRDetailBank(qrDetailBank);
             widget.bankCardBloc
                 .add(SetQrGenerateEvent(qrGeneratedDTO: qrGeneratedDTO));
-          } 
+          }
         }
         if (state.request == BankDetailType.ERROR) {
           await DialogWidget.instance.openMsgDialog(
@@ -336,7 +338,8 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                                   height: qrGeneratedDTO.amount.isNotEmpty
                                       ? 10
                                       : 20),
-                              if (qrGeneratedDTO.amount.isNotEmpty || qrGeneratedDTO.amount == '0')
+                              if (qrGeneratedDTO.amount.isNotEmpty ||
+                                  qrGeneratedDTO.amount == '0')
                                 _contentQr(),
                               _updateAmount(),
                               if (dto.id.isNotEmpty && !dto.authenticated) ...[

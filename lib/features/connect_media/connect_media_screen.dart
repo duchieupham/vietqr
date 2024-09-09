@@ -60,6 +60,8 @@ class __ScreenState extends State<_Screen> {
   final _bloc = getIt.get<ConnectMediaBloc>();
   final PageController _pageController = PageController(initialPage: 0);
   final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _nameEditingController = TextEditingController();
+
   Timer? _timer;
 
   int currentPageIndex = 0;
@@ -288,6 +290,7 @@ class __ScreenState extends State<_Screen> {
                                 setState(() {});
                               },
                               textController: _textEditingController,
+                              nameController: _nameEditingController,
                               controller: _pageController,
                               onGuide: onOpenGuide,
                               onChangeInput: (text) {
@@ -295,8 +298,10 @@ class __ScreenState extends State<_Screen> {
                               },
                               onSubmitInput: (value) {
                                 _provider.setUnFocusNode();
-                                _bloc.add(CheckWebhookUrlEvent(
-                                    url: value, type: typeConnect));
+                                if (value.isNotEmpty) {
+                                  _bloc.add(CheckWebhookUrlEvent(
+                                      url: value, type: typeConnect));
+                                }
                               },
                               onPageChanged: (index) {
                                 setState(() {

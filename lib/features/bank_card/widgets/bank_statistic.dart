@@ -12,6 +12,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/format_date.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
@@ -29,6 +30,7 @@ import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
+import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/verify_email/widgets/popup_key_free.dart';
 import 'package:vierqr/layouts/button/button.dart';
@@ -205,7 +207,9 @@ class _BankStatisticState extends State<BankStatistic>
                       ],
                     ),
                   )
-                else if (bankSelect != null && bankSelect?.bankTypeStatus == 1 && state.listBanks.isNotEmpty)
+                else if (bankSelect != null &&
+                    bankSelect?.bankTypeStatus == 1 &&
+                    state.listBanks.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: BankInfroWidget(dto: bankSelect!),
@@ -244,6 +248,7 @@ class _BankStatisticState extends State<BankStatistic>
                     },
                   ),
                 ],
+                _voiceWidget(),
                 if (state.listBanks.isNotEmpty && bankSelect != null) ...[
                   LatestTransWidget(
                     onTap: () {
@@ -276,6 +281,62 @@ class _BankStatisticState extends State<BankStatistic>
           ),
         );
       },
+    );
+  }
+
+  Widget _voiceWidget() {
+    return InkWell(
+      onTap: () {
+        NavigatorUtils.navigatePage(context, const SettingBDSD(),
+            routeName: SettingBDSD.routeName);
+      },
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 8, 20, 8),
+        height: 80,
+        decoration: BoxDecoration(
+          gradient: VietQRTheme.gradientColor.lilyLinear,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Row(
+          children: [
+            XImage(
+              imagePath: 'assets/images/ic-voice-black.png',
+              color: AppColor.BLUE_TEXT,
+              height: 50,
+            ),
+            SizedBox(width: 4),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Thông báo BĐSD bằng giọng nói',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'Tùy chỉnh thông báo giọng nói cho từng tài khoản ngân hàng đã liên kết',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: XImage(
+                imagePath: 'assets/images/ic-arrow-boder-blue.png',
+                width: 18,
+                height: 18,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

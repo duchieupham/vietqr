@@ -5,6 +5,7 @@ class GradientBorderButton extends StatelessWidget {
   final BorderRadius borderRadius;
   final double borderWidth;
   final Gradient gradient;
+  final EdgeInsetsGeometry? margin;
 
   const GradientBorderButton({
     super.key,
@@ -12,11 +13,13 @@ class GradientBorderButton extends StatelessWidget {
     required this.borderRadius,
     required this.borderWidth,
     required this.gradient,
+    this.margin,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: margin,
       padding: EdgeInsets.all(borderWidth),
       decoration: BoxDecoration(
         gradient: gradient,

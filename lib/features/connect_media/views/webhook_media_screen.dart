@@ -32,12 +32,15 @@ class WebhookMediaScreen extends StatefulWidget {
   final Function(bool, int) onChecked;
 
   final TextEditingController textController;
+  final TextEditingController nameController;
+
   final PageController controller;
   const WebhookMediaScreen({
     super.key,
     required this.type,
     required this.controller,
     required this.textController,
+    required this.nameController,
     required this.onPageChanged,
     required this.onSubmitInput,
     required this.onChangeInput,
@@ -589,7 +592,41 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-
+              const SizedBox(
+                width: double.infinity,
+                height: 20,
+                child: Text(
+                  'Tên kết nối nền tảng*',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                // margin: EdgeInsets.only(right: 40),
+                height: 50,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(
+                      bottom: BorderSide(color: AppColor.GREY_TEXT, width: 0.5),
+                    )),
+                child: TextField(
+                  // focusNode: value.focusNode,
+                  controller: widget.nameController,
+                  textInputAction: TextInputAction.next,
+                  // inputFormatters: [UrlInputFormatter()],
+                  keyboardType: TextInputType.multiline,
+                  // onSubmitted: widget.onSubmitInput,
+                  // onChanged: widget.onChangeInput,
+                  decoration: const InputDecoration(
+                    hintText: 'Nhập tên kết nối',
+                    hintStyle:
+                        TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
+                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                  ),
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ),
+              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 height: 20,

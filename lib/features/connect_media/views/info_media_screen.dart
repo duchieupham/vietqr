@@ -148,7 +148,8 @@ class InfoMediaScreen extends StatelessWidget {
               children: [
                 Text(
                   media,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
                 Image.asset(
@@ -157,6 +158,32 @@ class InfoMediaScreen extends StatelessWidget {
                   fit: BoxFit.fitWidth,
                 )
               ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const MySeparator(
+          color: AppColor.GREY_DADADA,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Kết nối:',
+              style: TextStyle(fontSize: 15),
+            ),
+            SizedBox(
+              width: 220,
+              child: Text(
+                'Kết nối của Kiên',
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
             ),
           ],
         ),
@@ -189,8 +216,7 @@ class InfoMediaScreen extends StatelessWidget {
                 const SizedBox(width: 4),
                 InkWell(
                   onTap: () {
-                    Clipboard.setData(
-                        ClipboardData(text: dto.chatId ?? ''));
+                    Clipboard.setData(ClipboardData(text: dto.chatId ?? ''));
                   },
                   child: Align(
                     alignment: Alignment.centerRight,

@@ -459,12 +459,18 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        'Kết nối của Kiên',
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
                         url,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 12),
                       ),
-                      const SizedBox(height: 3),
+                      // const SizedBox(height: 3),
                       Text(
                         '${bankAcc.toString()} TK ngân hàng',
                         style: const TextStyle(
