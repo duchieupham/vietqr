@@ -48,10 +48,10 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const GradientText(
-                          'VietQR Plus',
-                          style: TextStyle(fontSize: 12),
-                          gradient: LinearGradient(colors: [
+                         GradientText(
+                          'VietQR ${widget.bankDTto.mmsActive ? 'Pro' : 'Plus'} ',
+                          style: const TextStyle(fontSize: 12),
+                          gradient: const LinearGradient(colors: [
                             Color(0xFF00C6FF),
                             Color(0xFF0072FF),
                           ]),
