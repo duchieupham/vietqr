@@ -2,11 +2,13 @@ class LarkDTO {
   String larkId;
   String webhook;
   int bankAccountCount;
+  String name;
 
   LarkDTO({
     required this.larkId,
     required this.webhook,
     required this.bankAccountCount,
+    required this.name,
   });
 
   factory LarkDTO.fromJson(Map<String, dynamic> json) {
@@ -14,6 +16,7 @@ class LarkDTO {
       larkId: json['larkId'],
       webhook: json['webhook'],
       bankAccountCount: json['bankAccountCount'],
+      name: json['name'] ?? json['webhook'],
     );
   }
 
@@ -22,6 +25,7 @@ class LarkDTO {
       'larkId': larkId,
       'webhook': webhook,
       'bankAccountCount': bankAccountCount,
+      'name': name
     };
   }
 }

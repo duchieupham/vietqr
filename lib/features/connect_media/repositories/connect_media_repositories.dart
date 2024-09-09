@@ -509,7 +509,7 @@ class ConnectGgChatRepository extends BaseRepo {
     return false;
   }
 
-  Future<bool?> connectWebhook(String? webhook,
+  Future<bool?> connectWebhook(String? webhook, String? name,
       {List<String>? list,
       List<String>? notificationTypes,
       List<String>? notificationContents,
@@ -537,6 +537,7 @@ class ConnectGgChatRepository extends BaseRepo {
           break;
         default:
       }
+      param['name'] = name ?? webhook;
       param['userId'] = userId;
       param['bankIds'] = list;
       param['notificationTypes'] = notificationTypes;

@@ -78,8 +78,8 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         onPageChanged: widget.onPageChanged,
         children: [
           startConnectMedia(),
-          listAccountLinked(),
           inputWebhook(),
+          listAccountLinked(),
           settingConnect(),
           finishConnectGgChat(),
         ],
@@ -419,7 +419,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
               // ),
               const SizedBox(height: 20),
               Text(
-                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua $title',
+                'Tiếp theo, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua $title',
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
@@ -548,7 +548,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
               const SizedBox(
                 width: double.infinity,
                 child: Text(
-                  'Tiếp theo, vui lòng thực hiện theo hướng dẫn và nhập URL Webhook',
+                  'Đầu tiên, vui lòng thực hiện theo hướng dẫn và nhập URL Webhook',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),

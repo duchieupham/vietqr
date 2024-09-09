@@ -350,15 +350,14 @@ class __ScreenState extends State<_Screen> {
       buttonText = 'Bắt đầu kết nối';
     } else if (currentPageIndex == 1) {
       buttonText = 'Tiếp tục';
-
-      isEnable = _provider.listBank.any((element) => element.value == true);
-    } else if (currentPageIndex == 2) {
-      buttonText = 'Tiếp tục';
       if (_textEditingController.text == '') {
         isEnable = false;
       } else {
         isEnable = _provider.isValidWebhook;
       }
+    } else if (currentPageIndex == 2) {
+      buttonText = 'Tiếp tục';
+      isEnable = _provider.listBank.any((element) => element.value == true);
     } else if (currentPageIndex == 3) {
       buttonText = 'Tiếp tục';
     } else if (currentPageIndex == 4) {

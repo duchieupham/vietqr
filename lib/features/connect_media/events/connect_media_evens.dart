@@ -192,7 +192,7 @@ class CheckWebhookUrlEvent extends ConnectMediaEvent {
 
 class MakeMediaConnectionEvent extends ConnectMediaEvent {
   final TypeConnect type;
-
+  final String? name;
   final List<String>? listBankId;
   final List<String>? notificationTypes;
   final List<String>? notificationContents;
@@ -200,6 +200,7 @@ class MakeMediaConnectionEvent extends ConnectMediaEvent {
   final String? webhook;
 
   const MakeMediaConnectionEvent({
+    this.name,
     this.listBankId,
     this.notificationTypes,
     this.notificationContents,
@@ -208,8 +209,14 @@ class MakeMediaConnectionEvent extends ConnectMediaEvent {
   });
 
   @override
-  List<Object?> get props =>
-      [listBankId, webhook, notificationTypes, notificationContents, type];
+  List<Object?> get props => [
+        listBankId,
+        webhook,
+        notificationTypes,
+        notificationContents,
+        type,
+        name
+      ];
 }
 
 class DeleteWebhookEvent extends ConnectMediaEvent {

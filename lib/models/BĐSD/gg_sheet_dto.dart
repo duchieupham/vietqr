@@ -2,11 +2,13 @@ class GoogleSheetDTO {
   String webhook;
   String ggSheetId;
   int bankAccountCount;
+  String name;
 
   GoogleSheetDTO({
     required this.webhook,
     required this.ggSheetId,
     required this.bankAccountCount,
+    required this.name,
   });
 
   // Factory constructor to create an instance of GoogleSheetDTO from a JSON map
@@ -15,6 +17,7 @@ class GoogleSheetDTO {
       webhook: json['webhook'],
       ggSheetId: json['googleSheetId'],
       bankAccountCount: json['bankAccountCount'],
+      name: json['name'] ?? json['webhook'],
     );
   }
 
@@ -24,6 +27,7 @@ class GoogleSheetDTO {
       'webhook': webhook,
       'ggSheetId': ggSheetId,
       'bankAccountCount': bankAccountCount,
+      'name': name
     };
   }
 }

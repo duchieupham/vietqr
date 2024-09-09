@@ -336,34 +336,41 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
     String url = '';
     String id = '';
     int bankAcc = 0;
+    String name = '';
     switch (widget.type) {
       case TypeConnect.GG_CHAT:
-        id = chat!.googleChatId;
+        name = chat!.name;
+        id = chat.googleChatId;
         url = chat.webhook;
         bankAcc = chat.bankAccountCount;
         break;
       case TypeConnect.TELE:
-        id = tele!.telegramId;
+        name = tele!.name;
+        id = tele.telegramId;
         url = tele.chatId;
         bankAcc = tele.bankAccountCount;
         break;
       case TypeConnect.LARK:
-        id = lark!.larkId;
+        name = lark!.name;
+        id = lark.larkId;
         url = lark.webhook;
         bankAcc = lark.bankAccountCount;
         break;
       case TypeConnect.SLACK:
-        id = slack!.slackId;
+        name = slack!.name;
+        id = slack.slackId;
         url = slack.webhook;
         bankAcc = slack.bankAccountCount;
         break;
       case TypeConnect.DISCORD:
-        id = discord!.discordId;
+        name = discord!.name;
+        id = discord.discordId;
         url = discord.webhook;
         bankAcc = discord.bankAccountCount;
         break;
       case TypeConnect.GG_SHEET:
-        id = sheet!.ggSheetId;
+        name = sheet!.name;
+        id = sheet.ggSheetId;
         url = sheet.webhook;
         bankAcc = sheet.bankAccountCount;
         break;
@@ -459,7 +466,9 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Kết nối của Kiên',
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ),

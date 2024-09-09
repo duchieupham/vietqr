@@ -300,7 +300,8 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
       if (event is MakeMediaConnectionEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectMedia.NONE));
-        bool? result = await _repository.connectWebhook(event.webhook,
+        bool? result = await _repository.connectWebhook(
+            event.webhook, event.name,
             type: event.type,
             list: event.listBankId,
             notificationTypes: event.notificationTypes,
