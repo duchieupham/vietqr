@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:custom_clippers/custom_clippers.dart';
 import 'package:float_bubble/float_bubble.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -22,13 +24,12 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/bottom_bar_item.dart';
+import 'package:vierqr/commons/widgets/clip_shadow_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -45,6 +46,7 @@ import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/store/store_screen.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -397,6 +399,145 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
+              Positioned(
+                left: 0,
+                bottom: MediaQuery.of(context).size.height * 0.12,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 0,
+                      left: 40,
+                      child: Container(
+                        height: 15,
+                        width: 15,
+                        decoration: BoxDecoration(
+                          color: AppColor.RED_TEXT,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.exclamationmark,
+                          color: AppColor.WHITE,
+                          size: 13,
+                          weight: 10,
+                        ),
+                      ),
+                    ),
+                    const Positioned(
+                      top: 10,
+                      left: 0,
+                      child: XImage(
+                        imagePath: 'assets/images/ic-noti-extend-key.png',
+                        height: 52,
+                        width: 72,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+                    Positioned(
+                      left: 45,
+                      bottom: 0,
+                      child: ClipShadowWidget(
+                        clipper: UpperNipMessageClipper(MessageType.receive,
+                            bubbleRadius: 8),
+                        shadows: [
+                          BoxShadow(
+                              color: AppColor.BLACK.withOpacity(0.1),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                              offset: const Offset(0, 2))
+                        ],
+                        child: Container(
+                          width: 200,
+                          padding: const EdgeInsets.fromLTRB(20, 0, 16, 8),
+                          color: Colors.white,
+                          height: 90,
+                          child: Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text(
+                                  'Tài khoản sắp hết hạn',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  // textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                RichText(
+                                  text: const TextSpan(
+                                      text: 'Còn',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColor.BLACK),
+                                      children: [
+                                        TextSpan(
+                                          text: ' 15 ngày',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColor.RED_TEXT),
+                                        ),
+                                        TextSpan(
+                                          text: ' hết hạn dịch vụ',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColor.BLACK),
+                                        ),
+                                      ]),
+                                ),
+                                Container(
+                                  width: 110,
+                                  margin: const EdgeInsets.only(top: 5),
+                                  padding:
+                                      const EdgeInsets.only(top: 5, bottom: 5),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      gradient:
+                                          VietQRTheme.gradientColor.lilyLinear),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.history,
+                                        color: AppColor.BLACK,
+                                        size: 15,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        'Gia hạn ngay',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                        // textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 250,
+                      height: 150,
+                    ),
+                  ],
+                ),
+              ),
               ValueListenableBuilder<bool>(
                 valueListenable: scrollNotifier,
                 builder: (context, isScroll, child) {
@@ -742,7 +883,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
       if (settingAccountDTO.userConfig != null &&
           settingAccountDTO.userConfig!.bidvNotification) {
-        await showDialogBIDV(context);
+        await DialogWidget.instance.openNotificationBIDV();
       }
       if (!settingAccountDTO.notificationMobile && listBank!.isNotEmpty) {
         await DialogWidget.instance
