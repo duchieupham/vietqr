@@ -2,11 +2,13 @@ class DiscordDTO {
   String webhook;
   String discordId;
   int bankAccountCount;
+  String name;
 
   DiscordDTO({
     required this.webhook,
     required this.discordId,
     required this.bankAccountCount,
+    required this.name,
   });
 
   // Factory constructor to create an instance of SlackDTO from a JSON map
@@ -15,6 +17,7 @@ class DiscordDTO {
       webhook: json['webhook'],
       discordId: json['discordId'],
       bankAccountCount: json['bankAccountCount'],
+      name: json['name'] ?? ''
     );
   }
 
@@ -24,6 +27,7 @@ class DiscordDTO {
       'webhook': webhook,
       'discordId': discordId,
       'bankAccountCount': bankAccountCount,
+      'name': name
     };
   }
 }

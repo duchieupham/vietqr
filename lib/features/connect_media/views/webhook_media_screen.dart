@@ -78,8 +78,8 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
         onPageChanged: widget.onPageChanged,
         children: [
           startConnectMedia(),
-          listAccountLinked(),
           inputWebhook(),
+          listAccountLinked(),
           settingConnect(),
           finishConnectGgChat(),
         ],
@@ -419,7 +419,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
               // ),
               const SizedBox(height: 20),
               Text(
-                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua $title',
+                'Tiếp theo, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua $title',
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
@@ -528,6 +528,16 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
       case TypeConnect.TELE:
         webhook = 'Chat ID';
         break;
+       case TypeConnect.DISCORD:
+        webhook = 'Webhook Discord';
+        break;
+       case TypeConnect.GG_SHEET:
+        webhook = 'Webhook Google Sheet';
+        break;
+       case TypeConnect.SLACK:
+        webhook = 'Webhook Slack';
+        break;
+        
       default:
     }
     return Consumer<ConnectMediaProvider>(
@@ -548,7 +558,7 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
               const SizedBox(
                 width: double.infinity,
                 child: Text(
-                  'Tiếp theo, vui lòng thực hiện theo hướng dẫn và nhập URL Webhook',
+                  'Đầu tiên, vui lòng thực hiện theo hướng dẫn và nhập URL Webhook',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
               ),
@@ -653,11 +663,11 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
                   keyboardType: TextInputType.multiline,
                   onSubmitted: widget.onSubmitInput,
                   onChanged: widget.onChangeInput,
-                  decoration: const InputDecoration(
-                    hintText: 'Nhập đường dẫn Webhook tại đây',
+                  decoration:  InputDecoration(
+                    hintText: 'Nhập đường dẫn $webhook tại đây',
                     hintStyle:
-                        TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
-                    contentPadding: EdgeInsets.symmetric(vertical: 15),
+                       const TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 15),
                   ),
                   style: const TextStyle(fontSize: 15),
                 ),

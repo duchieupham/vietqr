@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
@@ -56,6 +57,7 @@ class UserUpdatePassword extends StatelessWidget {
                 }
                 if (state is UserEditPasswordFailedState) {
                   //pop loading dialog
+                  Navigator.pop(context);
                   Navigator.pop(context);
                   FocusManager.instance.primaryFocus?.unfocus();
                   //
@@ -212,6 +214,7 @@ class UserUpdatePassword extends StatelessWidget {
     _confirmPassController.clear();
     Provider.of<UserEditProvider>(context, listen: false).resetPasswordErr();
     FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.pop(context);
     Navigator.pop(context);
   }
 }

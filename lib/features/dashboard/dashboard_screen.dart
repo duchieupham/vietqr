@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:custom_clippers/custom_clippers.dart';
 import 'package:float_bubble/float_bubble.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -22,13 +24,14 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/format_date.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/bottom_bar_item.dart';
+import 'package:vierqr/commons/widgets/clip_shadow_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
+import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -45,14 +48,17 @@ import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/store/store_screen.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/invoice_provider.dart';
+import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'package:vierqr/splash_screen.dart';
 
@@ -91,6 +97,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
         DialogHelper {
   //page controller
   late PageController _pageController;
+
+  BankAccountDTO? bankSelect;
 
   List barItems = [
     {
@@ -213,6 +221,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final TextEditingController _editingController =
       TextEditingController(text: '');
   bool? isClose = false;
+
+  bool? isOpen = true;
 
   @override
   void initState() {
@@ -397,6 +407,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
+              renderExtendKeyNotification(),
               ValueListenableBuilder<bool>(
                 valueListenable: scrollNotifier,
                 builder: (context, isScroll, child) {
@@ -436,6 +447,211 @@ class _DashBoardScreen extends State<DashBoardScreen>
           // ),
         );
       }),
+    );
+  }
+
+  AnimatedPositioned renderExtendKeyNotification() {
+    return AnimatedPositioned(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      left: 0,
+      bottom: MediaQuery.of(context).size.height * 0.12,
+      child: BlocConsumer<BankBloc, BankState>(
+        bloc: _bankBloc,
+        listener: (context, state) {
+          if (state.bankSelect != null && !state.isEmpty) {
+            bankSelect = state.bankSelect;
+          }
+        },
+        builder: (context, state) {
+          final bankSelect = state.bankSelect;
+          if (state.listBanks.isEmpty) {
+            return const SizedBox.shrink();
+          } else {
+            if (bankSelect != null) {
+              final isValidService = bankSelect.isValidService;
+              final validFeeTo = bankSelect.validFeeTo;
+
+              if ((validFeeTo! != 0 && inclusiveDays(validFeeTo) <= 15)) {
+                return Stack(
+                  children: [
+                    Positioned(
+                      top: 0,
+                      left: 40,
+                      child: Container(
+                        height: 15,
+                        width: 15,
+                        decoration: BoxDecoration(
+                          color: AppColor.RED_TEXT,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: const Icon(
+                          CupertinoIcons.exclamationmark,
+                          color: AppColor.WHITE,
+                          size: 13,
+                          weight: 10,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 10,
+                      left: 0,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            isOpen = !isOpen!;
+                          });
+                        },
+                        child: const XImage(
+                          imagePath: 'assets/images/ic-noti-extend-key.png',
+                          height: 52,
+                          width: 72,
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 45,
+                      bottom: 0,
+                      child: isOpen!
+                          ? ClipShadowWidget(
+                              clipper: UpperNipMessageClipper(
+                                  MessageType.receive,
+                                  bubbleRadius: 8),
+                              shadows: [
+                                BoxShadow(
+                                    color: AppColor.BLACK.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 2))
+                              ],
+                              child: Container(
+                                width: 200,
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 0, 16, 8),
+                                color: Colors.white,
+                                height: 90,
+                                child: Center(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        isValidService!
+                                            ? 'Tài khoản sắp hết hạn'
+                                            : 'Tài khoản đã hết hạn',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        // textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(
+                                        height: 2,
+                                      ),
+                                      isValidService
+                                          ? RichText(
+                                              text: TextSpan(
+                                                  text: 'Còn',
+                                                  style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      color: AppColor.BLACK),
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          ' ${inclusiveDays(bankSelect.validFeeTo!)} ngày',
+                                                      style: const TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          color: AppColor
+                                                              .RED_TEXT),
+                                                    ),
+                                                    const TextSpan(
+                                                      text: ' hết hạn dịch vụ',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          color:
+                                                              AppColor.BLACK),
+                                                    ),
+                                                  ]),
+                                            )
+                                          : const SizedBox.shrink(),
+                                      InkWell(
+                                        onTap: () {
+                                          extendKey(bankSelect);
+                                        },
+                                        child: Container(
+                                          width: 110,
+                                          margin: const EdgeInsets.only(top: 5),
+                                          padding: const EdgeInsets.only(
+                                              top: 5, bottom: 5),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              gradient: VietQRTheme
+                                                  .gradientColor.lilyLinear),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons.history,
+                                                color: AppColor.BLACK,
+                                                size: 15,
+                                              ),
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                (isValidService &&
+                                                        inclusiveDays(
+                                                                validFeeTo) >=
+                                                            -7)
+                                                    ? 'Gia hạn ngay'
+                                                    : 'Đăng ký ngay',
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                                // textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                    const SizedBox(
+                      width: 250,
+                      height: 150,
+                    ),
+                  ],
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            } else {
+              return const SizedBox.shrink();
+            }
+          }
+        },
+      ),
     );
   }
 
@@ -742,7 +958,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
       if (settingAccountDTO.userConfig != null &&
           settingAccountDTO.userConfig!.bidvNotification) {
-        await showDialogBIDV(context);
+        await DialogWidget.instance.openNotificationBIDV();
       }
       if (!settingAccountDTO.notificationMobile && listBank!.isNotEmpty) {
         await DialogWidget.instance
@@ -968,6 +1184,19 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
         eventBus.fire(CheckSyncContact());
       }
     }
+  }
+
+  void extendKey(BankAccountDTO bankSelect) {
+    Provider.of<MaintainChargeProvider>(context, listen: false)
+        .selectedBank(bankSelect.bankAccount, bankSelect.bankShortName);
+    showDialogActiveKey(
+      context,
+      bankId: bankSelect.id,
+      bankCode: bankSelect.bankCode,
+      bankName: bankSelect.bankName,
+      bankAccount: bankSelect.bankAccount,
+      userBankName: bankSelect.userBankName,
+    );
   }
 
   // void _animatedToPage(int index) {
