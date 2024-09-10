@@ -16,7 +16,7 @@ class TeleDTO {
       telegramId: json['telegramId'],
       chatId: json['chatId'],
       bankAccountCount: json['bankAccountCount'],
-      name: json['name'] ?? json['chatId'],
+      name: json['name'] ?? ''
     );
   }
 

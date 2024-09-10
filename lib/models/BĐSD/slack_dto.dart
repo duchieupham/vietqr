@@ -17,7 +17,7 @@ class SlackDTO {
       webhook: json['webhook'],
       slackId: json['slackId'],
       bankAccountCount: json['bankAccountCount'],
-      name: json['name'] ?? json['webhook'],
+      name: json['name'] ?? ''
     );
   }
 

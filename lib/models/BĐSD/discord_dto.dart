@@ -17,7 +17,7 @@ class DiscordDTO {
       webhook: json['webhook'],
       discordId: json['discordId'],
       bankAccountCount: json['bankAccountCount'],
-      name: json['name'] ?? json['webhook'],
+      name: json['name'] ?? ''
     );
   }
 

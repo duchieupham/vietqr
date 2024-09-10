@@ -386,11 +386,6 @@ class __ScreenState extends State<_Screen> {
                   curve: Curves.easeInOut);
               break;
             case 1:
-              _pageController.nextPage(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut);
-              break;
-            case 2:
               if (_textEditingController.text != '' &&
                   _provider.isValidWebhook == true) {
                 _provider.setUnFocusNode();
@@ -400,7 +395,12 @@ class __ScreenState extends State<_Screen> {
                 _bloc.add(CheckWebhookUrlEvent(
                     url: _textEditingController.text, type: typeConnect));
               }
+              break;
 
+            case 2:
+              _pageController.nextPage(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut);
               break;
             case 3:
               List<String> listId = _provider.getListId();
@@ -416,6 +416,7 @@ class __ScreenState extends State<_Screen> {
 
               if (listId.isNotEmpty) {
                 _bloc.add(MakeMediaConnectionEvent(
+                    name: _nameEditingController.text,
                     type: typeConnect,
                     webhook: _textEditingController.text,
                     listBankId: listId,

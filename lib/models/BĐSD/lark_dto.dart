@@ -13,11 +13,10 @@ class LarkDTO {
 
   factory LarkDTO.fromJson(Map<String, dynamic> json) {
     return LarkDTO(
-      larkId: json['larkId'],
-      webhook: json['webhook'],
-      bankAccountCount: json['bankAccountCount'],
-      name: json['name'] ?? json['webhook'],
-    );
+        larkId: json['larkId'],
+        webhook: json['webhook'],
+        bankAccountCount: json['bankAccountCount'],
+        name: json['name'] ?? '');
   }
 
   Map<String, dynamic> toJson() {

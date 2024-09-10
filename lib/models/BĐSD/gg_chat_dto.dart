@@ -16,7 +16,7 @@ class GoogleChatDTO {
       bankAccountCount: json['bankAccountCount'],
       webhook: json['webhook'],
       googleChatId: json['googleChatId'],
-      name: json['name'] ?? json['webhook'],
+      name: json['name'] ?? ''
     );
   }
 

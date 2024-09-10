@@ -17,7 +17,7 @@ class GoogleSheetDTO {
       webhook: json['webhook'],
       ggSheetId: json['googleSheetId'],
       bankAccountCount: json['bankAccountCount'],
-      name: json['name'] ?? json['webhook'],
+      name: json['name'] ?? '',
     );
   }
 

@@ -176,7 +176,7 @@ class InfoMediaScreen extends StatelessWidget {
             SizedBox(
               width: 220,
               child: Text(
-                'Kết nối của Kiên',
+                dto.name,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
                 style: const TextStyle(

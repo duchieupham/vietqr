@@ -1,13 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
@@ -18,9 +14,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/key_free_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 

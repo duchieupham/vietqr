@@ -71,6 +71,7 @@ class InfoMediaDTO {
   String id;
   String chatId;
   String userId;
+  String name;
   List<BankMedia> banks;
   List<String> notificationTypes;
   List<String> notificationContents;
@@ -82,6 +83,7 @@ class InfoMediaDTO {
     required this.banks,
     required this.notificationTypes,
     required this.notificationContents,
+    required this.name,
   });
 
   factory InfoMediaDTO.fromJson(Map<String, dynamic> json, TypeConnect type) {
@@ -112,6 +114,7 @@ class InfoMediaDTO {
       id: json['id'],
       chatId: json[typeJson],
       userId: json['userId'],
+      name: json['name'],
       banks: json['banks'] != null
           ? List<BankMedia>.from(
               json['banks'].map((bank) => BankMedia.fromJson(bank, type)))
@@ -133,6 +136,7 @@ class InfoMediaDTO {
       'banks': banks.map((bank) => bank.toJson()).toList(),
       'notificationTypes': notificationTypes,
       'notificationContents': notificationContents,
+      'name': name,
     };
   }
 }
