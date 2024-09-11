@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +14,7 @@ import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -239,6 +242,21 @@ class SharePrefUtils {
     return sharedPreferenceService.get(
             fromJson: (json) => SettingAccountDTO.fromJson(json)) ??
         SettingAccountDTO();
+  }
+
+  /// List enable voice bank
+  static Future<void> saveListEnableVoiceBanks(
+      String value) async {
+    final sharedPreferenceService = SharedPrefLocal(
+        Constants.SharedPreferenceKey.ListEnableVoiceBank.sharedValue);
+    await sharedPreferenceService.set(data: value);
+  }
+
+  static String? getListEnableVoiceBank() {
+    final sharedPreferenceService = SharedPrefLocal<String>(
+      Constants.SharedPreferenceKey.ListEnableVoiceBank.sharedValue,
+    );
+    return sharedPreferenceService.get();
   }
 
   /// Show Qr Intro

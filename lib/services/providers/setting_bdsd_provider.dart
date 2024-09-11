@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
@@ -9,6 +11,9 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   List<BankSelection> _listBank = [];
   List<BankSelection> get listBank => _listBank;
+
+  List<VoiceBank> _listVoiceBank = [];
+  List<VoiceBank> get listVoiceBank => _listVoiceBank;
 
   bool get enableVoice => _enableVoice;
 
@@ -24,6 +29,24 @@ class SettingBDSDProvider extends ChangeNotifier {
       (index) => BankSelection(
           bank: list[index], value: settingAccountDTO.voiceMobile),
     ).toList();
+
+    final stringBanks = SharePrefUtils.getListEnableVoiceBank();
+    if (stringBanks != null) {
+      final listBanks = jsonDecode(stringBanks).split(',');
+      if (listBanks.isNotEmpty) {
+        _listVoiceBank = List.generate(
+          _listBank.length,
+          (index) => VoiceBank(
+              bank: list[index], isOn: listBanks.contains(list[index].id)),
+        ).toList();
+      }
+    } else {
+      _listVoiceBank = List.generate(
+        _listBank.length,
+        (index) =>
+            VoiceBank(bank: list[index], isOn: settingAccountDTO.voiceMobile),
+      ).toList();
+    }
 
     notifyListeners();
   }
@@ -42,6 +65,7 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   void selectValue(bool value, int index) {
     _listBank.elementAt(index).value = value;
+    _listVoiceBank.elementAt(index).isOn = value;
     _enableVoice = _listBank.every((element) => element.value == true);
 
     notifyListeners();
@@ -53,6 +77,11 @@ class SettingBDSDProvider extends ChangeNotifier {
       _listBank = List.generate(
         _listBank.length,
         (index) => BankSelection(bank: _listBank[index].bank, value: true),
+      ).toList();
+    } else {
+      _listBank = List.generate(
+        _listBank.length,
+        (index) => BankSelection(bank: _listBank[index].bank, value: false),
       ).toList();
     }
     notifyListeners();

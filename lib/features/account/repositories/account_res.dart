@@ -167,6 +167,28 @@ class AccountRepository {
     return false;
   }
 
+  Future<bool> enableVoiceSetting(Map<String, dynamic> param) async {
+    try {
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/sound-noti/enable';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: param,
+      );
+      var data = jsonDecode(response.body);
+      final result = ResponseMessageDTO.fromJson(data);
+      if (result.status == 'SUCCESS') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      return false;
+    }
+  }
+
   Future<CardDTO> getCardID(String userId) async {
     try {
       final String url =

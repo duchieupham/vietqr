@@ -80,24 +80,24 @@ class _CardWalletState extends State<CardWallet> {
                     },
                   ),
                   const SizedBox(width: 4),
-                  GestureDetector(
-                    onTap: () {
-                      isHide.value = !isHide.value;
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: ValueListenableBuilder<bool>(
-                          valueListenable: isHide,
-                          builder: (context, value, child) {
-                            return XImage(
-                              imagePath: value
-                                  ? ImageConstant.icHide
-                                  : ImageConstant.icUnHide,
-                              height: 15,
-                            );
-                          }),
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     isHide.value = !isHide.value;
+                  //   },
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.only(bottom: 4),
+                  //     child: ValueListenableBuilder<bool>(
+                  //         valueListenable: isHide,
+                  //         builder: (context, value, child) {
+                  //           return XImage(
+                  //             imagePath: value
+                  //                 ? ImageConstant.icHide
+                  //                 : ImageConstant.icUnHide,
+                  //             height: 15,
+                  //           );
+                  //         }),
+                  //   ),
+                  // ),
                   const Spacer(),
                   Text(
                     state.introduceDTO?.point ?? '0',

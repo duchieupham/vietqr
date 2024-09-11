@@ -167,6 +167,7 @@ class _AccountScreenState extends State<_AccountScreen>
         GestureDetector(
           onTap: () {
             _accountBloc.add(LogoutEventSubmit());
+            
           },
           child: Container(
             alignment: Alignment.center,

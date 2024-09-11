@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +40,27 @@ class _SettingBDSDState extends State<SettingBDSD> {
             await SharePrefUtils.saveAccountSetting(settingAccount);
           }
         }
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+    }
+  }
+
+  void _enableVoiceSetting(
+      Map<String, dynamic> param, SettingBDSDProvider provider) async {
+    String userId = SharePrefUtils.getProfile().userId;
+    try {
+      bool enableStatus = await accRepository.enableVoiceSetting(param);
+      if (enableStatus) {
+        final settingAccount = await accRepository.getSettingAccount(userId);
+        if (settingAccount != null) {
+          if (settingAccount.userId.isNotEmpty) {
+            await SharePrefUtils.saveAccountSetting(settingAccount);
+          }
+        }
+        List<String> listBanks = provider.getListId();
+        String stringBanks = listBanks.join(',');
+        await SharePrefUtils.saveListEnableVoiceBanks(stringBanks);
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');
@@ -146,7 +169,16 @@ class _SettingBDSDState extends State<SettingBDSD> {
                           param['userId'] = SharePrefUtils.getProfile().userId;
                           param['value'] = value ? 1 : 0;
                           param['type'] = 0;
+
+                          Map<String, dynamic> paramEnable = {};
+                          paramEnable['bankIds'] = provider.getListId();
+                          paramEnable['userId'] =
+                              SharePrefUtils.getProfile().userId;
+                          for (var e in provider.listVoiceBank) {
+                            e.isOn = value;
+                          }
                           _updateVoiceSetting(param);
+                          _enableVoiceSetting(paramEnable, provider);
                         },
                       ),
                     ],
@@ -193,7 +225,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                     ),
                   ],
                 ),
-                ...provider.listBank
+                ...provider.listVoiceBank
                     .asMap()
                     .map(
                       (index, e) => MapEntry(e, _itemBank(e, index, provider)),
@@ -259,7 +291,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
   }
 
   Widget _itemBank(
-      BankSelection dto, int index, SettingBDSDProvider settingProvider) {
+      VoiceBank dto, int index, SettingBDSDProvider settingProvider) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -299,9 +331,13 @@ class _SettingBDSDState extends State<SettingBDSD> {
           ),
           CupertinoSwitch(
             activeColor: AppColor.BLUE_TEXT,
-            value: dto.value!,
+            value: dto.isOn!,
             onChanged: (value) {
               settingProvider.selectValue(value, index);
+              Map<String, dynamic> paramEnable = {};
+              paramEnable['bankIds'] = settingProvider.getListId();
+              paramEnable['userId'] = SharePrefUtils.getProfile().userId;
+              _enableVoiceSetting(paramEnable, settingProvider);
             },
           )
         ],

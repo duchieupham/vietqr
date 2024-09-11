@@ -39,7 +39,7 @@ class SocketService {
   void init() async {
     if (userId.isEmpty) return;
     try {
-      Uri wsUrl = Uri.parse('wss://api.vietqr.org/vqr/socket?userId=$userId');
+      Uri wsUrl = Uri.parse('wss://dev.api.vietqr.org/vqr/socket?userId=$userId');
 
       _channelTransaction = WebSocketChannel.connect(wsUrl);
 
@@ -66,7 +66,19 @@ class SocketService {
                 dto: NotifyTransDTO.fromJson(data),
               ),
             );
-            MediaHelper.instance.playAudio(data);
+
+            final stringBanks = SharePrefUtils.getListEnableVoiceBank();
+            if (stringBanks != null) {
+              final listBanks = jsonDecode(stringBanks).split(',');
+              if (listBanks.isNotEmpty) {
+                bool bankId =
+                    listBanks.contains((NotifyTransDTO.fromJson(data)).bankId);
+
+                if (bankId) {
+                  MediaHelper.instance.playAudio(data);
+                }
+              }
+            }
           }
           notificationController.sink.add(true);
         }).onError(
