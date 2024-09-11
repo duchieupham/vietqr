@@ -23,8 +23,7 @@ class SettingBDSDProvider extends ChangeNotifier {
   List<String> get bankIds => _bankIds;
 
   initData(List<BankAccountDTO> list) async {
-    _enableVoice =
-        list.every((element) => element.enableVoice == true);
+    _enableVoice = list.every((element) => element.enableVoice == true);
 
     final stringBanks = SharePrefUtils.getListEnableVoiceBank();
     if (stringBanks != null) {
@@ -34,6 +33,11 @@ class SettingBDSDProvider extends ChangeNotifier {
           list.length,
           (index) => BankSelection(
               bank: list[index], value: listBanks.contains(list[index].id)),
+        ).toList();
+      } else {
+        _listBank = List.generate(
+          list.length,
+          (index) => BankSelection(bank: list[index], value: _enableVoice),
         ).toList();
       }
     } else {
@@ -60,8 +64,7 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   void selectValue(bool value, int index) {
     _listBank.elementAt(index).value = value;
-    _enableVoice =
-        _listBank.every((element) => element.value == true);
+    _enableVoice = _listBank.every((element) => element.value == true);
 
     notifyListeners();
   }
