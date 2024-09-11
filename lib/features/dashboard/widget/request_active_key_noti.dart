@@ -48,22 +48,13 @@ class _RequestActiveKeyNotiState extends State<RequestActiveKeyNoti>
               bottom: 100,
               child: Stack(
                 children: [
-                  Positioned(
+                  const Positioned(
                     top: 0,
                     left: 40,
-                    child: Container(
-                      height: 15,
-                      width: 15,
-                      decoration: BoxDecoration(
-                        color: AppColor.RED_TEXT,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: const Icon(
-                        CupertinoIcons.exclamationmark,
-                        color: AppColor.WHITE,
-                        size: 10,
-                        weight: 10,
-                      ),
+                    child: Icon(
+                      Icons.error_rounded,
+                      size: 18,
+                      color: AppColor.RED_TEXT,
                     ),
                   ),
                   Positioned(
