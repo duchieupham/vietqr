@@ -129,9 +129,3 @@ class BankSelection {
   bool? value;
   BankSelection({this.bank, this.value});
 }
-
-class VoiceBank {
-  BankAccountDTO? bank;
-  bool? isOn;
-  VoiceBank({this.bank, this.isOn});
-}

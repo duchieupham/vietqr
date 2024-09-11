@@ -9,7 +9,9 @@ import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 class SettingBDSDProvider extends ChangeNotifier {
   bool _enableVoice = false;
 
-  // List<BankSelection> get listBank => _listBank;
+  List<BankSelection> get listBank => _listBank;
+
+  List<BankSelection> _listBank = [];
 
   List<BankAccountDTO> _listVoiceBank = [];
   List<BankAccountDTO> get listVoiceBank => _listVoiceBank;
@@ -28,10 +30,17 @@ class SettingBDSDProvider extends ChangeNotifier {
     if (stringBanks != null) {
       final listBanks = jsonDecode(stringBanks).split(',');
       if (listBanks.isNotEmpty) {
-        _listVoiceBank = listBanks;
+        _listBank = List.generate(
+          list.length,
+          (index) => BankSelection(
+              bank: list[index], value: listBanks.contains(list[index].id)),
+        ).toList();
       }
     } else {
-      _listVoiceBank = list;
+      _listBank = List.generate(
+        list.length,
+        (index) => BankSelection(bank: list[index], value: _enableVoice),
+      ).toList();
     }
 
     notifyListeners();
@@ -39,11 +48,10 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   List<String> getListId() {
     Set<String> bankIdSet = <String>{};
-    final list =
-        _listVoiceBank.where((element) => element.enableVoice == true).toList();
-    for (BankAccountDTO selection in list) {
-      if (selection != null) {
-        bankIdSet.add(selection.id);
+    final list = _listBank.where((element) => element.value == true).toList();
+    for (BankSelection selection in list) {
+      if (selection.bank != null) {
+        bankIdSet.add(selection.bank!.id);
       }
     }
 
@@ -51,9 +59,9 @@ class SettingBDSDProvider extends ChangeNotifier {
   }
 
   void selectValue(bool value, int index) {
-    _listVoiceBank.elementAt(index).enableVoice = value;
+    _listBank.elementAt(index).value = value;
     _enableVoice =
-        _listVoiceBank.every((element) => element.enableVoice == true);
+        _listBank.every((element) => element.value == true);
 
     notifyListeners();
   }
@@ -61,13 +69,15 @@ class SettingBDSDProvider extends ChangeNotifier {
   void updateOpenVoice(bool check) {
     _enableVoice = check;
     if (check) {
-      for (var e in _listVoiceBank) {
-        e.enableVoice = true;
-      }
+      _listBank = List.generate(
+        _listBank.length,
+        (index) => BankSelection(bank: _listBank[index].bank, value: true),
+      ).toList();
     } else {
-      for (var e in _listVoiceBank) {
-        e.enableVoice = false;
-      }
+      _listBank = List.generate(
+        _listBank.length,
+        (index) => BankSelection(bank: _listBank[index].bank, value: false),
+      ).toList();
     }
     notifyListeners();
   }

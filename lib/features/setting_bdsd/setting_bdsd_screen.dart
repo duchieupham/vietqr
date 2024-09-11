@@ -33,6 +33,7 @@ class SettingBDSD extends StatefulWidget {
 class _SettingBDSDState extends State<SettingBDSD> {
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
 
+
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
     String userId = SharePrefUtils.getProfile().userId;
@@ -155,9 +156,9 @@ class _SettingBDSDState extends State<SettingBDSD> {
                           paramEnable['bankIds'] = provider.getListId();
                           paramEnable['userId'] =
                               SharePrefUtils.getProfile().userId;
-                          for (var e in provider.listVoiceBank) {
-                            e.enableVoice = value;
-                          }
+                          // for (var e in provider.listVoiceBank) {
+                          //   e.enableVoice = value;
+                          // }
                           _enableVoiceSetting(paramEnable, provider);
                         },
                       ),
@@ -205,7 +206,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                     ),
                   ],
                 ),
-                ...provider.listVoiceBank
+                ...provider.listBank
                     .asMap()
                     .map(
                       (index, e) => MapEntry(e, _itemBank(e, index, provider)),
@@ -271,7 +272,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
   }
 
   Widget _itemBank(
-      BankAccountDTO dto, int index, SettingBDSDProvider settingProvider) {
+      BankSelection dto, int index, SettingBDSDProvider settingProvider) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -287,7 +288,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(width: 0.5, color: Colors.grey),
                   image: DecorationImage(
-                    image: ImageUtils.instance.getImageNetWork(dto!.imgId),
+                    image: ImageUtils.instance.getImageNetWork(dto.bank!.imgId),
                   ),
                 ),
                 // Placeholder for bank logo
@@ -298,10 +299,10 @@ class _SettingBDSDState extends State<SettingBDSD> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(dto!.bankAccount,
+                    Text(dto.bank!.bankAccount,
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold)),
-                    Text(dto!.userBankName,
+                    Text(dto.bank!.userBankName,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 12)),
                   ],
@@ -311,7 +312,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
           ),
           CupertinoSwitch(
             activeColor: AppColor.BLUE_TEXT,
-            value: dto.enableVoice!,
+            value: dto.value!,
             onChanged: (value) {
               settingProvider.selectValue(value, index);
               Map<String, dynamic> paramEnable = {};
