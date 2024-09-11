@@ -36,16 +36,9 @@ class _SettingBDSDState extends State<SettingBDSD> {
 
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
-    String userId = SharePrefUtils.getProfile().userId;
     try {
       bool enableStatus = await accRepository.enableVoiceSetting(param);
       if (enableStatus) {
-        final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount != null) {
-          if (settingAccount.userId.isNotEmpty) {
-            await SharePrefUtils.saveAccountSetting(settingAccount);
-          }
-        }
         List<String> listBanks = provider.getListId();
         String stringBanks = listBanks.join(',');
         await SharePrefUtils.saveListEnableVoiceBanks(stringBanks);

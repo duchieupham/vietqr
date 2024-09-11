@@ -24,12 +24,12 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   initData(List<BankAccountDTO> list) async {
     _enableVoice =
-        _listVoiceBank.every((element) => element.enableVoice == true);
+        list.every((element) => element.enableVoice == true);
 
     final stringBanks = SharePrefUtils.getListEnableVoiceBank();
     if (stringBanks != null) {
       final listBanks = jsonDecode(stringBanks).split(',');
-      if (listBanks.isNotEmpty) {
+      if (listBanks.isNotEmpty && listBanks.first.isNotEmpty) {
         _listBank = List.generate(
           list.length,
           (index) => BankSelection(
