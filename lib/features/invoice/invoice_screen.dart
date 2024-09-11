@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,8 +10,11 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/invoice/states/invoice_states.dart';
+import 'package:vierqr/features/invoice/widgets/bottom_payment.dart';
 import 'package:vierqr/features/invoice/widgets/popup_filter_widget.dart';
 import 'package:vierqr/features/invoice/widgets/popup_invoice_widget.dart';
+import 'package:vierqr/layouts/button/button.dart';
+import 'package:vierqr/models/invoice_fee_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
@@ -50,7 +52,7 @@ class __InvoiceState extends State<_Invoice> {
   late InvoiceProvider _provider;
   String? selectBankId;
   MetaDataDTO? metadata;
-  ScrollController? scrollController;
+  late ScrollController scrollController;
   // bool _isPay = false;
 
   initData({bool isRefresh = false}) {
@@ -64,6 +66,22 @@ class __InvoiceState extends State<_Invoice> {
         page: 1));
   }
 
+  List<InvoiceFeeDTO> listInvoice = [];
+
+  List<String> getListId() {
+    Set<String> setId = <String>{};
+    if (listInvoice.isEmpty) {
+      return setId.toList();
+    }
+    final list =
+        listInvoice.where((element) => element.isSelect == true).toList();
+    for (InvoiceFeeDTO selection in list) {
+      setId.add(selection.invoiceId);
+    }
+
+    return setId.toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -73,23 +91,23 @@ class __InvoiceState extends State<_Invoice> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
-    scrollController = ScrollController();
-    scrollController!.addListener(() async {
-      if (scrollController!.position.pixels ==
-          scrollController!.position.maxScrollExtent) {
-        int totalPage = (metadata!.total! / 20).ceil();
-        if (totalPage > metadata!.page!) {
-          _bloc.add(LoadMoreInvoice(
-              status: _provider.invoiceStatus?.id,
-              bankId: _provider.selectBank?.id ?? '',
-              time: _provider.invoiceMonth != null
-                  ? DateFormat('yyyy-MM').format(_provider.invoiceMonth!)
-                  : '',
-              filterBy: 1,
-              page: 1));
+    scrollController = ScrollController()
+      ..addListener(() async {
+        if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent) {
+          int totalPage = (metadata!.total! / 20).ceil();
+          if (totalPage > metadata!.page!) {
+            _bloc.add(LoadMoreInvoice(
+                status: _provider.invoiceStatus?.id,
+                bankId: _provider.selectBank?.id ?? '',
+                time: _provider.invoiceMonth != null
+                    ? DateFormat('yyyy-MM').format(_provider.invoiceMonth!)
+                    : '',
+                filterBy: 1,
+                page: 1));
+          }
         }
-      }
-    });
+      });
   }
 
   void _openUrl(String invoiceId) async {
@@ -102,9 +120,8 @@ class __InvoiceState extends State<_Invoice> {
     }
   }
 
-  void _onQrCreate(InvoiceStates state, int index) async {
-    InvoiceDetailDTO? data =
-        await _bloc.getDetail(state.listInvoice![index].invoiceId!);
+  void _onQrCreate(InvoiceFeeDTO dto) async {
+    InvoiceDetailDTO? data = await _bloc.getDetail(dto.invoiceId!);
 
     if (data != null) {
       await showCupertinoModalPopup(
@@ -161,7 +178,7 @@ class __InvoiceState extends State<_Invoice> {
       builder: (context) => PopupFilterWidget(
           bloc: _bloc,
           bank: _provider.selectBank,
-          status: _provider.selectedStatus!,
+          status: _provider.selectedStatus,
           bankType: _provider.selectBankType!,
           isMonthSelect: _provider.isMonthSelect!,
           invoiceMonth: _provider.invoiceMonth ?? DateTime.now()),
@@ -174,6 +191,7 @@ class __InvoiceState extends State<_Invoice> {
       listener: (context, state) {
         if (state.status == BlocStatus.SUCCESS) {
           metadata = state.metaDataDTO;
+          listInvoice = state.listInvoice ?? [];
         }
       },
       builder: (context, state) {
@@ -182,55 +200,57 @@ class __InvoiceState extends State<_Invoice> {
             return Scaffold(
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: true,
-              body: CustomScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                slivers: [
-                  SliverAppBar(
-                    pinned: false,
-                    leadingWidth: 100,
-                    leading: InkWell(
-                      onTap: () {
-                        provider.reset();
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: const Row(
-                          children: [
-                            Icon(
-                              Icons.keyboard_arrow_left,
-                              color: Colors.black,
-                              size: 25,
-                            ),
-                            SizedBox(width: 2),
-                            Text(
-                              "Trở về",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 14),
-                            )
-                          ],
+              appBar: AppBar(
+                leadingWidth: 100,
+                leading: InkWell(
+                  onTap: () {
+                    provider.reset();
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: const Row(
+                      children: [
+                        Icon(
+                          Icons.keyboard_arrow_left,
+                          color: Colors.black,
+                          size: 25,
                         ),
-                      ),
+                        SizedBox(width: 2),
+                        Text(
+                          "Trở về",
+                          style: TextStyle(color: Colors.black, fontSize: 14),
+                        )
+                      ],
                     ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Image.asset(
-                          AppImages.icLogoVietQr,
-                          width: 95,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      )
-                    ],
                   ),
-                  SliverList(
-                    delegate: SliverChildListDelegate(<Widget>[
-                      const SizedBox(height: 30),
-                      _invoiceSection(provider, state),
-                      // const SizedBox(height: 15),
-                      _buildListInvoice(state, provider),
-                      loadMoreIcon(state)
-                    ]),
+                ),
+                actions: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Image.asset(
+                      AppImages.icLogoVietQr,
+                      width: 95,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  )
+                ],
+              ),
+              body: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  _invoiceSection(provider, state),
+                  const SizedBox(height: 15),
+                  _buildListInvoice(state, provider),
+                  BottomPayment(
+                    provider: provider,
+                    selectd: getListId().length,
+                    amount: getListId().isNotEmpty
+                        ? listInvoice
+                            .where((element) => element.isSelect)
+                            .map((e) => e.totalAmount)
+                            .reduce((a, b) => a + b)
+                        : 0,
                   )
                 ],
               ),
@@ -342,15 +362,15 @@ class __InvoiceState extends State<_Invoice> {
               provider.invoiceMonth != null
                   ? Text(
                       'Tháng ${provider.invoiceMonth?.month}/${provider.invoiceMonth?.year}',
-                      style:
-                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     )
                   : const SizedBox.shrink(),
               provider.selectBank != null
                   ? Text(
                       'TK ${provider.selectBank?.bankShortName} - ${provider.selectBank?.bankAccount}',
-                      style:
-                          const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     )
                   : const SizedBox.shrink(),
             ],
@@ -378,153 +398,177 @@ class __InvoiceState extends State<_Invoice> {
   }
 
   Widget _buildListInvoice(InvoiceStates state, InvoiceProvider provider) {
-    switch (state.status) {
-      case BlocStatus.LOADING:
-        return _buildLoading();
-      case BlocStatus.ERROR:
-        return const SizedBox.shrink();
-      case BlocStatus.NONE:
-        return Container(
-          padding: const EdgeInsets.only(top: 250),
-          // height: MediaQuery.of(context).size.height,
-          child: const Center(
-            child: Text('Chưa có hóa đơn nào'),
-          ),
-        );
-      default:
-        break;
-    }
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
-      height: MediaQuery.of(context).size.height * 0.78,
-      child: ListView.separated(
-        physics: const AlwaysScrollableScrollPhysics(),
+    return Expanded(
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
         controller: scrollController,
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: state.listInvoice!.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,
-                  arguments: {'id': state.listInvoice?[index].invoiceId});
-            },
-            child: Container(
-              height: 150,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: AppColor.GREY_DADADA, width: 0.5)),
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    width: double.infinity,
-                    padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          if (state.status == BlocStatus.ERROR)
+            const SizedBox.shrink()
+          else if (state.status == BlocStatus.LOADING)
+            ...List.generate(4, (index) => _buildLoading())
+          else if (listInvoice.isEmpty)
+            Container(
+              padding: const EdgeInsets.only(top: 250),
+              // height: MediaQuery.of(context).size.height,
+              child: const Center(
+                child: Text('Chưa có hóa đơn nào'),
+              ),
+            )
+          else
+            ...listInvoice.map(
+              (e) => InkWell(
+                onTap: () {
+                  Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,
+                      arguments: {'id': e.invoiceId});
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  height: 150,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border:
+                          Border.all(color: AppColor.GREY_DADADA, width: 0.5)),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 100,
+                        width: double.infinity,
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: 260,
-                              child: Text(
-                                '${state.listInvoice?[index].invoiceName}',
-                                style: const TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              '${state.listInvoice?[index].bankShortName} - ${state.listInvoice?[index].bankAccount}',
-                              style: const TextStyle(fontSize: 15),
-                            ),
-                            if (state.listInvoice![index].fileAttachmentId !=
-                                '')
-                              GestureDetector(
-                                onTap: () => _openUrl(
-                                    state.listInvoice![index].invoiceId!),
-                                child: const Text(
-                                  'Xem tệp',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: AppColor.BLUE_TEXT,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: AppColor.BLUE_TEXT,
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 15, 0, 15),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: 260,
+                                    child: Text(
+                                      e.invoiceName,
+                                      style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
+                                  Text(
+                                    '${e.bankShortName} - ${e.bankAccount}',
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                  if (e.fileAttachmentId != '')
+                                    GestureDetector(
+                                      onTap: () => _openUrl(e.invoiceId),
+                                      child: const Text(
+                                        'Xem tệp',
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: AppColor.BLUE_TEXT,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: AppColor.BLUE_TEXT,
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
+                            ),
+                            if (provider.selectedStatus == 0)
+                              Checkbox(
+                                value: e.isSelect,
+                                onChanged: (value) {
+                                  if (value != null) {
+                                    int index = listInvoice.indexWhere(
+                                        (element) =>
+                                            element.invoiceId == e.invoiceId);
+                                    InvoiceFeeDTO invoice = e;
+                                    invoice.selected(value);
+
+                                    setState(() {
+                                      listInvoice[index] = invoice;
+                                    });
+                                  }
+                                },
+                              )
+                            else
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(right: 15, top: 20),
+                                child: Image.asset(
+                                  'assets/images/ic-arrow-right-blue.png',
+                                  width: 15,
+                                ),
+                              )
                           ],
                         ),
-                        Image.asset(
-                          'assets/images/ic-arrow-right-blue.png',
-                          width: 15,
-                        )
-                      ],
-                    ),
-                  ),
-                  const MySeparator(color: AppColor.GREY_DADADA),
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${CurrencyUtils.instance.getCurrencyFormatted(state.listInvoice![index].totalAmount.toString())} VND',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: provider.selectedStatus == 0
-                                    ? AppColor.ORANGE_DARK
-                                    : AppColor.GREEN),
-                          ),
-                          provider.selectedStatus == 0
-                              ? GestureDetector(
-                                  onTap: () {
-                                    _onQrCreate(state, index);
-                                  },
-                                  child: Container(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(10, 4, 10, 4),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          AppColor.BLUE_TEXT.withOpacity(0.2),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Image.asset(
-                                          'assets/images/ic-tb-qr-blue.png',
-                                          width: 15,
-                                          height: 15,
-                                        ),
-                                        const SizedBox(width: 4),
-                                        const Text(
-                                          'QR thanh toán',
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.BLUE_TEXT),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        ],
                       ),
-                    ),
-                  )
-                ],
+                      const MySeparator(color: AppColor.GREY_DADADA),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '${CurrencyUtils.instance.getCurrencyFormatted(e.totalAmount.toString())} VND',
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: provider.selectedStatus == 0
+                                        ? AppColor.ORANGE_DARK
+                                        : AppColor.GREEN),
+                              ),
+                              provider.selectedStatus == 0
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        _onQrCreate(e);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 4, 10, 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColor.BLUE_TEXT
+                                              .withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/ic-tb-qr-blue.png',
+                                              width: 15,
+                                              height: 15,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            const Text(
+                                              'QR thanh toán',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: AppColor.BLUE_TEXT),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
-          );
-        },
+          // loadMoreIcon(state)
+        ],
       ),
     );
   }
@@ -533,9 +577,7 @@ class __InvoiceState extends State<_Invoice> {
     if (state.status == BlocStatus.LOAD_MORE) {
       return const Padding(
         padding: EdgeInsets.all(8.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+        child: CircularProgressIndicator(),
       );
     }
     return const SizedBox.shrink();
@@ -543,65 +585,55 @@ class __InvoiceState extends State<_Invoice> {
 
   Widget _buildLoading() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-      height: MediaQuery.of(context).size.height,
-      child: ListView.separated(
-        physics: const NeverScrollableScrollPhysics(),
-        separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: 4,
-        itemBuilder: (context, index) {
-          return Container(
-            height: 150,
+      margin: const EdgeInsets.only(bottom: 10),
+      height: 150,
+      width: double.infinity,
+      decoration: BoxDecoration(
+          color: AppColor.GREY_DADADA.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(5),
+          border: Border.all(
+              color: AppColor.GREY_DADADA.withOpacity(0.2), width: 0.5)),
+      child: Column(
+        children: [
+          Container(
             width: double.infinity,
-            decoration: BoxDecoration(
-                color: AppColor.GREY_DADADA.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                    color: AppColor.GREY_DADADA.withOpacity(0.2), width: 0.5)),
-            child: Column(
+            padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ShimmerBlock(
-                        width: 200,
-                        height: 35,
-                      ),
-                      SizedBox(height: 10),
-                      ShimmerBlock(
-                        width: 160,
-                        height: 20,
-                      ),
-                    ],
-                  ),
+                ShimmerBlock(
+                  width: 200,
+                  height: 35,
                 ),
-                const MySeparator(color: AppColor.GREY_DADADA),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ShimmerBlock(
-                          width: 90,
-                          height: 30,
-                        ),
-                        ShimmerBlock(
-                          width: 120,
-                          height: 30,
-                          borderRadius: 15,
-                        ),
-                      ],
-                    ),
-                  ),
-                )
+                SizedBox(height: 10),
+                ShimmerBlock(
+                  width: 160,
+                  height: 20,
+                ),
               ],
             ),
-          );
-        },
+          ),
+          const MySeparator(color: AppColor.GREY_DADADA),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ShimmerBlock(
+                    width: 90,
+                    height: 30,
+                  ),
+                  ShimmerBlock(
+                    width: 120,
+                    height: 30,
+                    borderRadius: 15,
+                  ),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

@@ -27,7 +27,7 @@ class InvoiceProvider extends ChangeNotifier {
 
   InvoiceStatus? invoiceStatus =
       const InvoiceStatus(id: 0, name: 'Chưa thanh toán');
-  int? selectedStatus = 0;
+  int selectedStatus = 0;
 
   void selectMonth(DateTime? month, bool? monthSelect) {
     invoiceMonth = month;
