@@ -102,14 +102,19 @@ class _BankCardDetailNewStateState extends State<BankCardDetailNewScreen> {
     return ChangeNotifierProvider(
       create: (context) => AccountBankDetailProvider(),
       child: Scaffold(
-        floatingActionButton: ScrollToTopButton(
-          onPressed: () {
-            scrollController.animateTo(0.0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut);
+        floatingActionButton: ValueListenableBuilder<bool>(
+          valueListenable: scrollToTopNotifier,
+          builder: (context, isShow, child) {
+            return ScrollToTopButton(
+              onPressed: () {
+                scrollController.animateTo(0.0,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut);
+              },
+              isShow: isShow,
+              bottom: 70,
+            );
           },
-          notifier: scrollToTopNotifier,
-          bottom: 70,
         ),
         body: Stack(
           fit: StackFit.expand,

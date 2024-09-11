@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/format_date.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 
 class ServiceVietqrWidget extends StatefulWidget {
-  final BankAccountDTO bankDTto;
-  const ServiceVietqrWidget({super.key, required this.bankDTto});
+  final BankAccountDTO bankDTO;
+  const ServiceVietqrWidget({super.key, required this.bankDTO});
 
   @override
   State<ServiceVietqrWidget> createState() => _ServiceVietqrWidgetState();
 }
 
-class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
+class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget>
+    with DialogHelper {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,8 +43,10 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const XImage(
-                    imagePath: 'assets/images/ic-diamond.png',
+                  XImage(
+                    imagePath: widget.bankDTO.mmsActive
+                        ? 'assets/images/ic-diamond-pro.png'
+                        : 'assets/images/ic-diamond.png',
                     width: 40,
                   ),
                   const SizedBox(width: 8),
@@ -48,24 +55,45 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                         GradientText(
-                          'VietQR ${widget.bankDTto.mmsActive ? 'Pro' : 'Plus'} ',
+                        GradientText(
+                          'VietQR ${widget.bankDTO.mmsActive ? 'Pro' : 'Plus'} ',
                           style: const TextStyle(fontSize: 12),
-                          gradient: const LinearGradient(colors: [
-                            Color(0xFF00C6FF),
-                            Color(0xFF0072FF),
-                          ]),
+                          gradient: widget.bankDTO.mmsActive
+                              ? VietQRTheme.gradientColor.vietQrPro
+                              : VietQRTheme.gradientColor.brightBlueLinear,
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          widget.bankDTto.isValidService!
-                              ? 'Kích hoạt đến ${timestampToDate(widget.bankDTto.validFeeTo!)}'
-                              : "Chưa kích hoạt",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 10,
-                          ),
-                        ),
+                        if (widget.bankDTO.isValidService)
+                          if (widget.bankDTO.validFeeTo != 0 &&
+                              inclusiveDays(widget.bankDTO.validFeeTo) <= 7)
+                            RichText(
+                              text: TextSpan(
+                                  text: 'Còn ',
+                                  style: const TextStyle(
+                                      fontSize: 10, color: AppColor.BLACK),
+                                  children: [
+                                    TextSpan(
+                                        text:
+                                            '${inclusiveDays(widget.bankDTO.validFeeTo)} ngày',
+                                        style: const TextStyle(
+                                            fontSize: 10,
+                                            color: AppColor.RED_TEXT)),
+                                    const TextSpan(
+                                        text: ' hết hạn',
+                                        style: TextStyle(
+                                            fontSize: 10,
+                                            color: AppColor.BLACK)),
+                                  ]),
+                            )
+                          else
+                            Text(
+                                'Kích hoạt đến ${timestampToDate(widget.bankDTO.validFeeTo)}',
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 10,
+                                ))
+                        else
+                          const Text('Chưa kích hoạt'),
                       ],
                     ),
                   ),
@@ -78,7 +106,17 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
             flex: 2,
             child: GestureDetector(
               onTap: () {
-                print('gia han dich vu vietqr');
+                Provider.of<MaintainChargeProvider>(context, listen: false)
+                    .selectedBank(widget.bankDTO.bankAccount,
+                        widget.bankDTO.bankShortName);
+                showDialogActiveKey(
+                  context,
+                  bankId: widget.bankDTO.id,
+                  bankCode: widget.bankDTO.bankCode,
+                  bankName: widget.bankDTO.bankName,
+                  bankAccount: widget.bankDTO.bankAccount,
+                  userBankName: widget.bankDTO.userBankName,
+                );
               },
               child: Container(
                 height: 128,
@@ -95,28 +133,28 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                   ],
                 ),
                 padding: const EdgeInsets.all(8),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GradientText(
-                          'Gia hạn\ndịch vụ\nVietQR',
-                          style: TextStyle(fontSize: 12),
-                          gradient: LinearGradient(colors: [
+                          '${widget.bankDTO.isValidService ? 'Gia hạn' : 'Đăng ký'}\ndịch vụ\nVietQR',
+                          style: const TextStyle(fontSize: 12),
+                          gradient: const LinearGradient(colors: [
                             Color(0xFF00C6FF),
                             Color(0xFF0072FF),
                           ]),
                         ),
-                        XImage(
+                        const XImage(
                           imagePath: 'assets/images/ic-infinity.png',
                           width: 40,
                         ),
                       ],
                     ),
-                    SizedBox(height: 4),
-                    Text(
+                    const SizedBox(height: 4),
+                    const Text(
                       'Trải nghiệm các tính năng không giới hạn.',
                       style: TextStyle(
                         color: Colors.black,
@@ -124,8 +162,8 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget> {
                       ),
                     ),
                     // Spacer(),
-                    SizedBox(height: 8),
-                    XImage(
+                    const SizedBox(height: 8),
+                    const XImage(
                       imagePath: 'assets/images/ic-arrow-boder-blue.png',
                       width: 20,
                     ),

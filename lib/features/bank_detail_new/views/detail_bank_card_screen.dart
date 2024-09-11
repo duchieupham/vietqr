@@ -353,7 +353,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                               const SizedBox(height: 20),
                               // if(qrGeneratedDT)
                               ServiceVietqrWidget(
-                                bankDTto: widget.dto,
+                                bankDTO: widget.dto,
                               ),
                               const SizedBox(height: 20),
                               AnimationGraphWidget(

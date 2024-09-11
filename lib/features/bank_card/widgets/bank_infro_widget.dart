@@ -78,19 +78,33 @@ class _BankInfroWidgetState extends State<BankInfroWidget> with DialogHelper {
                             fontSize: 14, color: AppColor.WHITE),
                       ),
                     ),
-                    if (widget.dto.validFeeTo! != 0 &&
-                        inclusiveDays(widget.dto.validFeeTo!) <= 7)
-                      Text(
-                        "Đến ${timestampToDate(widget.dto.validFeeTo!)}",
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColor.RED_TEXT),
+                    if (widget.dto.validFeeTo != 0 &&
+                        inclusiveDays(widget.dto.validFeeTo) <= 7)
+                      Row(
+                        children: [
+                          const Text(
+                            "Còn ",
+                            style:
+                                TextStyle(fontSize: 12, color: AppColor.BLACK),
+                          ),
+                          Text(
+                            '${inclusiveDays(widget.dto.validFeeTo).toString()} ngày',
+                            style: const TextStyle(
+                                fontSize: 12, color: AppColor.RED_TEXT),
+                          ),
+                          const Text(
+                            " hết hạn",
+                            style:
+                                TextStyle(fontSize: 12, color: AppColor.BLACK),
+                          ),
+                        ],
                       )
                   ],
                 ),
               ),
-              if (inclusiveDays(widget.dto.validFeeTo!) > 7)
+              if (inclusiveDays(widget.dto.validFeeTo) > 7)
                 Text(
-                  'Kích hoạt đến ${timestampToDate(widget.dto.validFeeTo!)}',
+                  'Kích hoạt đến ${timestampToDate(widget.dto.validFeeTo)}',
                   style: const TextStyle(fontSize: 12, color: AppColor.BLACK),
                 )
               else

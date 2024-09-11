@@ -304,15 +304,24 @@ class _DashBoardScreen extends State<DashBoardScreen>
         return Scaffold(
           backgroundColor: AppColor.WHITE,
           resizeToAvoidBottomInset: false,
-          floatingActionButton: ScrollToTopButton(
-              bottom: 80,
-              onPressed: () {
-                scrollController.animateTo(0.0,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut);
-                scrollNotifier.value = true;
-              },
-              notifier: scrollToTopNotifier),
+          floatingActionButton: ValueListenableBuilder<bool>(
+            valueListenable: scrollToTopNotifier,
+            builder: (context, isShow, child) {
+              if (!isShow) {
+                return const SizedBox.shrink();
+              }
+              return ScrollToTopButton(
+                bottom: 80,
+                onPressed: () {
+                  scrollController.animateTo(0.0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut);
+                  scrollNotifier.value = true;
+                },
+                isShow: isShow,
+              );
+            },
+          ),
           body: Stack(
             children: [
               if (provider.pageSelected != 3 && provider.pageSelected != 0)
@@ -406,6 +415,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
+              //Thông báo gia hạn dịch vụ
               const RequestActiveKeyNoti(),
               ValueListenableBuilder<bool>(
                 valueListenable: scrollNotifier,
@@ -919,14 +929,10 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   }
 
   void onTapPage(int index) async {
-    // if (index.pageType == PageType.STORE) {
-    //   await DialogWidget.instance.openMsgDialog(
-    //     title: 'Thông báo',
-    //     msg: 'Chúng tôi sẽ ra mắt tính năng cửa hàng trong thời gian sớm.',
-    //   );
-    //   return;
-    // }
-
+    scrollNotifier.value = true;
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0.0);
+    }
     if (index.pageType != PageType.SCAN_QR) {
       _animatedToPage(index);
     } else {
@@ -963,10 +969,6 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
         _pageController.jumpToPage(index);
       } else {
         _pageController.jumpToPage(index - 1);
-      }
-
-      if (index.pageType == PageType.CARD_QR) {
-        eventBus.fire(CheckSyncContact());
       }
     } catch (e) {
       _pageController = PageController(

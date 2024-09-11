@@ -284,16 +284,21 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       builder: (context, state) {
         return SafeArea(
           child: Scaffold(
-            floatingActionButton: ScrollToTopButton(
-              onPressed: _scrollToTop,
-              notifier: _notifier,
-              bottom: 90,
+            floatingActionButton: ValueListenableBuilder<bool>(
+              valueListenable: _notifier,
+              builder: (context, isShow, child) {
+                return ScrollToTopButton(
+                  onPressed: _scrollToTop,
+                  isShow: isShow,
+                  bottom: 90,
+                );
+              },
             ),
             backgroundColor: AppColor.WHITE,
             body: CustomScrollView(
               shrinkWrap: true,
               controller: _scrollController,
-              physics: const BouncingScrollPhysics(),
+              // physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
                   backgroundColor: AppColor.WHITE,
