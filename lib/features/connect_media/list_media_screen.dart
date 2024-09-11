@@ -466,7 +466,7 @@ class _ListMediaScreenState extends State<ListMediaScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        name.isNotEmpty ? name : '',
+                        name.isNotEmpty ? name : '-',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(

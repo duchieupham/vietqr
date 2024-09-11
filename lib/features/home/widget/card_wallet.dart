@@ -54,64 +54,71 @@ class _CardWalletState extends State<CardWallet> {
   Widget _buildInfoWallet() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Số dư: ',
-            style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 13)),
-        Expanded(
-          child: Consumer<AuthenProvider>(
-            builder: (context, state, child) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  ValueListenableBuilder<bool>(
-                    valueListenable: isHide,
-                    builder: (context, value, child) {
-                      if (value) {
-                        return const Text(
-                          '********',
-                          style: TextStyle(fontSize: 16),
-                        );
-                      }
-                      return Text(
-                        '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR',
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
+        Row(
+          children: [
+            const Text('Số dư: ',
+                style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 13)),
+            Consumer<AuthenProvider>(
+              builder: (context, provider, child) {
+                return ValueListenableBuilder<bool>(
+                  valueListenable: isHide,
+                  builder: (context, value, child) {
+                    if (value) {
+                      return const Text(
+                        '********',
+                        style: TextStyle(fontSize: 16),
                       );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     isHide.value = !isHide.value;
-                  //   },
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.only(bottom: 4),
-                  //     child: ValueListenableBuilder<bool>(
-                  //         valueListenable: isHide,
-                  //         builder: (context, value, child) {
-                  //           return XImage(
-                  //             imagePath: value
-                  //                 ? ImageConstant.icHide
-                  //                 : ImageConstant.icUnHide,
-                  //             height: 15,
-                  //           );
-                  //         }),
-                  //   ),
-                  // ),
-                  const Spacer(),
-                  Text(
-                    state.introduceDTO?.point ?? '0',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  const XImage(
-                    imagePath: ImageConstant.icPoint,
-                    height: 18,
-                  )
-                ],
-              );
-            },
-          ),
+                    }
+                    return Text(
+                      '${CurrencyUtils.instance.getCurrencyFormatted(provider.introduceDTO?.amount ?? '0')} VQR',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    );
+                  },
+                );
+              },
+            )
+          ],
+        ),
+        Consumer<AuthenProvider>(
+          builder: (context, state, child) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // GestureDetector(
+                //   onTap: () {
+                //     isHide.value = !isHide.value;
+                //   },
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(bottom: 4),
+                //     child: ValueListenableBuilder<bool>(
+                //         valueListenable: isHide,
+                //         builder: (context, value, child) {
+                //           return XImage(
+                //             imagePath: value
+                //                 ? ImageConstant.icHide
+                //                 : ImageConstant.icUnHide,
+                //             height: 15,
+                //           );
+                //         }),
+                //   ),
+                // ),
+
+                Text(
+                  state.introduceDTO?.point ?? '0',
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                const XImage(
+                  imagePath: ImageConstant.icPoint,
+                  height: 18,
+                )
+              ],
+            );
+          },
         ),
       ],
     );

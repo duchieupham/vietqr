@@ -114,7 +114,7 @@ class InfoMediaDTO {
       id: json['id'],
       chatId: json[typeJson],
       userId: json['userId'],
-      name: json['name'],
+      name: json['name'] ?? '-',
       banks: json['banks'] != null
           ? List<BankMedia>.from(
               json['banks'].map((bank) => BankMedia.fromJson(bank, type)))

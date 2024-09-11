@@ -464,36 +464,37 @@ class __InvoiceState extends State<_Invoice> {
                                 style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold),
                               ),
-                              Row(
-                                children: [
-                                  const Text(
-                                    'Tất cả',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Checkbox(
-                                    value: i.invoices
-                                        .every((element) => element.isSelect),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        List<InvoiceFeeDTO> list = [];
-                                        for (var item in i.invoices) {
-                                          InvoiceFeeDTO dto = item;
-                                          dto.selected(value);
-                                          list.add(dto);
+                              if (provider.selectedStatus == 0)
+                                Row(
+                                  children: [
+                                    const Text(
+                                      'Tất cả',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Checkbox(
+                                      value: i.invoices
+                                          .every((element) => element.isSelect),
+                                      onChanged: (value) {
+                                        if (value != null) {
+                                          List<InvoiceFeeDTO> list = [];
+                                          for (var item in i.invoices) {
+                                            InvoiceFeeDTO dto = item;
+                                            dto.selected(value);
+                                            list.add(dto);
+                                          }
+                                          setState(() {
+                                            invoiceGroups[index] = InvoiceGroup(
+                                                monthYear: i.monthYear,
+                                                invoices: list);
+                                          });
+                                          print('List: ${getListId().length}');
                                         }
-                                        setState(() {
-                                          invoiceGroups[index] = InvoiceGroup(
-                                              monthYear: i.monthYear,
-                                              invoices: list);
-                                        });
-                                        print('List: ${getListId().length}');
-                                      }
-                                    },
-                                  )
-                                ],
-                              ),
+                                      },
+                                    )
+                                  ],
+                                ),
                             ],
                           ),
                           const SizedBox(height: 8),

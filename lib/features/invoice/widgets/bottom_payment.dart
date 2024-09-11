@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/layouts/button/button.dart';
@@ -52,7 +53,16 @@ class BottomPayment extends StatelessWidget {
               borderRadius: 100,
               height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              onPressed: () {},
+              onPressed: () {
+                Fluttertoast.showToast(
+                  msg: 'Đang cập nhật tính năng',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  backgroundColor: Theme.of(context).cardColor,
+                  textColor: Theme.of(context).hintColor,
+                  fontSize: 15,
+                );
+              },
               isDisabled: amount == 0,
               child: Center(
                   child: Text(

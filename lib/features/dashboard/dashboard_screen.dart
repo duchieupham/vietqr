@@ -247,7 +247,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
       // listenNewNotification();
       onUpdateApp();
       onRenderUI();
-      SocketService.instance.init();
     });
 
     _subscription = eventBus.on<ChangeBottomBarEvent>().listen((data) {
