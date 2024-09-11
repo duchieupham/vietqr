@@ -506,7 +506,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   ///dialog bên dưới sẽ hiện khi mất kết nối hoặc đã kết nối trở lại
   Positioned renderNetworkDialog() {
     return Positioned(
-      bottom: 24,
+      bottom: 85,
       left: 20,
       right: 20,
       child: BlocBuilder<NetworkBloc, NetworkState>(
