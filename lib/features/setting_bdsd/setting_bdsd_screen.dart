@@ -33,15 +33,22 @@ class SettingBDSD extends StatefulWidget {
 class _SettingBDSDState extends State<SettingBDSD> {
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
 
-
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
     try {
       bool enableStatus = await accRepository.enableVoiceSetting(param);
       if (enableStatus) {
-        List<String> listBanks = provider.getListId();
+        List<String> listBanks = param['bankIds'];
         String stringBanks = listBanks.join(',');
         await SharePrefUtils.saveListEnableVoiceBanks(stringBanks);
+        for (var string in listBanks) {
+          widget.listIsOwnerBank
+              .where((e) => e.id == string)
+              .first
+              .copyWith(enableVoice: true);
+        }
+        
+        await SharePrefUtils.saveListOwnerBanks(widget.listIsOwnerBank);
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');

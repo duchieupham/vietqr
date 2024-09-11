@@ -249,7 +249,7 @@ class _BankStatisticState extends State<BankStatistic>
                   ),
                 ],
                 const SizedBox(height: 20),
-                _voiceWidget(),
+                // _voiceWidget(),
                 if (state.listBanks.isNotEmpty && bankSelect != null) ...[
                   LatestTransWidget(
                     onTap: () {

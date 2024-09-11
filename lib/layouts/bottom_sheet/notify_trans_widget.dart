@@ -86,17 +86,18 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
     countdownProvider = CountdownProvider(30);
 
     //check tài khoản có bật đọc voice không
-    final stringBanks = SharePrefUtils.getListEnableVoiceBank();
-    if (stringBanks != null) {
-      final listBanks = jsonDecode(stringBanks).split(',');
-      if (listBanks.isNotEmpty) {
-        bool bankId = listBanks.contains(widget.dto.bankId);
+    // final stringBanks = SharePrefUtils.getListEnableVoiceBank();
+    // if (stringBanks != null) {
+    //   final listBanks = jsonDecode(stringBanks).split(',');
+    //   if (listBanks.isNotEmpty) {
+    //     bool bankId = listBanks.contains(widget.dto.bankId);
 
-        if (bankId) {
-          _speak();
-        }
-      }
-    }
+    //     if (bankId) {
+    //       _speak();
+    //     }
+    //   }
+    // }
+    _speak();
 
     countdownProvider.countDown(callback: () {
       if (!mounted) return;

@@ -141,8 +141,71 @@ class BankAccountDTO {
     data['activeKey'] = activeKey;
     data['mmsActive'] = mmsActive;
     data['enableVoice'] = enableVoice;
+    data['id'] = id;
 
     return data;
+  }
+
+  BankAccountDTO copyWith({
+    String? id,
+    String? bankAccount,
+    String? userBankName,
+    String? bankCode,
+    String? bankShortName,
+    String? bankName,
+    String? imgId,
+    int? type,
+    bool? enableVoice,
+    String? userId,
+    bool? isAuthenticated,
+    bool? isOwner,
+    int? bankTypeStatus,
+    String? qrCode,
+    String? caiValue,
+    String? bankTypeId,
+    String? phoneAuthenticated,
+    String? nationalId,
+    String? ewalletToken,
+    int? unlinkedType,
+    bool? isValidService,
+    int? validFeeFrom,
+    int? validFeeTo,
+    int? transCount,
+    String? keyActive,
+    int? timeActiveKey,
+    bool? activeKey,
+    bool? mmsActive,
+  }) {
+    return BankAccountDTO(
+      id: id ?? this.id,
+      bankAccount: bankAccount ?? this.bankAccount,
+      userBankName: userBankName ?? this.userBankName,
+      bankCode: bankCode ?? this.bankCode,
+      bankShortName: bankShortName ?? this.bankShortName,
+      bankName: bankName ?? this.bankName,
+      imgId: imgId ?? this.imgId,
+      type: type ?? this.type,
+      enableVoice: enableVoice ?? this.enableVoice,
+      userId: userId ?? this.userId,
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      isOwner: isOwner ?? this.isOwner,
+      bankTypeStatus: bankTypeStatus ?? this.bankTypeStatus,
+      qrCode: qrCode ?? this.qrCode,
+      caiValue: caiValue ?? this.caiValue,
+      bankTypeId: bankTypeId ?? this.bankTypeId,
+      phoneAuthenticated: phoneAuthenticated ?? this.phoneAuthenticated,
+      nationalId: nationalId ?? this.nationalId,
+      ewalletToken: ewalletToken ?? this.ewalletToken,
+      unlinkedType: unlinkedType ?? this.unlinkedType,
+      isValidService: isValidService ?? this.isValidService,
+      validFeeFrom: validFeeFrom ?? this.validFeeFrom,
+      validFeeTo: validFeeTo ?? this.validFeeTo,
+      transCount: transCount ?? this.transCount,
+      keyActive: keyActive ?? this.keyActive,
+      timeActiveKey: timeActiveKey ?? this.timeActiveKey,
+      activeKey: activeKey ?? this.activeKey,
+      mmsActive: mmsActive ?? this.mmsActive,
+    );
   }
 
   String get getBankCodeAndName => '$bankCode - $bankAccount';

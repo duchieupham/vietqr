@@ -79,6 +79,14 @@ class _ListBankWidgetState extends State<ListBankWidget>
                 (e) => e.isAuthenticated && e.isOwner,
               )
               .toList());
+          List<String> listBankId = [];
+          for (var e in state.listBanks) {
+            if (e.enableVoice == true) {
+              listBankId.add(e.id);
+            }
+          }
+          String stringBanks = listBankId.join(',');
+          await SharePrefUtils.saveListEnableVoiceBanks(stringBanks);
         }
         if (state.status == BlocStatus.LOADING_PAGE &&
             state.request == BankType.BANK) {
