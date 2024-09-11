@@ -11,6 +11,7 @@ class BankAccountDTO {
   final String bankName;
   final String imgId;
   final int type;
+  bool enableVoice;
   final String userId;
   bool isAuthenticated;
   bool isOwner;
@@ -71,6 +72,7 @@ class BankAccountDTO {
     this.mmsActive = false,
     this.keyActive = '',
     this.timeActiveKey = 0,
+    this.enableVoice = true,
   });
 
   setColor(value) {
@@ -106,24 +108,40 @@ class BankAccountDTO {
       activeKey: json['activeKey'] ?? false,
       mmsActive: json['mmsActive'] ?? false,
       timeActiveKey: json['timeActiveKey'] ?? 1,
+      enableVoice: json['enableVoice'] ?? true,
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['id'] = id;
     data['bankAccount'] = bankAccount;
     data['userBankName'] = userBankName;
     data['bankCode'] = bankCode;
+    data['bankShortName'] = bankShortName;
     data['bankName'] = bankName;
     data['imgId'] = imgId;
     data['type'] = type;
-    data['isOwner'] = isOwner;
-    data['bankShortName'] = bankShortName;
-    data['authenticated'] = isAuthenticated;
     data['userId'] = userId;
+    data['isAuthenticated'] = isAuthenticated;
+    data['isOwner'] = isOwner;
+    data['bankTypeStatus'] = bankTypeStatus;
+    data['qrCode'] = qrCode;
+    data['caiValue'] = caiValue;
+    data['bankTypeId'] = bankTypeId;
+    data['phoneAuthenticated'] = phoneAuthenticated;
+    data['nationalId'] = nationalId;
+    data['ewalletToken'] = ewalletToken;
     data['unlinkedType'] = unlinkedType;
+    data['isValidService'] = isValidService;
+    data['validFeeFrom'] = validFeeFrom;
+    data['validFeeTo'] = validFeeTo;
     data['transCount'] = transCount;
+    data['keyActive'] = keyActive;
+    data['timeActiveKey'] = timeActiveKey;
+    data['activeKey'] = activeKey;
+    data['mmsActive'] = mmsActive;
+    data['enableVoice'] = enableVoice;
+
     return data;
   }
 

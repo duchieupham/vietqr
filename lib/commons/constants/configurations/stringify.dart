@@ -84,7 +84,8 @@ enum SharedPreferenceKey {
   Themes,
   SingleTheme,
   UpdateApp,
-  ListEnableVoiceBank
+  ListEnableVoiceBank,
+  ListOwnerBank,
 }
 
 extension SharedPreferenceKeyExtension on SharedPreferenceKey {
@@ -146,6 +147,8 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
         return 'DYNAMIC_LINKS';
       case SharedPreferenceKey.ListEnableVoiceBank:
         return 'LIST_ENABLE_VOICE_BANK';
+       case SharedPreferenceKey.ListOwnerBank:
+        return 'LIST_OWNER_BANK';
     }
   }
 }

@@ -21,6 +21,8 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
 class ListBankWidget extends StatefulWidget {
   const ListBankWidget({super.key});
@@ -72,6 +74,11 @@ class _ListBankWidgetState extends State<ListBankWidget>
         } else {
           Provider.of<AuthenProvider>(context, listen: false)
               .updateBanks(state.listBanks);
+          await SharePrefUtils.saveListOwnerBanks(state.listBanks
+              .where(
+                (e) => e.isAuthenticated && e.isOwner,
+              )
+              .toList());
         }
         if (state.status == BlocStatus.LOADING_PAGE &&
             state.request == BankType.BANK) {

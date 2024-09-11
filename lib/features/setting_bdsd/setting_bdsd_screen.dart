@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -13,12 +14,15 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/widget/custom_switch_view.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
 class SettingBDSD extends StatefulWidget {
-  const SettingBDSD({super.key});
+  SettingBDSD({super.key, required this.listIsOwnerBank});
+
+  List<BankAccountDTO> listIsOwnerBank;
 
   static String routeName = '/setting_bdsd';
 
@@ -28,23 +32,6 @@ class SettingBDSD extends StatefulWidget {
 
 class _SettingBDSDState extends State<SettingBDSD> {
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
-
-  void _updateVoiceSetting(param) async {
-    String userId = SharePrefUtils.getProfile().userId;
-    try {
-      bool updateStatus = await accRepository.updateVoiceSetting(param);
-      if (updateStatus) {
-        final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount != null) {
-          if (settingAccount.userId.isNotEmpty) {
-            await SharePrefUtils.saveAccountSetting(settingAccount);
-          }
-        }
-      }
-    } catch (e) {
-      LOG.error('Error at _getPointAccount: $e');
-    }
-  }
 
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
@@ -72,9 +59,8 @@ class _SettingBDSDState extends State<SettingBDSD> {
     return Scaffold(
       appBar: const MAppBar(title: 'Cài đặt hệ thống'),
       body: ChangeNotifierProvider(
-        create: (context) => SettingBDSDProvider()
-          ..initData(Provider.of<ConnectMediaProvider>(context, listen: false)
-              .listIsOwnerBank),
+        create: (context) =>
+            SettingBDSDProvider()..initData(widget.listIsOwnerBank),
         child: Consumer<SettingBDSDProvider>(
           builder: (context, provider, child) {
             return ListView(
@@ -165,19 +151,13 @@ class _SettingBDSDState extends State<SettingBDSD> {
                         activeColor: AppColor.BLUE_TEXT,
                         onChanged: (bool value) {
                           provider.updateOpenVoice(value);
-                          Map<String, dynamic> param = {};
-                          param['userId'] = SharePrefUtils.getProfile().userId;
-                          param['value'] = value ? 1 : 0;
-                          param['type'] = 0;
-
                           Map<String, dynamic> paramEnable = {};
                           paramEnable['bankIds'] = provider.getListId();
                           paramEnable['userId'] =
                               SharePrefUtils.getProfile().userId;
                           for (var e in provider.listVoiceBank) {
-                            e.isOn = value;
+                            e.enableVoice = value;
                           }
-                          _updateVoiceSetting(param);
                           _enableVoiceSetting(paramEnable, provider);
                         },
                       ),
@@ -291,7 +271,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
   }
 
   Widget _itemBank(
-      VoiceBank dto, int index, SettingBDSDProvider settingProvider) {
+      BankAccountDTO dto, int index, SettingBDSDProvider settingProvider) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -307,7 +287,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(width: 0.5, color: Colors.grey),
                   image: DecorationImage(
-                    image: ImageUtils.instance.getImageNetWork(dto.bank!.imgId),
+                    image: ImageUtils.instance.getImageNetWork(dto!.imgId),
                   ),
                 ),
                 // Placeholder for bank logo
@@ -318,10 +298,10 @@ class _SettingBDSDState extends State<SettingBDSD> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(dto.bank!.bankAccount,
+                    Text(dto!.bankAccount,
                         style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold)),
-                    Text(dto.bank!.userBankName,
+                    Text(dto!.userBankName,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(fontSize: 12)),
                   ],
@@ -331,7 +311,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
           ),
           CupertinoSwitch(
             activeColor: AppColor.BLUE_TEXT,
-            value: dto.isOn!,
+            value: dto.enableVoice!,
             onChanged: (value) {
               settingProvider.selectValue(value, index);
               Map<String, dynamic> paramEnable = {};

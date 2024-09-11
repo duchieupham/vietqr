@@ -249,8 +249,7 @@ class _BankStatisticState extends State<BankStatistic>
                   ),
                 ],
                 const SizedBox(height: 20),
-
-                // _voiceWidget(),
+                _voiceWidget(),
                 if (state.listBanks.isNotEmpty && bankSelect != null) ...[
                   LatestTransWidget(
                     onTap: () {
@@ -288,9 +287,19 @@ class _BankStatisticState extends State<BankStatistic>
 
   Widget _voiceWidget() {
     return InkWell(
-      onTap: () {
-        NavigatorUtils.navigatePage(context, const SettingBDSD(),
-            routeName: SettingBDSD.routeName);
+      onTap: () async {
+        await SharePrefUtils.getOwnerBanks().then(
+          (value) {
+            if (value != null) {
+              NavigatorUtils.navigatePage(
+                  context,
+                  SettingBDSD(
+                    listIsOwnerBank: value,
+                  ),
+                  routeName: SettingBDSD.routeName);
+            }
+          },
+        );
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),

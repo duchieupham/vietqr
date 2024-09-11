@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:provider/provider.dart';
@@ -82,7 +84,20 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
     SocketService.instance.updateConnect(true);
     authProvider = Provider.of<AuthenProvider>(context, listen: false);
     countdownProvider = CountdownProvider(30);
-    _speak();
+
+    //check tài khoản có bật đọc voice không
+    final stringBanks = SharePrefUtils.getListEnableVoiceBank();
+    if (stringBanks != null) {
+      final listBanks = jsonDecode(stringBanks).split(',');
+      if (listBanks.isNotEmpty) {
+        bool bankId = listBanks.contains(widget.dto.bankId);
+
+        if (bankId) {
+          _speak();
+        }
+      }
+    }
+
     countdownProvider.countDown(callback: () {
       if (!mounted) return;
       Navigator.pop(context);

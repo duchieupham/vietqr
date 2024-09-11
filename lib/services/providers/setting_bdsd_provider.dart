@@ -9,11 +9,10 @@ import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 class SettingBDSDProvider extends ChangeNotifier {
   bool _enableVoice = false;
 
-  List<BankSelection> _listBank = [];
-  List<BankSelection> get listBank => _listBank;
+  // List<BankSelection> get listBank => _listBank;
 
-  List<VoiceBank> _listVoiceBank = [];
-  List<VoiceBank> get listVoiceBank => _listVoiceBank;
+  List<BankAccountDTO> _listVoiceBank = [];
+  List<BankAccountDTO> get listVoiceBank => _listVoiceBank;
 
   bool get enableVoice => _enableVoice;
 
@@ -22,30 +21,17 @@ class SettingBDSDProvider extends ChangeNotifier {
   List<String> get bankIds => _bankIds;
 
   initData(List<BankAccountDTO> list) async {
-    SettingAccountDTO settingAccountDTO = SharePrefUtils.getAccountSetting();
-    _enableVoice = settingAccountDTO.voiceMobile;
-    _listBank = List.generate(
-      list.length,
-      (index) => BankSelection(
-          bank: list[index], value: settingAccountDTO.voiceMobile),
-    ).toList();
+    _enableVoice =
+        _listVoiceBank.every((element) => element.enableVoice == true);
 
     final stringBanks = SharePrefUtils.getListEnableVoiceBank();
     if (stringBanks != null) {
       final listBanks = jsonDecode(stringBanks).split(',');
       if (listBanks.isNotEmpty) {
-        _listVoiceBank = List.generate(
-          _listBank.length,
-          (index) => VoiceBank(
-              bank: list[index], isOn: listBanks.contains(list[index].id)),
-        ).toList();
+        _listVoiceBank = listBanks;
       }
     } else {
-      _listVoiceBank = List.generate(
-        _listBank.length,
-        (index) =>
-            VoiceBank(bank: list[index], isOn: settingAccountDTO.voiceMobile),
-      ).toList();
+      _listVoiceBank = list;
     }
 
     notifyListeners();
@@ -53,10 +39,11 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   List<String> getListId() {
     Set<String> bankIdSet = <String>{};
-    final list = _listBank.where((element) => element.value == true).toList();
-    for (BankSelection selection in list) {
-      if (selection.bank != null) {
-        bankIdSet.add(selection.bank!.id);
+    final list =
+        _listVoiceBank.where((element) => element.enableVoice == true).toList();
+    for (BankAccountDTO selection in list) {
+      if (selection != null) {
+        bankIdSet.add(selection.id);
       }
     }
 
@@ -64,9 +51,9 @@ class SettingBDSDProvider extends ChangeNotifier {
   }
 
   void selectValue(bool value, int index) {
-    _listBank.elementAt(index).value = value;
-    _listVoiceBank.elementAt(index).isOn = value;
-    _enableVoice = _listBank.every((element) => element.value == true);
+    _listVoiceBank.elementAt(index).enableVoice = value;
+    _enableVoice =
+        _listVoiceBank.every((element) => element.enableVoice == true);
 
     notifyListeners();
   }
@@ -74,15 +61,13 @@ class SettingBDSDProvider extends ChangeNotifier {
   void updateOpenVoice(bool check) {
     _enableVoice = check;
     if (check) {
-      _listBank = List.generate(
-        _listBank.length,
-        (index) => BankSelection(bank: _listBank[index].bank, value: true),
-      ).toList();
+      for (var e in _listVoiceBank) {
+        e.enableVoice = true;
+      }
     } else {
-      _listBank = List.generate(
-        _listBank.length,
-        (index) => BankSelection(bank: _listBank[index].bank, value: false),
-      ).toList();
+      for (var e in _listVoiceBank) {
+        e.enableVoice = false;
+      }
     }
     notifyListeners();
   }

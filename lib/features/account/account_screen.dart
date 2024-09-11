@@ -167,7 +167,6 @@ class _AccountScreenState extends State<_AccountScreen>
         GestureDetector(
           onTap: () {
             _accountBloc.add(LogoutEventSubmit());
-            
           },
           child: Container(
             alignment: Alignment.center,
@@ -643,8 +642,18 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
               children: [
                 _buildItem(
                   onTap: () async {
-                    NavigatorUtils.navigatePage(context, const SettingBDSD(),
-                        routeName: SettingBDSD.routeName);
+                    await SharePrefUtils.getOwnerBanks().then(
+                      (value) {
+                        if (value != null) {
+                          NavigatorUtils.navigatePage(
+                              context,
+                              SettingBDSD(
+                                listIsOwnerBank: value,
+                              ),
+                              routeName: SettingBDSD.routeName);
+                        }
+                      },
+                    );
                   },
                   urlImage: 'assets/images/ic-setting-bdsd.png',
                   title: 'Cài đặt hệ thống',

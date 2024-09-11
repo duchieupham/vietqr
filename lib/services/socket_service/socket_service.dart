@@ -67,18 +67,7 @@ class SocketService {
               ),
             );
 
-            final stringBanks = SharePrefUtils.getListEnableVoiceBank();
-            if (stringBanks != null) {
-              final listBanks = jsonDecode(stringBanks).split(',');
-              if (listBanks.isNotEmpty) {
-                bool bankId =
-                    listBanks.contains((NotifyTransDTO.fromJson(data)).bankId);
-
-                if (bankId) {
-                  MediaHelper.instance.playAudio(data);
-                }
-              }
-            }
+            MediaHelper.instance.playAudio(data);
           }
           notificationController.sink.add(true);
         }).onError(

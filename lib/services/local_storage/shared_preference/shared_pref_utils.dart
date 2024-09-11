@@ -259,6 +259,23 @@ class SharePrefUtils {
     return sharedPreferenceService.get();
   }
 
+  ///List owner and authen bank
+  static Future<void> saveListOwnerBanks(List<BankAccountDTO> list) async {
+    final sharedPreferenceService =
+        SharedPrefLocal(Constants.SharedPreferenceKey.ListOwnerBank.sharedValue);
+    await sharedPreferenceService.set(data: list);
+  }
+
+  static Future<List<BankAccountDTO>?> getOwnerBanks() async {
+    final sharedPreferenceService = SharedPrefLocal<BankAccountDTO>(
+      Constants.SharedPreferenceKey.ListOwnerBank.sharedValue,
+    );
+
+    return sharedPreferenceService.getList(
+      fromJson: (json) => BankAccountDTO.fromJson(json),
+    );
+  }
+
   /// Show Qr Intro
   static Future<void> saveQrIntro(bool value) async {
     final sharedPreferenceService = SharedPrefLocal<bool>(
