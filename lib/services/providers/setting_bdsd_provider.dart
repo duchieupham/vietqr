@@ -29,7 +29,7 @@ class SettingBDSDProvider extends ChangeNotifier {
     final stringBanks = SharePrefUtils.getListEnableVoiceBank();
     if (stringBanks != null) {
       final listBanks = jsonDecode(stringBanks).split(',');
-      if (listBanks.isNotEmpty) {
+      if (listBanks.isNotEmpty && listBanks.first.isNotEmpty) {
         _listBank = List.generate(
           list.length,
           (index) => BankSelection(
