@@ -78,7 +78,8 @@ class _BankInfroWidgetState extends State<BankInfroWidget> with DialogHelper {
                             fontSize: 14, color: AppColor.WHITE),
                       ),
                     ),
-                    if (widget.dto.validFeeTo != 0 &&
+                    if (widget.dto.isValidService &&
+                        widget.dto.validFeeTo != 0 &&
                         inclusiveDays(widget.dto.validFeeTo) <= 7)
                       Row(
                         children: [

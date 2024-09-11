@@ -37,6 +37,12 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
         fromDate:
             '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
         toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
+    FilterTrans(
+        title: 'Tuần',
+        type: 3,
+        fromDate:
+            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 7)))} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
   ];
 
   FilterTrans selected = FilterTrans(
@@ -96,7 +102,7 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                             : null,
                         child: Container(
                           height: 30,
-                          margin: EdgeInsets.only(left: index == 0 ? 0 : 8),
+                          // margin: EdgeInsets.only(left: index == 0 ? 0 : 8),
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
@@ -119,7 +125,11 @@ class _OverviewStatisticState extends State<OverviewStatistic> {
                   ),
                   const Spacer(),
                   Text(
-                    DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                    selected.type == 1
+                        ? DateFormat('dd/MM/yyyy').format(DateTime.now())
+                        : selected.type == 2
+                            ? DateFormat('MM/yyyy').format(DateTime.now())
+                            : '${DateFormat('dd/MM/yy').format(DateTime.now().subtract(const Duration(days: 7)))} - ${DateFormat('dd/MM/yy').format(DateTime.now())}',
                     style: const TextStyle(fontSize: 12),
                   )
                 ],
