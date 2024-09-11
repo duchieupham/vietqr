@@ -22,13 +22,13 @@ class BankAccountDTO {
   final String nationalId;
   final String ewalletToken;
   final int unlinkedType;
-  bool? isValidService;
-  int? validFeeFrom;
-  int? validFeeTo;
-  int? transCount;
-  String? keyActive;
-  int? timeActiveKey;
-  bool? activeKey;
+  bool isValidService;
+  int validFeeFrom;
+  int validFeeTo;
+  int transCount;
+  String keyActive;
+  int timeActiveKey;
+  bool activeKey;
   bool mmsActive;
 
   //thêm
@@ -63,10 +63,10 @@ class BankAccountDTO {
     this.ewalletToken = '',
     this.unlinkedType = -1,
     this.bankTypeStatus = -1,
-    this.isValidService,
-    this.validFeeFrom,
-    this.validFeeTo,
-    this.transCount,
+    this.isValidService = false,
+    this.validFeeFrom = 0,
+    this.validFeeTo = 0,
+    this.transCount = 0,
     this.activeKey = false,
     this.mmsActive = false,
     this.keyActive = '',
@@ -100,8 +100,8 @@ class BankAccountDTO {
       unlinkedType: json['unlinkedType'] ?? -1,
       isValidService: json['isValidService'],
       validFeeFrom: json['validFeeFrom'],
-      validFeeTo: json['validFeeTo'],
-      transCount: json['transCount'],
+      validFeeTo: json['validFeeTo'] ?? 0,
+      transCount: json['transCount'] ?? 0,
       keyActive: json['keyActive'] ?? '',
       activeKey: json['activeKey'] ?? false,
       mmsActive: json['mmsActive'] ?? false,
