@@ -26,6 +26,15 @@ class GetInvoiceList extends InvoiceEvent {
   List<Object?> get props => [status, bankId, filterBy, time, page, size];
 }
 
+class RequestMultiInvoicePaymentEvent extends InvoiceEvent {
+  final List<String> invoiceIds;
+
+  const RequestMultiInvoicePaymentEvent({required this.invoiceIds});
+
+  @override
+  List<Object?> get props => [invoiceIds];
+}
+
 class GetInvoiceDetail extends InvoiceEvent {
   final String invoiceId;
 

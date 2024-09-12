@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/invoice/repositories/base_repository.dart';
+import 'package:vierqr/models/unpaid_invoice_detail_qr_dto.dart';
 
 import '../../../commons/constants/env/env_config.dart';
 import '../../../commons/enums/authentication_type.dart';
@@ -48,6 +49,32 @@ class InvoiceRepository extends BaseRepo {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  Future<UnpaidInvoiceDetailQrDTO?> requestPaymnetV2({
+    required List<String> invoiceIds,
+    String bankIdRecharge = '',
+  }) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['invoiceIds'] = invoiceIds;
+      param['bankIdRecharge'] = bankIdRecharge;
+
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}invoice/request-payment/v2';
+      final response = await BaseAPIClient.postAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return UnpaidInvoiceDetailQrDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error("Failed to request payment: ${e.toString()}");
+    }
+    return null;
   }
 
   Future<InvoiceDetailDTO?> getInvoiceDetail({

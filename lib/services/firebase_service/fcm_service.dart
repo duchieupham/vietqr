@@ -70,7 +70,7 @@ class FCMService {
           //     NavigationService.context;
           // ModalRoute? modalRoute = ModalRoute.of(checkContext!);
           // String? currentRoute = modalRoute?.settings.name;
-          bool? isClose = true;
+          bool isClose = true;
 
           // if (currentRoute != null && currentRoute == Routes.INVOICE_DETAIL) {
           //   isClose = true;

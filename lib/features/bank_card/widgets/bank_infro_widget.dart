@@ -99,7 +99,7 @@ class _BankInfroWidgetState extends State<BankInfroWidget> with DialogHelper {
                                 TextStyle(fontSize: 12, color: AppColor.BLACK),
                           ),
                         ],
-                      )
+                      ),
                   ],
                 ),
               ),

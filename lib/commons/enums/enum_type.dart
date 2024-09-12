@@ -14,6 +14,8 @@ enum BlocStatus {
   INSERT,
   DONE,
   DELETED_ERROR,
+  REQUEST,
+  REQUEST_ERROR,
 }
 
 enum TypeImage { SAVE, SHARE }
@@ -321,6 +323,7 @@ enum InvoiceType {
   GET_INVOICE_LIST,
   INVOICE_DETAIL,
   FILTER_INVOICE,
+  PAYMENT,
 }
 
 enum MainChargeType {
@@ -477,12 +480,7 @@ enum ForgotPasswordType {
   CHANGE_PASS
 }
 
-enum QrCertificateType{
-  NONE,
-  SCAN,
-  ECOM_ACTIVE,
-  ERROR
-}
+enum QrCertificateType { NONE, SCAN, ECOM_ACTIVE, ERROR }
 
 enum RegisterType {
   NONE,

@@ -13,9 +13,9 @@ import 'package:vierqr/features/invoice/states/invoice_states.dart';
 import 'package:vierqr/features/invoice/widgets/bottom_payment.dart';
 import 'package:vierqr/features/invoice/widgets/popup_filter_widget.dart';
 import 'package:vierqr/features/invoice/widgets/popup_invoice_widget.dart';
-import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/models/invoice_fee_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
+import 'package:vierqr/models/unpaid_invoice_detail_qr_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/constants/configurations/route.dart';
@@ -53,11 +53,28 @@ class __InvoiceState extends State<_Invoice> {
   String? selectBankId;
   MetaDataDTO? metadata;
   late ScrollController scrollController;
+  ValueNotifier<bool> paymentNotifier = ValueNotifier<bool>(false);
   // bool _isPay = false;
 
   initData({bool isRefresh = false}) {
     if (isRefresh) {}
 
+    scrollController.addListener(() async {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        int totalPage = (metadata!.total! / 20).ceil();
+        if (totalPage > metadata!.page!) {
+          _bloc.add(LoadMoreInvoice(
+              status: _provider.invoiceStatus?.id,
+              bankId: _provider.selectBank?.id ?? '',
+              time: _provider.invoiceMonth != null
+                  ? DateFormat('yyyy-MM').format(_provider.invoiceMonth!)
+                  : '',
+              filterBy: 1,
+              page: 1));
+        }
+      }
+    });
     _bloc.add(GetInvoiceList(
         status: _provider.invoiceStatus?.id,
         bankId: selectBankId ?? '',
@@ -87,28 +104,18 @@ class __InvoiceState extends State<_Invoice> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    scrollController = ScrollController();
     _provider = Provider.of<InvoiceProvider>(context, listen: false);
     _provider.selectedStatus = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
-    scrollController = ScrollController()
-      ..addListener(() async {
-        if (scrollController.position.pixels ==
-            scrollController.position.maxScrollExtent) {
-          int totalPage = (metadata!.total! / 20).ceil();
-          if (totalPage > metadata!.page!) {
-            _bloc.add(LoadMoreInvoice(
-                status: _provider.invoiceStatus?.id,
-                bankId: _provider.selectBank?.id ?? '',
-                time: _provider.invoiceMonth != null
-                    ? DateFormat('yyyy-MM').format(_provider.invoiceMonth!)
-                    : '',
-                filterBy: 1,
-                page: 1));
-          }
-        }
-      });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
   }
 
   void _openUrl(String invoiceId) async {
@@ -189,7 +196,7 @@ class __InvoiceState extends State<_Invoice> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<InvoiceBloc, InvoiceStates>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == BlocStatus.SUCCESS) {
           metadata = state.metaDataDTO;
           listInvoice = state.listInvoice ?? [];
@@ -214,6 +221,47 @@ class __InvoiceState extends State<_Invoice> {
               .map((entry) =>
                   InvoiceGroup(monthYear: entry.key, invoices: entry.value))
               .toList();
+        }
+
+        if (state.status == BlocStatus.NONE) {
+          listInvoice = [];
+          invoiceGroups = [];
+        }
+
+        if (state.status == BlocStatus.REQUEST &&
+            state.request == InvoiceType.PAYMENT) {
+          paymentNotifier.value = false;
+          final requestPayment = state.unpaidInvoiceDetailQrDTO;
+          if (requestPayment != null) {
+            QRGeneratedDTO dto = QRGeneratedDTO(
+              bankCode: '',
+              bankName: '',
+              bankAccount: requestPayment.bankAccount,
+              userBankName: requestPayment.userBankName,
+              qrCode: requestPayment.qrCode,
+              imgId: '',
+              amount: requestPayment.totalAmount.toString(),
+            );
+            await showCupertinoModalPopup(
+              context: context,
+              builder: (context) => PopupQrCreate(
+                onSave: () {
+                  NavigatorUtils.navigatePage(
+                      context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+                      routeName: PopupBankShare.routeName);
+                },
+                onShare: () {
+                  NavigatorUtils.navigatePage(
+                      context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+                      routeName: PopupBankShare.routeName);
+                },
+                invoiceName: requestPayment.invoiceName,
+                totalAmount: requestPayment.totalAmountAfterVat.toString(),
+                billNumber: requestPayment.invoiceNumber,
+                qr: requestPayment.qrCode,
+              ),
+            );
+          }
         }
       },
       builder: (context, state) {
@@ -266,15 +314,27 @@ class __InvoiceState extends State<_Invoice> {
                   _invoiceSection(provider, state),
                   const SizedBox(height: 15),
                   _buildListInvoice(state, provider),
-                  BottomPayment(
-                    provider: provider,
-                    selectd: getListId().length,
-                    amount: getListId().isNotEmpty
-                        ? listInvoice
-                            .where((element) => element.isSelect)
-                            .map((e) => e.totalAmount)
-                            .reduce((a, b) => a + b)
-                        : 0,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: paymentNotifier,
+                    builder: (context, isPayment, child) {
+                      return BottomPayment(
+                        onPayment: () {
+                          if (!isPayment) {
+                            paymentNotifier.value = true;
+                            _bloc.add(RequestMultiInvoicePaymentEvent(
+                                invoiceIds: getListId()));
+                          }
+                        },
+                        provider: provider,
+                        selectd: getListId().length,
+                        amount: getListId().isNotEmpty
+                            ? listInvoice
+                                .where((element) => element.isSelect)
+                                .map((e) => e.totalAmount)
+                                .reduce((a, b) => a + b)
+                            : 0,
+                      );
+                    },
                   )
                 ],
               ),
@@ -489,7 +549,6 @@ class __InvoiceState extends State<_Invoice> {
                                                 monthYear: i.monthYear,
                                                 invoices: list);
                                           });
-                                          print('List: ${getListId().length}');
                                         }
                                       },
                                     )
@@ -680,7 +739,7 @@ class __InvoiceState extends State<_Invoice> {
                       )),
                 )
                 .values,
-          // loadMoreIcon(state)
+          loadMoreIcon(state)
         ],
       ),
     );
@@ -755,6 +814,7 @@ class __InvoiceState extends State<_Invoice> {
 class InvoiceGroup {
   String monthYear;
   List<InvoiceFeeDTO> invoices;
+  // bool i
 
   InvoiceGroup({required this.monthYear, required this.invoices});
 }

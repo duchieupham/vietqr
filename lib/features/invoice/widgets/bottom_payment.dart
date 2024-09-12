@@ -9,11 +9,14 @@ class BottomPayment extends StatelessWidget {
   final InvoiceProvider provider;
   final int selectd;
   final int amount;
-  const BottomPayment(
-      {super.key,
-      required this.provider,
-      required this.amount,
-      required this.selectd});
+  final Function() onPayment;
+  const BottomPayment({
+    super.key,
+    required this.provider,
+    required this.amount,
+    required this.selectd,
+    required this.onPayment,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class BottomPayment extends StatelessWidget {
               )),
               Text(
                 CurrencyUtils.instance.getCurrencyFormatted(amount.toString()),
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppColor.ORANGE_DARK),
@@ -53,16 +56,7 @@ class BottomPayment extends StatelessWidget {
               borderRadius: 100,
               height: 50,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              onPressed: () {
-                Fluttertoast.showToast(
-                  msg: 'Đang cập nhật tính năng',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  backgroundColor: Theme.of(context).cardColor,
-                  textColor: Theme.of(context).hintColor,
-                  fontSize: 15,
-                );
-              },
+              onPressed: onPayment,
               isDisabled: amount == 0,
               child: Center(
                   child: Text(
