@@ -90,7 +90,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     _bloc.add(ForgotPasswordEventSendOTP(param: param));
 
     _startTimer();
-    _resetTimer();
     otpNode.requestFocus();
   }
 
@@ -103,7 +102,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   void _resetTimer() {
     _timerNotifier.value = 600;
     _expriedNotifer.value = false;
-    _startTimer();
+    // _startTimer();
   }
 
   void _startTimer() {
@@ -112,7 +111,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         _timerNotifier.value--;
       } else {
         _expriedNotifer.value = true;
-        _timer.cancel();
+        // _timer.cancel();
+        _resetTimer();
       }
     });
   }
@@ -408,11 +408,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           builder: (context, isExpired, child) {
                             return InkWell(
                               onTap: () {
+                                _timerNotifier.value = 0;
                                 Map<String, dynamic> param = {
                                   'phoneNo': widget.phone,
                                   'email': widget.email,
                                 };
-                                _resetTimer();
+                                // _resetTimer();
                                 _bloc.add(
                                     ForgotPasswordEventResendOTP(param: param));
                               },
@@ -446,6 +447,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     child: TextFormFieldCode(
                       readOnly: state.isVerified,
                       hintText: 'Nhập mã xác nhận',
+                      onTap: state.isVerified ? () {} : () => _otpController.clear(),
                       controller: _otpController,
                       keyboardAction: TextInputAction.send,
                       onChange: (value) {
