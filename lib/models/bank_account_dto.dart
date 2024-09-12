@@ -1,8 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import 'bank_type_dto.dart';
 
-class BankAccountDTO {
+// ignore: must_be_immutable
+class BankAccountDTO extends Equatable {
   final String id;
   final String bankAccount;
   final String userBankName;
@@ -114,6 +116,7 @@ class BankAccountDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
+    data['id'] = id;
     data['bankAccount'] = bankAccount;
     data['userBankName'] = userBankName;
     data['bankCode'] = bankCode;
@@ -121,6 +124,7 @@ class BankAccountDTO {
     data['bankName'] = bankName;
     data['imgId'] = imgId;
     data['type'] = type;
+    data['enableVoice'] = enableVoice;
     data['userId'] = userId;
     data['isAuthenticated'] = isAuthenticated;
     data['isOwner'] = isOwner;
@@ -140,11 +144,40 @@ class BankAccountDTO {
     data['timeActiveKey'] = timeActiveKey;
     data['activeKey'] = activeKey;
     data['mmsActive'] = mmsActive;
-    data['enableVoice'] = enableVoice;
-    data['id'] = id;
-
     return data;
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        bankAccount,
+        userBankName,
+        bankCode,
+        bankShortName,
+        bankName,
+        imgId,
+        type,
+        enableVoice,
+        userId,
+        isAuthenticated,
+        isOwner,
+        bankTypeStatus,
+        qrCode,
+        caiValue,
+        bankTypeId,
+        phoneAuthenticated,
+        nationalId,
+        ewalletToken,
+        unlinkedType,
+        isValidService,
+        validFeeFrom,
+        validFeeTo,
+        transCount,
+        keyActive,
+        timeActiveKey,
+        activeKey,
+        mmsActive,
+      ];
 
   BankAccountDTO copyWith({
     String? id,

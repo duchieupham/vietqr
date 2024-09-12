@@ -280,11 +280,11 @@ class _UserInfoViewState extends State<UserInfoView> {
                   }
                   if (state is UserEditAvatarSuccessState) {
                     //pop loading dialog
-                    
+
                     Navigator.pop(context);
                     Navigator.pop(context);
-                              Provider.of<AuthenProvider>(context, listen: false)
-              .setImage(state.imageFile);
+                    Provider.of<AuthenProvider>(context, listen: false)
+                        .setImage(state.imageFile);
                   }
                   if (state is UserEditAvatarFailedState) {
                     //pop loading dialog
@@ -1154,6 +1154,32 @@ class _UserInfoViewState extends State<UserInfoView> {
                                     const MySeparator(
                                       color: AppColor.GREY_DADADA,
                                     ),
+                                    InkWell(
+                                      onTap: () async {},
+                                      child: Container(
+                                        padding: const EdgeInsets.only(top: 8, bottom: 8,
+                                            left: 0, right: 8),
+                                        width: double
+                                            .infinity, // Mở rộng chiều rộng của Container
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Cập nhật email',
+                                                style:  TextStyle(
+                                                    fontSize: 12)),
+                                            XImage(
+                                              imagePath:
+                                                  'assets/images/ic-mail.png',
+                                              width: 15,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const MySeparator(
+                                      color: AppColor.GREY_DADADA,
+                                    ),
                                     buildOptionRow(
                                       'Cập nhật thông tin cá nhân',
                                       'assets/images/ic-info-person-black.png',
@@ -1698,7 +1724,8 @@ class _UserInfoViewState extends State<UserInfoView> {
     );
   }
 
-  Widget buildOptionRow(String title, String path, Function() onTap) {
+  Widget buildOptionRow(String title, String path, Function() onTap,
+      {double? width}) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -1710,7 +1737,7 @@ class _UserInfoViewState extends State<UserInfoView> {
             Text(title, style: const TextStyle(fontSize: 12)),
             XImage(
               imagePath: path,
-              width: 30,
+              width: width ?? 30,
             ),
           ],
         ),

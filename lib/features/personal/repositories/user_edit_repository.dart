@@ -27,6 +27,7 @@ class UserEditRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}user/information';
+      
       final response = await BaseAPIClient.putAPI(
         url: url,
         body: dto.toJson(),
