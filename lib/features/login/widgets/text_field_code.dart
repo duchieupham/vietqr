@@ -25,8 +25,10 @@ class TextFormFieldCode extends StatelessWidget {
   final FocusNode? focusNode;
   final int? maxLines;
   final int? maxLength;
+  final VoidCallback? onTap;
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
+
 
   const TextFormFieldCode({
     super.key,
@@ -46,6 +48,7 @@ class TextFormFieldCode extends StatelessWidget {
     this.focusNode,
     this.maxLines,
     this.onEdittingComplete,
+    this.onTap,
     this.onSubmitted,
     this.maxLength,
     this.textAlign,
@@ -74,8 +77,8 @@ class TextFormFieldCode extends StatelessWidget {
       decoration: InputDecoration(
         suffixIcon: Padding(
           padding: const EdgeInsets.only(left: 20),
-          child: GestureDetector(
-            onTap: !readOnly ? () {} : () => controller.clear,
+          child: InkWell(
+            onTap: onTap,
             child: const Icon(
               Icons.clear,
               color: Colors.black,

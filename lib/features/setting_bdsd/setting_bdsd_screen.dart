@@ -36,19 +36,23 @@ class _SettingBDSDState extends State<SettingBDSD> {
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
     try {
+      final listIsOwnerBank = widget.listIsOwnerBank;
       bool enableStatus = await accRepository.enableVoiceSetting(param);
       if (enableStatus) {
         List<String> listBanks = param['bankIds'];
         String stringBanks = listBanks.join(',');
         await SharePrefUtils.saveListEnableVoiceBanks(stringBanks);
-        for (var string in listBanks) {
-          widget.listIsOwnerBank
-              .where((e) => e.id == string)
-              .first
-              .copyWith(enableVoice: true);
+        if (listBanks.isNotEmpty) {
+          for (var e in listIsOwnerBank) {
+            e.enableVoice = listBanks.contains(e.id);
+          }
+        } else {
+          for (var e in listIsOwnerBank) {
+            e.enableVoice = false;
+          }
         }
-        
-        await SharePrefUtils.saveListOwnerBanks(widget.listIsOwnerBank);
+
+        await SharePrefUtils.saveListOwnerBanks(listIsOwnerBank);
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');

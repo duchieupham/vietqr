@@ -505,7 +505,7 @@ class _UserEditViewState extends State<UserEditView> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 0),
                               child: TextFieldWidget(
-                                enable: !SharePrefUtils.getProfile().verify,
+                                enable: false,
                                 width: width,
                                 textfieldType: TextfieldType.LABEL,
                                 isObscureText: false,
@@ -745,7 +745,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   birthDate: _birthDate,
                                   gender: provider.gender,
                                   address: _addressController.text,
-                                  email: _emailController.text,
+                                  // email: _emailController.text,
                                   nationalDate: _nationalDate,
                                   nationalId: _nationalIdController.text,
                                   oldNationalId: _oldNationalIdController.text,
