@@ -24,6 +24,7 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_appbar_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_statistic.dart';
+import 'package:vierqr/features/bank_card/widgets/build_banner_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/list_bank.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -155,29 +156,27 @@ class _BankScreenState extends State<BankScreen> {
         _focusNode.unfocus();
       },
       child: Container(
-        color: AppColor.WHITE.withOpacity(0.6),
+        color: AppColor.WHITE,
         child: CustomScrollView(
           controller: widget.scrollController,
           physics: const BouncingScrollPhysics(),
           slivers: [
-            BankAppbarWidget(
-              notifier: _opacityNotifier,
-            ),
+            BankAppbarWidget(notifier: _opacityNotifier),
             CupertinoSliverRefreshControl(
               builder: (context, refreshState, pulledExtent,
                   refreshTriggerPullDistance, refreshIndicatorExtent) {
                 return Stack(
                   children: [
-                    Positioned.fill(
-                      child: Opacity(
-                        opacity: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: VietQRTheme.gradientColor.lilyLinear,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned.fill(
+                    //   child: Opacity(
+                    //     opacity: 1,
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         gradient: VietQRTheme.gradientColor.lilyLinear,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Positioned(
                       top: 0,
                       left: 0,
@@ -204,6 +203,7 @@ class _BankScreenState extends State<BankScreen> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
+                  const BuildBannerWidget(),
                   const ListBankWidget(),
                   BankStatistic(
                     textFielddKey: _textFieldKey,

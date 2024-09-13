@@ -35,103 +35,228 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
         if (state.listBanner.isEmpty) {
           return const SizedBox.shrink();
         }
-        return Column(
-          children: [
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-              height: 160,
-              width: MediaQuery.of(context).size.width,
-              child: Swiper(
-                controller: _swiperController,
-                viewportFraction: 0.9,
 
-                // scale: 1.0,
-                onIndexChanged: (value) async {
-                  setState(() {
-                    _index = value;
-                  });
-                  if (value == 1) {
-                    await Future.delayed(const Duration(milliseconds: 5000));
-                    _swiperController.previous();
-                  }
-                },
-                loop: false,
-                autoplay: true,
-                autoplayDelay: 5000,
-                itemCount: state.listBanner.length,
-                curve: Curves.easeInOut,
+        return Container(
+          // margin: const EdgeInsets.only(top: 10),
+          // padding: const EdgeInsets.fromLTRB(0, 010, 0, 0),
+          height: MediaQuery.of(context).size.width * (550 / 2000),
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            gradient: VietQRTheme.gradientColor.lilyLinear,
+          ),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Swiper(
+                  controller: _swiperController,
+                  viewportFraction: 1.0,
 
-                // allowImplicitScrolling: true,
-                itemBuilder: (context, index) {
-                  int bannerIndex = state.listBanner[index];
-                  if (bannerIndex == 1) {
-                    return InkWell(
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 0, bottom: 10),
-                        decoration: BoxDecoration(
+                  // scale: 1.0,
+                  onIndexChanged: (value) async {
+                    setState(() {
+                      _index = value;
+                    });
+                    if (value == 1) {
+                      await Future.delayed(const Duration(milliseconds: 5000));
+                      _swiperController.previous();
+                    }
+                  },
+                  loop: false,
+                  autoplay: true,
+                  autoplayDelay: 5000,
+                  itemCount: state.listBanner.length,
+                  curve: Curves.easeInOut,
+
+                  // allowImplicitScrolling: true,
+                  itemBuilder: (context, index) {
+                    int bannerIndex = state.listBanner[index];
+                    if (bannerIndex == 1) {
+                      return InkWell(
+                        child: Container(
+                          // margin: const EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
                             color: AppColor.WHITE,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColor.BLACK.withOpacity(0.1),
-                                spreadRadius: 1,
-                                blurRadius: 10,
-                                offset: const Offset(0, 1),
-                              )
-                            ]),
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(19),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Trải nghiệm',
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text(
-                                              'dịch vụ ',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            ShaderMask(
-                                              shaderCallback: (bounds) =>
-                                                  VietQRTheme
-                                                      .gradientColor.vietQrPro
-                                                      .createShader(bounds),
-                                              child: const Text(
-                                                'VietQR Pro',
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: AppColor.WHITE,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: AppColor.BLACK.withOpacity(0.1),
+                            //     spreadRadius: 1,
+                            //     blurRadius: 10,
+                            //     offset: const Offset(0, 1),
+                            //   )
+                            // ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(19),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Trải nghiệm',
+                                            style: TextStyle(fontSize: 20),
+                                          ),
+                                          Row(
+                                            children: [
+                                              const Text(
+                                                'dịch vụ ',
+                                                style: TextStyle(fontSize: 20),
                                               ),
-                                            )
-                                          ],
-                                        ),
-                                        const Text(
-                                          'Giải pháp tối ưu cho doanh nghiệp của bạn.',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                      ],
+                                              ShaderMask(
+                                                shaderCallback: (bounds) =>
+                                                    VietQRTheme
+                                                        .gradientColor.vietQrPro
+                                                        .createShader(bounds),
+                                                child: const Text(
+                                                  'VietQR Pro',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: AppColor.WHITE,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          const Text(
+                                            'Giải pháp tối ưu cho doanh nghiệp của bạn.',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const XImage(
+                                      imagePath:
+                                          'assets/images/vietqr-image.png',
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    const SizedBox(width: 10)
+                                  ],
+                                ),
+                              ),
+                              if (state.bankSelect != null &&
+                                  state.bankSelect!.mmsActive)
+                                Positioned(
+                                  top: 10,
+                                  right: 10,
+                                  child: InkWell(
+                                    onTap: () {
+                                      // List<int> list =
+                                      //     List.from(state.listBanner);
+                                      // list.removeAt(index);
+                                      getIt.get<BankBloc>().add(
+                                          const CloseBannerEvent(
+                                              listBanner: []));
+                                    },
+                                    child: const XImage(
+                                      imagePath:
+                                          'assets/images/ic-close-black.png',
+                                      width: 30,
+                                      height: 30,
+                                      color: AppColor.BLACK,
                                     ),
                                   ),
-                                  const XImage(
-                                    imagePath: 'assets/images/vietqr-image.png',
-                                    height: 80,
-                                    width: 80,
-                                    fit: BoxFit.cover,
+                                )
+                            ],
+                          ),
+                        ),
+                      );
+                    }
+                    return InkWell(
+                      onTap: () async {
+                        String url =
+                            "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ3LHREWRRmb24DNqNTapRGTNB";
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url),
+                              mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      child: Container(
+                        // margin: const EdgeInsets.only(bottom: 10),
+                        decoration: const BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/images/bidv-img.png',
+                                ),
+                                fit: BoxFit.cover)),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              left: 20,
+                              right: 20,
+                              top: 10,
+                              bottom: 20,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Padding(
+                                        padding: EdgeInsets.only(top: 5),
+                                        child: XImage(
+                                          imagePath:
+                                              'assets/images/ic-bidv-white.png',
+                                          width: 60,
+                                          height: 20,
+                                          fit: BoxFit.fitWidth,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          final Uri url = Uri(
+                                            scheme: 'tel',
+                                            path: '0989895905',
+                                          );
+                                          if (await canLaunchUrl(url)) {
+                                            await launchUrl(url);
+                                          }
+                                        },
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.phone,
+                                              size: 15,
+                                              color: AppColor.WHITE,
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              '098.989.5905',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColor.WHITE,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  const SizedBox(width: 10)
+                                  const Spacer(),
+                                  const Text(
+                                    'Mở tài khoản BIDV',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColor.WHITE,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const Text(
+                                    'Nhận ngay ưu đãi miễn phí 2 tháng sử dụng\nMiễn phí mở tài khoản số đẹp.',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColor.WHITE,
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -142,19 +267,17 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                 right: 10,
                                 child: InkWell(
                                   onTap: () {
-                                    // List<int> list =
-                                    //     List.from(state.listBanner);
+                                    // List<int> list = List.from(state.listBanner);
                                     // list.removeAt(index);
-                                    getIt
-                                        .get<BankBloc>()
-                                        .add(CloseBannerEvent(listBanner: []));
+                                    getIt.get<BankBloc>().add(
+                                        const CloseBannerEvent(listBanner: []));
                                   },
                                   child: const XImage(
                                     imagePath:
                                         'assets/images/ic-close-black.png',
                                     width: 30,
                                     height: 30,
-                                    color: AppColor.BLACK,
+                                    color: AppColor.WHITE,
                                   ),
                                 ),
                               )
@@ -162,148 +285,36 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                         ),
                       ),
                     );
-                  }
-                  return InkWell(
-                    onTap: () async {
-                      String url =
-                          "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ3LHREWRRmb24DNqNTapRGTNB";
-                      if (await canLaunchUrl(Uri.parse(url))) {
-                        await launchUrl(Uri.parse(url),
-                            mode: LaunchMode.externalApplication);
-                      }
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8, bottom: 10),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          image: const DecorationImage(
-                              image: AssetImage(
-                                'assets/images/bidv-img.png',
-                              ),
-                              fit: BoxFit.cover)),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 20,
-                            right: 20,
-                            top: 10,
-                            bottom: 20,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 5),
-                                      child: XImage(
-                                        imagePath:
-                                            'assets/images/ic-bidv-white.png',
-                                        width: 60,
-                                        height: 20,
-                                        fit: BoxFit.fitWidth,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        final Uri url = Uri(
-                                          scheme: 'tel',
-                                          path: '0989895905',
-                                        );
-                                        if (await canLaunchUrl(url)) {
-                                          await launchUrl(url);
-                                        }
-                                      },
-                                      child: const Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.phone,
-                                            size: 15,
-                                            color: AppColor.WHITE,
-                                          ),
-                                          SizedBox(width: 4),
-                                          Text(
-                                            '098.989.5905',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColor.WHITE,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const Spacer(),
-                                const Text(
-                                  'Mở tài khoản BIDV',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: AppColor.WHITE,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const Text(
-                                  'Nhận ngay ưu đãi miễn phí 2 tháng sử dụng\nMiễn phí mở tài khoản số đẹp.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColor.WHITE,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          if (state.bankSelect != null &&
-                              state.bankSelect!.mmsActive)
-                            Positioned(
-                              top: 10,
-                              right: 10,
-                              child: InkWell(
-                                onTap: () {
-                                  // List<int> list = List.from(state.listBanner);
-                                  // list.removeAt(index);
-                                  getIt
-                                      .get<BankBloc>()
-                                      .add(CloseBannerEvent(listBanner: []));
-                                },
-                                child: const XImage(
-                                  imagePath: 'assets/images/ic-close-black.png',
-                                  width: 30,
-                                  height: 30,
-                                  color: AppColor.WHITE,
-                                ),
-                              ),
-                            )
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                  },
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                state.listBanner.length,
-                (index) {
-                  bool isIndex = _index == index;
-                  return Container(
-                    margin: EdgeInsets.only(left: index == 0 ? 0 : 8),
-                    height: 10,
-                    width: isIndex ? 30 : 10,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: isIndex
-                            ? VietQRTheme.gradientColor.brightBlueLinear
-                            : VietQRTheme.gradientColor.lilyLinear),
-                  );
-                },
-              ),
-            )
-          ],
+              // Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 10,
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: List.generate(
+              //       state.listBanner.length,
+              //       (index) {
+              //         bool isIndex = _index == index;
+              //         return Container(
+              //           margin: EdgeInsets.only(left: index == 0 ? 0 : 8),
+              //           height: 10,
+              //           width: isIndex ? 30 : 10,
+              //           decoration: BoxDecoration(
+              //               borderRadius: BorderRadius.circular(100),
+              //               gradient: isIndex
+              //                   ? VietQRTheme.gradientColor.brightBlueLinear
+              //                   : VietQRTheme.gradientColor.lilyLinear),
+              //         );
+              //       },
+              //     ),
+              //   ),
+              // )
+            ],
+          ),
         );
       },
     );

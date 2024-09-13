@@ -416,7 +416,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
-              const RequestActiveKeyNoti(),
+              // const RequestActiveKeyNoti(),
               ValueListenableBuilder<bool>(
                 valueListenable: scrollNotifier,
                 builder: (context, isScroll, child) {

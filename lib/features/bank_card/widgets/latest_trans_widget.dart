@@ -14,7 +14,9 @@ import 'package:vierqr/layouts/button/button.dart';
 
 class LatestTransWidget extends StatefulWidget {
   final Function() onTap;
-  const LatestTransWidget({super.key, required this.onTap});
+  final bool isHome;
+  const LatestTransWidget(
+      {super.key, required this.onTap, required this.isHome});
 
   @override
   State<LatestTransWidget> createState() => _LatestTransWidgetState();
@@ -47,16 +49,19 @@ class _LatestTransWidgetState extends State<LatestTransWidget> {
             Container(
               // height: 320,
               margin: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                        color: AppColor.BLACK.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 10,
-                        offset: const Offset(0, 1))
-                  ]),
+              decoration: widget.isHome
+                  ? null
+                  : BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                            color: AppColor.BLACK.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 10,
+                            offset: const Offset(0, 1))
+                      ],
+                    ),
               child: Column(
                 children: [
                   const SizedBox(height: 20),
@@ -68,12 +73,12 @@ class _LatestTransWidgetState extends State<LatestTransWidget> {
                         Text(
                           'Số tiền (VND)',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12),
+                              fontWeight: FontWeight.normal, fontSize: 12),
                         ),
                         Text(
                           'Thời gian',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 12),
+                              fontWeight: FontWeight.normal, fontSize: 12),
                         ),
                       ],
                     ),
@@ -197,20 +202,22 @@ class _LatestTransWidgetState extends State<LatestTransWidget> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            VietQRButton.solid(
-                height: 30,
-                width: 100,
-                padding: EdgeInsets.zero,
-                borderRadius: 50,
-                onPressed: widget.onTap,
-                isDisabled: false,
-                child: const Center(
-                  child: Text(
-                    'Xem thêm',
-                    style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
-                  ),
-                )),
+            if (!widget.isHome) ...[
+              const SizedBox(height: 20),
+              VietQRButton.solid(
+                  height: 30,
+                  width: 100,
+                  padding: EdgeInsets.zero,
+                  borderRadius: 50,
+                  onPressed: widget.onTap,
+                  isDisabled: false,
+                  child: const Center(
+                    child: Text(
+                      'Xem thêm',
+                      style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+                    ),
+                  )),
+            ]
           ],
         );
       },

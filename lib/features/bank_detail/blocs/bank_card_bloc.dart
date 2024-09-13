@@ -14,6 +14,7 @@ import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.da
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -54,28 +55,32 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   void _setQrGenerate(BankCardEvent event, Emitter emit) async {
     if (event is SetQrGenerateEvent) {
       emit(state.copyWith(
-         request: BankDetailType.SET_QR,
-        qrGenerate: event.qrGeneratedDTO));
+          request: BankDetailType.SET_QR, qrGenerate: event.qrGeneratedDTO));
     }
   }
 
   void _getOverview(BankCardEvent event, Emitter emit) async {
     const bankCardRepository = BankCardRepository();
-
-    if (event is GetOverviewBankCardEvent) {
-      final resultMonth = await bankCardRepository.getOverview(
-        bankId: event.bankId,
-        fromDate:
-            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
-        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
-      );
-      final resultDay = await bankCardRepository.getOverview(
-        bankId: event.bankId,
-        fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
-        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
-      );
-      emit(state.copyWith(
-          overviewDayDto: resultDay, overviewMonthDto: resultMonth));
+    try {
+      if (event is GetOverviewBankCardEvent) {
+        final resultMonth = await bankCardRepository.getOverview(
+          bankId: event.bankId,
+          fromDate: event.fromDate ??
+              '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
+          toDate: event.toDate ??
+              '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+        );
+        final resultDay = await bankCardRepository.getOverview(
+          bankId: event.bankId,
+          fromDate:
+              '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+          toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+        );
+        emit(state.copyWith(
+            overviewDayDto: resultDay, overviewMonthDto: resultMonth));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
     }
   }
 

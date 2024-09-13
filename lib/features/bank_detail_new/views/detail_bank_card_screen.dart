@@ -357,7 +357,6 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                               ),
                               const SizedBox(height: 20),
                               AnimationGraphWidget(
-                                bloc: widget.bankCardBloc,
                                 bankId: widget.bankId,
                                 scrollNotifer: isScrollToChart,
                                 key: _animatedBarKey,

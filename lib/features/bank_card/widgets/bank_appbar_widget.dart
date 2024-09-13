@@ -90,13 +90,15 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                   // height: 120,
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                   decoration: BoxDecoration(
-                      // color: opacity == 0.0
-                      //     ? AppColor.TRANSPARENT
-                      //     : AppColor.WHITE,
-                      gradient: opacity == 0.0
-                          ? VietQRTheme.gradientColor.lilyLinear
-                          : const LinearGradient(
-                              colors: [Colors.white, Colors.white])),
+                    color: AppColor.WHITE,
+                    // color: opacity == 0.0
+                    //     ? AppColor.TRANSPARENT
+                    //     : AppColor.WHITE,
+                    // gradient: opacity == 0.0
+                    //     ? VietQRTheme.gradientColor.lilyLinear
+                    //     : const LinearGradient(
+                    //         colors: [Colors.white, Colors.white]),
+                  ),
                   child: Stack(
                     children: [
                       AnimatedPositioned(

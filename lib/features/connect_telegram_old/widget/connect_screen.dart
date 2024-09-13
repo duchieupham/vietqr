@@ -128,11 +128,12 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
         builder: (context, provider, child) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
-        child: StepProgressView(
-            width: MediaQuery.of(context).size.width,
-            curStep: provider.curStep,
-            color: AppColor.BLUE_TEXT,
-            titles: provider.titles),
+
+        // child: StepProgressView(
+        //     // width: MediaQuery.of(context).size.width,
+        //     curStep: provider.curStep,
+        //     color: AppColor.BLUE_TEXT,
+        //     titles: provider.titles),
       );
     });
   }

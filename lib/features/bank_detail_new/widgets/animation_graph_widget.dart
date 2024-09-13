@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
@@ -10,18 +11,21 @@ import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 
 class AnimationGraphWidget extends StatefulWidget {
   final String bankId;
-  final BankCardBloc bloc;
+
   final ValueNotifier<bool> scrollNotifer;
   final Function() onTap;
+  final bool isHome;
+
   const AnimationGraphWidget({
     super.key,
     required this.scrollNotifer,
     required this.bankId,
     required this.onTap,
-    required this.bloc,
+    this.isHome = false,
   });
 
   @override
@@ -33,12 +37,40 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   late final AnimationController _controller;
   late final Animation<double> _animation;
   late final BankBloc bankBloc = getIt.get<BankBloc>();
+  late final BankCardBloc bankCardBloc =
+      getIt.get<BankCardBloc>(param1: widget.bankId, param2: true);
+
+  List<FilterTrans> list = [
+    FilterTrans(
+        title: 'Ngày',
+        type: 1,
+        fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
+    FilterTrans(
+        title: 'Tháng',
+        type: 2,
+        fromDate:
+            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
+    FilterTrans(
+        title: 'Tuần',
+        type: 3,
+        fromDate:
+            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 7)))} 00:00:00',
+        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
+  ];
+
+  FilterTrans selected = FilterTrans(
+      title: 'Ngày',
+      type: 1,
+      fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+      toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
 
   @override
   void initState() {
     super.initState();
     bankBloc.add(GetTransEvent(bankId: widget.bankId));
-    widget.bloc.add(GetOverviewBankCardEvent(bankId: widget.bankId));
+    bankCardBloc.add(GetOverviewBankCardEvent(bankId: widget.bankId));
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
@@ -59,32 +91,6 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     return (totalAmount * percentage).roundToDouble();
   }
 
-  // double calculateMaxAmount(double totalAmount) {
-  //   if (totalAmount <= 500000) {
-  //     return 500000;
-  //   } else if (totalAmount <= 1000000) {
-  //     return 1000000;
-  //   } else if (totalAmount <= 2000000) {
-  //     return 2000000;
-  //   } else if (totalAmount <= 5000000) {
-  //     return 5000000;
-  //   } else if (totalAmount <= 10000000) {
-  //     return 10000000;
-  //   } else if (totalAmount <= 20000000) {
-  //     return 20000000;
-  //   } else if (totalAmount <= 50000000) {
-  //     return 50000000;
-  //   } else if (totalAmount <= 100000000) {
-  //     return 100000000;
-  //   } else if (totalAmount <= 150000000) {
-  //     return 150000000;
-  //   } else if (totalAmount <= 200000000) {
-  //     return 200000000;
-  //   } else {
-  //     return (totalAmount * 1.2).roundToDouble(); // 20% more than totalAmount
-  //   }
-  // }
-
   bool isFiftyPercent(double currentAmount, double totalAmount) {
     if (totalAmount == 0) return false; // To handle division by zero
     return currentAmount == (0.5 * totalAmount);
@@ -92,12 +98,6 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
 
   @override
   Widget build(BuildContext context) {
-    // double totalAmount1 = 180300000; // Example total amount
-    // double totalAmount2 = 90200000; // Example total amount
-
-    // double maxAmount1 = calculateMaxAmount(totalAmount1);
-    // double maxAmount2 = calculateMaxAmount(totalAmount1);
-
     return ValueListenableBuilder<bool>(
       valueListenable: widget.scrollNotifer,
       builder: (context, value, child) {
@@ -111,7 +111,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         return Column(
           children: [
             BlocBuilder<BankCardBloc, BankCardState>(
-              bloc: widget.bloc,
+              bloc: bankCardBloc,
               builder: (context, state) {
                 // if (state.overviewMonthDto == null ||
                 //     state.overviewDayDto == null) {
@@ -138,20 +138,73 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Column(
+                                        Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Biểu đồ thu chi',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            Text(
-                                              '07/2024',
+                                              widget.isHome
+                                                  ? 'Quản lý giao dịch'
+                                                  : 'Biểu đồ thu chi',
                                               style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: AppColor.GREY_TEXT),
+                                                  fontSize: 20,
+                                                  fontWeight: widget.isHome
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal),
                                             ),
+                                            if (widget.isHome) ...[
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: List.generate(
+                                                  list.length,
+                                                  (index) {
+                                                    bool isSelect =
+                                                        selected.type ==
+                                                            list[index].type;
+
+                                                    return InkWell(
+                                                      onTap: () {},
+                                                      child: Container(
+                                                        height: 30,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 16),
+                                                        decoration: BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        100),
+                                                            gradient: isSelect
+                                                                ? VietQRTheme
+                                                                    .gradientColor
+                                                                    .lilyLinear
+                                                                : null),
+                                                        child: Center(
+                                                          child: Text(
+                                                            list[index].title,
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: isSelect
+                                                                    ? AppColor
+                                                                        .BLACK
+                                                                    : AppColor
+                                                                        .GREY_TEXT),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              )
+                                            ] else
+                                              Text(
+                                                DateFormat('MM/yyyy')
+                                                    .format(DateTime.now()),
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColor.GREY_TEXT),
+                                              ),
                                           ],
                                         ),
                                         // const SizedBox(height: 20),
@@ -206,32 +259,55 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          height: 30,
-                                          width: 150,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            gradient: const LinearGradient(
-                                              colors: [
-                                                Color(0xFFE1EFFF),
-                                                Color(0xFFE5F9FF),
-                                              ],
-                                              end: Alignment.centerRight,
-                                              begin: Alignment.centerLeft,
+                                      Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              if (widget.isHome) {
+                                              } else {}
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20),
+                                              height: 30,
+                                              // width: 150,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                gradient: const LinearGradient(
+                                                  colors: [
+                                                    Color(0xFFE1EFFF),
+                                                    Color(0xFFE5F9FF),
+                                                  ],
+                                                  end: Alignment.centerRight,
+                                                  begin: Alignment.centerLeft,
+                                                ),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  widget.isHome
+                                                      ? "Xem thêm"
+                                                      : 'Chi tiết thống kê',
+                                                  style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color:
+                                                          AppColor.BLUE_TEXT),
+                                                ),
+                                              ),
                                             ),
                                           ),
-                                          child: const Center(
-                                            child: Text(
-                                              'Chi tiết thống kê',
-                                              style: TextStyle(
+                                          if (widget.isHome) ...[
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              DateFormat('MM/yyyy')
+                                                  .format(DateTime.now()),
+                                              style: const TextStyle(
                                                   fontSize: 12,
-                                                  color: AppColor.BLUE_TEXT),
+                                                  color: AppColor.GREY_TEXT),
                                             ),
-                                          ),
-                                        ),
+                                          ]
+                                        ],
                                       ),
                                       Column(
                                         crossAxisAlignment:
@@ -376,87 +452,9 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             ),
             const SizedBox(height: 20),
             LatestTransWidget(
+              isHome: widget.isHome,
               onTap: widget.onTap,
             ),
-            // Container(
-            //   height: 320,
-            //   margin: const EdgeInsets.symmetric(horizontal: 12),
-            //   decoration: BoxDecoration(
-            //       color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            //   child: Column(
-            //     children: [
-            //       Container(
-            //         height: 50,
-            //         padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            //         child: const Row(
-            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //           children: [
-            //             Text(
-            //               'Số tiền (VND)',
-            //               style: TextStyle(
-            //                   fontWeight: FontWeight.bold, fontSize: 12),
-            //             ),
-            //             Text(
-            //               'Thời gian',
-            //               style: TextStyle(
-            //                   fontWeight: FontWeight.bold, fontSize: 12),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //       Container(
-            //         margin: const EdgeInsets.symmetric(horizontal: 12),
-            //         child: const MySeparator(
-            //           color: AppColor.GREY_DADADA,
-            //         ),
-            //       ),
-            //       Expanded(
-            //           child: ListView.separated(
-            //               padding: const EdgeInsets.only(top: 0),
-            //               physics: const NeverScrollableScrollPhysics(),
-            //               itemBuilder: (context, index) {
-            //                 final transaction = transactions[index];
-            //                 return Container(
-            //                   height: 50,
-            //                   padding:
-            //                       const EdgeInsets.symmetric(horizontal: 12.0),
-            //                   child: Row(
-            //                     mainAxisAlignment:
-            //                         MainAxisAlignment.spaceBetween,
-            //                     children: [
-            //                       Text(
-            //                         transaction.amount,
-            //                         style: TextStyle(
-            //                             color: transaction.color, fontSize: 12),
-            //                       ),
-            //                       Text(
-            //                         transaction.time,
-            //                         style: const TextStyle(
-            //                             color: AppColor.BLACK, fontSize: 12),
-            //                       ),
-            //                     ],
-            //                   ),
-            //                 );
-            //               },
-            //               separatorBuilder: (context, index) => const Padding(
-            //                     padding: EdgeInsets.symmetric(horizontal: 10),
-            //                     child: MySeparator(
-            //                       color: AppColor.GREY_DADADA,
-            //                     ),
-            //                   ),
-            //               itemCount: transactions.length))
-            //       // for (var transaction in transactions) ...[
-
-            //       //   Container(
-            //       //     margin: const EdgeInsets.symmetric(horizontal: 12),
-            //       //     child: const MySeparator(
-            //       //       color: AppColor.GREY_DADADA,
-            //       //     ),
-            //       //   ),
-            //       // ]
-            //     ],
-            //   ),
-            // ),
           ],
         );
       },

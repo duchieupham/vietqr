@@ -16,6 +16,7 @@ import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
+import 'package:vierqr/commons/widgets/step_progress.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
@@ -117,6 +118,15 @@ class _BankStatisticState extends State<BankStatistic>
     }
   }
 
+  final List<String> labels = [
+    "Giới thiệu",
+    "Khai báo TT kinh doanh",
+    "Khai báo TT kết nối dịch vụ",
+    "Kết nối dịch vụ",
+    "Nghiệm thu",
+    "Golive"
+  ];
+
   void saveImageTask(List<dynamic> args) async {
     SendPort sendPort = args[0];
     List<BankTypeDTO> list = args[1];
@@ -173,12 +183,36 @@ class _BankStatisticState extends State<BankStatistic>
           child: Container(
             // padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-                color: AppColor.WHITE.withOpacity(0.6),
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
+              color: AppColor.WHITE,
+              // borderRadius: const BorderRadius.only(
+              //     topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+            ),
             child: Column(
               children: [
+                if (bankSelect != null &&
+                    !bankSelect!.isValidService &&
+                    bankSelect!.isAuthenticated &&
+                    bankSelect?.bankTypeStatus == 1) ...[
+                  const SizedBox(height: 20),
+                  SlideFadeTransition(
+                    offset: 1,
+                    delayStart: const Duration(milliseconds: 20),
+                    direction: Direction.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: NotiVerifyEmailWidget(
+                        dto: bankSelect!,
+                        isVerify: isVerify,
+                      ),
+                    ),
+                  ),
+                ],
+                // StepProgressView(
+                //   height: 220,
+                //   curStep: 4,
+                //   color: AppColor.BLUE_TEXT,
+                //   titles: labels,
+                // ),
                 if (state.status == BlocStatus.LOADING &&
                     state.request != BankType.GET_OVERVIEW)
                   Container(
@@ -214,25 +248,10 @@ class _BankStatisticState extends State<BankStatistic>
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: BankInfroWidget(dto: bankSelect!),
                   ),
-                if (bankSelect != null &&
-                    !bankSelect!.isValidService! &&
-                    bankSelect!.isAuthenticated &&
-                    bankSelect?.bankTypeStatus == 1) ...[
-                  const SizedBox(height: 20),
-                  SlideFadeTransition(
-                    offset: 1,
-                    delayStart: const Duration(milliseconds: 20),
-                    direction: Direction.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: NotiVerifyEmailWidget(
-                        dto: bankSelect!,
-                        isVerify: isVerify,
-                      ),
-                    ),
-                  ),
-                ],
-                const BuildBannerWidget(),
+
+                const SizedBox(height: 20),
+
+                // const BuildBannerWidget(),
                 const InvoiceOverviewWidget(),
                 if (bankSelect != null && bankSelect?.bankTypeStatus == 1) ...[
                   const SizedBox(height: 20),
@@ -248,10 +267,11 @@ class _BankStatisticState extends State<BankStatistic>
                     },
                   ),
                 ],
-                const SizedBox(height: 20),
-                _voiceWidget(),
+                // const SizedBox(height: 20),
+                // _voiceWidget(),
                 if (state.listBanks.isNotEmpty && bankSelect != null) ...[
                   LatestTransWidget(
+                    isHome: true,
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
