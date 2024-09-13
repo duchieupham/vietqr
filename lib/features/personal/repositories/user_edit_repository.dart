@@ -27,7 +27,7 @@ class UserEditRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${getIt.get<AppConfig>().getBaseUrl}user/information';
-      
+
       final response = await BaseAPIClient.putAPI(
         url: url,
         body: dto.toJson(),
@@ -173,6 +173,40 @@ class UserEditRepository {
         await _resetServices();
       } else {
         result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> updateEmail(
+      {required String email,
+      required int type,
+      required String otp,
+      required String userId}) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}admin/account-update/$userId';
+      final response = await BaseAPIClient.putAPI(
+        url: url,
+        body: {'email': email, 'type': type, 'otp': otp},
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+        if (result.status == 'SUCCESS') {
+          UserProfile profile = SharePrefUtils.getProfile();
+          profile.email = email;
+          profile.verify = false;
+          await SharePrefUtils.saveProfileToCache(profile);
+        } else {
+          result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+        }
       }
     } catch (e) {
       LOG.error(e.toString());

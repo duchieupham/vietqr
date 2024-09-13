@@ -45,6 +45,7 @@ import 'package:vierqr/features/my_vietqr/my_vietqr_screen.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_info_view.dart';
+import 'package:vierqr/features/personal/views/user_update_email_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
 import 'package:vierqr/features/qr_certificate/qr_certificate_screen.dart';
@@ -150,6 +151,15 @@ class NavigationService {
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
 
+      case Routes.UPDATE_EMAIL:
+        Map map = settings.arguments as Map;
+        String phoneNum = map['phoneNum'];
+        return _buildRoute(
+          settings,
+          UserUpdateEmailWidget(
+            phoneNum: phoneNum,
+          ),
+        );
       case Routes.QR_CERTIFICATE_SCREEN:
         Map map = settings.arguments as Map;
         String qrCode = map['qrCode'];

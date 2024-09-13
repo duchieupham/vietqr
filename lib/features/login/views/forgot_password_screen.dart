@@ -72,6 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   bool isCircle = false;
   bool isSuccess = false;
   bool readOnly = true;
+  bool readOnlyConfirm = true;
 
   @override
   void initState() {
@@ -110,9 +111,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       if (_timerNotifier.value > 0) {
         _timerNotifier.value--;
       } else {
+        Map<String, dynamic> param = {
+          'phoneNo': widget.phone,
+          'email': widget.email,
+        };
+        _bloc.add(ForgotPasswordEventResendOTP(param: param));
         _expriedNotifer.value = true;
-        // _timer.cancel();
         _resetTimer();
+
+        readOnly = true;
+        readOnlyConfirm = true;
+        isPassFocus = false;
+        isConfirmPassFocus = false;
+
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+
+        FocusManager.instance.primaryFocus?.unfocus();
+        Provider.of<PinProvider>(context, listen: false).resetPinNewPass();
+        Provider.of<PinProvider>(context, listen: false)
+            .resetPinConfirmNewPass();
+        otpNode.requestFocus();
       }
     });
   }
@@ -179,6 +198,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               state.request == ForgotPasswordType.NEW_PASS) {
             FocusManager.instance.primaryFocus?.unfocus();
             isConfirmPassFocus = true;
+            readOnlyConfirm = false;
             confirmPassNode.requestFocus();
           }
 
@@ -226,7 +246,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               state.request == ForgotPasswordType.CHANGE_PASS) {
             isSuccess = false;
             isCircle = false;
+
             readOnly = false;
+            readOnlyConfirm = true;
+
+            isPassFocus = true;
+            isConfirmPassFocus = false;
+
+            passNode.requestFocus();
+
             DialogWidget.instance.openMsgDialog(
                 title: 'Không thể cập nhật Mật khẩu',
                 msg: state.msg ?? '',
@@ -407,16 +435,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                           valueListenable: _expriedNotifer,
                           builder: (context, isExpired, child) {
                             return InkWell(
-                              onTap: () {
-                                _timerNotifier.value = 0;
-                                Map<String, dynamic> param = {
-                                  'phoneNo': widget.phone,
-                                  'email': widget.email,
-                                };
-                                // _resetTimer();
-                                _bloc.add(
-                                    ForgotPasswordEventResendOTP(param: param));
-                              },
+                              onTap: state.isVerified
+                                  ? () {}
+                                  : () => _timerNotifier.value = 0,
+                              // onTap: () {
+                              //   _timerNotifier.value = 0;
+                              //   // Map<String, dynamic> param = {
+                              //   //   'phoneNo': widget.phone,
+                              //   //   'email': widget.email,
+                              //   // };
+                              //   // // _resetTimer();
+                              //   // _bloc.add(
+                              //   //     ForgotPasswordEventResendOTP(param: param));
+                              // },
                               child: ShaderMask(
                                 shaderCallback: (bounds) =>
                                     const LinearGradient(
@@ -447,7 +478,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     child: TextFormFieldCode(
                       readOnly: state.isVerified,
                       hintText: 'Nhập mã xác nhận',
-                      onTap: state.isVerified ? () {} : () => _otpController.clear(),
+                      onTap: state.isVerified
+                          ? () {}
+                          : () => _otpController.clear(),
                       controller: _otpController,
                       keyboardAction: TextInputAction.send,
                       onChange: (value) {
@@ -607,7 +640,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                 : AppColor.GREY_DADADA,
                             width: 1.5)),
                     child: PinConfirmPasswordWidget(
-                      readOnly: readOnly,
+                      readOnly: readOnlyConfirm,
                       width: MediaQuery.of(context).size.width,
                       pinSize: 15,
                       pinLength: Numeral.DEFAULT_PIN_LENGTH,

@@ -141,6 +141,13 @@ enum TypeQR {
   NEGATIVE_ONE,
 }
 
+enum UserUpdateEmailType{
+  NONE,
+  SAVE,
+  VERIFY,
+  ERROR,
+}
+
 extension TypeQRExt on TypeQR {
   String get value {
     switch (this) {

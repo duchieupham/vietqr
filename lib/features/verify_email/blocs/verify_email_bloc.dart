@@ -11,6 +11,7 @@ class EmailBloc extends Bloc<EmailEvent, EmailState> {
     on<SendOTPAgainEvent>(_sendOTPAgain);
     on<ConfirmOTPEvent>(_confirmOTP);
     on<GetKeyFreeEvent>(_getKeyFree);
+    // on<UpdateEmailEvent>(_updateEmail);
   }
 }
 
@@ -90,3 +91,32 @@ void _getKeyFree(EmailEvent event, Emitter emit) async {
         keyFreeDTO: KeyFreeDTO(keyActive: '', bankId: '', status: 0)));
   }
 }
+
+// void _updateEmail(EmailEvent event, Emitter emit) async {
+//   ResponseMessageDTO dto = const ResponseMessageDTO(status: '', message: '');
+//   try {
+//     if (event is UpdateEmailEvent) {
+//       emit(UpdateEmailState());
+//       dto = await emailRepository.updateEmail(
+//           email: event.email,
+//           otp: event.otp,
+//           type: event.type,
+//           userId: event.userId);
+//       if (event.type == 0) {
+//         if (dto.status == "SUCCESS") {
+//           emit(SaveEmailSuccessState(message: dto));
+//         } else {
+//           emit(UpdateEmailFailedState(dto: dto));
+//         }
+//       } else {
+//         if (dto.status == "SUCCESS") {
+//           emit(UpdateEmailSuccessState(message: dto));
+//         } else {
+//           emit(UpdateEmailFailedState(dto: dto));
+//         }
+//       }
+//     }
+//   } catch (e) {
+//     emit(UpdateEmailFailedState(dto: dto));
+//   }
+// }

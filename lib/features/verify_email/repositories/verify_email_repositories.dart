@@ -104,7 +104,7 @@ class EmailRepository {
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
-        type: AuthenticationType.SYSTEM,
+        type: AuthenticationType.NONE,
       );
       if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
