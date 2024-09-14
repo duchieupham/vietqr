@@ -273,7 +273,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
       children: [
         const Text(
           'Quản lý giao dịch',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         InkWell(
           onTap: () {

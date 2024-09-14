@@ -66,7 +66,7 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
               const Text(
                 'Cài đặt hiển thị',
                 style: TextStyle(
-                    color: AppColor.BLACK, fontWeight: FontWeight.bold),
+                    color: AppColor.BLACK, fontWeight: FontWeight.bold, fontSize: 16),
               ),
               // const SizedBox(height: 10),
               Row(
@@ -74,14 +74,14 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
                   const XImage(
                     imagePath: 'assets/images/ic-voice-black.png',
                     color: AppColor.BLUE_TEXT,
-                    height: 50,
+                    height: 40,
                   ),
                   const SizedBox(width: 4),
                   const Expanded(
                     child: Text(
                       'Nhận thông báo với giọng nói',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
@@ -125,26 +125,22 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 5,
-              ),
+
               _buildDashLine(),
-              const SizedBox(
-                height: 5,
-              ),
+   
               Row(
                 children: [
                   const XImage(
                     imagePath: 'assets/images/ic-screenon.png',
                     color: AppColor.BLUE_TEXT,
-                    height: 50,
+                    height: 40,
                   ),
                   const SizedBox(width: 4),
                   const Expanded(
                     child: Text(
                       'Màn hình luôn sáng khi hiển thị QR',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 12,
                         fontWeight: FontWeight.normal,
                       ),
                     ),
