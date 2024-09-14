@@ -241,6 +241,13 @@ extension TypeContactExt2 on TypeContact {
   }
 }
 
+enum TransManage {
+  NONE,
+  LOADING,
+  GET_TRANS,
+  ERROR,
+}
+
 enum BankDetailType {
   NONE,
   SUCCESS,

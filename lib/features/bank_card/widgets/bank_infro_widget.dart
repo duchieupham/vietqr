@@ -12,7 +12,9 @@ import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 
 class BankInfroWidget extends StatefulWidget {
   final BankAccountDTO dto;
-  const BankInfroWidget({super.key, required this.dto});
+  final bool isLoading;
+  const BankInfroWidget(
+      {super.key, required this.dto, required this.isLoading});
 
   @override
   State<BankInfroWidget> createState() => _BankInfroWidgetState();
@@ -37,6 +39,7 @@ class _BankInfroWidgetState extends State<BankInfroWidget> with DialogHelper {
           : null,
       child: Container(
         width: double.infinity,
+        margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         decoration: BoxDecoration(
             color: AppColor.WHITE,

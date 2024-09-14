@@ -202,22 +202,22 @@ class _LatestTransWidgetState extends State<LatestTransWidget> {
                 ],
               ),
             ),
-            if (!widget.isHome) ...[
-              const SizedBox(height: 20),
-              VietQRButton.solid(
-                  height: 30,
-                  width: 100,
-                  padding: EdgeInsets.zero,
-                  borderRadius: 50,
-                  onPressed: widget.onTap,
-                  isDisabled: false,
-                  child: const Center(
-                    child: Text(
-                      'Xem thêm',
-                      style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
-                    ),
-                  )),
-            ]
+            // if (!widget.isHome) ...[
+            //   const SizedBox(height: 20),
+            //   VietQRButton.solid(
+            //       height: 30,
+            //       width: 100,
+            //       padding: EdgeInsets.zero,
+            //       borderRadius: 50,
+            //       onPressed: widget.onTap,
+            //       isDisabled: false,
+            //       child: const Center(
+            //         child: Text(
+            //           'Xem thêm',
+            //           style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+            //         ),
+            //       )),
+            // ]
           ],
         );
       },

@@ -56,12 +56,12 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                     setState(() {
                       _index = value;
                     });
-                    if (value == 1) {
-                      await Future.delayed(const Duration(milliseconds: 5000));
-                      _swiperController.previous();
-                    }
+                    // if (value == 1) {
+                    //   await Future.delayed(const Duration(milliseconds: 5000));
+                    //   _swiperController.previous();
+                    // }
                   },
-                  loop: false,
+                  loop: true,
                   autoplay: true,
                   autoplayDelay: 5000,
                   itemCount: state.listBanner.length,
