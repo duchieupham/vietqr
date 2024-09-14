@@ -50,6 +50,7 @@ class SettingBDSDProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
   List<String> getListId() {
     Set<String> bankIdSet = <String>{};
     final list = _listBank.where((element) => element.value == true).toList();

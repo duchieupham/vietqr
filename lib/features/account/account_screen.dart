@@ -642,18 +642,15 @@ class _SettingWidget extends StatelessWidget with DialogHelper {
               children: [
                 _buildItem(
                   onTap: () async {
-                    await SharePrefUtils.getOwnerBanks().then(
-                      (value) {
-                        if (value != null) {
-                          NavigatorUtils.navigatePage(
-                              context,
-                              SettingBDSD(
-                                listIsOwnerBank: value,
-                              ),
-                              routeName: SettingBDSD.routeName);
-                        }
-                      },
-                    );
+                    final list = SharePrefUtils.getOwnerBanks();
+                    if (list != null) {
+                      NavigatorUtils.navigatePage(
+                          context,
+                          SettingBDSD(
+                            listIsOwnerBank: list,
+                          ),
+                          routeName: SettingBDSD.routeName);
+                    }
                   },
                   urlImage: 'assets/images/ic-setting-bdsd.png',
                   title: 'Cài đặt hệ thống',

@@ -86,4 +86,20 @@ class SharedPrefLocal<T> extends IStorageService<T> {
     // TODO: implement getStorage
     throw UnimplementedError();
   }
+
+  @override
+  List<T>? getListNoFuture(
+      {required T Function(Map<String, dynamic> p1) fromJson}) {
+    final dataStr = sharedPrefs.getString(key);
+    if (dataStr == null) {
+      return null;
+    }
+    try {
+      return (json.decode(dataStr) as List<dynamic>)
+          .map((item) => fromJson(item))
+          .toList();
+    } catch (err) {
+      return null;
+    }
+  }
 }

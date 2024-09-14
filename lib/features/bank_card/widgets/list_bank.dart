@@ -79,6 +79,8 @@ class _ListBankWidgetState extends State<ListBankWidget>
                 (e) => e.isAuthenticated && e.isOwner,
               )
               .toList());
+          Provider.of<SettingBDSDProvider>(context, listen: false)
+              .initData(SharePrefUtils.getOwnerBanks() ?? []);
           List<String> listBankId = [];
           for (var e in state.listBanks) {
             if (e.enableVoice == true) {

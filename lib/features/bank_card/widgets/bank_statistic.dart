@@ -23,6 +23,7 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_infro_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/build_banner_widget.dart';
+import 'package:vierqr/features/bank_card/widgets/display_setting_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
@@ -63,11 +64,13 @@ class _BankStatisticState extends State<BankStatistic>
 
   bool isVerify = false;
   BankAccountDTO? bankSelect;
+  List<BankAccountDTO>? listIsOwnerBank;
 
   @override
   void initState() {
     super.initState();
     handleMessageOnBackground();
+    listIsOwnerBank = SharePrefUtils.getOwnerBanks();
     isVerify = SharePrefUtils.getProfile().verify;
   }
 
@@ -188,6 +191,7 @@ class _BankStatisticState extends State<BankStatistic>
               //     topLeft: Radius.circular(20), topRight: Radius.circular(20)),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (bankSelect != null &&
                     !bankSelect!.isValidService &&
@@ -296,7 +300,31 @@ class _BankStatisticState extends State<BankStatistic>
                       key: widget.textFielddKey,
                     ),
                   ),
-                const SizedBox(height: 100),
+
+                // FutureBuilder<List<BankAccountDTO>?>(
+                //   future: SharePrefUtils.getOwnerBanks(),
+                //   builder: (contxt, snapshot) {
+                //     if (snapshot.connectionState == ConnectionState.waiting) {
+                //       return const SizedBox(
+                //         height: 100,
+                //       );
+                //     } else if (snapshot.hasError) {
+                //       return Text("Error: ${snapshot.error}");
+                //     } else if (snapshot.hasData) {
+                //       return DisplaySettingWidget(
+                //           listIsOwnerBank: snapshot.data ?? [],
+                //           width: double.infinity);
+                //     } else {
+                //       return const SizedBox(
+                //         height: 100,
+                //       );
+                //     }
+                //   },
+                // ),
+                DisplaySettingWidget(
+                    listIsOwnerBank: listIsOwnerBank ?? [],
+                    width: double.infinity),
+                const SizedBox(height: 200),
               ],
             ),
           ),
@@ -308,18 +336,15 @@ class _BankStatisticState extends State<BankStatistic>
   Widget _voiceWidget() {
     return InkWell(
       onTap: () async {
-        await SharePrefUtils.getOwnerBanks().then(
-          (value) {
-            if (value != null) {
-              NavigatorUtils.navigatePage(
-                  context,
-                  SettingBDSD(
-                    listIsOwnerBank: value,
-                  ),
-                  routeName: SettingBDSD.routeName);
-            }
-          },
-        );
+        final list = SharePrefUtils.getOwnerBanks();
+        if (list != null) {
+          NavigatorUtils.navigatePage(
+              context,
+              SettingBDSD(
+                listIsOwnerBank: list,
+              ),
+              routeName: SettingBDSD.routeName);
+        }
       },
       child: Container(
         margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
