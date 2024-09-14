@@ -15,6 +15,7 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
     on<UserEditAvatarEvent>(_updateAvatar);
     on<UserDeactiveEvent>(_deactiveUser);
     on<GetInformationUserEvent>(_getInformationUser);
+    on<UserEditEmailEvent>(_updateEmail);
   }
 
   final UserEditRepository userEditRepository = const UserEditRepository();
@@ -53,6 +54,27 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
           emit(UserEditPasswordSuccessfulState());
         } else {
           emit(UserEditPasswordFailedState(msg: result['msg']));
+        }
+      }
+    } catch (e) {
+      emit(const UserEditPasswordFailedState(
+          msg: 'Vui lòng kiểm tra lại kết nối mạng.'));
+    }
+  }
+
+  void _updateEmail(UserEditEvent event, Emitter emit) async {
+    try {
+      if (event is UserEditEmailEvent) {
+        emit(UserEditLoadingState());
+        final result = await userEditRepository.updateEmail(
+            email: event.email,
+            type: event.type,
+            otp: event.otp,
+            userId: event.userId);
+        if (result.status == 'SUCCESS') {
+          emit(UserEditEmailSuccessState());
+        } else {
+          emit(const UserEditEmailFailedState(message: 'Cập nhật thất bại'));
         }
       }
     } catch (e) {

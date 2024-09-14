@@ -32,6 +32,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
@@ -1135,13 +1136,38 @@ class _UserInfoViewState extends State<UserInfoView> {
                                     const MySeparator(
                                       color: AppColor.GREY_DADADA,
                                     ),
-                                    buildOptionRow(
-                                      'Cập nhật email',
-                                      'assets/images/ic-mail.png',
-                                      width: 15,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 8),
-                                      () {},
+                                    //cập nhật email
+                                    InkWell(
+                                      onTap: () {
+                                        Map<String, dynamic> param = {};
+                                        param['phoneNum'] =
+                                            SharePrefUtils.getPhone();
+                                        NavigationService.push(
+                                            Routes.UPDATE_EMAIL,
+                                            arguments: param);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 8,
+                                            bottom: 8,
+                                            left: 0,
+                                            right: 8),
+                                        width: double
+                                            .infinity, // Mở rộng chiều rộng của Container
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Cập nhật email',
+                                                style: TextStyle(fontSize: 12)),
+                                            XImage(
+                                              imagePath:
+                                                  'assets/images/ic-mail.png',
+                                              width: 15,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                     const MySeparator(
                                       color: AppColor.GREY_DADADA,
