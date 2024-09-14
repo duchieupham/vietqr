@@ -29,6 +29,7 @@ import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/overview_statistic.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
@@ -47,11 +48,16 @@ class BankStatistic extends StatefulWidget {
   final VoidCallback onStore;
   final GlobalKey textFielddKey;
   final FocusNode focusNode;
+  final GlobalKey animatedKey;
+  final ValueNotifier<bool> scrollNotifer;
+
   const BankStatistic({
     super.key,
     required this.onStore,
     required this.textFielddKey,
     required this.focusNode,
+    required this.animatedKey,
+    required this.scrollNotifer,
   });
 
   @override
@@ -217,52 +223,25 @@ class _BankStatisticState extends State<BankStatistic>
                 //   color: AppColor.BLUE_TEXT,
                 //   titles: labels,
                 // ),
-                if (state.status == BlocStatus.LOADING &&
-                    state.request != BankType.GET_OVERVIEW)
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 15),
-                    decoration: BoxDecoration(
-                        color: AppColor.WHITE,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.BLACK.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 10,
-                            offset: const Offset(0, 2),
-                          )
-                        ]),
-                    child: const Row(
-                      children: [
-                        ShimmerBlock(height: 30, width: 30, borderRadius: 100),
-                        SizedBox(width: 6),
-                        ShimmerBlock(height: 14, width: 80, borderRadius: 10),
-                        Spacer(),
-                        ShimmerBlock(height: 12, width: 120, borderRadius: 10),
-                      ],
-                    ),
-                  )
-                else if (bankSelect != null &&
+                if (bankSelect != null &&
                     bankSelect?.bankTypeStatus == 1 &&
                     state.listBanks.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: BankInfroWidget(dto: bankSelect!),
+                  BankInfroWidget(
+                    dto: bankSelect!,
+                    isLoading: state.status == BlocStatus.LOADING &&
+                        state.request != BankType.GET_OVERVIEW,
                   ),
 
                 const SizedBox(height: 20),
 
                 // const BuildBannerWidget(),
                 const InvoiceOverviewWidget(),
-                if (bankSelect != null && bankSelect?.bankTypeStatus == 1) ...[
-                  const SizedBox(height: 20),
-                  OverviewStatistic(
-                    bankDto: bankSelect!,
-                  ),
-                ],
+                // if (bankSelect != null && bankSelect?.bankTypeStatus == 1) ...[
+                //   const SizedBox(height: 20),
+                //   OverviewStatistic(
+                //     bankDto: bankSelect!,
+                //   ),
+                // ],
                 if (state.listBanks.isNotEmpty) ...[
                   const SizedBox(height: 20),
                   MenuBankWidget(
@@ -274,7 +253,11 @@ class _BankStatisticState extends State<BankStatistic>
                 // const SizedBox(height: 20),
                 // _voiceWidget(),
                 if (state.listBanks.isNotEmpty && bankSelect != null) ...[
-                  LatestTransWidget(
+                  AnimationGraphWidget(
+                    margin: const EdgeInsets.fromLTRB(20, 35, 20, 0),
+                    dto: bankSelect!,
+                    scrollNotifer: widget.scrollNotifer,
+                    key: widget.animatedKey,
                     isHome: true,
                     onTap: () {
                       Navigator.of(context).push(
@@ -290,6 +273,22 @@ class _BankStatisticState extends State<BankStatistic>
                       );
                     },
                   ),
+                  // LatestTransWidget(
+                  //   isHome: true,
+                  //   onTap: () {
+                  //     Navigator.of(context).push(
+                  //       MaterialPageRoute(
+                  //         builder: (context) => BankCardDetailNewScreen(
+                  //             page: 1,
+                  //             dto: bankSelect!,
+                  //             bankId: bankSelect!.id),
+                  //         settings: const RouteSettings(
+                  //           name: Routes.BANK_CARD_DETAIL_NEW,
+                  //         ),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
                 if (state.listBanks.isEmpty)
                   Padding(

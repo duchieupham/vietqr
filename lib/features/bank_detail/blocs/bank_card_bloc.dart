@@ -59,28 +59,80 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     }
   }
 
+  Future<BankOverviewDTO?> getCurrentDateTime(
+      {required String bankId, String? fromDate, String? toDate}) async {
+    return await bankCardRepository.getOverview(
+      bankId: bankId,
+      fromDate: fromDate ??
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+      toDate: toDate ??
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+    );
+  }
+
+  Future<BankOverviewDTO?> getPassedDateTime(
+      {required String bankId, required int type}) async {
+    String fromDate = '';
+    String toDate = '';
+    DateTime now = DateTime.now();
+    DateTime firstDayOfYear = DateTime(now.year, 1, 1);
+    DateTime calculatedDate = now.subtract(const Duration(days: 30));
+
+    if (calculatedDate.isBefore(firstDayOfYear)) {
+      calculatedDate = firstDayOfYear;
+    }
+    switch (type) {
+      case 1:
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      case 2:
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      case 3:
+        calculatedDate = now.subtract(const Duration(days: 90));
+        if (calculatedDate.isBefore(firstDayOfYear)) {
+          calculatedDate = firstDayOfYear;
+        }
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      default:
+        break;
+    }
+
+    return await bankCardRepository.getOverview(
+      bankId: bankId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+  }
+
   void _getOverview(BankCardEvent event, Emitter emit) async {
-    const bankCardRepository = BankCardRepository();
     try {
       if (event is GetOverviewBankCardEvent) {
-        final resultMonth = await bankCardRepository.getOverview(
-          bankId: event.bankId,
-          fromDate: event.fromDate ??
-              '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
-          toDate: event.toDate ??
-              '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
-        );
-        final resultDay = await bankCardRepository.getOverview(
-          bankId: event.bankId,
-          fromDate:
-              '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
-          toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
-        );
+        emit(state.copyWith(transRequest: TransManage.LOADING));
+        final futures = [
+          getCurrentDateTime(
+              bankId: bankId, fromDate: event.fromDate, toDate: event.toDate),
+          getPassedDateTime(bankId: bankId, type: event.type),
+        ];
+        final result = await Future.wait(futures);
+        final BankOverviewDTO resultCurrent = result[0] as BankOverviewDTO;
+        final BankOverviewDTO resultPassed = result[1] as BankOverviewDTO;
+
         emit(state.copyWith(
-            overviewDayDto: resultDay, overviewMonthDto: resultMonth));
+            transRequest: TransManage.GET_TRANS,
+            overviewDayDto: resultCurrent,
+            overviewMonthDto: resultPassed));
       }
     } catch (e) {
       LOG.error(e.toString());
+      emit(state.copyWith(transRequest: TransManage.ERROR));
     }
   }
 

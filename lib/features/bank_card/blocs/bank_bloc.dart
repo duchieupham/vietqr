@@ -63,8 +63,6 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     }
   }
 
-
-
   void _isCloseInvoiceOverview(BankEvent event, Emitter emit) async {
     if (event is CloseInvoiceOverviewEvent) {
       emit(state.copyWith(isClose: event.isClose));
@@ -243,7 +241,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     try {
       if (event is BankCardEventGetList) {
         bool isEmpty = false;
-        BankOverviewDTO? overviewDTO;
+        // BankOverviewDTO? overviewDTO;
         InvoiceOverviewDTO? invoiceOverviewDTO;
         List<NearestTransDTO> listTrans = [];
         emit(state.copyWith(
@@ -255,37 +253,31 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         if (list.isNotEmpty && event.isGetOverview) {
           final futures = !state.isClose
               ? [
-                  getBankOverView(
-                    bankId: list.first.id,
-                    fromDate: selected.fromDate!,
-                    toDate: selected.toDate!,
-                  ),
+                  // getBankOverView(
+                  //   bankId: list.first.id,
+                  //   fromDate: selected.fromDate!,
+                  //   toDate: selected.toDate!,
+                  // ),
                   getNearestTrans(bankId: list.first.id),
                   getInvoiceOverIvew(),
                 ]
               : [
-                  getBankOverView(
-                    bankId: list.first.id,
-                    fromDate: selected.fromDate!,
-                    toDate: selected.toDate!,
-                  ),
+                  // getBankOverView(
+                  //   bankId: list.first.id,
+                  //   fromDate: selected.fromDate!,
+                  //   toDate: selected.toDate!,
+                  // ),
                   getNearestTrans(bankId: list.first.id),
                 ];
           final results = await Future.wait(futures);
-          overviewDTO = results[0] as BankOverviewDTO;
-          listTrans = results[1] as List<NearestTransDTO>;
+          // overviewDTO = results[0] as BankOverviewDTO;
+          listTrans = results[0] as List<NearestTransDTO>;
           if (event.isLoadInvoice) {
-            invoiceOverviewDTO = results[2] as InvoiceOverviewDTO;
+            invoiceOverviewDTO = results[1] as InvoiceOverviewDTO;
           }
           if (!state.isClose) {
-            invoiceOverviewDTO = results[2] as InvoiceOverviewDTO;
+            invoiceOverviewDTO = results[1] as InvoiceOverviewDTO;
           }
-
-          // overviewDTO = await bankCardRepository.getOverview(
-          //     bankId: list.first.id,
-          //     fromDate: selected.fromDate!,
-          //     toDate: selected.toDate!);
-          // listTrans = await bankCardRepository.getListTrans(list.first.id);
         }
         if (list.isEmpty) {
           isEmpty = true;
@@ -296,7 +288,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         emit(state.copyWith(
             request: BankType.BANK,
             listBanks: list,
-            overviewDto: isEmpty ? null : overviewDTO,
+            // overviewDto: isEmpty ? null : overviewDTO,
             invoiceOverviewDTO: invoiceOverviewDTO,
             listTrans: listTrans,
             bankSelect: isEmpty ? null : list.first,

@@ -61,13 +61,16 @@ class BankScreen extends StatefulWidget {
 
 class _BankScreenState extends State<BankScreen> {
   final List<Widget> cardWidgets = [];
-  // final scrollController = ScrollController();
-  final carouselController = CarouselController();
+  final CarouselController carouselController = CarouselController();
   rive.StateMachineController? _riveController;
   late rive.SMITrigger _action;
+
   final GlobalKey _textFieldKey = GlobalKey();
+  final GlobalKey _animatedBarKey = GlobalKey();
+
   final FocusNode _focusNode = FocusNode();
   final ValueNotifier<double> _opacityNotifier = ValueNotifier<double>(0.0);
+  final ValueNotifier<bool> isScrollToChart = ValueNotifier<bool>(false);
 
   late final BankBloc _bloc = getIt.get<BankBloc>();
 
@@ -101,6 +104,15 @@ class _BankScreenState extends State<BankScreen> {
 
   void _onScroll() {
     _opacityNotifier.value = widget.scrollController.offset > 100 ? 1.0 : 0.0;
+    if (_animatedBarKey.currentContext != null) {
+      final RenderBox renderBox =
+          _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
+      final position = renderBox.localToGlobal(Offset.zero);
+      final scrollPosition = widget.scrollController.position;
+      isScrollToChart.value = position.dy >= scrollPosition.pixels + 250 &&
+          position.dy <=
+              scrollPosition.pixels + scrollPosition.viewportDimension;
+    }
   }
 
   void _scrollToFocusedTextField() {
@@ -206,6 +218,8 @@ class _BankScreenState extends State<BankScreen> {
                   const BuildBannerWidget(),
                   const ListBankWidget(),
                   BankStatistic(
+                    animatedKey: _animatedBarKey,
+                    scrollNotifer: isScrollToChart,
                     textFielddKey: _textFieldKey,
                     focusNode: _focusNode,
                     onStore: () {
