@@ -3,16 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -188,22 +191,65 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                                   opacity: 1.0,
                                   duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
-                                  child: Row(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      const SizedBox(width: 8),
-                                      XImage(
-                                        imagePath: state.bankSelect!.mmsActive
-                                            ? 'assets/images/ic-diamond-pro.png'
-                                            : 'assets/images/ic-diamond.png',
-                                        width: 30,
-                                        height: 30,
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 4),
+                                            child: GradientBorderButton(
+                                                widget: XImage(
+                                                  imagePath:
+                                                      '${getIt.get<AppConfig>().getBaseUrl}images/${state.bankSelect!.imgId}',
+                                                  width: 20,
+                                                  height: 20,
+                                                  fit: BoxFit.fitWidth,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(100),
+                                                borderWidth: 1,
+                                                gradient: VietQRTheme
+                                                    .gradientColor.lilyLinear),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            state.bankSelect!.bankAccount,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold),
+                                          )
+                                        ],
                                       ),
-                                      Text(
-                                        '${state.bankSelect!.bankCode} - ${state.bankSelect!.bankAccount}',
-                                        style: const TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.bold),
-                                      )
+                                      Row(
+                                        children: [
+                                          const SizedBox(width: 6),
+                                          XImage(
+                                            imagePath: state
+                                                    .bankSelect!.mmsActive
+                                                ? 'assets/images/ic-diamond-pro.png'
+                                                : 'assets/images/ic-diamond.png',
+                                            width: 25,
+                                            height: 25,
+                                          ),
+                                          GradientText(
+                                            !state.bankSelect!.mmsActive
+                                                ? 'VietQR Plus'
+                                                : 'VietQR Pro',
+                                            gradient:
+                                                !state.bankSelect!.mmsActive
+                                                    ? VietQRTheme.gradientColor
+                                                        .brightBlueLinear
+                                                    : VietQRTheme.gradientColor
+                                                        .vietQrPro,
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.WHITE),
+                                          )
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 )

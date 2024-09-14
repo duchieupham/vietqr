@@ -12,6 +12,7 @@ import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/share_bdsd/share_bdsd_screen.dart';
@@ -192,25 +193,31 @@ class _MenuBankWidgetState extends State<MenuBankWidget> with DialogHelper {
                         }
                       }
                     : null,
-                child: Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Image.asset(
-                        item.icon,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      ),
-                      const SizedBox(height: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Image.asset(
+                      item.icon,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                    ),
+                    const SizedBox(height: 4),
+                    if (item.type == 7)
+                      GradientText(
+                        item.title,
+                        style: const TextStyle(
+                            fontSize: 10, color: AppColor.WHITE),
+                        gradient: VietQRTheme.gradientColor.aiTextColor,
+                      )
+                    else
                       Text(
                         item.title,
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 10),
                       ),
-                    ],
-                  ),
+                  ],
                 ),
               );
             },
