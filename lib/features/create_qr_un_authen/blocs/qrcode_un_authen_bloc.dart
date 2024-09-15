@@ -52,5 +52,5 @@ class QRCodeUnUTBloc extends Bloc<QRCodeUnUTEvent, QRCodeUnUTState>
   }
 }
 
-const bankTypeRepository = BankCardRepository();
+BankCardRepository bankTypeRepository = BankCardRepository();
 const QRCodeUnUTRepository _repository = QRCodeUnUTRepository();

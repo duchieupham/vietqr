@@ -506,4 +506,4 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   }
 }
 
-const BankCardRepository bankCardRepository = BankCardRepository();
+BankCardRepository bankCardRepository = BankCardRepository();

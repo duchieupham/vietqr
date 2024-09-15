@@ -32,7 +32,7 @@ class UpdateTransView extends StatefulWidget {
 }
 
 class _UpdateTransViewState extends State<UpdateTransView> {
-  final bankCardRepository = const BankCardRepository();
+  final bankCardRepository = BankCardRepository();
   final transRepository = getIt.get<TransactionRepository>();
 
   final controller = TextEditingController();
