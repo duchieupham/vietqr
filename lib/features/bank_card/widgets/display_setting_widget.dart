@@ -13,6 +13,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
+// ignore: must_be_immutable
 class DisplaySettingWidget extends StatefulWidget {
   DisplaySettingWidget(
       {super.key, required this.listIsOwnerBank, required this.width});
@@ -56,7 +57,7 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
       width: widget.width,
       child: Consumer<SettingBDSDProvider>(
         builder: (context, provider, child) {
@@ -66,7 +67,9 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
               const Text(
                 'Cài đặt hiển thị',
                 style: TextStyle(
-                    color: AppColor.BLACK, fontWeight: FontWeight.bold, fontSize: 16),
+                    color: AppColor.BLACK,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16),
               ),
               // const SizedBox(height: 10),
               Row(
@@ -127,7 +130,7 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
               ),
 
               _buildDashLine(),
-   
+
               Row(
                 children: [
                   const XImage(
