@@ -15,6 +15,7 @@ import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
+import 'package:vierqr/models/platform_dto.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
@@ -47,6 +48,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     on<ArrangeBankListEvent>(_arrange);
     on<CloseInvoiceOverviewEvent>(_isCloseInvoiceOverview);
     on<CloseBannerEvent>(_isCloseBanner);
+    on<GetAllPlatformsEvent>(_getAllPlatforms);
   }
 
   FilterTrans selected = FilterTrans(
@@ -55,7 +57,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
       toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
 
-  final bankCardRepository = const BankCardRepository();
+  final bankCardRepository = BankCardRepository();
 
   void _isCloseBanner(BankEvent event, Emitter emit) async {
     if (event is CloseBannerEvent) {
@@ -377,5 +379,28 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
   void _updateEvent(BankEvent event, Emitter emit) {
     emit(state.copyWith(status: BlocStatus.DONE));
+  }
+
+  void _getAllPlatforms(BankEvent event, Emitter emit) async {
+    try {
+      if (event is GetAllPlatformsEvent) {
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          request: BankType.BANK,
+        ));
+        final result = await bankCardRepository.getPlatformByBankId(
+            page: event.page, size: event.size, bankId: event.bankId);
+        if (result is PlatformDTO) {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: BankType.BANK,
+            listPlaforms: result.items,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, request: BankType.BANK));
+    }
   }
 }

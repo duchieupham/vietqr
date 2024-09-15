@@ -7,9 +7,11 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/invoice/repositories/base_repository.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -25,7 +27,9 @@ import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
+import 'package:vierqr/models/platform_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -37,8 +41,8 @@ import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
 import '../../../models/qr_box_dto.dart';
 
-class BankCardRepository {
-  const BankCardRepository();
+class BankCardRepository extends BaseRepo {
+  BankCardRepository();
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
   Future<BankOverviewDTO?> getOverview(
@@ -833,5 +837,30 @@ class BankCardRepository {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  Future<dynamic> getPlatformByBankId({
+    required int page,
+    required int size,
+    required String bankId,
+  }) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}list-platforms?bankId=$bankId&page=$page&size=$size';
+
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        metaDataDTO = MetaDataDTO.fromJson(data["metadata"]);
+
+        return PlatformDTO.fromJson(data['data']);
+      }
+    } catch (e) {
+      LOG.error("Failed to fetch invoice data: ${e.toString()}");
+    }
+    return null;
   }
 }
