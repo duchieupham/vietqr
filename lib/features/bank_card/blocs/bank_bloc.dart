@@ -57,7 +57,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
       toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
 
-  final bankCardRepository = BankCardRepository();
+  final bankCardRepository = const BankCardRepository();
 
   void _isCloseBanner(BankEvent event, Emitter emit) async {
     if (event is CloseBannerEvent) {
@@ -177,6 +177,17 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       emit(state.copyWith(
           bankSelect: event.bank,
           listBanner: event.bank.mmsActive ? state.listBanner : [0, 1]));
+
+      final result = await bankCardRepository.getPlatformByBankId(
+          page: 1, size: 4, bankId: event.bank.id);
+
+      if (result is PlatformDTO) {
+        emit(state.copyWith(
+          bankSelect: event.bank,
+          listBanner: event.bank.mmsActive ? state.listBanner : [0, 1],
+          listPlaforms: result.items,
+        ));
+      }
     }
   }
 

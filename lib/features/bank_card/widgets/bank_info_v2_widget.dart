@@ -154,9 +154,66 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
             ],
           ),
           if (inclusiveDays(widget.dto.validFeeTo) > 15 ||
-              !widget.dto.isAuthenticated)
-            const SizedBox.shrink()
-          else ...[
+              !widget.dto.isAuthenticated) ...[
+            const SizedBox(
+              height: 15,
+            ),
+            GradientBorderButton(
+              gradient: VietQRTheme.gradientColor.aiTextColor,
+              borderRadius: BorderRadius.circular(10),
+              borderWidth: 1.5,
+              widget: Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: ShaderMask(
+                            shaderCallback: (bounds) => VietQRTheme
+                                .gradientColor.aiTextColor
+                                .createShader(bounds),
+                            child: const Text(
+                              'Gia hạn dịch vụ VietQR',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColor.WHITE,
+                                  fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ),
+
+                        //sắp hết hạn
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Text(
+                            'Đến ${timestampToDate(widget.dto.validFeeTo)}',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: AppColor.BLACK,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 15,
+                          weight: 1,
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ] else ...[
             const SizedBox(
               height: 15,
             ),

@@ -73,7 +73,9 @@ class _BankStatisticState extends State<BankStatistic>
   bool isVerify = false;
   BankAccountDTO? bankSelect;
   List<BankAccountDTO>? listIsOwnerBank;
-  List<PlatformItem>? listPlatforms = [];
+  List<PlatformItem>? listPlatforms = [
+    PlatformItem(platformId: '', platformName: '', connectionDetail: '')
+  ];
   final List<String> listText = [
     'Quét mã VietQR của bạn để thêm tài khoản ngân hàng!',
   ];
@@ -188,8 +190,6 @@ class _BankStatisticState extends State<BankStatistic>
         }
         if (state.bankSelect != null && !state.isEmpty) {
           bankSelect = state.bankSelect;
-          _bloc.add(
-              GetAllPlatformsEvent(page: 1, size: 4, bankId: bankSelect!.id));
         }
         if (state.listPlaforms != null && state.listPlaforms!.isNotEmpty) {
           listPlatforms = state.listPlaforms;
@@ -413,7 +413,8 @@ class _BankStatisticState extends State<BankStatistic>
                         const SizedBox(
                           height: 15,
                         ),
-                        listPlatforms!.isEmpty
+                        (state.listPlaforms == null ||
+                                state.listPlaforms!.isEmpty)
                             ? NoServiceWidget(
                                 bankSelect: state.bankSelect!,
                               )
@@ -427,7 +428,7 @@ class _BankStatisticState extends State<BankStatistic>
                                     child: StepProgressView(
                                         curStep: 1,
                                         height: 120,
-                                        listItem: widgetList,
+                                        listItem: [],
                                         activeColor: Colors.black),
                                   ),
                                   Center(
@@ -536,43 +537,28 @@ class _BankStatisticState extends State<BankStatistic>
   }
 
   List<Widget> widgetList = [
-    Container(
-      width: 300,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Kế toán Katinat HCM',
-            style: TextStyle(
-              fontSize: 12,
-            ),
+    ListView.builder(
+      itemBuilder: (context, index) {
+        Container(
+          width: 300,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Kế toán Katinat HCM',
+                style: TextStyle(
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                'Hoạt động',
+                style: TextStyle(fontSize: 12, color: AppColor.GREEN),
+              ),
+            ],
           ),
-          Text(
-            'Hoạt động',
-            style: TextStyle(fontSize: 12, color: AppColor.GREEN),
-          ),
-        ],
-      ),
-    ),
-    Container(
-      width: 300,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'Kế toán Katinat HCM',
-            style: TextStyle(
-              fontSize: 12,
-            ),
-          ),
-          Text(
-            'Hoạt động',
-            style: TextStyle(fontSize: 12, color: AppColor.GREEN),
-          ),
-        ],
-      ),
-    ),
-    Text('Third Widget'),
+        );
+      },
+    )
   ];
 
   Widget _voiceWidget() {
