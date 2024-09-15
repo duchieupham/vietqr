@@ -41,8 +41,39 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   late final AnimationController _controller;
   late final Animation<double> _animation;
   late final BankBloc bankBloc = getIt.get<BankBloc>();
-  late final BankCardBloc bankCardBloc =
-      getIt.get<BankCardBloc>(param1: widget.dto.id, param2: true);
+  late BankCardBloc bankCardBloc;
+
+  String getSession() {
+    DateTime now = DateTime.now();
+    DateTime fromDate = DateTime(now.year, now.month, 1);
+    if (now.month >= 1 && now.month <= 3) {
+      DateTime currentSesson = DateTime(now.year, 1, 1);
+      if (fromDate.isBefore(currentSesson)) {
+        return '${DateFormat('yyyy-MM-dd').format(currentSesson)} 00:00:00';
+      }
+      return '${DateFormat('yyyy-MM-dd').format(fromDate)} 00:00:00';
+    } else if (now.month >= 4 && now.month <= 6) {
+      DateTime currentSesson = DateTime(now.year, 4, 1);
+      if (fromDate.isBefore(currentSesson)) {
+        return '${DateFormat('yyyy-MM-dd').format(currentSesson)} 00:00:00';
+      }
+      return '${DateFormat('yyyy-MM-dd').format(fromDate)} 00:00:00';
+    } else if (now.month >= 7 && now.month <= 9) {
+      DateTime currentSesson = DateTime(now.year, 7, 1);
+      if (fromDate.isBefore(currentSesson)) {
+        return '${DateFormat('yyyy-MM-dd').format(currentSesson)} 00:00:00';
+      }
+      // Quý 3: Từ 01-07 đến 30-09
+      return '${DateFormat('yyyy-MM-dd').format(fromDate)} 00:00:00';
+    } else {
+      DateTime currentSesson = DateTime(now.year, 10, 1);
+      if (fromDate.isBefore(currentSesson)) {
+        return '${DateFormat('yyyy-MM-dd').format(currentSesson)} 00:00:00';
+      }
+      // Quý 4: Từ 01-10 đến 31-12
+      return '${DateFormat('yyyy-MM-dd').format(fromDate)} 00:00:00';
+    }
+  }
 
   List<FilterTrans> list = [
     FilterTrans(
@@ -70,30 +101,21 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
       fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
       toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
 
-  BankOverviewDTO _currentOverview = BankOverviewDTO(
-      totalCredit: 0,
-      countCredit: 0,
-      totalDebit: 0,
-      countDebit: 0,
-      merchantName: '',
-      terminals: []);
+  BankOverviewDTO _currentOverview = BankOverviewDTO(terminals: []);
   BankOverviewDTO get currentOverview => _currentOverview;
 
-  BankOverviewDTO _passedOverview = BankOverviewDTO(
-      totalCredit: 0,
-      countCredit: 0,
-      totalDebit: 0,
-      countDebit: 0,
-      merchantName: '',
-      terminals: []);
+  BankOverviewDTO _passedOverview = BankOverviewDTO(terminals: []);
   BankOverviewDTO get passedOverview => _passedOverview;
 
   bool isTapped = false;
 
+  ValueNotifier<String> stringNotifier =
+      ValueNotifier<String>(DateFormat('dd/MM/yyyy').format(DateTime.now()));
+
   @override
   void initState() {
     super.initState();
-
+    bankCardBloc = getIt.get<BankCardBloc>(param1: widget.dto.id, param2: true);
     if (!widget.isHome) {
       bankBloc.add(GetTransEvent(bankId: widget.dto.id));
     }
@@ -147,10 +169,11 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                   _controller.reset();
                 }
                 if (state.transRequest == TransManage.GET_TRANS) {
+                  _controller.reset();
+                  isTapped = false;
                   _currentOverview = state.overviewDayDto!;
                   _passedOverview = state.overviewMonthDto!;
                   _controller.forward();
-                  isTapped = false;
                 }
               },
               builder: (context, state) {
@@ -165,7 +188,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                     children: [
                       _title(),
                       if (currentOverview.merchantName.isNotEmpty &&
-                          widget.dto.isOwner)
+                          !widget.dto.isOwner)
                         _merchant(),
                       SizedBox(
                         height: 220,
@@ -327,13 +350,53 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             setState(() {
                               selected = list[index];
                             });
-                            bankCardBloc.add(
-                              GetOverviewBankCardEvent(
-                                  bankId: widget.dto.id,
-                                  type: selected.type,
-                                  fromDate: selected.fromDate,
-                                  toDate: selected.toDate),
-                            );
+                            DateTime now = DateTime.now();
+                            switch (selected.type) {
+                              case 1:
+                                stringNotifier.value = DateFormat('dd/MM/yyyy')
+                                    .format(DateTime.now());
+                                bankCardBloc.add(
+                                  GetOverviewBankCardEvent(
+                                      bankId: widget.dto.id,
+                                      type: selected.type,
+                                      fromDate: selected.fromDate,
+                                      toDate: selected.toDate),
+                                );
+                                break;
+                              case 2:
+                                String fromDate = '';
+                                int currentWeekday = now.weekday;
+                                DateTime firstDayOfWeek = now.subtract(
+                                    Duration(days: currentWeekday - 1));
+                                if (firstDayOfWeek
+                                    .isBefore(DateTime(now.year, 1, 1))) {
+                                  firstDayOfWeek = DateTime(now.year, 1, 1);
+                                }
+                                fromDate =
+                                    '${DateFormat('yyyy-MM-dd').format(firstDayOfWeek)} 00:00:00';
+                                stringNotifier.value =
+                                    '${DateFormat('dd/MM/yy').format(firstDayOfWeek)} -> ${DateFormat('dd/MM/yy').format(DateTime.now())}';
+                                bankCardBloc.add(
+                                  GetOverviewBankCardEvent(
+                                      bankId: widget.dto.id,
+                                      type: selected.type,
+                                      fromDate: fromDate,
+                                      toDate: selected.toDate),
+                                );
+                                break;
+                              case 3:
+                                stringNotifier.value =
+                                    'Tháng ${now.month}/${now.year}';
+                                bankCardBloc.add(
+                                  GetOverviewBankCardEvent(
+                                      bankId: widget.dto.id,
+                                      type: selected.type,
+                                      fromDate: getSession(),
+                                      toDate: selected.toDate),
+                                );
+                                break;
+                              default:
+                            }
                           }
                         : null,
                     child: Container(
@@ -389,8 +452,8 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
               totalAmount: double.parse(passedOverview.totalDebit.toString()),
               currentAmount: state.transRequest == TransManage.LOADING
                   ? 0.0
-                  : calculateMaxAmount(double.parse(
-                      currentOverview.totalDebit.toString())), // in VND
+                  : double.parse(
+                      currentOverview.totalDebit.toString()), // in VND
               maxAmount: calculateMaxAmount(double.parse(passedOverview
                   .totalDebit
                   .toString())), // Dynamically calculated max amount
@@ -410,13 +473,17 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const SizedBox(height: 22),
-            Text(
-              selected.type == 3
-                  ? 'Quý ${(((DateTime.now().month - 1) ~/ 3) + 1).toString()} / ${DateTime.now().year}'
-                  : DateFormat('MM/yyyy').format(DateTime.now()),
-              style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-            ),
+            const SizedBox(height: 26),
+            ValueListenableBuilder<String>(
+              valueListenable: stringNotifier,
+              builder: (context, value, child) {
+                return Text(
+                  value,
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                );
+              },
+            )
           ],
         ),
         Column(
@@ -426,7 +493,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                 text: TextSpan(
                     text: state.transRequest == TransManage.LOADING
                         ? '...'
-                        : StringUtils.formatNumber(passedOverview.totalCredit),
+                        : StringUtils.formatNumber(currentOverview.totalCredit),
                     style: TextStyle(
                         fontSize: 12,
                         color: state.transRequest == TransManage.LOADING
@@ -446,7 +513,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             Text(
               state.transRequest == TransManage.LOADING
                   ? '0 GD đến (+)'
-                  : '${CurrencyUtils.instance.getCurrencyFormatted(passedOverview.countCredit.toString())} GD đến (+)',
+                  : '${CurrencyUtils.instance.getCurrencyFormatted(currentOverview.countCredit.toString())} GD đến (+)',
               style: const TextStyle(
                   fontSize: 10,
                   color: AppColor.BLACK,
@@ -457,7 +524,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                 text: TextSpan(
                     text: state.transRequest == TransManage.LOADING
                         ? '...'
-                        : StringUtils.formatNumber(passedOverview.totalDebit),
+                        : StringUtils.formatNumber(currentOverview.totalDebit),
                     style: TextStyle(
                         fontSize: 12,
                         color: state.transRequest == TransManage.LOADING
@@ -477,7 +544,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             Text(
               state.transRequest == TransManage.LOADING
                   ? '0 GD đi (-)'
-                  : '${CurrencyUtils.instance.getCurrencyFormatted(passedOverview.countDebit.toString())} GD đi (-)',
+                  : '${CurrencyUtils.instance.getCurrencyFormatted(currentOverview.countDebit.toString())} GD đi (-)',
               style: const TextStyle(
                   fontSize: 10,
                   color: AppColor.BLACK,
@@ -558,12 +625,26 @@ class AnimatedBar extends StatelessWidget {
 
     double currentHeight =
         currentAmount != 0 ? (currentAmount / totalAmount) * barHeight : 6;
-    bool isFiftyPercent = currentHeight >= barHeight * 0.7;
+    bool isFiftyPercent = currentHeight >= barHeight * 0.65;
     String formatAmount(double amount) {
       double billions = amount / 1000000;
       return isLoading
           ? '...'
           : '${billions.toStringAsFixed(1).replaceAll('.', ',')} Tr';
+    }
+
+    String currentType = '';
+    switch (type) {
+      case 1:
+        currentType = 'Hôm nay';
+        break;
+      case 2:
+        currentType = 'Tuần này';
+        break;
+      case 3:
+        currentType = 'Tháng ${DateTime.now().month}';
+        break;
+      default:
     }
 
     // String formatAmount(double amount) {
@@ -587,7 +668,7 @@ class AnimatedBar extends StatelessWidget {
         Text(
           type == 3
               ? 'Quý ${(((DateTime.now().month - 1) ~/ 3) + 1).toString()} / ${DateTime.now().year}'
-              : 'Tháng này',
+              : 'Tháng ${DateTime.now().month}',
           textAlign: TextAlign.left,
           style: const TextStyle(fontSize: 10, color: AppColor.GREY_TEXT),
         ),
@@ -624,10 +705,10 @@ class AnimatedBar extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'Hôm nay',
+                                Text(
+                                  currentType,
                                   textAlign: TextAlign.left,
-                                  style: TextStyle(fontSize: 10),
+                                  style: const TextStyle(fontSize: 10),
                                 ),
                                 Text(
                                   formatAmount(currentAmount),
@@ -655,10 +736,10 @@ class AnimatedBar extends StatelessWidget {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Text(
-                                        'Hôm nay',
+                                      Text(
+                                        currentType,
                                         textAlign: TextAlign.left,
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 10,
                                           color: AppColor.WHITE,
                                           fontWeight: FontWeight.bold,

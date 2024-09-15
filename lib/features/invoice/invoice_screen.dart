@@ -245,6 +245,7 @@ class __InvoiceState extends State<_Invoice> {
             await showCupertinoModalPopup(
               context: context,
               builder: (context) => PopupQrCreate(
+                urlLink: requestPayment.urlLink,
                 onSave: () {
                   NavigatorUtils.navigatePage(
                       context, PopupBankShare(dto: dto, type: TypeImage.SAVE),

@@ -75,31 +75,55 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     String fromDate = '';
     String toDate = '';
     DateTime now = DateTime.now();
-    DateTime firstDayOfYear = DateTime(now.year, 1, 1);
+    DateTime thisMonth = DateTime(now.year, now.month, 1);
+
     DateTime calculatedDate = now.subtract(const Duration(days: 30));
 
-    if (calculatedDate.isBefore(firstDayOfYear)) {
-      calculatedDate = firstDayOfYear;
-    }
     switch (type) {
       case 1:
+        if (calculatedDate.isBefore(thisMonth)) {
+          calculatedDate = thisMonth;
+        }
         fromDate =
             '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
         toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
         break;
       case 2:
+        if (calculatedDate.isBefore(thisMonth)) {
+          calculatedDate = thisMonth;
+        }
         fromDate =
             '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
         toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
         break;
       case 3:
-        calculatedDate = now.subtract(const Duration(days: 90));
-        if (calculatedDate.isBefore(firstDayOfYear)) {
-          calculatedDate = firstDayOfYear;
+        // calculatedDate = now.subtract(const Duration(days: 90));
+        if (now.month >= 1 && now.month <= 3) {
+          // Quý 1: Từ 01-01 đến 31-03
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 1, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 3, 31))} 23:59:59';
+        } else if (now.month >= 4 && now.month <= 6) {
+          // Quý 2: Từ 01-04 đến 30-06
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 4, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 6, 30))} 23:59:59';
+        } else if (now.month >= 7 && now.month <= 9) {
+          // Quý 3: Từ 01-07 đến 30-09
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 7, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 9, 30))} 23:59:59';
+        } else {
+          // Quý 4: Từ 01-10 đến 31-12
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 10, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 12, 30))} 23:59:59';
         }
-        fromDate =
-            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
-        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+
         break;
       default:
         break;
@@ -117,18 +141,24 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
       if (event is GetOverviewBankCardEvent) {
         emit(state.copyWith(transRequest: TransManage.LOADING));
         final futures = [
+          getPassedDateTime(bankId: bankId, type: event.type),
           getCurrentDateTime(
               bankId: bankId, fromDate: event.fromDate, toDate: event.toDate),
-          getPassedDateTime(bankId: bankId, type: event.type),
         ];
         final result = await Future.wait(futures);
-        final BankOverviewDTO resultCurrent = result[0] as BankOverviewDTO;
-        final BankOverviewDTO resultPassed = result[1] as BankOverviewDTO;
-
-        emit(state.copyWith(
-            transRequest: TransManage.GET_TRANS,
-            overviewDayDto: resultCurrent,
-            overviewMonthDto: resultPassed));
+        BankOverviewDTO? resultPassed = result[0];
+        BankOverviewDTO? resultCurrent = result[1];
+        if (resultCurrent != null && resultPassed != null) {
+          emit(state.copyWith(
+              transRequest: TransManage.GET_TRANS,
+              overviewDayDto: resultCurrent,
+              overviewMonthDto: resultPassed));
+        } else {
+          emit(state.copyWith(
+              transRequest: TransManage.NONE,
+              overviewDayDto: BankOverviewDTO(terminals: []),
+              overviewMonthDto: BankOverviewDTO(terminals: [])));
+        }
       }
     } catch (e) {
       LOG.error(e.toString());

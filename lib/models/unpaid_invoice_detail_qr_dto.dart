@@ -12,6 +12,7 @@ class UnpaidInvoiceDetailQrDTO {
   double vat;
   int vatAmount;
   String invoiceId;
+  String urlLink;
   int expiredTime;
 
   UnpaidInvoiceDetailQrDTO({
@@ -28,6 +29,7 @@ class UnpaidInvoiceDetailQrDTO {
     required this.vat,
     required this.vatAmount,
     required this.invoiceId,
+    required this.urlLink,
     required this.expiredTime,
   });
 
@@ -46,6 +48,7 @@ class UnpaidInvoiceDetailQrDTO {
       vat: json['vat'],
       vatAmount: json['vatAmount'],
       invoiceId: json['invoiceId'],
+      urlLink: json['urlLink'],
       expiredTime: json['expiredTime'],
     );
   }
@@ -65,6 +68,8 @@ class UnpaidInvoiceDetailQrDTO {
     data['vat'] = vat;
     data['vatAmount'] = vatAmount;
     data['invoiceId'] = invoiceId;
+    data['urlLink'] = urlLink;
+
     data['expiredTime'] = expiredTime;
     return data;
   }
