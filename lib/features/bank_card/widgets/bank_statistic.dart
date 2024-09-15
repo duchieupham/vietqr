@@ -30,28 +30,19 @@ import 'package:vierqr/features/bank_card/widgets/bank_infro_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/build_banner_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/display_setting_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
-import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
-import 'package:vierqr/features/bank_card/widgets/list_bank.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/no_service_widget.dart';
-import 'package:vierqr/features/bank_card/widgets/overview_statistic.dart';
-import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
-import 'package:vierqr/features/connect_media/connect_media_screen.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
-import 'package:vierqr/features/home/widget/item_service.dart';
 import 'package:vierqr/features/personal/views/noti_verify_email_widget.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
-import 'package:vierqr/features/verify_email/widgets/popup_key_free.dart';
-import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/platform_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -82,6 +73,7 @@ class _BankStatisticState extends State<BankStatistic>
   bool isVerify = false;
   BankAccountDTO? bankSelect;
   List<BankAccountDTO>? listIsOwnerBank;
+  List<PlatformItem>? listPlatforms = [];
   final List<String> listText = [
     'Quét mã VietQR của bạn để thêm tài khoản ngân hàng!',
   ];
@@ -197,6 +189,11 @@ class _BankStatisticState extends State<BankStatistic>
         }
         if (state.bankSelect != null && !state.isEmpty) {
           bankSelect = state.bankSelect;
+          _bloc.add(
+              GetAllPlatformsEvent(page: 1, size: 4, bankId: bankSelect!.id));
+        }
+        if (state.listPlaforms != null && state.listPlaforms!.isNotEmpty) {
+          listPlatforms = state.listPlaforms;
         }
       },
       builder: (context, state) {
@@ -368,107 +365,112 @@ class _BankStatisticState extends State<BankStatistic>
                         const SizedBox(
                           height: 15,
                         ),
-                        NoServiceWidget(
-                          bankSelect: state.bankSelect!,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Stack(
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(
-                                  left: 12, right: 12, top: 40),
-                              width: double.infinity,
-                              // height: 400,
-                              child: StepProgressView(
-                                  curStep: 1,
-                                  height: 120,
-                                  listItem: widgetList,
-                                  activeColor: Colors.black),
-                            ),
-                            Center(
-                              child: Container(
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                width: double.infinity,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(35),
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFFE1EFFF),
-                                      Color(0xFFE5F9FF),
-                                    ],
-                                    end: Alignment.centerRight,
-                                    begin: Alignment.centerLeft,
+                        listPlatforms!.isEmpty
+                            ? NoServiceWidget(
+                                bankSelect: state.bankSelect!,
+                              )
+                            : Stack(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(
+                                        left: 12, right: 12, top: 40),
+                                    width: double.infinity,
+                                    // height: 400,
+                                    child: StepProgressView(
+                                        curStep: 1,
+                                        height: 120,
+                                        listItem: widgetList,
+                                        activeColor: Colors.black),
                                   ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      height: 30,
-                                      width: 60,
+                                  Center(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
+                                      width: double.infinity,
+                                      height: 60,
                                       decoration: BoxDecoration(
-                                          color: AppColor.WHITE,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: Image(
-                                        image: ImageUtils.instance
-                                            .getImageNetWork(
-                                                state.bankSelect!.imgId),
+                                        borderRadius: BorderRadius.circular(35),
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xFFE1EFFF),
+                                            Color(0xFFE5F9FF),
+                                          ],
+                                          end: Alignment.centerRight,
+                                          begin: Alignment.centerLeft,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: Column(
+                                      child: Row(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                            CrossAxisAlignment.center,
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            state.bankSelect!.bankAccount,
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold),
+                                          Container(
+                                            height: 30,
+                                            width: 60,
+                                            decoration: BoxDecoration(
+                                                color: AppColor.WHITE,
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                            child: Image(
+                                              image: ImageUtils.instance
+                                                  .getImageNetWork(
+                                                      state.bankSelect!.imgId),
+                                            ),
                                           ),
-                                          Text(
-                                            state.bankSelect!.userBankName,
-                                            style: const TextStyle(
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  state.bankSelect!.bankAccount,
+                                                  style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                  state
+                                                      .bankSelect!.userBankName,
+                                                  style: const TextStyle(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 80,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                              gradient: VietQRTheme
+                                                  .gradientColor
+                                                  .brightBlueLinear,
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              'Kết nối mới',
+                                              style: TextStyle(
+                                                color: AppColor.WHITE,
                                                 fontSize: 10,
-                                                fontWeight: FontWeight.normal),
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
                                     ),
-                                    Container(
-                                      width: 80,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        gradient: VietQRTheme
-                                            .gradientColor.brightBlueLinear,
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Kết nối mới',
-                                        style: TextStyle(
-                                          color: AppColor.WHITE,
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  )
+                                ],
                               ),
-                            )
-                          ],
-                        ),
                       ],
                     ),
                   ),

@@ -167,3 +167,15 @@ class GetTransEvent extends BankEvent {
   @override
   List<Object?> get props => [bankId];
 }
+
+class GetAllPlatformsEvent extends BankEvent {
+  final int page;
+  final int size;
+  final String bankId;
+
+  const GetAllPlatformsEvent(
+      {required this.page, required this.size, required this.bankId});
+
+  @override
+  List<Object?> get props => [page, size, bankId];
+}

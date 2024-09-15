@@ -331,6 +331,7 @@ enum ConnectMedia {
   MAKE_CONNECTION,
   ADD_BANKS,
   REMOVE_BANK,
+  GET_PLATFORM
 }
 
 enum InvoiceType {

@@ -6,6 +6,7 @@ import 'package:vierqr/models/B%C4%90SD/lark_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/slack_dto.dart';
 import 'package:vierqr/models/B%C4%90SD/tele_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
+import 'package:vierqr/models/platform_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
@@ -22,7 +23,7 @@ class ConnectMediaStates extends Equatable {
   final List<DiscordDTO>? listDiscord;
   final List<GoogleSheetDTO>? listGgSheet;
   final MetaDataDTO? metadata;
-
+  final List<PlatformItem>? listPlatforms;
   final bool? hasInfo;
   final bool? isValidUrl;
   final bool? isConnectSuccess;
@@ -44,42 +45,43 @@ class ConnectMediaStates extends Equatable {
     this.listDiscord,
     this.listGgSheet,
     this.metadata,
+    this.listPlatforms,
   });
 
-  ConnectMediaStates copyWith({
-    BlocStatus? status,
-    ConnectMedia? request,
-    String? msg,
-    InfoMediaDTO? dto,
-    bool? hasInfo,
-    bool? isValidUrl,
-    bool? isConnectSuccess,
-    bool? isAddSuccess,
-    List<GoogleChatDTO>? listChat,
-    List<LarkDTO>? listLark,
-    List<TeleDTO>? listTele,
-    List<SlackDTO>? listSlack,
-    List<DiscordDTO>? listDiscord,
-    List<GoogleSheetDTO>? listGgSheet,
-    MetaDataDTO? metadata,
-  }) {
+  ConnectMediaStates copyWith(
+      {BlocStatus? status,
+      ConnectMedia? request,
+      String? msg,
+      InfoMediaDTO? dto,
+      bool? hasInfo,
+      bool? isValidUrl,
+      bool? isConnectSuccess,
+      bool? isAddSuccess,
+      List<GoogleChatDTO>? listChat,
+      List<LarkDTO>? listLark,
+      List<TeleDTO>? listTele,
+      List<SlackDTO>? listSlack,
+      List<DiscordDTO>? listDiscord,
+      List<GoogleSheetDTO>? listGgSheet,
+      MetaDataDTO? metadata,
+      List<PlatformItem>? listPlatforms}) {
     return ConnectMediaStates(
-      status: status ?? this.status,
-      request: request ?? this.request,
-      msg: msg ?? this.msg,
-      dto: dto ?? this.dto,
-      hasInfo: hasInfo ?? this.hasInfo,
-      isValidUrl: isValidUrl ?? this.isValidUrl,
-      isConnectSuccess: isConnectSuccess ?? this.isConnectSuccess,
-      isAddSuccess: isAddSuccess ?? this.isAddSuccess,
-      listChat: listChat ?? this.listChat,
-      listLark: listLark ?? this.listLark,
-      listTele: listTele ?? this.listTele,
-      listSlack: listSlack ?? this.listSlack,
-      listDiscord: listDiscord ?? this.listDiscord,
-      listGgSheet: listGgSheet ?? this.listGgSheet,
-      metadata: metadata ?? this.metadata,
-    );
+        status: status ?? this.status,
+        request: request ?? this.request,
+        msg: msg ?? this.msg,
+        dto: dto ?? this.dto,
+        hasInfo: hasInfo ?? this.hasInfo,
+        isValidUrl: isValidUrl ?? this.isValidUrl,
+        isConnectSuccess: isConnectSuccess ?? this.isConnectSuccess,
+        isAddSuccess: isAddSuccess ?? this.isAddSuccess,
+        listChat: listChat ?? this.listChat,
+        listLark: listLark ?? this.listLark,
+        listTele: listTele ?? this.listTele,
+        listSlack: listSlack ?? this.listSlack,
+        listDiscord: listDiscord ?? this.listDiscord,
+        listGgSheet: listGgSheet ?? this.listGgSheet,
+        metadata: metadata ?? this.metadata,
+        listPlatforms: listPlatforms ?? this.listPlatforms);
   }
 
   @override
@@ -99,5 +101,6 @@ class ConnectMediaStates extends Equatable {
         listDiscord,
         listGgSheet,
         metadata,
+        listPlatforms
       ];
 }
