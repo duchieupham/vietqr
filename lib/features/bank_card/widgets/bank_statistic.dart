@@ -414,7 +414,8 @@ class _BankStatisticState extends State<BankStatistic>
                           height: 15,
                         ),
                         (state.listPlaforms == null ||
-                                state.listPlaforms!.isEmpty)
+                                state.listPlaforms!.isEmpty ||
+                                state.listPlaforms!.length == 1)
                             ? NoServiceWidget(
                                 bankSelect: state.bankSelect!,
                               )
@@ -427,8 +428,44 @@ class _BankStatisticState extends State<BankStatistic>
                                     // height: 400,
                                     child: StepProgressView(
                                         curStep: 1,
-                                        height: 120,
-                                        listItem: [],
+                                        height: state.listPlaforms!.length == 5
+                                            ? 180
+                                            : state.listPlaforms!.length == 4
+                                                ? 150
+                                                : state.listPlaforms!.length ==
+                                                        3
+                                                    ? 120
+                                                    : 60,
+                                        listItem: List.generate(
+                                            state.listPlaforms!.length,
+                                            (index) {
+                                          return SizedBox(
+                                            width: 310,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    state.listPlaforms![index]
+                                                        .platformId,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const Text(
+                                                  'Hoạt động',
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColor.GREEN),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
                                         activeColor: Colors.black),
                                   ),
                                   Center(
@@ -536,30 +573,30 @@ class _BankStatisticState extends State<BankStatistic>
     );
   }
 
-  List<Widget> widgetList = [
-    ListView.builder(
-      itemBuilder: (context, index) {
-        Container(
-          width: 300,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Kế toán Katinat HCM',
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                'Hoạt động',
-                style: TextStyle(fontSize: 12, color: AppColor.GREEN),
-              ),
-            ],
-          ),
-        );
-      },
-    )
-  ];
+  // List<Widget> widgetList = [
+  //   ListView.builder(
+  //     itemBuilder: (context, index) {
+  //       Container(
+  //         width: 300,
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             Text(
+  //               'Kế toán Katinat HCM',
+  //               style: TextStyle(
+  //                 fontSize: 12,
+  //               ),
+  //             ),
+  //             Text(
+  //               'Hoạt động',
+  //               style: TextStyle(fontSize: 12, color: AppColor.GREEN),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   )
+  // ];
 
   Widget _voiceWidget() {
     return InkWell(

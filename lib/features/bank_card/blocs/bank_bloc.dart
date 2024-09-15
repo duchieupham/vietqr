@@ -182,10 +182,13 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           page: 1, size: 4, bankId: event.bank.id);
 
       if (result is PlatformDTO) {
+        List<PlatformItem> listPlatforms = [
+          PlatformItem(platformId: '', platformName: '', connectionDetail: '')
+        ];
         emit(state.copyWith(
           bankSelect: event.bank,
           listBanner: event.bank.mmsActive ? state.listBanner : [0, 1],
-          listPlaforms: result.items,
+          listPlaforms: listPlatforms..addAll(result.items),
         ));
       }
     }

@@ -153,8 +153,10 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
               ),
             ],
           ),
-          if (inclusiveDays(widget.dto.validFeeTo) > 15 ||
-              !widget.dto.isAuthenticated) ...[
+          if(!widget.dto.isAuthenticated) 
+          const SizedBox.shrink()
+          else if(inclusiveDays(widget.dto.validFeeTo) > 15 &&
+              widget.dto.isAuthenticated) ...[
             const SizedBox(
               height: 15,
             ),
