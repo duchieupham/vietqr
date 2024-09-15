@@ -169,7 +169,7 @@ class _BankStatisticState extends State<BankStatistic>
 
   @override
   Widget build(BuildContext context) {
-        final width = MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
     super.build(context);
 
     return BlocConsumer<BankBloc, BankState>(
@@ -238,10 +238,15 @@ class _BankStatisticState extends State<BankStatistic>
                 if (bankSelect != null &&
                     bankSelect?.bankTypeStatus == 1 &&
                     state.listBanks.isNotEmpty)
-                  BankInfroV2Widget(
-                    dto: bankSelect!,
-                    isLoading: state.status == BlocStatus.LOADING &&
-                        state.request != BankType.GET_OVERVIEW,
+                  SlideFadeTransition(
+                    offset: 1,
+                    delayStart: const Duration(milliseconds: 20),
+                    direction: Direction.horizontal,
+                    child: BankInfroV2Widget(
+                      dto: bankSelect!,
+                      isLoading: state.status == BlocStatus.LOADING &&
+                          state.request != BankType.GET_OVERVIEW,
+                    ),
                   ),
 
                 const SizedBox(height: 20),
