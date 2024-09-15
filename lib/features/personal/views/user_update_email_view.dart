@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -14,15 +13,10 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
-import 'package:vierqr/features/register/states/register_state.dart';
-import 'package:vierqr/features/verify_email/blocs/verify_email_bloc.dart';
-import 'package:vierqr/features/verify_email/events/verify_email_event.dart';
-import 'package:vierqr/features/verify_email/states/verify_email_state.dart';
+import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/layouts/register_app_bar.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class UserUpdateEmailWidget extends StatefulWidget {
@@ -225,13 +219,13 @@ class _UserUpdateEmailWidgetState extends State<UserUpdateEmailWidget> {
                       bool isValidEmail = _emailError == null &&
                           _emailController.text.isNotEmpty;
                       if (isValidEmail) {
-                        _bloc.add(
-                          UserEditEmailEvent(
+                        NavigatorUtils.navigatePage(
+                            context,
+                            VerifyEmailScreen(
                               email: _emailController.text,
-                              type: 0,
-                              otp: '',
-                              userId: SharePrefUtils.getProfile().userId),
-                        );
+                              isUpdate: true,
+                            ),
+                            routeName: VerifyEmailScreen.routeName);
                       }
                     },
                     onChange: (value) {
@@ -262,84 +256,6 @@ class _UserUpdateEmailWidgetState extends State<UserUpdateEmailWidget> {
                         style: const TextStyle(color: Colors.red, fontSize: 11),
                       ),
                     ),
-                  const SizedBox(height: 20),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: 'Nhận ngay ưu đãi sử dụng dịch vụ VietQR ',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                        TextSpan(
-                          text: 'miễn phí 01 tháng',
-                          style: TextStyle(
-                            fontSize: 20,
-                            foreground: Paint()
-                              ..shader = const LinearGradient(
-                                colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ).createShader(Rect.fromLTWH(0, 0, 200, 40)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  const Row(
-                    children: [
-                      XImage(
-                        imagePath: 'assets/images/ic-noti-bdsd-black.png',
-                        width: 40,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Nhận thông báo biến động số dư',
-                        style: TextStyle(fontSize: 12),
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Row(
-                    children: [
-                      XImage(
-                        imagePath: 'assets/images/ic-earth-black.png',
-                        width: 40,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Chuyển khoản nhanh chóng, mọi lúc mọi nơi',
-                        style: TextStyle(fontSize: 12),
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Row(
-                    children: [
-                      XImage(
-                        imagePath: 'assets/images/ic-store-black.png',
-                        width: 40,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Quản lý doanh thu các cửa hàng',
-                        style: TextStyle(fontSize: 12),
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -356,13 +272,13 @@ class _UserUpdateEmailWidgetState extends State<UserUpdateEmailWidget> {
                     bool isValidEmail =
                         _emailError == null && _emailController.text.isNotEmpty;
                     if (isValidEmail) {
-                      _bloc.add(
-                        UserEditEmailEvent(
+                      NavigatorUtils.navigatePage(
+                          context,
+                          VerifyEmailScreen(
                             email: _emailController.text,
-                            type: 0,
-                            otp: '',
-                            userId: SharePrefUtils.getProfile().userId),
-                      );
+                            isUpdate: true,
+                          ),
+                          routeName: VerifyEmailScreen.routeName);
                     }
                   },
                   isDisabled: !(_emailError == null &&
@@ -370,7 +286,7 @@ class _UserUpdateEmailWidgetState extends State<UserUpdateEmailWidget> {
                   size: VietQRButtonSize.large,
                   child: Center(
                     child: Text(
-                      'Lưu thông tin',
+                      'Xác thực Email',
                       style: TextStyle(
                         color: (_emailError == null &&
                                 _emailController.text.isNotEmpty)
@@ -384,40 +300,36 @@ class _UserUpdateEmailWidgetState extends State<UserUpdateEmailWidget> {
                 GestureDetector(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    // Map<String, dynamic> param = Map();
-                    // param['registerBloc'] = widget.registerBloc;
-                    // NavigationService.pushAndRemoveUntil(
-                    //     Routes.REGISTER_SPLASH_SCREEN,
-                    //     arguments: param);
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => FormRegisterSuccessSplash(
-                    //         // onHome: () {
-                    //         //   _onHomeCalled = true;
-                    //         //   // Navigator.of(context).popUntil((route) => route.,);
-                    //         //   // Navigator.of(context).pop();
-                    //         //   // Navigator.of(context).pop();
-                    //         //   // Navigator.of(context).pop();
-                    //         //   // backToPreviousPage(context, true);
-
-                    //         // },
-                    //         ),
-                    //   ),
-                    // );
+                    validateEmail(_emailController.text);
+                    bool isValidEmail =
+                        _emailError == null && _emailController.text.isNotEmpty;
+                    if (isValidEmail) {
+                      _bloc.add(
+                        UserEditEmailEvent(
+                            email: _emailController.text,
+                            userId: SharePrefUtils.getProfile().userId),
+                      );
+                    } else {}
                   },
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ).createShader(bounds),
-                    child: const Text(
-                      'Xác thực Email',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, color: Colors.white),
-                    ),
-                  ),
+                  child: _emailError == null && _emailController.text.isNotEmpty
+                      ? ShaderMask(
+                          shaderCallback: (bounds) => const LinearGradient(
+                            colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ).createShader(bounds),
+                          child: const Text(
+                            'Lưu thông tin',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 15, color: Colors.white),
+                          ),
+                        )
+                      : const Text(
+                          'Lưu thông tin',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 15, color: AppColor.GREY_DADADA),
+                        ),
                 ),
               ],
             ),

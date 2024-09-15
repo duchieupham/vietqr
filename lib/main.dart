@@ -39,6 +39,7 @@ import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/qr_box_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
+import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/splash_screen.dart';
 
@@ -95,8 +96,8 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // await Injection.inject(env: EnvType.STG);
-  await Injection.inject(env: EnvType.PROD);
+  await Injection.inject(env: EnvType.STG);
+  // await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
@@ -204,6 +205,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
             ChangeNotifierProvider(
                 create: (context) => CustomerVaInsertProvider()),
+            ChangeNotifierProvider(create: (context) => SettingBDSDProvider()),
           ],
           child: Consumer<AuthenProvider>(
             builder: (context, authProvider, child) {

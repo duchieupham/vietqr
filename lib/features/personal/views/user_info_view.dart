@@ -852,7 +852,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                 : InkWell(
                                     onTap: () {
                                       NavigatorUtils.navigatePage(
-                                          context, const VerifyEmailScreen(),
+                                          context, const VerifyEmailScreen(email: '',),
                                           routeName:
                                               VerifyEmailScreen.routeName);
                                     },

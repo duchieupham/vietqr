@@ -68,8 +68,6 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
         emit(UserEditLoadingState());
         final result = await userEditRepository.updateEmail(
             email: event.email,
-            type: event.type,
-            otp: event.otp,
             userId: event.userId);
         if (result.status == 'SUCCESS') {
           emit(UserEditEmailSuccessState());
