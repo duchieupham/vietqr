@@ -41,8 +41,7 @@ import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
 import '../../../models/qr_box_dto.dart';
 
-class BankCardRepository extends BaseRepo {
-  // BankCardRepository();
+class BankCardRepository {
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
   Future<BankOverviewDTO?> getOverview(
@@ -845,8 +844,8 @@ class BankCardRepository extends BaseRepo {
     required String bankId,
   }) async {
     try {
-      String url =
-          '${getIt.get<AppConfig>().getBaseUrl}list-platforms?bankId=$bankId&page=$page&size=$size';
+      final String url =
+          '${EnvConfig.getBaseUrl()}list-platforms?bankId=$bankId&page=$page&size=$size';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -854,9 +853,8 @@ class BankCardRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        metaDataDTO = MetaDataDTO.fromJson(data["metadata"]);
 
-        return PlatformDTO.fromJson(data['data']);
+        return PlatformDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error("Failed to fetch invoice data: ${e.toString()}");

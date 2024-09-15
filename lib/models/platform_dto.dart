@@ -6,15 +6,18 @@ class PlatformDTO {
   });
 
   factory PlatformDTO.fromJson(Map<String, dynamic> json) {
-    return PlatformDTO(
-      items: List<PlatformItem>.from(
-          json['items'].map((x) => PlatformItem.fromJson(x))),
-    );
+    List<PlatformItem> items = [];
+    if (json['data'] != null) {
+      json['data'].forEach((v) {
+        items.add(PlatformItem.fromJson(v));
+      });
+    }
+    return PlatformDTO(items: items);
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'items': List<dynamic>.from(items.map((x) => x.toJson())),
+      'data': List<dynamic>.from(items.map((x) => x.toJson())),
     };
   }
 }
