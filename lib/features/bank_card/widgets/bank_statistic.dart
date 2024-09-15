@@ -336,6 +336,19 @@ class _BankStatisticState extends State<BankStatistic>
                             ],
                           )),
                     ),
+                    // Container(
+                    //   width: double.infinity,
+                    //   margin: const EdgeInsets.symmetric(horizontal: 20),
+                    //   child: VietQRButton.suggest(
+                    //       size: VietQRButtonSize.small,
+                    //       onPressed: () async {
+                    //         await NavigatorUtils.navigatePage(
+                    //             context, const AddBankScreen(),
+                    //             routeName: AddBankScreen.routeName);
+                    //       },
+                    //       text:
+                    //           'Quét mã VietQR của bạn để thêm tài khoản ngân hàng'),
+                    // ),
                     const SizedBox(height: 10),
                   ],
                   if (state.listBanks.isEmpty)
@@ -364,10 +377,11 @@ class _BankStatisticState extends State<BankStatistic>
                                 fontSize: 16),
                           ),
                           const SizedBox(
-                            height: 20,
+                            height: 15,
                           ),
                           (state.listPlaforms == null ||
-                                  state.listPlaforms!.isEmpty)
+                                  state.listPlaforms!.isEmpty ||
+                                  state.listPlaforms!.length == 1)
                               ? NoServiceWidget(
                                   bankSelect: state.bankSelect!,
                                 )
@@ -380,8 +394,46 @@ class _BankStatisticState extends State<BankStatistic>
                                       // height: 400,
                                       child: StepProgressView(
                                           curStep: 1,
-                                          height: 120,
-                                          listItem: [],
+                                          height: state.listPlaforms!.length ==
+                                                  5
+                                              ? 180
+                                              : state.listPlaforms!.length == 4
+                                                  ? 150
+                                                  : state.listPlaforms!
+                                                              .length ==
+                                                          3
+                                                      ? 120
+                                                      : 60,
+                                          listItem: List.generate(
+                                              state.listPlaforms!.length,
+                                              (index) {
+                                            return SizedBox(
+                                              width: 310,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Text(
+                                                      state.listPlaforms![index]
+                                                          .platformId,
+                                                      style: TextStyle(
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Text(
+                                                    'Hoạt động',
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: AppColor.GREEN),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }),
                                           activeColor: Colors.black),
                                     ),
                                     Center(
@@ -492,30 +544,30 @@ class _BankStatisticState extends State<BankStatistic>
     );
   }
 
-  List<Widget> widgetList = [
-    ListView.builder(
-      itemBuilder: (context, index) {
-        Container(
-          width: 300,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Kế toán Katinat HCM',
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                'Hoạt động',
-                style: TextStyle(fontSize: 12, color: AppColor.GREEN),
-              ),
-            ],
-          ),
-        );
-      },
-    )
-  ];
+  // List<Widget> widgetList = [
+  //   ListView.builder(
+  //     itemBuilder: (context, index) {
+  //       Container(
+  //         width: 300,
+  //         child: Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             Text(
+  //               'Kế toán Katinat HCM',
+  //               style: TextStyle(
+  //                 fontSize: 12,
+  //               ),
+  //             ),
+  //             Text(
+  //               'Hoạt động',
+  //               style: TextStyle(fontSize: 12, color: AppColor.GREEN),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   )
+  // ];
 
   Widget _voiceWidget() {
     return InkWell(
