@@ -171,13 +171,15 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
               selected = list.first;
             }
             if (state.status == BlocStatus.LOADING &&
-                (state.request == BankType.GET_OVERVIEW)) {
+                (state.request == BankType.GET_OVERVIEW ||
+                    state.request == BankType.SELECT_BANK)) {
               isLoading = true;
               isTapped = true;
               _controller.reset();
             }
             if (state.status == BlocStatus.SUCCESS &&
-                (state.request == BankType.GET_OVERVIEW)) {
+                (state.request == BankType.GET_OVERVIEW ||
+                    state.request == BankType.SELECT_BANK)) {
               isLoading = false;
               isTapped = false;
               _controller.reset();
@@ -198,9 +200,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                       const EdgeInsets.symmetric(horizontal: 12),
                   child: Column(
                     children: [
-                      _title(
-                          isHomeLoading: state.status == BlocStatus.LOADING &&
-                              state.request == BankType.SELECT_BANK),
+                      _title(),
                       // if (currentOverview.merchantName.isNotEmpty &&
                       //     !widget.dto.isOwner)
                       //   _merchant(),
@@ -306,14 +306,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     );
   }
 
-  Widget _title({required bool isHomeLoading}) {
-    if (isHomeLoading) {
-      return const Row(
-        children: [
-          ShimmerBlock(height: 16, width: 100, borderRadius: 50),
-        ],
-      );
-    }
+  Widget _title() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -353,44 +346,44 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   }
 
   Widget _chart(BankState state) {
-    if (state.status == BlocStatus.LOADING &&
-        state.request == BankType.SELECT_BANK) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Row(
-                children: List.generate(
-                  list.length,
-                  (index) {
-                    return const Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: ShimmerBlock(
-                        height: 30,
-                        width: 60,
-                        borderRadius: 50,
-                      ),
-                    );
-                  },
-                ),
-              )
-            ],
-          ),
-          const Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ShimmerBlock(width: 80, height: 120, borderRadius: 4),
-              SizedBox(width: 20),
-              ShimmerBlock(width: 80, height: 120, borderRadius: 4),
-            ],
-          ),
-        ],
-      );
-    }
+    // if (state.status == BlocStatus.LOADING &&
+    //     state.request == BankType.SELECT_BANK) {
+    //   return Column(
+    //     crossAxisAlignment: CrossAxisAlignment.start,
+    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //     children: [
+    //       Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           const SizedBox(height: 20),
+    //           Row(
+    //             children: List.generate(
+    //               list.length,
+    //               (index) {
+    //                 return const Padding(
+    //                   padding: EdgeInsets.only(right: 8),
+    //                   child: ShimmerBlock(
+    //                     height: 30,
+    //                     width: 60,
+    //                     borderRadius: 50,
+    //                   ),
+    //                 );
+    //               },
+    //             ),
+    //           )
+    //         ],
+    //       ),
+    //       const Row(
+    //         crossAxisAlignment: CrossAxisAlignment.end,
+    //         children: [
+    //           ShimmerBlock(width: 80, height: 120, borderRadius: 4),
+    //           SizedBox(width: 20),
+    //           ShimmerBlock(width: 80, height: 120, borderRadius: 4),
+    //         ],
+    //       ),
+    //     ],
+    //   );
+    // }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -525,70 +518,70 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   }
 
   Widget _statistic(BankState state) {
-    if (state.status == BlocStatus.LOADING &&
-        state.request == BankType.SELECT_BANK) {
-      return const Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SizedBox(height: 26),
-              ShimmerBlock(
-                height: 12,
-                width: 70,
-                borderRadius: 10,
-              )
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ShimmerBlock(
-                height: 12,
-                width: 30,
-                borderRadius: 10,
-              ),
-              SizedBox(height: 2),
-              ShimmerBlock(
-                height: 12,
-                width: 70,
-                borderRadius: 10,
-              ),
-              SizedBox(height: 10),
-              ShimmerBlock(
-                height: 12,
-                width: 30,
-                borderRadius: 10,
-              ),
-              SizedBox(height: 2),
-              ShimmerBlock(
-                height: 12,
-                width: 70,
-                borderRadius: 10,
-              ),
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ShimmerBlock(
-                height: 12,
-                width: 100,
-                borderRadius: 10,
-              ),
-              SizedBox(height: 10),
-              ShimmerBlock(
-                height: 12,
-                width: 100,
-                borderRadius: 10,
-              ),
-            ],
-          ),
-        ],
-      );
-    }
+    // if (state.status == BlocStatus.LOADING &&
+    //     state.request == BankType.SELECT_BANK) {
+    //   return const Column(
+    //     crossAxisAlignment: CrossAxisAlignment.end,
+    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //     children: [
+    //       Column(
+    //         crossAxisAlignment: CrossAxisAlignment.end,
+    //         children: [
+    //           SizedBox(height: 26),
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 70,
+    //             borderRadius: 10,
+    //           )
+    //         ],
+    //       ),
+    //       Column(
+    //         crossAxisAlignment: CrossAxisAlignment.end,
+    //         children: [
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 30,
+    //             borderRadius: 10,
+    //           ),
+    //           SizedBox(height: 2),
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 70,
+    //             borderRadius: 10,
+    //           ),
+    //           SizedBox(height: 10),
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 30,
+    //             borderRadius: 10,
+    //           ),
+    //           SizedBox(height: 2),
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 70,
+    //             borderRadius: 10,
+    //           ),
+    //         ],
+    //       ),
+    //       Column(
+    //         crossAxisAlignment: CrossAxisAlignment.end,
+    //         children: [
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 100,
+    //             borderRadius: 10,
+    //           ),
+    //           SizedBox(height: 10),
+    //           ShimmerBlock(
+    //             height: 12,
+    //             width: 100,
+    //             borderRadius: 10,
+    //           ),
+    //         ],
+    //       ),
+    //     ],
+    //   );
+    // }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -614,16 +607,12 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
           children: [
             RichText(
                 text: TextSpan(
-                    text: state.status == BlocStatus.LOADING &&
-                            state.request == BankType.GET_OVERVIEW
+                    text: isLoading
                         ? '...'
                         : StringUtils.formatNumber(currentOverview.totalCredit),
                     style: TextStyle(
                         fontSize: 12,
-                        color: state.status == BlocStatus.LOADING &&
-                                state.request == BankType.GET_OVERVIEW
-                            ? AppColor.BLACK
-                            : AppColor.GREEN,
+                        color: isLoading ? AppColor.BLACK : AppColor.GREEN,
                         fontWeight: FontWeight.bold),
                     children: const [
                   TextSpan(
@@ -647,16 +636,12 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             const SizedBox(height: 10),
             RichText(
                 text: TextSpan(
-                    text: state.status == BlocStatus.LOADING &&
-                            state.request == BankType.GET_OVERVIEW
+                    text: isLoading
                         ? '...'
                         : StringUtils.formatNumber(currentOverview.totalDebit),
                     style: TextStyle(
                         fontSize: 12,
-                        color: state.status == BlocStatus.LOADING &&
-                                state.request == BankType.GET_OVERVIEW
-                            ? AppColor.BLACK
-                            : AppColor.RED_TEXT,
+                        color: isLoading ? AppColor.BLACK : AppColor.RED_TEXT,
                         fontWeight: FontWeight.bold),
                     children: const [
                   TextSpan(

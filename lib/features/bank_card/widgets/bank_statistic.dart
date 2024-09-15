@@ -73,7 +73,7 @@ class _BankStatisticState extends State<BankStatistic>
   bool isVerify = false;
   BankAccountDTO? bankSelect;
   List<BankAccountDTO>? listIsOwnerBank;
-  List<PlatformItem>? listPlatforms = [
+  List<PlatformItem> listPlatforms = [
     PlatformItem(platformId: '', platformName: '', connectionDetail: '')
   ];
   final List<String> listText = [
@@ -193,7 +193,11 @@ class _BankStatisticState extends State<BankStatistic>
           bankSelect = state.bankSelect;
         }
         if (state.listPlaforms != null && state.listPlaforms!.isNotEmpty) {
-          listPlatforms = state.listPlaforms;
+          listPlatforms = state.listPlaforms ??
+              [
+                PlatformItem(
+                    platformId: '', platformName: '', connectionDetail: '')
+              ];
         }
       },
       builder: (context, state) {
@@ -305,7 +309,7 @@ class _BankStatisticState extends State<BankStatistic>
                                 width: 30,
                               ),
                               Expanded(
-                                // width: MediaQuery.of(context).size.width,
+                                // width: MediaQuery.of(contxext).size.width,
                                 child: CarouselSlider(
                                   items: listText.map(
                                     (e) {
@@ -419,7 +423,7 @@ class _BankStatisticState extends State<BankStatistic>
                                                     child: Text(
                                                       state.listPlaforms![index]
                                                           .platformId,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontSize: 12,
                                                       ),
                                                     ),
