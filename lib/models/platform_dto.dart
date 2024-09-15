@@ -26,18 +26,20 @@ class PlatformItem {
   final String platformId;
   final String platformName;
   final String connectionDetail;
+  final String platform;
 
   PlatformItem(
       {required this.platformId,
       required this.platformName,
-      required this.connectionDetail});
+      required this.connectionDetail,
+      required this.platform});
 
   factory PlatformItem.fromJson(Map<String, dynamic> json) {
     return PlatformItem(
-      platformId: json['platformId'],
-      platformName: json['platformName'],
-      connectionDetail: json['connectionDetail'],
-    );
+        platformId: json['platformId'],
+        platformName: json['platformName'],
+        connectionDetail: json['connectionDetail'],
+        platform: json['platform']);
   }
 
   Map<String, dynamic> toJson() {
@@ -45,6 +47,7 @@ class PlatformItem {
     data['platformId'] = platformId;
     data['platformName'] = platformName;
     data['connectionDetail'] = connectionDetail;
+    data['platform'] = platform;
     return data;
   }
 }

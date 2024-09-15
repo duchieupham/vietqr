@@ -183,7 +183,11 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
       if (result is PlatformDTO) {
         List<PlatformItem> listPlatforms = [
-          PlatformItem(platformId: '', platformName: '', connectionDetail: '')
+          PlatformItem(
+              platformId: '',
+              platformName: '',
+              connectionDetail: '',
+              platform: '')
         ];
         emit(state.copyWith(
           bankSelect: event.bank,
@@ -260,12 +264,20 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         // BankOverviewDTO? overviewDTO;
         InvoiceOverviewDTO? invoiceOverviewDTO;
         List<NearestTransDTO> listTrans = [];
+        List<PlatformItem> listPlatforms = [
+          PlatformItem(
+              platformId: '',
+              platformName: '',
+              connectionDetail: '',
+              platform: '')
+        ];
         emit(state.copyWith(
           status: BlocStatus.LOADING_PAGE,
           request: BankType.BANK,
         ));
         List<BankAccountDTO> list =
             await bankCardRepository.getListBankAccount(userId);
+
         if (list.isNotEmpty && event.isGetOverview) {
           final futures = !state.isClose
               ? [
@@ -294,6 +306,13 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           if (!state.isClose) {
             invoiceOverviewDTO = results[1] as InvoiceOverviewDTO;
           }
+
+          final resultListPlatform = await bankCardRepository
+              .getPlatformByBankId(page: 1, size: 4, bankId: list.first.id);
+
+          if (resultListPlatform is PlatformDTO) {
+            listPlatforms = listPlatforms..addAll(resultListPlatform.items);
+          }
         }
         if (list.isEmpty) {
           isEmpty = true;
@@ -310,6 +329,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             bankSelect: isEmpty ? null : list.first,
             // colors: colors,
             status: BlocStatus.UNLOADING,
+            listPlaforms: listPlatforms,
             isEmpty: isEmpty));
         // final List<Color> colors = [];
         // PaletteGenerator? paletteGenerator;

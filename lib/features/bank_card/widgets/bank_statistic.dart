@@ -73,9 +73,7 @@ class _BankStatisticState extends State<BankStatistic>
   bool isVerify = false;
   BankAccountDTO? bankSelect;
   List<BankAccountDTO>? listIsOwnerBank;
-  List<PlatformItem>? listPlatforms = [
-    PlatformItem(platformId: '', platformName: '', connectionDetail: '')
-  ];
+
   final List<String> listText = [
     'Quét mã VietQR của bạn để thêm tài khoản ngân hàng!',
   ];
@@ -190,9 +188,6 @@ class _BankStatisticState extends State<BankStatistic>
         }
         if (state.bankSelect != null && !state.isEmpty) {
           bankSelect = state.bankSelect;
-        }
-        if (state.listPlaforms != null && state.listPlaforms!.isNotEmpty) {
-          listPlatforms = state.listPlaforms;
         }
       },
       builder: (context, state) {
@@ -423,39 +418,69 @@ class _BankStatisticState extends State<BankStatistic>
                                 children: [
                                   Container(
                                     margin: const EdgeInsets.only(
-                                        left: 12, right: 12, top: 40),
-                                    width: double.infinity,
-                                    // height: 400,
+                                        left: 12, right: 12, top: 20),
+                                    // padding: const EdgeInsets.only(top: 10, bottom: 10),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 300,
                                     child: StepProgressView(
                                         curStep: 1,
                                         height: state.listPlaforms!.length == 5
-                                            ? 180
+                                            ? 250
                                             : state.listPlaforms!.length == 4
-                                                ? 150
+                                                ? 200
                                                 : state.listPlaforms!.length ==
                                                         3
-                                                    ? 120
-                                                    : 60,
+                                                    ? 150
+                                                    : 80,
                                         listItem: List.generate(
                                             state.listPlaforms!.length,
                                             (index) {
                                           return SizedBox(
                                             width: 310,
+                                            height: 40,
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
-                                                      .spaceBetween,
+                                                      .start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
                                               children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: AppColor.BLACK
+                                                              .withOpacity(0.1),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 8,
+                                                          offset: const Offset(
+                                                              0, 2),
+                                                        )
+                                                      ]),
+                                                  child: XImage(
+                                                    imagePath:
+                                                        _buildIconPlatform(state
+                                                            .listPlaforms![
+                                                                index]
+                                                            .platform),
+                                                    height: 28,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10,),
                                                 Expanded(
                                                   flex: 2,
                                                   child: Text(
                                                     state.listPlaforms![index]
                                                         .platformId,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
+                                                 const SizedBox(width: 10,),
                                                 const Text(
                                                   'Hoạt động',
                                                   style: TextStyle(
@@ -597,6 +622,33 @@ class _BankStatisticState extends State<BankStatistic>
   //     },
   //   )
   // ];
+
+  String _buildIconPlatform(String platform) {
+    String img = '';
+    switch (platform) {
+      case 'Google Chat':
+        img = ImageConstant.logoGGChatHome;
+        break;
+      case 'Telegram':
+        img = ImageConstant.logoTelegramDash;
+        break;
+      case 'Lark':
+        img = ImageConstant.logoLarkDash;
+        break;
+      case 'Slack':
+        img = ImageConstant.logoSlackHome;
+        break;
+      case 'Discord':
+        img = ImageConstant.logoDiscordHome;
+        break;
+      case 'Google Sheet':
+        img = ImageConstant.logoGGSheetHome;
+        break;
+      default:
+    }
+
+    return img;
+  }
 
   Widget _voiceWidget() {
     return InkWell(
