@@ -42,7 +42,7 @@ import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 import '../../../models/qr_box_dto.dart';
 
 class BankCardRepository extends BaseRepo {
-  BankCardRepository();
+  // BankCardRepository();
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
   Future<BankOverviewDTO?> getOverview(
