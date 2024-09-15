@@ -31,9 +31,11 @@ import 'package:vierqr/features/bank_card/widgets/build_banner_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/display_setting_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
+import 'package:vierqr/features/bank_card/widgets/list_bank.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/no_service_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/overview_statistic.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
@@ -86,6 +88,7 @@ class _BankStatisticState extends State<BankStatistic>
   @override
   void initState() {
     super.initState();
+
     handleMessageOnBackground();
     listIsOwnerBank = SharePrefUtils.getOwnerBanks();
     isVerify = SharePrefUtils.getProfile().verify;
@@ -203,7 +206,7 @@ class _BankStatisticState extends State<BankStatistic>
           ),
           child: Container(
             // padding: const EdgeInsets.symmetric(vertical: 20),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColor.WHITE,
               // borderRadius: const BorderRadius.only(
               //     topLeft: Radius.circular(20), topRight: Radius.circular(20)),
@@ -211,40 +214,14 @@ class _BankStatisticState extends State<BankStatistic>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (bankSelect != null &&
-                    !bankSelect!.isValidService &&
-                    bankSelect!.isAuthenticated &&
-                    bankSelect?.bankTypeStatus == 1) ...[
-                  const SizedBox(height: 20),
-                  SlideFadeTransition(
-                    offset: 1,
-                    delayStart: const Duration(milliseconds: 20),
-                    direction: Direction.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: NotiVerifyEmailWidget(
-                        dto: bankSelect!,
-                        isVerify: isVerify,
-                      ),
-                    ),
-                  ),
-                ],
-                // StepProgressView(
-                //   height: 220,
-                //   curStep: 4,
-                //   color: AppColor.BLUE_TEXT,
-                //   titles: labels,
-                // ),
                 if (bankSelect != null && state.listBanks.isNotEmpty)
                   BankInfroV2Widget(
                     dto: bankSelect!,
                     isLoading: state.status == BlocStatus.LOADING &&
-                        state.request != BankType.GET_OVERVIEW,
+                        state.request == BankType.SELECT_BANK,
                   ),
 
                 const SizedBox(height: 20),
-
-                // const BuildBannerWidget(),
 
                 // if (bankSelect != null && bankSelect?.bankTypeStatus == 1) ...[
                 //   const SizedBox(height: 20),
@@ -264,7 +241,7 @@ class _BankStatisticState extends State<BankStatistic>
                 // _voiceWidget(),
                 if (state.listBanks.isNotEmpty && bankSelect != null) ...[
                   AnimationGraphWidget(
-                    margin: const EdgeInsets.fromLTRB(20, 35, 20, 0),
+                    margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                     dto: bankSelect!,
                     scrollNotifer: widget.scrollNotifer,
                     key: widget.animatedKey,
@@ -283,22 +260,19 @@ class _BankStatisticState extends State<BankStatistic>
                       );
                     },
                   ),
-                  // LatestTransWidget(
-                  //   isHome: true,
-                  //   onTap: () {
-                  //     Navigator.of(context).push(
-                  //       MaterialPageRoute(
-                  //         builder: (context) => BankCardDetailNewScreen(
-                  //             page: 1,
-                  //             dto: bankSelect!,
-                  //             bankId: bankSelect!.id),
-                  //         settings: const RouteSettings(
-                  //           name: Routes.BANK_CARD_DETAIL_NEW,
-                  //         ),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
+                ],
+                if (bankSelect != null &&
+                    !bankSelect!.isValidService &&
+                    bankSelect!.isAuthenticated &&
+                    bankSelect?.bankTypeStatus == 1) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 20),
+                    child: NotiVerifyEmailWidget(
+                      dto: bankSelect!,
+                      isVerify: isVerify,
+                    ),
+                  ),
                 ],
                 if (state.isEmpty) ...[
                   InkWell(

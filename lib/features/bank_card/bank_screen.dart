@@ -106,15 +106,15 @@ class _BankScreenState extends State<BankScreen> {
 
   void _onScroll() {
     _opacityNotifier.value = widget.scrollController.offset > 100 ? 1.0 : 0.0;
-    if (_animatedBarKey.currentContext != null) {
-      final RenderBox renderBox =
-          _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
-      final position = renderBox.localToGlobal(Offset.zero);
-      final scrollPosition = widget.scrollController.position;
-      isScrollToChart.value = position.dy >= scrollPosition.pixels + 250 &&
-          position.dy <=
-              scrollPosition.pixels + scrollPosition.viewportDimension;
-    }
+    // if (_animatedBarKey.currentContext != null) {
+    //   final RenderBox renderBox =
+    //       _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
+    //   final position = renderBox.localToGlobal(Offset.zero);
+    //   final scrollPosition = widget.scrollController.position;
+    //   isScrollToChart.value = position.dy >= scrollPosition.pixels + 250 &&
+    //       position.dy <=
+    //           scrollPosition.pixels + scrollPosition.viewportDimension;
+    // }
   }
 
   void _scrollToFocusedTextField() {

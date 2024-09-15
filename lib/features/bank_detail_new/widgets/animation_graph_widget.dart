@@ -6,8 +6,11 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/widgets/shimmer_block.dart';
+import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
+import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
@@ -40,8 +43,9 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
-  late final BankBloc bankBloc = getIt.get<BankBloc>();
-  late BankCardBloc bankCardBloc;
+  final BankBloc bankBloc = getIt.get<BankBloc>();
+  bool isLoading = false;
+  // late BankCardBloc bankCardBloc;
 
   String getSession() {
     DateTime now = DateTime.now();
@@ -101,10 +105,10 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
       fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
       toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59');
 
-  BankOverviewDTO _currentOverview = BankOverviewDTO(terminals: []);
+  BankOverviewDTO _currentOverview = BankOverviewDTO();
   BankOverviewDTO get currentOverview => _currentOverview;
 
-  BankOverviewDTO _passedOverview = BankOverviewDTO(terminals: []);
+  BankOverviewDTO _passedOverview = BankOverviewDTO();
   BankOverviewDTO get passedOverview => _passedOverview;
 
   bool isTapped = false;
@@ -115,12 +119,12 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   @override
   void initState() {
     super.initState();
-    bankCardBloc = getIt.get<BankCardBloc>(param1: widget.dto.id, param2: true);
+
     if (!widget.isHome) {
       bankBloc.add(GetTransEvent(bankId: widget.dto.id));
     }
-    bankCardBloc.add(
-        GetOverviewBankCardEvent(bankId: widget.dto.id, type: selected.type));
+    bankBloc
+        .add(GetOverviewBankEvent(bankId: widget.dto.id, type: selected.type));
 
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
@@ -159,37 +163,43 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
         //     value == false) {
         //   _controller.reset();
         // }
-        return Column(
-          children: [
-            BlocConsumer<BankCardBloc, BankCardState>(
-              bloc: bankCardBloc,
-              listener: (context, state) {
-                if (state.transRequest == TransManage.LOADING) {
-                  isTapped = true;
-                  _controller.reset();
-                }
-                if (state.transRequest == TransManage.GET_TRANS) {
-                  _controller.reset();
-                  isTapped = false;
-                  _currentOverview = state.overviewDayDto!;
-                  _passedOverview = state.overviewMonthDto!;
-                  _controller.forward();
-                }
-              },
-              builder: (context, state) {
-                // if (state.overviewMonthDto == null ||
-                //     state.overviewDayDto == null) {
-                //   return const SizedBox.shrink();
-                // }
-                return Container(
+        return BlocConsumer<BankBloc, BankState>(
+          bloc: bankBloc,
+          listener: (context, state) {
+            if (state.status == BlocStatus.LOADING &&
+                (state.request == BankType.GET_OVERVIEW)) {
+              isLoading = true;
+              isTapped = true;
+              _controller.reset();
+            }
+            if (state.status == BlocStatus.SUCCESS &&
+                (state.request == BankType.GET_OVERVIEW)) {
+              isLoading = false;
+              isTapped = false;
+              _controller.reset();
+              _currentOverview = state.overviewDayDto!;
+              _passedOverview = state.overviewMonthDto!;
+              _controller.forward();
+            }
+          },
+          builder: (context, state) {
+            // if (state.overviewMonthDto == null ||
+            //     state.overviewDayDto == null) {
+            //   return const SizedBox.shrink();
+            // }
+            return Column(
+              children: [
+                Container(
                   margin: widget.margin ??
                       const EdgeInsets.symmetric(horizontal: 12),
                   child: Column(
                     children: [
-                      _title(),
-                      if (currentOverview.merchantName.isNotEmpty &&
-                          !widget.dto.isOwner)
-                        _merchant(),
+                      _title(
+                          isHomeLoading: state.status == BlocStatus.LOADING &&
+                              state.request == BankType.SELECT_BANK),
+                      // if (currentOverview.merchantName.isNotEmpty &&
+                      //     !widget.dto.isOwner)
+                      //   _merchant(),
                       SizedBox(
                         height: 220,
                         child: Row(
@@ -203,15 +213,17 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                       ),
                     ],
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            LatestTransWidget(
-              isHome: widget.isHome,
-              onTap: widget.onTap,
-            ),
-          ],
+                ),
+                const SizedBox(height: 20),
+                LatestTransWidget(
+                  dto: widget.dto,
+                  listTrans: state.listTrans,
+                  isHome: widget.isHome,
+                  onTap: widget.onTap,
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -240,11 +252,11 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             style: const TextStyle(
                                 fontSize: 12, color: AppColor.BLACK),
                             children: [
-                              TextSpan(
-                                  text: ' ${currentOverview.merchantName}',
-                                  style: const TextStyle(
-                                      // fontWeight: FontWeight.w600,
-                                      fontSize: 12)),
+                              // TextSpan(
+                              //     text: ' ${currentOverview.merchantName}',
+                              //     style: const TextStyle(
+                              //         // fontWeight: FontWeight.w600,
+                              //         fontSize: 12)),
                             ])),
                   ),
                   const Icon(
@@ -267,15 +279,15 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      'Chi nhánh: ${currentOverview.terminals.join(', ')}',
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: Text(
+                  //     'Chi nhánh: ${currentOverview.terminals.join(', ')}',
+                  //     overflow: TextOverflow.ellipsis,
+                  //     style: const TextStyle(
+                  //       fontSize: 12,
+                  //     ),
+                  //   ),
+                  // ),
                   const Icon(
                     Icons.keyboard_arrow_down,
                     size: 20,
@@ -290,7 +302,14 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     );
   }
 
-  Widget _title() {
+  Widget _title({required bool isHomeLoading}) {
+    if (isHomeLoading) {
+      return const Row(
+        children: [
+          ShimmerBlock(height: 16, width: 100, borderRadius: 50),
+        ],
+      );
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -329,7 +348,45 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     );
   }
 
-  Widget _chart(BankCardState state) {
+  Widget _chart(BankState state) {
+    if (state.status == BlocStatus.LOADING &&
+        state.request == BankType.SELECT_BANK) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Row(
+                children: List.generate(
+                  list.length,
+                  (index) {
+                    return const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: ShimmerBlock(
+                        height: 30,
+                        width: 60,
+                        borderRadius: 50,
+                      ),
+                    );
+                  },
+                ),
+              )
+            ],
+          ),
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ShimmerBlock(width: 80, height: 120, borderRadius: 4),
+              SizedBox(width: 20),
+              ShimmerBlock(width: 80, height: 120, borderRadius: 4),
+            ],
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -355,8 +412,8 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                               case 1:
                                 stringNotifier.value = DateFormat('dd/MM/yyyy')
                                     .format(DateTime.now());
-                                bankCardBloc.add(
-                                  GetOverviewBankCardEvent(
+                                bankBloc.add(
+                                  GetOverviewBankEvent(
                                       bankId: widget.dto.id,
                                       type: selected.type,
                                       fromDate: selected.fromDate,
@@ -376,8 +433,8 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                                     '${DateFormat('yyyy-MM-dd').format(firstDayOfWeek)} 00:00:00';
                                 stringNotifier.value =
                                     '${DateFormat('dd/MM/yy').format(firstDayOfWeek)} -> ${DateFormat('dd/MM/yy').format(DateTime.now())}';
-                                bankCardBloc.add(
-                                  GetOverviewBankCardEvent(
+                                bankBloc.add(
+                                  GetOverviewBankEvent(
                                       bankId: widget.dto.id,
                                       type: selected.type,
                                       fromDate: fromDate,
@@ -387,8 +444,8 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                               case 3:
                                 stringNotifier.value =
                                     'Tháng ${now.month}/${now.year}';
-                                bankCardBloc.add(
-                                  GetOverviewBankCardEvent(
+                                bankBloc.add(
+                                  GetOverviewBankEvent(
                                       bankId: widget.dto.id,
                                       type: selected.type,
                                       fromDate: getSession(),
@@ -429,12 +486,11 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             AnimatedBar(
-              isLoading: state.transRequest == TransManage.NONE ||
-                  state.transRequest == TransManage.LOADING,
+              isLoading: isLoading,
               type: selected.type,
               animation: _animation,
               totalAmount: double.parse(passedOverview.totalCredit.toString()),
-              currentAmount: state.transRequest == TransManage.LOADING
+              currentAmount: isLoading
                   ? 0.0
                   : double.parse(
                       currentOverview.totalCredit.toString()), // in VND
@@ -445,12 +501,11 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             ),
             const SizedBox(width: 20),
             AnimatedBar(
-              isLoading: state.transRequest == TransManage.NONE ||
-                  state.transRequest == TransManage.LOADING,
+              isLoading: isLoading,
               type: selected.type,
               animation: _animation,
               totalAmount: double.parse(passedOverview.totalDebit.toString()),
-              currentAmount: state.transRequest == TransManage.LOADING
+              currentAmount: isLoading
                   ? 0.0
                   : double.parse(
                       currentOverview.totalDebit.toString()), // in VND
@@ -465,7 +520,95 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     );
   }
 
-  Widget _statistic(BankCardState state) {
+  Widget _statistic(BankState state) {
+    if (state.status == BlocStatus.LOADING &&
+        state.request == BankType.SELECT_BANK) {
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(height: 26),
+              ShimmerBlock(
+                height: 12,
+                width: 70,
+                borderRadius: 10,
+              )
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ShimmerBlock(
+                height: 12,
+                width: 30,
+                borderRadius: 10,
+              ),
+              SizedBox(height: 2),
+              ShimmerBlock(
+                height: 12,
+                width: 70,
+                borderRadius: 10,
+              ),
+              SizedBox(height: 10),
+              ShimmerBlock(
+                height: 12,
+                width: 30,
+                borderRadius: 10,
+              ),
+              SizedBox(height: 2),
+              ShimmerBlock(
+                height: 12,
+                width: 70,
+                borderRadius: 10,
+              ),
+            ],
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    'Giao dịch đến (+)',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColor.WHITE,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  SizedBox(width: 10),
+                  Icon(
+                    Icons.circle,
+                    size: 16,
+                    color: AppColor.WHITE,
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Text(
+                    'Giao dịch đến (-)',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColor.WHITE,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  SizedBox(width: 10),
+                  Icon(
+                    Icons.circle,
+                    size: 16,
+                    color: AppColor.WHITE,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -491,12 +634,14 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
           children: [
             RichText(
                 text: TextSpan(
-                    text: state.transRequest == TransManage.LOADING
+                    text: state.status == BlocStatus.LOADING &&
+                            state.request == BankType.GET_OVERVIEW
                         ? '...'
                         : StringUtils.formatNumber(currentOverview.totalCredit),
                     style: TextStyle(
                         fontSize: 12,
-                        color: state.transRequest == TransManage.LOADING
+                        color: state.status == BlocStatus.LOADING &&
+                                state.request == BankType.GET_OVERVIEW
                             ? AppColor.BLACK
                             : AppColor.GREEN,
                         fontWeight: FontWeight.bold),
@@ -511,7 +656,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                 ])),
             const SizedBox(height: 2),
             Text(
-              state.transRequest == TransManage.LOADING
+              isLoading
                   ? '0 GD đến (+)'
                   : '${CurrencyUtils.instance.getCurrencyFormatted(currentOverview.countCredit.toString())} GD đến (+)',
               style: const TextStyle(
@@ -522,12 +667,14 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             const SizedBox(height: 10),
             RichText(
                 text: TextSpan(
-                    text: state.transRequest == TransManage.LOADING
+                    text: state.status == BlocStatus.LOADING &&
+                            state.request == BankType.GET_OVERVIEW
                         ? '...'
                         : StringUtils.formatNumber(currentOverview.totalDebit),
                     style: TextStyle(
                         fontSize: 12,
-                        color: state.transRequest == TransManage.LOADING
+                        color: state.status == BlocStatus.LOADING &&
+                                state.request == BankType.GET_OVERVIEW
                             ? AppColor.BLACK
                             : AppColor.RED_TEXT,
                         fontWeight: FontWeight.bold),
@@ -542,7 +689,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                 ])),
             const SizedBox(height: 2),
             Text(
-              state.transRequest == TransManage.LOADING
+              isLoading
                   ? '0 GD đi (-)'
                   : '${CurrencyUtils.instance.getCurrencyFormatted(currentOverview.countDebit.toString())} GD đi (-)',
               style: const TextStyle(

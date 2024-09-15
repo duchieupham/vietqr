@@ -54,6 +54,28 @@ class GetOverviewEvent extends BankEvent {
       ];
 }
 
+class GetOverviewBankEvent extends BankEvent {
+  final String bankId;
+  final int type;
+  final String? fromDate;
+  final String? toDate;
+
+  const GetOverviewBankEvent({
+    required this.bankId,
+    required this.type,
+    this.fromDate,
+    this.toDate,
+  });
+
+  @override
+  List<Object?> get props => [
+        bankId,
+        type,
+        fromDate,
+        toDate,
+      ];
+}
+
 class SelectBankAccount extends BankEvent {
   final BankAccountDTO bank;
 

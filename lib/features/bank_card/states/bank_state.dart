@@ -17,7 +17,8 @@ class BankState extends Equatable {
   final List<BankAccountDTO> listBanks;
   final List<NearestTransDTO> listTrans;
   final BankAccountDTO? bankSelect;
-  final BankOverviewDTO? overviewDto;
+  final BankOverviewDTO? overviewDayDto;
+  final BankOverviewDTO? overviewMonthDto;
   final InvoiceOverviewDTO? invoiceOverviewDTO;
   // final List<Color> colors;
   final KeyFreeDTO? keyDTO;
@@ -41,7 +42,8 @@ class BankState extends Equatable {
     this.bankAccount,
     this.bankTypeDTO,
     this.barCode,
-    this.overviewDto,
+    this.overviewDayDto,
+    this.overviewMonthDto,
     required this.listBanks,
     required this.listTrans,
     required this.listBanner,
@@ -66,7 +68,8 @@ class BankState extends Equatable {
     List<int>? listBanner,
     NationalScannerDTO? nationalScannerDTO,
     String? bankAccount,
-    BankOverviewDTO? overviewDto,
+    BankOverviewDTO? overviewDayDto,
+    BankOverviewDTO? overviewMonthDto,
     KeyFreeDTO? keyDTO,
     InvoiceOverviewDTO? invoiceOverviewDTO,
     List<BankTypeDTO>? listBankTypeDTO,
@@ -89,7 +92,8 @@ class BankState extends Equatable {
       listTrans: listTrans ?? this.listTrans,
       listBanks: listBanks ?? this.listBanks,
       bankSelect: bankSelect ?? this.bankSelect,
-      overviewDto: overviewDto ?? this.overviewDto,
+      overviewDayDto: overviewDayDto ?? this.overviewDayDto,
+      overviewMonthDto: overviewMonthDto ?? this.overviewMonthDto,
       invoiceOverviewDTO: invoiceOverviewDTO ?? this.invoiceOverviewDTO,
       listBanner: listBanner ?? this.listBanner,
       listBankTypeDTO: listBankTypeDTO ?? this.listBankTypeDTO,
@@ -110,7 +114,7 @@ class BankState extends Equatable {
         listBanks,
         bankSelect,
         listTrans,
-        overviewDto,
+        overviewDayDto,
         invoiceOverviewDTO,
         typeQR,
         barCode,

@@ -191,65 +191,58 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                                   opacity: 1.0,
                                   duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  child: Row(
                                     children: [
-                                      Row(
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: GradientBorderButton(
+                                            widget: XImage(
+                                              imagePath:
+                                                  '${getIt.get<AppConfig>().getBaseUrl}images/${state.bankSelect!.imgId}',
+                                              width: 40,
+                                              height: 40,
+                                              fit: BoxFit.fitWidth,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            borderWidth: 1,
+                                            gradient: VietQRTheme
+                                                .gradientColor.lilyLinear),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 4),
-                                            child: GradientBorderButton(
-                                                widget: XImage(
-                                                  imagePath:
-                                                      '${getIt.get<AppConfig>().getBaseUrl}images/${state.bankSelect!.imgId}',
-                                                  width: 20,
-                                                  height: 20,
-                                                  fit: BoxFit.fitWidth,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(100),
-                                                borderWidth: 1,
-                                                gradient: VietQRTheme
-                                                    .gradientColor.lilyLinear),
-                                          ),
-                                          const SizedBox(width: 4),
                                           Text(
                                             state.bankSelect!.bankAccount,
                                             style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          const SizedBox(width: 6),
-                                          XImage(
-                                            imagePath: state
-                                                    .bankSelect!.mmsActive
-                                                ? 'assets/images/ic-diamond-pro.png'
-                                                : 'assets/images/ic-diamond.png',
-                                            width: 25,
-                                            height: 25,
                                           ),
-                                          GradientText(
-                                            !state.bankSelect!.mmsActive
-                                                ? 'VietQR Plus'
-                                                : 'VietQR Pro',
-                                            gradient:
+                                          Row(
+                                            children: [
+                                              GradientText(
                                                 !state.bankSelect!.mmsActive
-                                                    ? VietQRTheme.gradientColor
-                                                        .brightBlueLinear
-                                                    : VietQRTheme.gradientColor
-                                                        .vietQrPro,
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: AppColor.WHITE),
-                                          )
+                                                    ? 'VietQR Plus'
+                                                    : 'VietQR Pro',
+                                                gradient:
+                                                    !state.bankSelect!.mmsActive
+                                                        ? VietQRTheme
+                                                            .gradientColor
+                                                            .brightBlueLinear
+                                                        : VietQRTheme
+                                                            .gradientColor
+                                                            .vietQrPro,
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColor.WHITE),
+                                              )
+                                            ],
+                                          ),
                                         ],
-                                      ),
+                                      )
                                     ],
                                   ),
                                 )

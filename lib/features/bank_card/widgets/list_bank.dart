@@ -16,6 +16,8 @@ import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/button/button.dart';
@@ -37,10 +39,6 @@ class _ListBankWidgetState extends State<ListBankWidget>
   late SwiperController _swiperController;
   double move = 0.0;
   double moveWidth = 0.0;
-
-  final List<String> listText = [
-    'Quét mã VietQR của bạn để thêm tài khoản ngân hàng!',
-  ];
 
   @override
   void initState() {
@@ -132,10 +130,7 @@ class _ListBankWidgetState extends State<ListBankWidget>
                   onIndexChanged: (value) {
                     bankBloc
                         .add(SelectBankAccount(bank: state.listBanks[value]));
-                    bankBloc.add(
-                        GetOverviewEvent(bankId: state.listBanks[value].id));
-                    bankBloc
-                        .add(GetTransEvent(bankId: state.listBanks[value].id));
+
                     int itemCount =
                         (state.listBanks.length); // Assuming 1-indexed itemse
                     double availableWidth = 80 - 18;
@@ -257,7 +252,6 @@ class _ListBankWidgetState extends State<ListBankWidget>
                   },
                 ),
               ),
-
               if (state.listBanks.isNotEmpty) ...[
                 Container(
                   alignment: Alignment.centerLeft,

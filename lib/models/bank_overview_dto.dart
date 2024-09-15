@@ -3,16 +3,12 @@ class BankOverviewDTO {
   final int countCredit;
   final int totalDebit;
   final int countDebit;
-  final String merchantName;
-  final List<String> terminals;
 
   BankOverviewDTO({
     this.totalCredit = 0,
     this.countCredit = 0,
     this.totalDebit = 0,
     this.countDebit = 0,
-    this.merchantName = '',
-    required this.terminals,
   });
 
   // Factory constructor to create an instance from a JSON map
@@ -22,9 +18,6 @@ class BankOverviewDTO {
       countCredit: json['countCredit'] ?? 0,
       totalDebit: json['totalDebit'] ?? 0,
       countDebit: json['countDebit'] ?? 0,
-      merchantName: json['merchantName'] ?? '',
-      terminals:
-          json['terminals'] != null ? List<String>.from(json['terminals']) : [],
     );
   }
 
@@ -35,8 +28,6 @@ class BankOverviewDTO {
       'countCredit': countCredit,
       'totalDebit': totalDebit,
       'countDebit': countDebit,
-      'merchantName': merchantName,
-      'terminals': terminals,
     };
   }
 }

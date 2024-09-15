@@ -141,7 +141,7 @@ enum TypeQR {
   NEGATIVE_ONE,
 }
 
-enum UserUpdateEmailType{
+enum UserUpdateEmailType {
   NONE,
   SAVE,
   VERIFY,
@@ -302,6 +302,7 @@ enum BankType {
   QR,
   NONE,
   BANK,
+  SELECT_BANK,
   GET_BANK,
   GET_BANK_LOCAL,
   GET_KEY_FREE,

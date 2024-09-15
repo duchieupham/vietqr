@@ -156,8 +156,8 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         } else {
           emit(state.copyWith(
               transRequest: TransManage.NONE,
-              overviewDayDto: BankOverviewDTO(terminals: []),
-              overviewMonthDto: BankOverviewDTO(terminals: [])));
+              overviewDayDto: BankOverviewDTO(),
+              overviewMonthDto: BankOverviewDTO()));
         }
       }
     } catch (e) {

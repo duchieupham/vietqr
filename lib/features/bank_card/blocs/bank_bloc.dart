@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -40,7 +41,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     on<GetVerifyEmail>(_verifyEmail);
     on<SelectBankAccount>(_selectBank);
     on<SelectTimeEvent>(_selectTime);
-    on<GetOverviewEvent>(_getOverview);
+    on<GetOverviewBankEvent>(_getOverview);
     on<GetKeyFreeEvent>(_getKeyFree);
     on<GetInvoiceOverview>(_getInvoiceOverview);
     on<GetTransEvent>(_getTrans);
@@ -170,33 +171,163 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     }
   }
 
-  void _selectBank(BankEvent event, Emitter emit) async {
-    if (event is SelectBankAccount) {
-      emit(state.copyWith(
-          bankSelect: event.bank,
-          listBanner: event.bank.mmsActive ? state.listBanner : [0, 1]));
+  Future<BankOverviewDTO?> getCurrentDateTime(
+      {required String bankId, String? fromDate, String? toDate}) async {
+    return await bankCardRepository.getOverview(
+      bankId: bankId,
+      fromDate: fromDate ??
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+      toDate: toDate ??
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+    );
+  }
+
+  Future<BankOverviewDTO?> getPassedDateTime(
+      {required String bankId, required int type}) async {
+    String fromDate = '';
+    String toDate = '';
+    DateTime now = DateTime.now();
+    DateTime thisMonth = DateTime(now.year, now.month, 1);
+
+    DateTime calculatedDate = now.subtract(const Duration(days: 30));
+
+    switch (type) {
+      case 1:
+        if (calculatedDate.isBefore(thisMonth)) {
+          calculatedDate = thisMonth;
+        }
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      case 2:
+        if (calculatedDate.isBefore(thisMonth)) {
+          calculatedDate = thisMonth;
+        }
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      case 3:
+        // calculatedDate = now.subtract(const Duration(days: 90));
+        if (now.month >= 1 && now.month <= 3) {
+          // Quý 1: Từ 01-01 đến 31-03
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 1, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 3, 31))} 23:59:59';
+        } else if (now.month >= 4 && now.month <= 6) {
+          // Quý 2: Từ 01-04 đến 30-06
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 4, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 6, 30))} 23:59:59';
+        } else if (now.month >= 7 && now.month <= 9) {
+          // Quý 3: Từ 01-07 đến 30-09
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 7, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 9, 30))} 23:59:59';
+        } else {
+          // Quý 4: Từ 01-10 đến 31-12
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 10, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 12, 30))} 23:59:59';
+        }
+
+        break;
+      default:
+        break;
     }
+
+    return await bankCardRepository.getOverview(
+      bankId: bankId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+  }
+
+  Future<List<NearestTransDTO>> getListNearestTrans(String bankId) async {
+    List<NearestTransDTO> list = [];
+
+    list = await bankCardRepository.getListTrans(bankId);
+    return list;
   }
 
   void _getOverview(BankEvent event, Emitter emit) async {
     try {
-      if (event is GetOverviewEvent) {
+      if (event is GetOverviewBankEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: BankType.GET_OVERVIEW));
-        final result = await bankCardRepository.getOverview(
-          bankId: event.bankId,
-          fromDate: event.fromDate ?? selected.fromDate!,
-          toDate: event.toDate ?? selected.toDate!,
-        );
-        emit(state.copyWith(
-            status: BlocStatus.SUCCESS,
-            request: BankType.GET_OVERVIEW,
-            overviewDto: result));
+        final futures = [
+          getPassedDateTime(bankId: event.bankId, type: event.type),
+          getCurrentDateTime(
+              bankId: event.bankId,
+              fromDate: event.fromDate,
+              toDate: event.toDate),
+        ];
+        final result = await Future.wait(futures);
+        BankOverviewDTO? resultPassed = result[0];
+        BankOverviewDTO? resultCurrent = result[1];
+        if (resultCurrent != null && resultPassed != null) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS,
+              request: BankType.GET_OVERVIEW,
+              overviewDayDto: resultCurrent,
+              overviewMonthDto: resultPassed));
+        }
       }
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: BankType.GET_OVERVIEW));
+    }
+  }
+
+  void _selectBank(BankEvent event, Emitter emit) async {
+    try {
+      if (event is SelectBankAccount) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankType.SELECT_BANK));
+
+        await Future.delayed(const Duration(milliseconds: 500));
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: BankType.SELECT_BANK,
+          bankSelect: event.bank,
+        ));
+
+        //state overview
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankType.GET_OVERVIEW));
+
+        final futures = [
+          getPassedDateTime(bankId: event.bank.id, type: 1),
+          getCurrentDateTime(
+              bankId: event.bank.id,
+              fromDate:
+                  '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+              toDate:
+                  '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
+          getNearestTrans(bankId: event.bank.id),
+        ];
+        final resultFuture = await Future.wait(futures);
+        BankOverviewDTO? resultPassed = resultFuture[0] as BankOverviewDTO;
+        BankOverviewDTO? resultCurrent = resultFuture[1] as BankOverviewDTO;
+
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: BankType.GET_OVERVIEW,
+          overviewDayDto: resultCurrent,
+          overviewMonthDto: resultPassed,
+          listTrans: resultFuture[2] as List<NearestTransDTO>,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, request: BankType.SELECT_BANK));
     }
   }
 
@@ -253,20 +384,10 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         if (list.isNotEmpty && event.isGetOverview) {
           final futures = !state.isClose
               ? [
-                  // getBankOverView(
-                  //   bankId: list.first.id,
-                  //   fromDate: selected.fromDate!,
-                  //   toDate: selected.toDate!,
-                  // ),
                   getNearestTrans(bankId: list.first.id),
                   getInvoiceOverIvew(),
                 ]
               : [
-                  // getBankOverView(
-                  //   bankId: list.first.id,
-                  //   fromDate: selected.fromDate!,
-                  //   toDate: selected.toDate!,
-                  // ),
                   getNearestTrans(bankId: list.first.id),
                 ];
           final results = await Future.wait(futures);
@@ -291,10 +412,14 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             // overviewDto: isEmpty ? null : overviewDTO,
             invoiceOverviewDTO: invoiceOverviewDTO,
             listTrans: listTrans,
-            bankSelect: isEmpty ? null : list.first,
+            // bankSelect: isEmpty ? null : list.first,
             // colors: colors,
             status: BlocStatus.UNLOADING,
             isEmpty: isEmpty));
+        if (!isEmpty) {
+          getIt.get<BankBloc>().add(SelectBankAccount(bank: list.first));
+        }
+
         // final List<Color> colors = [];
         // PaletteGenerator? paletteGenerator;
         // BuildContext context = NavigationService.context!;

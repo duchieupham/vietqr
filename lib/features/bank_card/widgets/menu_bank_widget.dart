@@ -8,6 +8,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
@@ -36,6 +37,7 @@ class MenuBankWidget extends StatefulWidget {
 
 class _MenuBankWidgetState extends State<MenuBankWidget> with DialogHelper {
   final BankBloc bankBloc = getIt.get<BankBloc>();
+  bool isLoading = false;
 
   List<MenuItem> menus = [
     MenuItem(
@@ -70,17 +72,26 @@ class _MenuBankWidgetState extends State<MenuBankWidget> with DialogHelper {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BankBloc, BankState>(
+    return BlocConsumer<BankBloc, BankState>(
       bloc: bankBloc,
+      listener: (context, state) {
+        if (state.request == BankType.SELECT_BANK &&
+            state.status == BlocStatus.LOADING) {
+          isLoading = true;
+        }
+        if (state.request == BankType.SELECT_BANK &&
+            state.status == BlocStatus.SUCCESS) {
+          isLoading = false;
+        }
+      },
       builder: (context, state) {
         return Container(
           alignment: Alignment.center,
           width: double.infinity,
-          height: 150,
+          height: 180,
           child: GridView.builder(
             physics: const NeverScrollableScrollPhysics(),
             padding: EdgeInsets.zero,
-            primary: false,
             itemCount: menus.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
@@ -88,6 +99,25 @@ class _MenuBankWidgetState extends State<MenuBankWidget> with DialogHelper {
             ),
             itemBuilder: (context, index) {
               MenuItem item = menus[index];
+              if (isLoading) {
+                return const Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    ShimmerBlock(
+                      width: 40,
+                      height: 40,
+                      borderRadius: 10,
+                    ),
+                    SizedBox(height: 4),
+                    ShimmerBlock(
+                      width: 50,
+                      height: 10,
+                      borderRadius: 10,
+                    ),
+                  ],
+                );
+              }
               return InkWell(
                 onTap: state.status == BlocStatus.SUCCESS ||
                         state.status == BlocStatus.UNLOADING
