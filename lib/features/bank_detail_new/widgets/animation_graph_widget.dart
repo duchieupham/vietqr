@@ -167,6 +167,10 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
           bloc: bankBloc,
           listener: (context, state) {
             if (state.status == BlocStatus.LOADING &&
+                (state.request == BankType.SELECT_BANK)) {
+              selected = list.first;
+            }
+            if (state.status == BlocStatus.LOADING &&
                 (state.request == BankType.GET_OVERVIEW)) {
               isLoading = true;
               isTapped = true;
@@ -569,40 +573,16 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Row(
-                children: [
-                  Text(
-                    'Giao dịch đến (+)',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColor.WHITE,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  SizedBox(width: 10),
-                  Icon(
-                    Icons.circle,
-                    size: 16,
-                    color: AppColor.WHITE,
-                  ),
-                ],
+              ShimmerBlock(
+                height: 12,
+                width: 100,
+                borderRadius: 10,
               ),
               SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    'Giao dịch đến (-)',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColor.WHITE,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  SizedBox(width: 10),
-                  Icon(
-                    Icons.circle,
-                    size: 16,
-                    color: AppColor.WHITE,
-                  ),
-                ],
+              ShimmerBlock(
+                height: 12,
+                width: 100,
+                borderRadius: 10,
               ),
             ],
           ),

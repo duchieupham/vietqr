@@ -97,6 +97,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                               decorationColor: AppColor.ORANGE_DARK,
                               decorationThickness: 2,
                               fontSize: 12,
+                              height: 2.0,
                             ),
                           ),
                         ),
@@ -154,15 +155,17 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
               ),
             ],
           ),
-          if (inclusiveDays(widget.dto.validFeeTo) > 15 ||
-              !widget.dto.isAuthenticated) ...[
+          if (!widget.dto.isAuthenticated)
+            const SizedBox.shrink()
+          else if (inclusiveDays(widget.dto.validFeeTo) > 15 &&
+              widget.dto.isAuthenticated) ...[
             const SizedBox(
               height: 15,
             ),
             GradientBorderButton(
               gradient: VietQRTheme.gradientColor.aiTextColor,
               borderRadius: BorderRadius.circular(10),
-              borderWidth: 1,
+              borderWidth: 1.5,
               widget: Container(
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: Column(
@@ -232,7 +235,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
               child: GradientBorderButton(
                 gradient: VietQRTheme.gradientColor.aiTextColor,
                 borderRadius: BorderRadius.circular(10),
-                borderWidth: 1,
+                borderWidth: 1.5,
                 widget: Container(
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 15),
                   child: Column(
@@ -277,7 +280,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                                     ? 'Hạn ngày cuối'
                                     : 'Còn ${inclusiveDays(widget.dto.validFeeTo)} ngày',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 15,
                                   color:
                                       inclusiveDays(widget.dto.validFeeTo) == 0
                                           ? AppColor.RED_FFFF0000

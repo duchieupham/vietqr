@@ -13,7 +13,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
-// ignore: must_be_immutable
 class DisplaySettingWidget extends StatefulWidget {
   DisplaySettingWidget(
       {super.key, required this.listIsOwnerBank, required this.width});

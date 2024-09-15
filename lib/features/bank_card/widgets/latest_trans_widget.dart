@@ -45,6 +45,9 @@ class _LatestTransWidgetState extends State<LatestTransWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.listTrans.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Column(
       children: [
         const SizedBox(height: 20),

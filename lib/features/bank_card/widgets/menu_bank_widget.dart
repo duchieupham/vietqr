@@ -99,25 +99,25 @@ class _MenuBankWidgetState extends State<MenuBankWidget> with DialogHelper {
             ),
             itemBuilder: (context, index) {
               MenuItem item = menus[index];
-              if (isLoading) {
-                return const Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    ShimmerBlock(
-                      width: 40,
-                      height: 40,
-                      borderRadius: 10,
-                    ),
-                    SizedBox(height: 4),
-                    ShimmerBlock(
-                      width: 50,
-                      height: 10,
-                      borderRadius: 10,
-                    ),
-                  ],
-                );
-              }
+              // if (isLoading) {
+              //   return const Column(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     children: [
+              //       ShimmerBlock(
+              //         width: 40,
+              //         height: 40,
+              //         borderRadius: 10,
+              //       ),
+              //       SizedBox(height: 4),
+              //       ShimmerBlock(
+              //         width: 50,
+              //         height: 10,
+              //         borderRadius: 10,
+              //       ),
+              //     ],
+              //   );
+              // }
               return InkWell(
                 onTap: state.status == BlocStatus.SUCCESS ||
                         state.status == BlocStatus.UNLOADING
