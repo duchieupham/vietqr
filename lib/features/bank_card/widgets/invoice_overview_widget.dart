@@ -47,7 +47,7 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget>
             Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
           },
           child: Container(
-            margin: const EdgeInsets.only(top: 10),
+            margin: const EdgeInsets.only(top: 0),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: const BoxDecoration(

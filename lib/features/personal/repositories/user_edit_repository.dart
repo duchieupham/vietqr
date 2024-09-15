@@ -183,8 +183,6 @@ class UserEditRepository {
 
   Future<ResponseMessageDTO> updateEmail(
       {required String email,
-      required int type,
-      required String otp,
       required String userId}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
@@ -193,7 +191,7 @@ class UserEditRepository {
           '${getIt.get<AppConfig>().getBaseUrl}admin/account-update/$userId';
       final response = await BaseAPIClient.putAPI(
         url: url,
-        body: {'email': email, 'type': type, 'otp': otp},
+        body: {'email': email},
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200 || response.statusCode == 400) {
