@@ -234,8 +234,8 @@ class __InvoiceState extends State<_Invoice> {
           final requestPayment = state.unpaidInvoiceDetailQrDTO;
           if (requestPayment != null) {
             QRGeneratedDTO dto = QRGeneratedDTO(
-              bankCode: '',
-              bankName: '',
+              bankCode: requestPayment.bankCode,
+              bankName: requestPayment.bankName,
               bankAccount: requestPayment.bankAccount,
               userBankName: requestPayment.userBankName,
               qrCode: requestPayment.qrCode,

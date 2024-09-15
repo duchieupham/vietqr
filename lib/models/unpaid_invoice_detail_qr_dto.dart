@@ -4,6 +4,8 @@ class UnpaidInvoiceDetailQrDTO {
   String invoiceName;
   String midName;
   String vso;
+  String bankCode;
+  String bankName;
   String bankAccount;
   String bankShortName;
   String invoiceNumber;
@@ -21,6 +23,8 @@ class UnpaidInvoiceDetailQrDTO {
     required this.invoiceName,
     required this.midName,
     required this.vso,
+    required this.bankCode,
+    required this.bankName,
     required this.bankAccount,
     required this.bankShortName,
     required this.invoiceNumber,
@@ -40,6 +44,8 @@ class UnpaidInvoiceDetailQrDTO {
       invoiceName: json['invoiceName'],
       midName: json['midName'],
       vso: json['vso'],
+      bankCode: json['bankCode'] ?? '',
+      bankName: json['bankName'] ?? '',
       bankAccount: json['bankAccount'],
       bankShortName: json['bankShortName'],
       invoiceNumber: json['invoiceNumber'],

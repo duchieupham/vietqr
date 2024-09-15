@@ -235,24 +235,17 @@ class _BankStatisticState extends State<BankStatistic>
                 //   color: AppColor.BLUE_TEXT,
                 //   titles: labels,
                 // ),
-                if (bankSelect != null &&
-                    bankSelect?.bankTypeStatus == 1 &&
-                    state.listBanks.isNotEmpty)
-                  SlideFadeTransition(
-                    offset: 1,
-                    delayStart: const Duration(milliseconds: 20),
-                    direction: Direction.horizontal,
-                    child: BankInfroV2Widget(
-                      dto: bankSelect!,
-                      isLoading: state.status == BlocStatus.LOADING &&
-                          state.request != BankType.GET_OVERVIEW,
-                    ),
+                if (bankSelect != null && state.listBanks.isNotEmpty)
+                  BankInfroV2Widget(
+                    dto: bankSelect!,
+                    isLoading: state.status == BlocStatus.LOADING &&
+                        state.request != BankType.GET_OVERVIEW,
                   ),
 
                 const SizedBox(height: 20),
 
                 // const BuildBannerWidget(),
-                const InvoiceOverviewWidget(),
+
                 // if (bankSelect != null && bankSelect?.bankTypeStatus == 1) ...[
                 //   const SizedBox(height: 20),
                 //   OverviewStatistic(
@@ -370,19 +363,6 @@ class _BankStatisticState extends State<BankStatistic>
                           ],
                         )),
                   ),
-                  // Container(
-                  //   width: double.infinity,
-                  //   margin: const EdgeInsets.symmetric(horizontal: 20),
-                  //   child: VietQRButton.suggest(
-                  //       size: VietQRButtonSize.small,
-                  //       onPressed: () async {
-                  //         await NavigatorUtils.navigatePage(
-                  //             context, const AddBankScreen(),
-                  //             routeName: AddBankScreen.routeName);
-                  //       },
-                  //       text:
-                  //           'Quét mã VietQR của bạn để thêm tài khoản ngân hàng'),
-                  // ),
                   const SizedBox(height: 10),
                 ],
                 if (state.listBanks.isEmpty)

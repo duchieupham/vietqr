@@ -26,6 +26,7 @@ import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_appbar_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_statistic.dart';
 import 'package:vierqr/features/bank_card/widgets/build_banner_widget.dart';
+import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/list_bank.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -216,6 +217,7 @@ class _BankScreenState extends State<BankScreen> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
+                  const InvoiceOverviewWidget(),
                   const BuildBannerWidget(),
                   const ListBankWidget(),
                   BankStatistic(

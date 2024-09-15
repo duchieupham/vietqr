@@ -141,29 +141,29 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                   ],
                                 ),
                               ),
-                              if (state.bankSelect != null &&
-                                  state.bankSelect!.mmsActive)
-                                Positioned(
-                                  top: 10,
-                                  right: 10,
-                                  child: InkWell(
-                                    onTap: () {
-                                      // List<int> list =
-                                      //     List.from(state.listBanner);
-                                      // list.removeAt(index);
-                                      getIt.get<BankBloc>().add(
-                                          const CloseBannerEvent(
-                                              listBanner: []));
-                                    },
-                                    child: const XImage(
-                                      imagePath:
-                                          'assets/images/ic-close-black.png',
-                                      width: 30,
-                                      height: 30,
-                                      color: AppColor.BLACK,
-                                    ),
-                                  ),
-                                )
+                              // if (state.bankSelect != null &&
+                              //     state.bankSelect!.mmsActive)
+                              //   Positioned(
+                              //     top: 10,
+                              //     right: 10,
+                              //     child: InkWell(
+                              //       onTap: () {
+                              //         // List<int> list =
+                              //         //     List.from(state.listBanner);
+                              //         // list.removeAt(index);
+                              //         getIt.get<BankBloc>().add(
+                              //             const CloseBannerEvent(
+                              //                 listBanner: []));
+                              //       },
+                              //       child: const XImage(
+                              //         imagePath:
+                              //             'assets/images/ic-close-black.png',
+                              //         width: 30,
+                              //         height: 30,
+                              //         color: AppColor.BLACK,
+                              //       ),
+                              //     ),
+                              //   )
                             ],
                           ),
                         ),
@@ -260,27 +260,27 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                 ],
                               ),
                             ),
-                            if (state.bankSelect != null &&
-                                state.bankSelect!.mmsActive)
-                              Positioned(
-                                top: 10,
-                                right: 10,
-                                child: InkWell(
-                                  onTap: () {
-                                    // List<int> list = List.from(state.listBanner);
-                                    // list.removeAt(index);
-                                    getIt.get<BankBloc>().add(
-                                        const CloseBannerEvent(listBanner: []));
-                                  },
-                                  child: const XImage(
-                                    imagePath:
-                                        'assets/images/ic-close-black.png',
-                                    width: 30,
-                                    height: 30,
-                                    color: AppColor.WHITE,
-                                  ),
-                                ),
-                              )
+                            // if (state.bankSelect != null &&
+                            //     state.bankSelect!.mmsActive)
+                            //   Positioned(
+                            //     top: 10,
+                            //     right: 10,
+                            //     child: InkWell(
+                            //       onTap: () {
+                            //         // List<int> list = List.from(state.listBanner);
+                            //         // list.removeAt(index);
+                            //         getIt.get<BankBloc>().add(
+                            //             const CloseBannerEvent(listBanner: []));
+                            //       },
+                            //       child: const XImage(
+                            //         imagePath:
+                            //             'assets/images/ic-close-black.png',
+                            //         width: 30,
+                            //         height: 30,
+                            //         color: AppColor.WHITE,
+                            //       ),
+                            //     ),
+                            //   )
                           ],
                         ),
                       ),
