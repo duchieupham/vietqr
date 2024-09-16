@@ -33,7 +33,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     on<RequestRegisterBankAccount>(_requestRegisterBankAccount);
   }
 
-  final bankCardRepository = const BankCardRepository();
+  final bankCardRepository = BankCardRepository();
 
   void _getBankTypes(AddBankEvent event, Emitter emit) async {
     if (banks.isNotEmpty) {
@@ -130,7 +130,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
 
           if (event.type == ExitsType.ADD.name) {
             title = 'Không thể thêm TK';
-            msg = 'Tài khoản đã tồn tại trong danh sách tài khoản ngân hàng của bạn';
+            msg =
+                'Tài khoản đã tồn tại trong danh sách tài khoản ngân hàng của bạn';
           }
           emit(
             state.copyWith(

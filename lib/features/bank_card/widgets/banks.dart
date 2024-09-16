@@ -38,54 +38,62 @@ class _BanksViewState extends State<BanksView> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                height: 48,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: AppColor.WHITE,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: MTextFieldCustom(
-                    focusNode: widget.focusNode,
-                    controller: controller,
-                    focusBorder: InputBorder.none,
-                    enableBorder: InputBorder.none,
-                    enable: true,
-                    contentPadding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
-                    hintText: 'Tìm kiếm ngân hàng',
-                    prefixIcon: const XImage(
-                        imagePath: 'assets/images/ic-search-black.png',
-                        width: 30,
-                        height: 30),
-                    keyboardAction: TextInputAction.done,
-                    onChange: (value) {
-                      if (value.isNotEmpty) {
-                        setState(() {
-                          isSearch = true;
-                          listSearch = list
-                              .where(
-                                (element) =>
-                                    element.bankCode
-                                        .toLowerCase()
-                                        .contains(value) ||
-                                    element.bankName
-                                        .toLowerCase()
-                                        .contains(value) ||
-                                    element.bankShortName!.contains(value),
-                              )
-                              .toList();
-                        });
-                      } else {
-                        setState(() {
-                          isSearch = false;
-                        });
-                      }
-                    },
-                    inputType: TextInputType.text,
-                    isObscureText: false),
+              const Text(
+                'Chọn ngân hàng để thực hiện thao tác thêm/liên kết.',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
               ),
+              const SizedBox(height: 16),
+              GradientBorderButton(
+                  widget: Container(
+                    width: double.infinity,
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: MTextFieldCustom(
+                        focusNode: widget.focusNode,
+                        controller: controller,
+                        focusBorder: InputBorder.none,
+                        enableBorder: InputBorder.none,
+                        enable: true,
+                        contentPadding: const EdgeInsets.fromLTRB(0, 2, 0, 0),
+                        hintText: 'Tìm kiếm ngân hàng',
+                        prefixIcon: const XImage(
+                            imagePath: 'assets/images/ic-search-black.png',
+                            width: 30,
+                            height: 30),
+                        keyboardAction: TextInputAction.done,
+                        onChange: (value) {
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              isSearch = true;
+                              listSearch = list
+                                  .where(
+                                    (element) =>
+                                        element.bankCode
+                                            .toLowerCase()
+                                            .contains(value) ||
+                                        element.bankName
+                                            .toLowerCase()
+                                            .contains(value) ||
+                                        element.bankShortName!.contains(value),
+                                  )
+                                  .toList();
+                            });
+                          } else {
+                            setState(() {
+                              isSearch = false;
+                            });
+                          }
+                        },
+                        inputType: TextInputType.text,
+                        isObscureText: false),
+                  ),
+                  borderRadius: BorderRadius.circular(100),
+                  borderWidth: 1,
+                  gradient: VietQRTheme.gradientColor.aiTextColor),
               const SizedBox(height: 16),
               GridView.builder(
                 padding: EdgeInsets.zero,

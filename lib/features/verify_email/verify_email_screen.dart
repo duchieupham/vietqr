@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
@@ -18,7 +19,11 @@ import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({super.key});
+  const VerifyEmailScreen(
+      {super.key, required this.email, this.isUpdate = false});
+
+  final String email;
+  final bool isUpdate;
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -36,9 +41,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   bool _confirmOTP = true;
 
   void initialServices() {
-    if (userProfile.email.isNotEmpty && _emailController.text.isEmpty) {
-      _emailController.value =
-          _emailController.value.copyWith(text: userProfile.email);
+    if (widget.email.isNotEmpty) {
+      _emailController.text = widget.email;
+    } else {
+      if (userProfile.email.isNotEmpty && _emailController.text.isEmpty) {
+        _emailController.value =
+            _emailController.value.copyWith(text: userProfile.email);
+      }
     }
   }
 
@@ -62,7 +71,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<EmailBloc, EmailState>(
       bloc: _bloc,
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is SendOTPState) {
           DialogWidget.instance.openLoadingDialog();
         }
@@ -112,6 +121,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           getIt.get<DashBoardBloc>().add(GetUserInformation());
           // getIt.get<BankBloc>().add(GetVerifyEmail());
           // print(SharePrefUtils.getProfile().verify);
+          //  if (widget.isUpdate) {
+          //   UserProfile profile = SharePrefUtils.getProfile();
+          //   profile.email = _emailController.text;
+          //   await SharePrefUtils.saveProfileToCache(profile);
+          //   NavigatorUtils.navigateToRoot(context);
+          // } else {
+          //   Navigator.of(context).pop();
+          // }
         }
         if (state is ConfirmOTPStateFailedState) {
           _confirmOTP = false;
@@ -230,7 +247,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               VerifyEmailSuccessScreen(
                 email: _emailController.text,
                 onContinue: () {
-                  Navigator.of(context).pop();
+                  NavigatorUtils.navigateToRoot(context);
                 },
               ),
             ],

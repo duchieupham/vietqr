@@ -245,8 +245,7 @@ class SharePrefUtils {
   }
 
   /// List enable voice bank
-  static Future<void> saveListEnableVoiceBanks(
-      String value) async {
+  static Future<void> saveListEnableVoiceBanks(String value) async {
     final sharedPreferenceService = SharedPrefLocal(
         Constants.SharedPreferenceKey.ListEnableVoiceBank.sharedValue);
     await sharedPreferenceService.set(data: value);
@@ -261,17 +260,17 @@ class SharePrefUtils {
 
   ///List owner and authen bank
   static Future<void> saveListOwnerBanks(List<BankAccountDTO> list) async {
-    final sharedPreferenceService =
-        SharedPrefLocal(Constants.SharedPreferenceKey.ListOwnerBank.sharedValue);
+    final sharedPreferenceService = SharedPrefLocal(
+        Constants.SharedPreferenceKey.ListOwnerBank.sharedValue);
     await sharedPreferenceService.set(data: list);
   }
 
-  static Future<List<BankAccountDTO>?> getOwnerBanks() async {
+  static List<BankAccountDTO>? getOwnerBanks() {
     final sharedPreferenceService = SharedPrefLocal<BankAccountDTO>(
       Constants.SharedPreferenceKey.ListOwnerBank.sharedValue,
     );
 
-    return sharedPreferenceService.getList(
+    return sharedPreferenceService.getListNoFuture(
       fromJson: (json) => BankAccountDTO.fromJson(json),
     );
   }

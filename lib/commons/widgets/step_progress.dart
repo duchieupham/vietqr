@@ -1,95 +1,129 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart'; // Assuming this contains the AppColor constants
 
 class StepProgressView extends StatelessWidget {
-  final double _width;
-
-  final List<String> _titles;
+  final List<Widget> _listItem;
   final int _curStep;
   final Color _activeColor;
-  final Color _inactiveColor = AppColor.GREY_TEXT;
-  final double lineWidth = 2.0;
+  final double _height;
+  final Color _inactiveColor;
+  final double _lineWidth;
+  final Widget? _customSpace;
 
-  const StepProgressView(
-      {super.key,
-      required int curStep,
-      required List<String> titles,
-      required double width,
-      required Color color})
-      : _titles = titles,
+  StepProgressView({
+    super.key,
+    required int curStep,
+    required double height,
+    required List<Widget> listItem,
+    required Color activeColor,
+    Color? inactiveColor,
+    double? lineWidth,
+    Widget? customSpace,
+  })  : _listItem = listItem,
+        _height = height,
         _curStep = curStep,
-        _width = width,
-        _activeColor = color,
-        assert(width > 0);
+        _activeColor = activeColor,
+        _inactiveColor = inactiveColor ?? activeColor.withOpacity(0.3),
+        _lineWidth = lineWidth ?? 2.0,
+        _customSpace = customSpace;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        width: _width,
-        child: Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: _iconViews(),
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            height: _height,
+            child: Column(
+              children: _iconViews(),
+            ),
+          ),
+          const SizedBox(
+            width: 16,
+          ),
+          Expanded(
+            child: SizedBox(
+              height: _height + (_height / _listItem.length) * 0.6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _itemViews(),
               ),
             ),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: _titleViews(),
-            ),
-          ],
-        ));
+          ),
+        ],
+      ),
+    );
   }
 
   List<Widget> _iconViews() {
     var list = <Widget>[];
-    _titles.asMap().forEach((i, icon) {
+    _listItem.asMap().forEach((i, item) {
       var circleColor =
-          (i == 0 || _curStep > i) ? AppColor.BLUE_TEXT : AppColor.GREY_BUTTON;
+          (i == 0 || _curStep > i + 1) ? _activeColor : _inactiveColor;
       var lineColor = _curStep > i + 1 ? _activeColor : _inactiveColor;
-      var textColor =
-          (i == 0 || _curStep > i) ? AppColor.WHITE : AppColor.GREY_TEXT;
+
+      // Icon for each step
       list.add(
-        Container(
-          width: 28.0,
-          height: 28.0,
-          padding: const EdgeInsets.all(0),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              /* color: circleColor,*/
-              borderRadius: const BorderRadius.all(Radius.circular(22.0)),
-              color: circleColor),
-          child: Text(
-            '${i + 1}',
-            style: TextStyle(color: textColor),
-          ),
-        ),
+        _customSpace ??
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                gradient: VietQRTheme.gradientColor.brightBlueLinear,
+              ),
+            ),
       );
 
-      //line between icons
-      if (i != _titles.length - 1) {
-        list.add(Expanded(
-            child: Container(
-          height: lineWidth,
-          color: lineColor,
-        )));
+      // Dashed line between icons
+      if (i != _listItem.length - 1) {
+        list.add(
+          Expanded(
+            child: SizedBox(
+              width: _lineWidth,
+              child: _dashedLine(lineColor),
+            ),
+          ),
+        );
       }
     });
 
     return list;
   }
 
-  List<Widget> _titleViews() {
+  List<Widget> _itemViews() {
     var list = <Widget>[];
-    _titles.asMap().forEach((i, text) {
-      var textColor =
-          (i == 0 || _curStep > i) ? AppColor.BLACK : AppColor.GREY_TEXT;
-      list.add(Text(text, style: TextStyle(color: textColor, fontSize: 11)));
+    _listItem.asMap().forEach((i, item) {
+      var isActive = (i == 0 || _curStep > i + 1);
+      list.add(item);
     });
     return list;
+  }
+
+  // Method to create a vertical dashed line
+  Widget _dashedLine(Color? color) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final boxHeight = constraints.constrainHeight();
+        const dashHeight = 5.0;
+        const dashSpace = 3.0;
+        final dashCount = (boxHeight / (dashHeight + dashSpace)).floor();
+
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: List.generate(dashCount, (_) {
+            return SizedBox(
+              width: _lineWidth,
+              height: dashHeight,
+              child: const DecoratedBox(
+                decoration: BoxDecoration(color: AppColor.GREY_DADADA),
+              ),
+            );
+          }),
+        );
+      },
+    );
   }
 }

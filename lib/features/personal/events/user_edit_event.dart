@@ -71,3 +71,15 @@ class GetInformationUserEvent extends UserEditEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+class UserEditEmailEvent extends UserEditEvent {
+  final String email;
+  final String userId;
+
+  const UserEditEmailEvent({required this.email, required this.userId});
+
+  @override
+  List<Object?> get props => [
+        email,
+      ];
+}

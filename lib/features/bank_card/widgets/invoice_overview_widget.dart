@@ -5,9 +5,11 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
@@ -47,7 +49,7 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget>
             Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
           },
           child: Container(
-            margin: const EdgeInsets.only(top: 10),
+            margin: const EdgeInsets.only(top: 0),
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             decoration: const BoxDecoration(
@@ -67,7 +69,7 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget>
                       width: 40,
                       height: 40,
                     ),
-                    const SizedBox(width: 8),
+
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,22 +117,38 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget>
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-                        getIt.get<BankBloc>().add(
-                            const CloseInvoiceOverviewEvent(isClose: true));
-                      },
-                      child: const XImage(
-                        imagePath: 'assets/images/ic-close-black.png',
-                        width: 30,
-                        height: 30,
-                      ),
-                    ),
+                      child: GradientBorderButton(
+                          widget: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            height: 40,
+                            child: Center(
+                              child: GradientText('Thanh toán ngay',
+                                  style: TextStyle(fontSize: 12),
+                                  gradient:
+                                      VietQRTheme.gradientColor.aiTextColor),
+                            ),
+                          ),
+                          borderRadius: BorderRadius.circular(100),
+                          borderWidth: 1,
+                          gradient: VietQRTheme.gradientColor.aiTextColor),
+                    )
+                    // InkWell(
+                    //   onTap: () {
+                    //     getIt.get<BankBloc>().add(
+                    //         const CloseInvoiceOverviewEvent(isClose: true));
+                    //   },
+                    //   child: const XImage(
+                    //     imagePath: 'assets/images/ic-close-black.png',
+                    //     width: 30,
+                    //     height: 30,
+                    //   ),
+                    // ),
                   ],
                 ),
-                const SizedBox(height: 18),
-                ...state.invoiceOverviewDTO!.invoices.map(
-                  (e) => _item(e),
-                )
+                // const SizedBox(height: 18),
+                // ...state.invoiceOverviewDTO!.invoices.map(
+                //   (e) => _item(e),
+                // )
               ],
             ),
           ),

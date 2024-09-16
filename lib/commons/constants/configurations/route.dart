@@ -14,6 +14,7 @@ class Routes {
   static const String QR_GENERATED = '/qrGenerated';
   static const String USER_EDIT = '/userEdit';
   static const String USER_INFO = '/userInfo';
+  static const String UPDATE_EMAIL = '/updateEmail';
   static const String UPDATE_PASSWORD = '/updatePassword';
   static const String QR_SCAN = '/qrScan';
   static const String BANK_MANAGE = '/bankManage';

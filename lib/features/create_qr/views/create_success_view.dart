@@ -57,7 +57,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
               const Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Nhận tiền từ mọi ngân hàng và ví điện thử có hỗ trợ VietQR',
+                  'Nhận tiền từ mọi ngân hàng và ví điện tử có hỗ trợ VietQR',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
                 ),

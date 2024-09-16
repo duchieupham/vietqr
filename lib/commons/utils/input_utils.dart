@@ -16,6 +16,22 @@ class VietnameseNameInputFormatter extends TextInputFormatter {
   }
 }
 
+class VietnameseNameNoSpaceInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final RegExp regExp = RegExp(
+      r'^[a-zA-ZÀ-ỹẠ-ỵ0-9]*$',
+    );
+    if (regExp.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
 class WebhookTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -73,6 +89,22 @@ class VietnameseNameLongTextInputFormatter extends TextInputFormatter {
   ) {
     final RegExp regExp = RegExp(
       r'^[a-zA-ZÀ-ỹẠ-ỵ0-9\s,.]*$',
+    );
+    if (regExp.hasMatch(newValue.text)) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
+
+class VietnameseAddressTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final RegExp regExp = RegExp(
+      r'^[a-zA-ZÀ-ỹẠ-ỵ0-9\s,./\-()]*$',
     );
     if (regExp.hasMatch(newValue.text)) {
       return newValue;

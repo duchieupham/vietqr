@@ -1,9 +1,5 @@
 import 'dart:async';
-import 'dart:math';
-
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:custom_clippers/custom_clippers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +20,6 @@ import 'package:vierqr/features/scan_qr/events/scan_qr_event.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/general_dialog.dart';
 import 'package:vierqr/features/scan_qr/widgets/scan_overlay_widget.dart';
-import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';

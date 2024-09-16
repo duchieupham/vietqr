@@ -8,7 +8,6 @@ class UserProfile {
   String nationalId;
   String oldNationalId;
   String nationalDate;
-
   int gender;
   String address;
   String email;

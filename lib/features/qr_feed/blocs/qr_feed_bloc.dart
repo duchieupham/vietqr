@@ -216,7 +216,6 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
             status: BlocStatus.LOADING,
             request: QrFeed.GET_QR_FEED_POPUP_DETAIL));
 
-
         if (result != null) {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,
@@ -312,7 +311,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   }
 
   void _searchBankName(QrFeedEvent event, Emitter emit) async {
-    BankCardRepository bankCardRepository = const BankCardRepository();
+    BankCardRepository bankCardRepository = BankCardRepository();
 
     try {
       if (event is SearchBankEvent) {
@@ -345,7 +344,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   }
 
   void _getBankTypes(QrFeedEvent event, Emitter emit) async {
-    BankCardRepository bankCardRepository = const BankCardRepository();
+    BankCardRepository bankCardRepository = BankCardRepository();
 
     try {
       if (event is LoadBanksEvent) {

@@ -14,6 +14,7 @@ import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.da
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -54,28 +55,114 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   void _setQrGenerate(BankCardEvent event, Emitter emit) async {
     if (event is SetQrGenerateEvent) {
       emit(state.copyWith(
-         request: BankDetailType.SET_QR,
-        qrGenerate: event.qrGeneratedDTO));
+          request: BankDetailType.SET_QR, qrGenerate: event.qrGeneratedDTO));
     }
   }
 
-  void _getOverview(BankCardEvent event, Emitter emit) async {
-    const bankCardRepository = BankCardRepository();
+  Future<BankOverviewDTO?> getCurrentDateTime(
+      {required String bankId, String? fromDate, String? toDate}) async {
+    return await bankCardRepository.getOverview(
+      bankId: bankId,
+      fromDate: fromDate ??
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
+      toDate: toDate ??
+          '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+    );
+  }
 
-    if (event is GetOverviewBankCardEvent) {
-      final resultMonth = await bankCardRepository.getOverview(
-        bankId: event.bankId,
-        fromDate:
-            '${DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 30)))} 00:00:00',
-        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
-      );
-      final resultDay = await bankCardRepository.getOverview(
-        bankId: event.bankId,
-        fromDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
-        toDate: '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
-      );
-      emit(state.copyWith(
-          overviewDayDto: resultDay, overviewMonthDto: resultMonth));
+  Future<BankOverviewDTO?> getPassedDateTime(
+      {required String bankId, required int type}) async {
+    String fromDate = '';
+    String toDate = '';
+    DateTime now = DateTime.now();
+    DateTime thisMonth = DateTime(now.year, now.month, 1);
+
+    DateTime calculatedDate = now.subtract(const Duration(days: 30));
+
+    switch (type) {
+      case 1:
+        if (calculatedDate.isBefore(thisMonth)) {
+          calculatedDate = thisMonth;
+        }
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      case 2:
+        if (calculatedDate.isBefore(thisMonth)) {
+          calculatedDate = thisMonth;
+        }
+        fromDate =
+            '${DateFormat('yyyy-MM-dd').format(calculatedDate)} 00:00:00';
+        toDate = '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59';
+        break;
+      case 3:
+        // calculatedDate = now.subtract(const Duration(days: 90));
+        if (now.month >= 1 && now.month <= 3) {
+          // Quý 1: Từ 01-01 đến 31-03
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 1, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 3, 31))} 23:59:59';
+        } else if (now.month >= 4 && now.month <= 6) {
+          // Quý 2: Từ 01-04 đến 30-06
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 4, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 6, 30))} 23:59:59';
+        } else if (now.month >= 7 && now.month <= 9) {
+          // Quý 3: Từ 01-07 đến 30-09
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 7, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 9, 30))} 23:59:59';
+        } else {
+          // Quý 4: Từ 01-10 đến 31-12
+          fromDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 10, 1))} 00:00:00';
+          toDate =
+              '${DateFormat('yyyy-MM-dd').format(DateTime(now.year, 12, 30))} 23:59:59';
+        }
+
+        break;
+      default:
+        break;
+    }
+
+    return await bankCardRepository.getOverview(
+      bankId: bankId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+  }
+
+  void _getOverview(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is GetOverviewBankCardEvent) {
+        emit(state.copyWith(transRequest: TransManage.LOADING));
+        final futures = [
+          getPassedDateTime(bankId: bankId, type: event.type),
+          getCurrentDateTime(
+              bankId: bankId, fromDate: event.fromDate, toDate: event.toDate),
+        ];
+        final result = await Future.wait(futures);
+        BankOverviewDTO? resultPassed = result[0];
+        BankOverviewDTO? resultCurrent = result[1];
+        if (resultCurrent != null && resultPassed != null) {
+          emit(state.copyWith(
+              transRequest: TransManage.GET_TRANS,
+              overviewDayDto: resultCurrent,
+              overviewMonthDto: resultPassed));
+        } else {
+          emit(state.copyWith(
+              transRequest: TransManage.NONE,
+              overviewDayDto: BankOverviewDTO(),
+              overviewMonthDto: BankOverviewDTO()));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(transRequest: TransManage.ERROR));
     }
   }
 
@@ -419,4 +506,4 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   }
 }
 
-const BankCardRepository bankCardRepository = BankCardRepository();
+BankCardRepository bankCardRepository = BankCardRepository();

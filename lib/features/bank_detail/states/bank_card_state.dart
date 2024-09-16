@@ -15,6 +15,7 @@ class BankCardState extends Equatable {
   final String? msg;
   final BlocStatus status;
   final BankDetailType request;
+  final TransManage transRequest;
   final String? bankId;
   final String? qr;
   final BankCardRequestOTP? dto;
@@ -38,6 +39,7 @@ class BankCardState extends Equatable {
     this.msg,
     this.status = BlocStatus.NONE,
     this.request = BankDetailType.NONE,
+    this.transRequest = TransManage.NONE,
     this.bankId,
     this.qr,
     this.dto,
@@ -60,6 +62,7 @@ class BankCardState extends Equatable {
   BankCardState copyWith({
     BlocStatus? status,
     BankDetailType? request,
+    TransManage? transRequest,
     String? msg,
     String? bankId,
     String? qr,
@@ -84,6 +87,7 @@ class BankCardState extends Equatable {
     return BankCardState(
       status: status ?? this.status,
       request: request ?? this.request,
+      transRequest: transRequest ?? this.transRequest,
       msg: msg ?? this.msg,
       bankId: bankId ?? this.bankId,
       qr: qr ?? this.qr,
@@ -108,6 +112,8 @@ class BankCardState extends Equatable {
   @override
   List<Object?> get props => [
         status,
+        request,
+        transRequest,
         msg,
         bankId,
         qr,

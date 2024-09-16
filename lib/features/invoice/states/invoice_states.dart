@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/invoice_detail_dto.dart';
+import 'package:vierqr/models/unpaid_invoice_detail_qr_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
 import '../../../models/invoice_fee_dto.dart';
@@ -12,6 +13,7 @@ class InvoiceStates extends Equatable {
   final BlocStatus status;
   final MetaDataDTO? metaDataDTO;
   final InvoiceDetailDTO? invoiceDetailDTO;
+  final UnpaidInvoiceDetailQrDTO? unpaidInvoiceDetailQrDTO;
 
   const InvoiceStates({
     this.msg,
@@ -20,6 +22,7 @@ class InvoiceStates extends Equatable {
     this.listInvoice,
     this.metaDataDTO,
     this.invoiceDetailDTO,
+    this.unpaidInvoiceDetailQrDTO,
   });
 
   InvoiceStates copyWith({
@@ -29,6 +32,7 @@ class InvoiceStates extends Equatable {
     List<InvoiceFeeDTO>? listInvoice,
     MetaDataDTO? metaDataDTO,
     InvoiceDetailDTO? invoiceDetailDTO,
+    UnpaidInvoiceDetailQrDTO? unpaidInvoiceDetailQrDTO,
   }) {
     return InvoiceStates(
       status: status ?? this.status,
@@ -37,6 +41,8 @@ class InvoiceStates extends Equatable {
       listInvoice: listInvoice ?? this.listInvoice,
       metaDataDTO: metaDataDTO ?? this.metaDataDTO,
       invoiceDetailDTO: invoiceDetailDTO ?? this.invoiceDetailDTO,
+      unpaidInvoiceDetailQrDTO:
+          unpaidInvoiceDetailQrDTO ?? this.unpaidInvoiceDetailQrDTO,
     );
   }
 
@@ -45,6 +51,7 @@ class InvoiceStates extends Equatable {
         status,
         msg,
         listInvoice,
+        unpaidInvoiceDetailQrDTO,
         metaDataDTO,
       ];
 }

@@ -151,7 +151,7 @@ class _NotiVerifyEmailWidgetState extends State<NotiVerifyEmailWidget> {
           )
         : InkWell(
             onTap: () {
-              NavigatorUtils.navigatePage(context, const VerifyEmailScreen(),
+              NavigatorUtils.navigatePage(context, const VerifyEmailScreen(email: '',),
                   routeName: VerifyEmailScreen.routeName);
             },
             child: Container(

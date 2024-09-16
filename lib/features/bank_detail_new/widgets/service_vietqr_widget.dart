@@ -65,7 +65,8 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget>
                         const SizedBox(height: 4),
                         if (widget.bankDTO.isValidService)
                           if (widget.bankDTO.validFeeTo != 0 &&
-                              inclusiveDays(widget.bankDTO.validFeeTo) <= 7)
+                              inclusiveDays(widget.bankDTO.validFeeTo) <= 7 &&
+                              inclusiveDays(widget.bankDTO.validFeeTo) > 0)
                             RichText(
                               text: TextSpan(
                                   text: 'Còn ',
@@ -85,6 +86,20 @@ class _ServiceVietqrWidgetState extends State<ServiceVietqrWidget>
                                             color: AppColor.BLACK)),
                                   ]),
                             )
+                          else if (inclusiveDays(widget.bankDTO.validFeeTo) ==
+                              0)
+                            const Text('Hạn ngày cuối',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 10,
+                                ))
+                          else if (inclusiveDays(widget.bankDTO.validFeeTo) < 0)
+                            Text(
+                                'Quá hạn ${inclusiveDays(widget.bankDTO.validFeeTo).abs()} ngày',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 10,
+                                ))
                           else
                             Text(
                                 'Kích hoạt đến ${timestampToDate(widget.bankDTO.validFeeTo)}',

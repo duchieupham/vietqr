@@ -72,4 +72,10 @@ class SecureStorageService<T> extends IStorageService<T> {
     // TODO: implement get
     throw UnimplementedError();
   }
+  
+  @override
+  List<T>? getListNoFuture({required T Function(Map<String, dynamic> p1) fromJson}) {
+    // TODO: implement getListNoFuture
+    throw UnimplementedError();
+  }
 }

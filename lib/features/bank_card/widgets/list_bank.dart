@@ -16,6 +16,8 @@ import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/button/button.dart';
@@ -37,10 +39,6 @@ class _ListBankWidgetState extends State<ListBankWidget>
   late SwiperController _swiperController;
   double move = 0.0;
   double moveWidth = 0.0;
-
-  final List<String> listText = [
-    'Quét mã VietQR của bạn để thêm tài khoản ngân hàng!',
-  ];
 
   @override
   void initState() {
@@ -79,6 +77,8 @@ class _ListBankWidgetState extends State<ListBankWidget>
                 (e) => e.isAuthenticated && e.isOwner,
               )
               .toList());
+          Provider.of<SettingBDSDProvider>(context, listen: false)
+              .initData(SharePrefUtils.getOwnerBanks() ?? []);
           List<String> listBankId = [];
           for (var e in state.listBanks) {
             if (e.enableVoice == true) {
@@ -130,10 +130,7 @@ class _ListBankWidgetState extends State<ListBankWidget>
                   onIndexChanged: (value) {
                     bankBloc
                         .add(SelectBankAccount(bank: state.listBanks[value]));
-                    bankBloc.add(
-                        GetOverviewEvent(bankId: state.listBanks[value].id));
-                    bankBloc
-                        .add(GetTransEvent(bankId: state.listBanks[value].id));
+
                     int itemCount =
                         (state.listBanks.length); // Assuming 1-indexed itemse
                     double availableWidth = 80 - 18;
@@ -255,83 +252,6 @@ class _ListBankWidgetState extends State<ListBankWidget>
                   },
                 ),
               ),
-              if (state.isEmpty) ...[
-                InkWell(
-                  onTap: () async {
-                    await NavigatorUtils.navigatePage(
-                        context, const AddBankScreen(),
-                        routeName: AddBankScreen.routeName);
-                  },
-                  child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 30,
-                      margin: const EdgeInsets.only(right: 20, left: 20),
-                      padding: const EdgeInsets.fromLTRB(12, 0, 22, 0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFFD8ECF8),
-                                Color(0xFFFFEAD9),
-                                Color(0xFFF5C9D1),
-                              ],
-                              begin: Alignment.bottomLeft,
-                              end: Alignment.topRight)),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const XImage(
-                            imagePath: 'assets/images/ic-suggest.png',
-                            width: 30,
-                          ),
-                          Expanded(
-                            // width: MediaQuery.of(context).size.width,
-                            child: CarouselSlider(
-                              items: listText.map(
-                                (e) {
-                                  return Center(
-                                    child: Text(
-                                      e,
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                        color: AppColor.BLACK,
-                                        fontSize: width > 380 ? 12 : 10,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ).toList(),
-                              options: CarouselOptions(
-                                  reverse: false,
-                                  autoPlay: true,
-                                  viewportFraction: 0.9,
-                                  pageSnapping: false,
-                                  autoPlayCurve: Curves.linear,
-                                  autoPlayInterval: const Duration(seconds: 1),
-                                  autoPlayAnimationDuration:
-                                      const Duration(seconds: 10)),
-                            ),
-                          ),
-                        ],
-                      )),
-                ),
-                // Container(
-                //   width: double.infinity,
-                //   margin: const EdgeInsets.symmetric(horizontal: 20),
-                //   child: VietQRButton.suggest(
-                //       size: VietQRButtonSize.small,
-                //       onPressed: () async {
-                //         await NavigatorUtils.navigatePage(
-                //             context, const AddBankScreen(),
-                //             routeName: AddBankScreen.routeName);
-                //       },
-                //       text:
-                //           'Quét mã VietQR của bạn để thêm tài khoản ngân hàng'),
-                // ),
-                const SizedBox(height: 10),
-              ],
               if (state.listBanks.isNotEmpty) ...[
                 Container(
                   alignment: Alignment.centerLeft,

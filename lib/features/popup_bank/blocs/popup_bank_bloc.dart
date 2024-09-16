@@ -199,8 +199,8 @@ class PopupBankBloc extends Bloc<PopupBankEvent, PopupBankState> {
       if (event is PopupBankEventUnConfirmOTP) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: PopupBankType.NONE));
-        final ResponseMessageDTO responseMessageDTO =
-            await bankCardRepository.unConfirmOTP(event.dto, unlinkType: event.unlinkType);
+        final ResponseMessageDTO responseMessageDTO = await bankCardRepository
+            .unConfirmOTP(event.dto, unlinkType: event.unlinkType);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           BankAccountDTO dto = state.bankAccountDTO;
           dto.isAuthenticated = false;
@@ -237,4 +237,4 @@ class PopupBankBloc extends Bloc<PopupBankEvent, PopupBankState> {
   }
 }
 
-const BankCardRepository bankCardRepository = BankCardRepository();
+BankCardRepository bankCardRepository = BankCardRepository();

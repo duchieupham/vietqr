@@ -14,5 +14,7 @@ abstract class IStorageService<T> {
   Future<List<T>?> getList(
       {required T Function(Map<String, dynamic>) fromJson});
 
+  List<T>? getListNoFuture({required T Function(Map<String, dynamic>) fromJson});
+
   Future<bool> remove();
 }

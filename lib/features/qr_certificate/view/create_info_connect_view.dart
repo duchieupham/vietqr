@@ -248,7 +248,7 @@ class _CreateInfoConnectViewState extends State<CreateInfoConnectView>
                         notifier: addressClearNotifier,
                         focus: focusNode4,
                         inputFormatter: [
-                          VietnameseNameLongTextInputFormatter()
+                          VietnameseAddressTextInputFormatter()
                         ]),
                     _buildItem(
                         title: 'Ngành nghề*',

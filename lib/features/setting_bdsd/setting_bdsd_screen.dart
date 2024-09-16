@@ -36,237 +36,235 @@ class _SettingBDSDState extends State<SettingBDSD> {
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
     try {
+      final listIsOwnerBank = widget.listIsOwnerBank;
       bool enableStatus = await accRepository.enableVoiceSetting(param);
       if (enableStatus) {
         List<String> listBanks = param['bankIds'];
         String stringBanks = listBanks.join(',');
         await SharePrefUtils.saveListEnableVoiceBanks(stringBanks);
-        for (var string in listBanks) {
-          widget.listIsOwnerBank
-              .where((e) => e.id == string)
-              .first
-              .copyWith(enableVoice: true);
+        if (listBanks.isNotEmpty) {
+          for (var e in listIsOwnerBank) {
+            e.enableVoice = listBanks.contains(e.id);
+          }
+        } else {
+          for (var e in listIsOwnerBank) {
+            e.enableVoice = false;
+          }
         }
-        
-        await SharePrefUtils.saveListOwnerBanks(widget.listIsOwnerBank);
+
+        await SharePrefUtils.saveListOwnerBanks(listIsOwnerBank);
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');
     }
   }
+  // create: (context) =>
+  //   SettingBDSDProvider()..initData(widget.listIsOwnerBank),
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MAppBar(title: 'Cài đặt hệ thống'),
-      body: ChangeNotifierProvider(
-        create: (context) =>
-            SettingBDSDProvider()..initData(widget.listIsOwnerBank),
-        child: Consumer<SettingBDSDProvider>(
-          builder: (context, provider, child) {
-            return ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              children: [
-                ...[
-                  const Text(
-                    'Hiển thị',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildContainer(
-                    child: Row(
-                      children: [
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Giữ màn hình sáng khi hiện QR',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.w500)),
-                              SizedBox(height: 4),
-                              Text(
-                                  'Hệ thống giữ thiết bị của bạn luôn sáng ở những màn hình có thông tin mã QR.',
-                                  style: TextStyle(fontSize: 11)),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Consumer<AuthenProvider>(
-                            builder: (context, provider, _) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                provider.settingDTO.keepScreenOn
-                                    ? 'Bật'
-                                    : 'Tắt',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              const SizedBox(width: 8),
-                              // CustomSwitch(
-                              //   value: provider.settingDTO.keepScreenOn,
-                              //   onChanged: (value) {
-                              //     _bloc.add(UpdateKeepBrightEvent(value));
-                              //   },
-                              // ),
-                              Switch(
-                                value: provider.settingDTO.keepScreenOn,
-                                activeColor: AppColor.BLUE_TEXT,
-                                onChanged: (bool value) {
-                                  _bloc.add(UpdateKeepBrightEvent(value));
-                                },
-                              ),
-                            ],
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 24),
+      body: Consumer<SettingBDSDProvider>(
+        builder: (context, provider, child) {
+          return ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            children: [
+              ...[
                 const Text(
-                  'Cài đặt giọng nói',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  'Hiển thị',
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
-                _buildBgItem(
-                  customPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                const SizedBox(height: 12),
+                _buildContainer(
                   child: Row(
                     children: [
                       const Expanded(
-                        child: Text(
-                          'Giọng nói được kích hoạt khi nhận thông báo Biến động số dư trong ứng dụng VietQR cho tất cả tài khoản',
-                          style: TextStyle(fontSize: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Giữ màn hình sáng khi hiện QR',
+                                style: TextStyle(fontWeight: FontWeight.w500)),
+                            SizedBox(height: 4),
+                            Text(
+                                'Hệ thống giữ thiết bị của bạn luôn sáng ở những màn hình có thông tin mã QR.',
+                                style: TextStyle(fontSize: 11)),
+                          ],
                         ),
                       ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        provider.enableVoice ? 'Bật' : 'Tắt',
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColor.GREY_TEXT),
-                      ),
-                      Switch(
-                        value: provider.enableVoice,
-                        activeColor: AppColor.BLUE_TEXT,
-                        onChanged: (bool value) {
-                          provider.updateOpenVoice(value);
-                          Map<String, dynamic> paramEnable = {};
-                          paramEnable['bankIds'] = provider.getListId();
-                          paramEnable['userId'] =
-                              SharePrefUtils.getProfile().userId;
-                          // for (var e in provider.listVoiceBank) {
-                          //   e.enableVoice = value;
-                          // }
-                          _enableVoiceSetting(paramEnable, provider);
-                        },
-                      ),
+                      const SizedBox(width: 16),
+                      Consumer<AuthenProvider>(builder: (context, provider, _) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              provider.settingDTO.keepScreenOn ? 'Bật' : 'Tắt',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            const SizedBox(width: 8),
+                            // CustomSwitch(
+                            //   value: provider.settingDTO.keepScreenOn,
+                            //   onChanged: (value) {
+                            //     _bloc.add(UpdateKeepBrightEvent(value));
+                            //   },
+                            // ),
+                            Switch(
+                              value: provider.settingDTO.keepScreenOn,
+                              activeColor: AppColor.BLUE_TEXT,
+                              onChanged: (bool value) {
+                                _bloc.add(UpdateKeepBrightEvent(value));
+                              },
+                            ),
+                          ],
+                        );
+                      }),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                // const Text(
-                //   'Danh sách tài khoản nhận giọng nói\nthông báo Biến động số dư',
-                //   style: TextStyle(fontWeight: FontWeight.bold),
-                // ),
-                // const SizedBox(height: 16),
-
-                Row(
+              ],
+              const SizedBox(height: 24),
+              const Text(
+                'Cài đặt giọng nói',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              _buildBgItem(
+                customPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
                   children: [
-                    Expanded(
-                      child: Container(
-                        // width: 100,
-                        height: 45,
-                        padding: const EdgeInsets.all(4),
-                        color: AppColor.BLUE_TEXT.withOpacity(0.3),
-                        child: const Center(
-                          child: Text(
-                            'Tài khoản ngân hàng',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                    const Expanded(
+                      child: Text(
+                        'Giọng nói được kích hoạt khi nhận thông báo Biến động số dư trong ứng dụng VietQR cho tất cả tài khoản',
+                        style: TextStyle(fontSize: 12),
                       ),
                     ),
-                    Container(
-                      height: 45,
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Text(
+                      provider.enableVoice ? 'Bật' : 'Tắt',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColor.GREY_TEXT),
+                    ),
+                    Switch(
+                      value: provider.enableVoice,
+                      activeColor: AppColor.BLUE_TEXT,
+                      onChanged: (bool value) {
+                        provider.updateOpenVoice(value);
+                        Map<String, dynamic> paramEnable = {};
+                        paramEnable['bankIds'] = provider.getListId();
+                        paramEnable['userId'] =
+                            SharePrefUtils.getProfile().userId;
+                        // for (var e in provider.listVoiceBank) {
+                        //   e.enableVoice = value;
+                        // }
+                        _enableVoiceSetting(paramEnable, provider);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // const Text(
+              //   'Danh sách tài khoản nhận giọng nói\nthông báo Biến động số dư',
+              //   style: TextStyle(fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 16),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
                       // width: 100,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 45,
+                      padding: const EdgeInsets.all(4),
                       color: AppColor.BLUE_TEXT.withOpacity(0.3),
                       child: const Center(
                         child: Text(
-                          'Thông báo BĐSD',
+                          'Tài khoản ngân hàng',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 13, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
+                  ),
+                  Container(
+                    height: 45,
+                    // width: 100,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    color: AppColor.BLUE_TEXT.withOpacity(0.3),
+                    child: const Center(
+                      child: Text(
+                        'Thông báo BĐSD',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...provider.listBank
+                  .asMap()
+                  .map(
+                    (index, e) => MapEntry(e, _itemBank(e, index, provider)),
+                  )
+                  .values,
+
+              _buildBgNote(
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '- Giọng nói thông báo biến động số dư hoạt động khi bạn đang sử dụng ứng dụng.',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                    Text(
+                      '- Các trường hợp chạy nền, tắt ứng dụng thì giọng nói sẽ không hoạt động.',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                    Text(
+                      '- Âm lượng thiết bị của bạn phải luôn bật.',
+                      style: TextStyle(fontSize: 11),
+                    )
                   ],
                 ),
-                ...provider.listBank
-                    .asMap()
-                    .map(
-                      (index, e) => MapEntry(e, _itemBank(e, index, provider)),
-                    )
-                    .values,
-
-                _buildBgNote(
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '- Giọng nói thông báo biến động số dư hoạt động khi bạn đang sử dụng ứng dụng.',
-                        style: TextStyle(fontSize: 11),
-                      ),
-                      Text(
-                        '- Các trường hợp chạy nền, tắt ứng dụng thì giọng nói sẽ không hoạt động.',
-                        style: TextStyle(fontSize: 11),
-                      ),
-                      Text(
-                        '- Âm lượng thiết bị của bạn phải luôn bật.',
-                        style: TextStyle(fontSize: 11),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                // Text(
-                //   'Danh sách tài khoản nhận biến động số dư',
-                //   style: TextStyle(fontWeight: FontWeight.bold),
-                // ),
-                // _buildListBank(context, provider),
-                // _buildBgNote(
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     mainAxisSize: MainAxisSize.min,
-                //     children: [
-                //       Text(
-                //         '- Biến động số dư được bật khi bạn cho phép tính năng này hoạt động.',
-                //         style: TextStyle(fontSize: 11),
-                //       ),
-                //       const SizedBox(
-                //         height: 8,
-                //       ),
-                //       Text(
-                //         '- Danh sách tài khoản ngân hàng khả dụng để nhận biến động số dư là các tài khoản ngân hàng đã được liên kết với hệ thống VietQR VN.',
-                //         style: TextStyle(fontSize: 11),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(
-                //   height: 40,
-                // ),
-              ],
-            );
-          },
-        ),
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              // Text(
+              //   'Danh sách tài khoản nhận biến động số dư',
+              //   style: TextStyle(fontWeight: FontWeight.bold),
+              // ),
+              // _buildListBank(context, provider),
+              // _buildBgNote(
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     mainAxisSize: MainAxisSize.min,
+              //     children: [
+              //       Text(
+              //         '- Biến động số dư được bật khi bạn cho phép tính năng này hoạt động.',
+              //         style: TextStyle(fontSize: 11),
+              //       ),
+              //       const SizedBox(
+              //         height: 8,
+              //       ),
+              //       Text(
+              //         '- Danh sách tài khoản ngân hàng khả dụng để nhận biến động số dư là các tài khoản ngân hàng đã được liên kết với hệ thống VietQR VN.',
+              //         style: TextStyle(fontSize: 11),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(
+              //   height: 40,
+              // ),
+            ],
+          );
+        },
       ),
     );
   }

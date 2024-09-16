@@ -14,7 +14,9 @@ import 'package:vierqr/models/vietqr_store_dto.dart';
 
 class SelectStoreWidget extends StatefulWidget {
   final String bankId;
-  const SelectStoreWidget({super.key, required this.bankId});
+  final bool isHome;
+  const SelectStoreWidget(
+      {super.key, required this.bankId, this.isHome = false});
 
   @override
   State<SelectStoreWidget> createState() => _SelectStoreWidgetState();
@@ -83,7 +85,7 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
-                    'Chọn cửa hàng',
+                    'Chọn cửa hàng thuộc đại lý',
                     style: TextStyle(fontSize: 20),
                   ),
                   InkWell(
@@ -139,9 +141,17 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
                                       dto.terminals[index];
                                   return InkWell(
                                     onTap: () {
-                                      _bloc.add(
-                                          SetTerminalEvent(dto: terminalDTO));
-                                      Navigator.of(context).pop();
+                                      if (!widget.isHome) {
+                                        _bloc.add(
+                                            SetTerminalEvent(dto: terminalDTO));
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        VietQRStoreDTO select = VietQRStoreDTO(
+                                            merchantId: dto.merchantId,
+                                            merchantName: dto.merchantName,
+                                            terminals: [terminalDTO]);
+                                        Navigator.of(context).pop(select);
+                                      }
                                     },
                                     child: _buildItem(dto.terminals[index]),
                                   );
@@ -176,23 +186,34 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                termial.terminalAddress,
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.normal),
-              ),
-              Text(
-                termial.terminalCode,
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                    color: AppColor.GREY_TEXT),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tên cửa hàng: ${termial.terminalName}',
+                  maxLines: 1,
+                  style: const TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal),
+                ),
+                Text(
+                  'Địa chỉ: ${termial.terminalAddress}',
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal),
+                ),
+                Text(
+                  termial.terminalCode,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: AppColor.GREY_TEXT),
+                ),
+              ],
+            ),
           ),
           const XImage(
             imagePath: 'assets/images/ic-next-black.png',

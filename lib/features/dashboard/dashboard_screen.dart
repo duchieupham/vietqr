@@ -41,7 +41,6 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/dashboard/widget/popup_noti_widget.dart';
-import 'package:vierqr/features/dashboard/widget/request_active_key_noti.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
@@ -61,7 +60,6 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/invoice_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
-import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
 import '../../commons/utils/navigator_utils.dart';
@@ -398,6 +396,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           onTapPage(5);
                           // provider.updateIndex(5, isOnTap: true, isHome: false);
                         },
+                        onHome: () {
+                          onTapPage(1);
+                        },
                       ),
                       const HomeScreen(key: PageStorageKey('HOME_PAGE')),
                       // const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
@@ -416,7 +417,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           : const SizedBox.shrink()),
               renderUpdateDialog(provider),
               renderNetworkDialog(),
-              const RequestActiveKeyNoti(),
+              // const RequestActiveKeyNoti(),
               ValueListenableBuilder<bool>(
                 valueListenable: scrollNotifier,
                 builder: (context, isScroll, child) {
@@ -481,7 +482,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
               final isValidService = bankSelect.isValidService;
               final validFeeTo = bankSelect.validFeeTo;
 
-              if ((validFeeTo! != 0 && inclusiveDays(validFeeTo) <= 15)) {
+              if ((validFeeTo != 0 && inclusiveDays(validFeeTo) <= 15)) {
                 return Stack(
                   children: [
                     Positioned(
@@ -550,7 +551,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                                         height: 10,
                                       ),
                                       Text(
-                                        isValidService!
+                                        isValidService
                                             ? 'Tài khoản sắp hết hạn'
                                             : 'Tài khoản đã hết hạn',
                                         style: const TextStyle(
@@ -574,7 +575,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                                                   children: [
                                                     TextSpan(
                                                       text:
-                                                          ' ${inclusiveDays(bankSelect.validFeeTo!)} ngày',
+                                                          ' ${inclusiveDays(bankSelect.validFeeTo)} ngày',
                                                       style: const TextStyle(
                                                           fontSize: 12,
                                                           fontWeight:

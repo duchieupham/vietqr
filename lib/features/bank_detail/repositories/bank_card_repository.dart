@@ -7,9 +7,11 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/invoice/repositories/base_repository.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -19,13 +21,16 @@ import 'package:vierqr/models/bank_arrange_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
+
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
+import 'package:vierqr/models/platform_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -38,17 +43,17 @@ import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 import '../../../models/qr_box_dto.dart';
 
 class BankCardRepository {
-  const BankCardRepository();
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
   Future<BankOverviewDTO?> getOverview(
       {required String bankId,
       required String fromDate,
-      required String toDate}) async {
+      required String toDate,
+      String terminalCode = ''}) async {
     try {
       final receivePort = ReceivePort();
       String url =
-          '${EnvConfig.getBaseUrl()}transactions/overview/v2?bankId=$bankId&userId=$userId&fromDate=$fromDate&toDate=$toDate';
+          '${EnvConfig.getBaseUrl()}transactions/overview/v2?bankId=$bankId&userId=$userId&fromDate=$fromDate&toDate=$toDate&terminalCode=$terminalCode';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -833,5 +838,29 @@ class BankCardRepository {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  Future<dynamic> getPlatformByBankId({
+    required int page,
+    required int size,
+    required String bankId,
+  }) async {
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}list-platforms?bankId=$bankId&page=$page&size=$size';
+
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+
+        return PlatformDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error("Failed to fetch invoice data: ${e.toString()}");
+    }
+    return null;
   }
 }
