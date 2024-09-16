@@ -8,6 +8,7 @@ import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 
 class SettingBDSDProvider extends ChangeNotifier {
   bool _enableVoice = false;
+  bool _enablePopup = false;
 
   List<BankSelection> get listBank => _listBank;
 
@@ -17,6 +18,7 @@ class SettingBDSDProvider extends ChangeNotifier {
   List<BankAccountDTO> get listVoiceBank => _listVoiceBank;
 
   bool get enableVoice => _enableVoice;
+  bool get enablePopup => _enablePopup;
 
   final List<String> _bankIds = [];
 
@@ -24,6 +26,7 @@ class SettingBDSDProvider extends ChangeNotifier {
 
   initData(List<BankAccountDTO> list) async {
     _enableVoice = list.every((element) => element.enableVoice == true);
+    _enablePopup = list.every((element) => element.pushNotification == 1);
 
     final stringBanks = SharePrefUtils.getListEnableVoiceBank();
     if (stringBanks != null) {
@@ -50,8 +53,19 @@ class SettingBDSDProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   List<String> getListId() {
+    Set<String> bankIdSet = <String>{};
+    final list = _listBank.where((element) => element.value == true).toList();
+    for (BankSelection selection in list) {
+      if (selection.bank != null) {
+        bankIdSet.add(selection.bank!.id);
+      }
+    }
+
+    return bankIdSet.toList(); // Convert set to list and return
+  }
+
+  List<String> getListIdNoti() {
     Set<String> bankIdSet = <String>{};
     final list = _listBank.where((element) => element.value == true).toList();
     for (BankSelection selection in list) {
@@ -83,6 +97,22 @@ class SettingBDSDProvider extends ChangeNotifier {
         (index) => BankSelection(bank: _listBank[index].bank, value: false),
       ).toList();
     }
+    notifyListeners();
+  }
+
+  void updateOpenPopupNoti(bool check) {
+    _enablePopup = check;
+    // if (check) {
+    //   _listBank = List.generate(
+    //     _listBank.length,
+    //     (index) => BankSelection(bank: _listBank[index].bank, value: true),
+    //   ).toList();
+    // } else {
+    //   _listBank = List.generate(
+    //     _listBank.length,
+    //     (index) => BankSelection(bank: _listBank[index].bank, value: false),
+    //   ).toList();
+    // }
     notifyListeners();
   }
 
