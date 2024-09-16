@@ -220,7 +220,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
           const SizedBox(height: 0),
           SizedBox(
             width: width,
-            height: height * 0.6,
+            height: height * 0.65,
             child: PageView(
               controller: _pageController,
               onPageChanged: (value) {
@@ -238,7 +238,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
           Center(
             child: SmoothPageIndicator(
               controller: _pageController,

@@ -298,7 +298,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                               child: Text(
                                 'Quá hạn ${inclusiveDays(widget.dto.validFeeTo).abs()} ngày',
                                 style: const TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 12,
                                   color: AppColor.RED_FFFF0000,
                                   fontWeight: FontWeight.bold,
                                 ),
