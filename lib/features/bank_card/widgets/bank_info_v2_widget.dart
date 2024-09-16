@@ -235,7 +235,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
               child: GradientBorderButton(
                 gradient: VietQRTheme.gradientColor.aiTextColor,
                 borderRadius: BorderRadius.circular(10),
-                borderWidth: 1.5,
+                borderWidth: 1,
                 widget: Container(
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 15),
                   child: Column(
@@ -280,7 +280,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                                     ? 'Hạn ngày cuối'
                                     : 'Còn ${inclusiveDays(widget.dto.validFeeTo)} ngày',
                                 style: TextStyle(
-                                  fontSize: 15,
+                                  fontSize: 12,
                                   color:
                                       inclusiveDays(widget.dto.validFeeTo) == 0
                                           ? AppColor.RED_FFFF0000
