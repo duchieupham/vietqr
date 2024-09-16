@@ -226,10 +226,10 @@ class _BankStatisticState extends State<BankStatistic>
                 ],
                 // const SizedBox(height: 20),
                 // _voiceWidget(),
-                if (state.listBanks.isNotEmpty && bankSelect != null) ...[
+                if (state.listBanks.isNotEmpty && state.bankSelect != null) ...[
                   AnimationGraphWidget(
                     margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    dto: bankSelect!,
+                    dto: state.bankSelect!,
                     scrollNotifer: widget.scrollNotifer,
                     key: widget.animatedKey,
                     isHome: true,

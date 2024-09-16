@@ -184,6 +184,8 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
           listener: (context, state) {
             if (state.status == BlocStatus.LOADING &&
                 (state.request == BankType.SELECT_BANK)) {
+              merchant = VietQRStoreDTO(terminals: []);
+
               selected = list.first;
             }
             if (state.status == BlocStatus.LOADING &&

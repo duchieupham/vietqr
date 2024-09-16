@@ -331,7 +331,8 @@ class CardWidget extends StatelessWidget {
 
                                           Row(
                                             children: [
-                                              inclusiveDays <= 7
+                                              (inclusiveDays <= 7 &&
+                                                      inclusiveDays > 0)
                                                   ? Text(
                                                       "Còn $inclusiveDays ngày hết hạn",
                                                       style: const TextStyle(
@@ -341,13 +342,35 @@ class CardWidget extends StatelessWidget {
                                                           color: Color(
                                                               0xFFFF5353)),
                                                     )
-                                                  : Text(
-                                                      "Đến ${timestampToDate(e.validFeeTo!)}",
-                                                      style: const TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              AppColor.WHITE),
-                                                    ),
+                                                  : (inclusiveDays == 0)
+                                                      ? const Text(
+                                                          "Hạn ngày cuối",
+                                                          style:  TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Color(
+                                                                  0xFFFF5353)),
+                                                        )
+                                                      : (inclusiveDays < 0)
+                                                          ? Text(
+                                                              "Quá hạn ${inclusiveDays.abs()} ngày ",
+                                                              style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Color(
+                                                                      0xFFFF5353)),
+                                                            )
+                                                          : Text(
+                                                              "Đến ${timestampToDate(e.validFeeTo!)}",
+                                                              style: const TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: AppColor
+                                                                      .WHITE),
+                                                            ),
                                               const SizedBox(width: 8),
                                               Container(
                                                 width: 70,
