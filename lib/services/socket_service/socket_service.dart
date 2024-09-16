@@ -20,9 +20,9 @@ class SocketService {
 
   static SocketService get instance => _instance;
 
-  static late WebSocketChannel _channelTransaction;
+  static WebSocketChannel? _channelTransaction;
 
-  WebSocketChannel get channelTransaction => _channelTransaction;
+  WebSocketChannel? get channelTransaction => _channelTransaction;
 
   String get userId => SharePrefUtils().userId;
 
@@ -38,13 +38,16 @@ class SocketService {
 
   void init() async {
     if (userId.isEmpty) return;
+    if (_channelTransaction != null && _channelTransaction?.closeCode == null) {
+      return;
+    }
     try {
       Uri wsUrl = Uri.parse('wss://api.vietqr.org/vqr/socket?userId=$userId');
 
       _channelTransaction = WebSocketChannel.connect(wsUrl);
 
-      if (_channelTransaction.closeCode == null) {
-        _channelTransaction.stream.listen((event) async {
+      if (_channelTransaction?.closeCode == null) {
+        _channelTransaction?.stream.listen((event) async {
           var data = jsonDecode(event);
 
           if (_isConnected) {
@@ -86,6 +89,6 @@ class SocketService {
   }
 
   void closeListenTransaction() async {
-    _channelTransaction.sink.close();
+    _channelTransaction?.sink.close();
   }
 }
