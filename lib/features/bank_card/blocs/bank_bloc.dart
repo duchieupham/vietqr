@@ -176,18 +176,19 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   }
 
   Future<BankOverviewDTO?> getCurrentDateTime(
-      {required String bankId, String? fromDate, String? toDate}) async {
+      {required String bankId, String? fromDate, String? toDate, String terminalCode =''}) async {
     return await bankCardRepository.getOverview(
       bankId: bankId,
       fromDate: fromDate ??
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 00:00:00',
       toDate: toDate ??
           '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59',
+          terminalCode: terminalCode
     );
   }
 
   Future<BankOverviewDTO?> getPassedDateTime(
-      {required String bankId, required int type}) async {
+      {required String bankId, required int type, String terminalCode = ''}) async {
     String fromDate = '';
     String toDate = '';
     DateTime now = DateTime.now();
@@ -249,6 +250,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       bankId: bankId,
       fromDate: fromDate,
       toDate: toDate,
+      terminalCode: terminalCode
     );
   }
 
@@ -275,11 +277,13 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: BankType.GET_OVERVIEW));
         final futures = [
-          getPassedDateTime(bankId: event.bankId, type: event.type),
+          getPassedDateTime(bankId: event.bankId, type: event.type, terminalCode: event.terminalCode),
           getCurrentDateTime(
               bankId: event.bankId,
               fromDate: event.fromDate,
-              toDate: event.toDate),
+              toDate: event.toDate,
+              terminalCode: event.terminalCode
+              ),
         ];
         final result = await Future.wait(futures);
         BankOverviewDTO? resultPassed = result[0];

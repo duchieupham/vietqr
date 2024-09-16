@@ -59,10 +59,12 @@ class GetOverviewBankEvent extends BankEvent {
   final int type;
   final String? fromDate;
   final String? toDate;
+  final String terminalCode;
 
   const GetOverviewBankEvent({
     required this.bankId,
     required this.type,
+    this.terminalCode = '',
     this.fromDate,
     this.toDate,
   });
@@ -73,6 +75,7 @@ class GetOverviewBankEvent extends BankEvent {
         type,
         fromDate,
         toDate,
+        terminalCode
       ];
 }
 
