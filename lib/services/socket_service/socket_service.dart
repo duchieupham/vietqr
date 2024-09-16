@@ -90,5 +90,6 @@ class SocketService {
 
   void closeListenTransaction() async {
     _channelTransaction?.sink.close();
+    _channelTransaction = null;
   }
 }
