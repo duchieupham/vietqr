@@ -396,8 +396,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           onTapPage(5);
                           // provider.updateIndex(5, isOnTap: true, isHome: false);
                         },
-                        onHome: (){
-                           onTapPage(1);
+                        onHome: () {
+                          onTapPage(1);
                         },
                       ),
                       const HomeScreen(key: PageStorageKey('HOME_PAGE')),
@@ -482,7 +482,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
               final isValidService = bankSelect.isValidService;
               final validFeeTo = bankSelect.validFeeTo;
 
-              if ((validFeeTo! != 0 && inclusiveDays(validFeeTo) <= 15)) {
+              if ((validFeeTo != 0 && inclusiveDays(validFeeTo) <= 15)) {
                 return Stack(
                   children: [
                     Positioned(
@@ -551,7 +551,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                                         height: 10,
                                       ),
                                       Text(
-                                        isValidService!
+                                        isValidService
                                             ? 'Tài khoản sắp hết hạn'
                                             : 'Tài khoản đã hết hạn',
                                         style: const TextStyle(
@@ -575,7 +575,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                                                   children: [
                                                     TextSpan(
                                                       text:
-                                                          ' ${inclusiveDays(bankSelect.validFeeTo!)} ngày',
+                                                          ' ${inclusiveDays(bankSelect.validFeeTo)} ngày',
                                                       style: const TextStyle(
                                                           fontSize: 12,
                                                           fontWeight:
