@@ -186,23 +186,33 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                termial.terminalAddress,
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.normal),
-              ),
-              Text(
-                termial.terminalCode,
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                    color: AppColor.GREY_TEXT),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tên cửa hàng: ${termial.terminalName}',
+                  maxLines: 1,
+                  style: const TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                      fontSize: 14, fontWeight: FontWeight.normal),
+                ),
+                Text(
+                  'Địa chỉ: ${termial.terminalAddress}',
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.normal),
+                ),
+                Text(
+                  termial.terminalCode,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: AppColor.GREY_TEXT),
+                ),
+              ],
+            ),
           ),
           const XImage(
             imagePath: 'assets/images/ic-next-black.png',

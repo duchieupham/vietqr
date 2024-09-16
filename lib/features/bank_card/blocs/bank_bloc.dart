@@ -337,14 +337,14 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           request: BankType.GET_OVERVIEW,
           overviewDayDto: resultCurrent,
           overviewMonthDto: resultPassed,
-          listTrans: resultFuture[3] as List<NearestTransDTO>,
+          listTrans: resultFuture[2] as List<NearestTransDTO>,
           listPlaforms: [
             PlatformItem(
                 platformId: '',
                 platformName: '',
                 connectionDetail: '',
                 platform: ''),
-            ...resultFuture[4] as List<PlatformItem>
+            ...resultFuture[3] as List<PlatformItem>
           ],
         ));
       }

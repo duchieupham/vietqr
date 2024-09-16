@@ -6,16 +6,13 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/widgets/shimmer_block.dart';
-import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
-import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
-import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
+import 'package:vierqr/features/my_vietqr/widgets/select_store_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/vietqr_store_dto.dart';
@@ -220,7 +217,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                   child: Column(
                     children: [
                       _title(),
-                      if (!widget.dto.isOwner) _merchant(),
+                      if (widget.dto.isOwner) _merchant(),
                       SizedBox(
                         height: 220,
                         child: Row(
@@ -251,76 +248,106 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   }
 
   Widget _merchant() {
-    return Container(
-      padding: const EdgeInsets.only(top: 10),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
-              decoration: BoxDecoration(
-                // color: AppColor.WHITE,
-                gradient: VietQRTheme.gradientColor.lilyLinear,
-                borderRadius: BorderRadius.circular(50),
+    return InkWell(
+      onTap: () async {
+        await DialogWidget.instance
+            .showModelBottomSheet(
+          borderRadius: BorderRadius.circular(0),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.57,
+          padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
+          bgrColor: AppColor.WHITE,
+          margin: EdgeInsets.zero,
+          widget: SelectStoreWidget(
+            isHome: true,
+            bankId: widget.dto.id,
+          ),
+        )
+            .then(
+          (value) {
+            if (value != null) {
+              if (value is VietQRStoreDTO) {
+                setState(() {
+                  merchant = value;
+                });
+              }
+            }
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+                decoration: BoxDecoration(
+                  // color: AppColor.WHITE,
+                  gradient: VietQRTheme.gradientColor.lilyLinear,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: RichText(
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                              text: 'Đại lý:',
+                              style: const TextStyle(
+                                  fontSize: 12, color: AppColor.BLACK),
+                              children: [
+                                TextSpan(
+                                    text: merchant.merchantName.isEmpty
+                                        ? ' Chọn đại lý'
+                                        : ' ${merchant.merchantName}',
+                                    style: const TextStyle(
+                                        // fontWeight: FontWeight.w600,
+                                        fontSize: 12)),
+                              ])),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 20,
+                      weight: 0.5,
+                    )
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: RichText(
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+                decoration: BoxDecoration(
+                  // color: AppColor.WHITE,
+                  gradient: VietQRTheme.gradientColor.lilyLinear,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Chi nhánh: ${(merchant.terminals.isEmpty) ? '' : merchant.terminals.first.terminalName } ',
                         overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                            text: 'Đại lý:',
-                            style: const TextStyle(
-                                fontSize: 12, color: AppColor.BLACK),
-                            children: [
-                              TextSpan(
-                                  text: merchant.merchantName.isEmpty
-                                      ? ' Chọn đại lý'
-                                      : ' ${merchant.merchantName}',
-                                  style: const TextStyle(
-                                      // fontWeight: FontWeight.w600,
-                                      fontSize: 12)),
-                            ])),
-                  ),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 20,
-                    weight: 0.5,
-                  )
-                ],
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    // const Icon(
+                    //   Icons.keyboard_arrow_down,
+                    //   size: 20,
+                    //   weight: 0.5,
+                    // )
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
-              decoration: BoxDecoration(
-                // color: AppColor.WHITE,
-                gradient: VietQRTheme.gradientColor.lilyLinear,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Row(
-                children: [
-                  // Expanded(
-                  //   child: Text(
-                  //     'Chi nhánh: ${merchant.terminals.isEmpty ? }',
-                  //     overflow: TextOverflow.ellipsis,
-                  //     style: const TextStyle(
-                  //       fontSize: 12,
-                  //     ),
-                  //   ),
-                  // ),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    size: 20,
-                    weight: 0.5,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
