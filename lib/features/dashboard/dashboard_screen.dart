@@ -41,7 +41,6 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/dashboard/widget/popup_noti_widget.dart';
-import 'package:vierqr/features/dashboard/widget/request_active_key_noti.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
@@ -61,7 +60,6 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/invoice_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
-import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
 import '../../commons/utils/navigator_utils.dart';
@@ -397,6 +395,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
                         onStore: () {
                           onTapPage(5);
                           // provider.updateIndex(5, isOnTap: true, isHome: false);
+                        },
+                        onHome: (){
+                           onTapPage(1);
                         },
                       ),
                       const HomeScreen(key: PageStorageKey('HOME_PAGE')),
