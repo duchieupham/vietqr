@@ -257,6 +257,14 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     return list;
   }
 
+  Future<List<PlatformItem>> getListPlatform(String bankId) async {
+    List<PlatformItem> list = [];
+    list = await bankCardRepository.getPlatformByBankId(
+        page: 1, size: 4, bankId: bankId);
+
+    return list;
+  }
+
   void _getOverview(BankEvent event, Emitter emit) async {
     try {
       if (event is GetOverviewBankEvent) {
@@ -314,6 +322,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
               toDate:
                   '${DateFormat('yyyy-MM-dd').format(DateTime.now())} 23:59:59'),
           getNearestTrans(bankId: event.bank.id),
+          getListPlatform(event.bank.id),
         ];
         final resultFuture = await Future.wait(futures);
         BankOverviewDTO? resultPassed = resultFuture[0] as BankOverviewDTO;
@@ -325,6 +334,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           overviewDayDto: resultCurrent,
           overviewMonthDto: resultPassed,
           listTrans: resultFuture[2] as List<NearestTransDTO>,
+          listPlaforms: resultFuture[3] as List<PlatformItem>,
         ));
       }
     } catch (e) {
@@ -378,12 +388,20 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         // BankOverviewDTO? overviewDTO;
         InvoiceOverviewDTO? invoiceOverviewDTO;
         List<NearestTransDTO> listTrans = [];
+        List<PlatformItem> listPlatforms = [
+          PlatformItem(
+              platformId: '',
+              platformName: '',
+              connectionDetail: '',
+              platform: '')
+        ];
         emit(state.copyWith(
           status: BlocStatus.LOADING_PAGE,
           request: BankType.BANK,
         ));
         List<BankAccountDTO> list =
             await bankCardRepository.getListBankAccount(userId);
+
         if (list.isNotEmpty && event.isGetOverview) {
           final futures = !state.isClose
               ? [
@@ -402,6 +420,13 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           if (!state.isClose) {
             invoiceOverviewDTO = results[1] as InvoiceOverviewDTO;
           }
+
+          final resultListPlatform = await bankCardRepository
+              .getPlatformByBankId(page: 1, size: 4, bankId: list.first.id);
+
+          if (resultListPlatform is PlatformDTO) {
+            listPlatforms = listPlatforms..addAll(resultListPlatform.items);
+          }
         }
         if (list.isEmpty) {
           isEmpty = true;
@@ -418,6 +443,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             // bankSelect: isEmpty ? null : list.first,
             // colors: colors,
             status: BlocStatus.UNLOADING,
+            listPlaforms: listPlatforms,
             isEmpty: isEmpty));
         if (!isEmpty) {
           getIt.get<BankBloc>().add(SelectBankAccount(bank: list.first));

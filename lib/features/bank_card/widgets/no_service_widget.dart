@@ -9,9 +9,11 @@ import 'package:vierqr/models/bank_account_dto.dart';
 
 class NoServiceWidget extends StatelessWidget {
   final BankAccountDTO bankSelect;
+  final VoidCallback onHome;
   const NoServiceWidget({
     super.key,
     required this.bankSelect,
+    required this.onHome,
   });
 
   @override
@@ -67,19 +69,24 @@ class NoServiceWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                width: 80,
-                height: 30,
-                decoration: BoxDecoration(
-                  gradient: VietQRTheme.gradientColor.brightBlueLinear,
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  'Kết nối mới',
-                  style: TextStyle(
-                    color: AppColor.WHITE,
-                    fontSize: 10,
+              InkWell(
+                onTap: () {
+                  onHome.call();
+                },
+                child: Container(
+                  width: 80,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    gradient: VietQRTheme.gradientColor.brightBlueLinear,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    'Kết nối mới',
+                    style: TextStyle(
+                      color: AppColor.WHITE,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
               ),

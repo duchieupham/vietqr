@@ -119,7 +119,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                 const SizedBox(width: 12),
                 _getSearchPage(context, page.pageSelected),
                 const Spacer(),
-                XImage(
+                const XImage(
                   imagePath: 'assets/images/ic-viet-qr.png',
                   height: 35,
                   // borderRadius: BorderRadius.circular(10),
