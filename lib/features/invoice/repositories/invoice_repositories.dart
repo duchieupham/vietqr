@@ -73,8 +73,8 @@ class InvoiceRepository extends BaseRepo {
       }
     } catch (e) {
       LOG.error("Failed to request payment: ${e.toString()}");
+      rethrow;
     }
-    return null;
   }
 
   Future<InvoiceDetailDTO?> getInvoiceDetail({

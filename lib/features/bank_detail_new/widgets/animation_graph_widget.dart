@@ -18,6 +18,7 @@ import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
+import 'package:vierqr/models/vietqr_store_dto.dart';
 
 class AnimationGraphWidget extends StatefulWidget {
   final BankAccountDTO dto;
@@ -45,7 +46,25 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   late final Animation<double> _animation;
   final BankBloc bankBloc = getIt.get<BankBloc>();
   bool isLoading = false;
-  // late BankCardBloc bankCardBloc;
+  VietQRStoreDTO merchant = VietQRStoreDTO(terminals: []);
+
+  //   await DialogWidget.instance
+  //     .showModelBottomSheet(
+  //   borderRadius: BorderRadius.circular(0),
+  //   width: MediaQuery.of(context).size.width,
+  //   height: MediaQuery.of(context).size.height * 0.57,
+  //   padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
+  //   bgrColor: AppColor.WHITE,
+  //   margin: EdgeInsets.zero,
+  //   widget: SelectStoreWidget(
+  //     bankId: selectBank.id,
+  //   ),
+  // )
+  //     .then(
+  //   (value) {
+  //     if (value != null) {}
+  //   },
+  // );
 
   String getSession() {
     DateTime now = DateTime.now();
@@ -201,9 +220,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                   child: Column(
                     children: [
                       _title(),
-                      // if (currentOverview.merchantName.isNotEmpty &&
-                      //     !widget.dto.isOwner)
-                      //   _merchant(),
+                      if (!widget.dto.isOwner) _merchant(),
                       SizedBox(
                         height: 220,
                         child: Row(
@@ -256,11 +273,13 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             style: const TextStyle(
                                 fontSize: 12, color: AppColor.BLACK),
                             children: [
-                              // TextSpan(
-                              //     text: ' ${currentOverview.merchantName}',
-                              //     style: const TextStyle(
-                              //         // fontWeight: FontWeight.w600,
-                              //         fontSize: 12)),
+                              TextSpan(
+                                  text: merchant.merchantName.isEmpty
+                                      ? 'Chọn đại lý'
+                                      : ' ${merchant.merchantName}',
+                                  style: const TextStyle(
+                                      // fontWeight: FontWeight.w600,
+                                      fontSize: 12)),
                             ])),
                   ),
                   const Icon(
@@ -285,7 +304,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                 children: [
                   // Expanded(
                   //   child: Text(
-                  //     'Chi nhánh: ${currentOverview.terminals.join(', ')}',
+                  //     'Chi nhánh: ${merchant.terminals.isEmpty ? }',
                   //     overflow: TextOverflow.ellipsis,
                   //     style: const TextStyle(
                   //       fontSize: 12,

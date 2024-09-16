@@ -43,20 +43,22 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
   ) async {
     try {
       if (event is RequestMultiInvoicePaymentEvent) {
-        if (state.status == BlocStatus.NONE) {
-          emit(state.copyWith(status: BlocStatus.LOADING));
-        }
+        emit(state.copyWith(status: BlocStatus.LOADING_PAGE));
         final result = await _invoiceRepository.requestPaymnetV2(
             invoiceIds: event.invoiceIds);
-        emit(state.copyWith(
-            status: BlocStatus.REQUEST,
-            request: InvoiceType.PAYMENT,
-            unpaidInvoiceDetailQrDTO: result));
+        if (result != null) {
+          emit(state.copyWith(
+              status: BlocStatus.REQUEST,
+              request: InvoiceType.PAYMENT,
+              unpaidInvoiceDetailQrDTO: result));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, msg: 'Đã có lỗi xảy ra.'));
+        }
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(
-          status: BlocStatus.REQUEST_ERROR, msg: 'Đã có lỗi xảy ra.'));
+      emit(state.copyWith(status: BlocStatus.ERROR, msg: 'Đã có lỗi xảy ra.'));
     }
   }
 
@@ -95,9 +97,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
   void _getListInvoice(InvoiceEvent event, Emitter emit) async {
     try {
       if (event is GetInvoiceList) {
-        if (state.status == BlocStatus.NONE) {
-          emit(state.copyWith(status: BlocStatus.LOADING));
-        }
+        emit(state.copyWith(status: BlocStatus.LOADING));
 
         List<InvoiceFeeDTO>? list = await _invoiceRepository.getInvoiceList(
           status: event.status,

@@ -14,7 +14,9 @@ import 'package:vierqr/models/vietqr_store_dto.dart';
 
 class SelectStoreWidget extends StatefulWidget {
   final String bankId;
-  const SelectStoreWidget({super.key, required this.bankId});
+  final bool isHome;
+  const SelectStoreWidget(
+      {super.key, required this.bankId, this.isHome = false});
 
   @override
   State<SelectStoreWidget> createState() => _SelectStoreWidgetState();
@@ -139,9 +141,17 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
                                       dto.terminals[index];
                                   return InkWell(
                                     onTap: () {
-                                      _bloc.add(
-                                          SetTerminalEvent(dto: terminalDTO));
-                                      Navigator.of(context).pop();
+                                      if (!widget.isHome) {
+                                        _bloc.add(
+                                            SetTerminalEvent(dto: terminalDTO));
+                                        Navigator.of(context).pop();
+                                      } else {
+                                        VietQRStoreDTO select = VietQRStoreDTO(
+                                            merchantId: dto.merchantId,
+                                            merchantName: dto.merchantName,
+                                            terminals: [terminalDTO]);
+                                        Navigator.of(context).pop(select);
+                                      }
                                     },
                                     child: _buildItem(dto.terminals[index]),
                                   );

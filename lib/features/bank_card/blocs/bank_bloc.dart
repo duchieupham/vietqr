@@ -13,10 +13,12 @@ import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart'
 import 'package:vierqr/features/verify_email/repositories/verify_email_repositories.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
+
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
 import 'package:vierqr/models/platform_dto.dart';
+import 'package:vierqr/models/vietqr_store_dto.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 
@@ -335,14 +337,14 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           request: BankType.GET_OVERVIEW,
           overviewDayDto: resultCurrent,
           overviewMonthDto: resultPassed,
-          listTrans: resultFuture[2] as List<NearestTransDTO>,
+          listTrans: resultFuture[3] as List<NearestTransDTO>,
           listPlaforms: [
             PlatformItem(
                 platformId: '',
                 platformName: '',
                 connectionDetail: '',
                 platform: ''),
-            ...resultFuture[3] as List<PlatformItem>
+            ...resultFuture[4] as List<PlatformItem>
           ],
         ));
       }

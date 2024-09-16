@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/invoice/states/invoice_states.dart';
@@ -221,11 +223,15 @@ class __InvoiceState extends State<_Invoice> {
               .map((entry) =>
                   InvoiceGroup(monthYear: entry.key, invoices: entry.value))
               .toList();
-        }
-
-        if (state.status == BlocStatus.NONE) {
+        } else if (state.status == BlocStatus.NONE) {
           listInvoice = [];
           invoiceGroups = [];
+        } else if (state.status == BlocStatus.ERROR) {
+          paymentNotifier.value = false;
+          DialogWidget.instance.openMsgDialog(
+            title: state.msg ?? '',
+            msg: '',
+          );
         }
 
         if (state.status == BlocStatus.REQUEST &&
@@ -496,9 +502,7 @@ class __InvoiceState extends State<_Invoice> {
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-          if (state.status == BlocStatus.ERROR)
-            const SizedBox.shrink()
-          else if (state.status == BlocStatus.LOADING)
+          if (state.status == BlocStatus.LOADING)
             ...List.generate(4, (index) => _buildLoading())
           else if (listInvoice.isEmpty)
             Container(
@@ -539,6 +543,8 @@ class __InvoiceState extends State<_Invoice> {
                                           .every((element) => element.isSelect),
                                       onChanged: (value) {
                                         if (value != null) {
+                                          paymentNotifier.value = false;
+
                                           List<InvoiceFeeDTO> list = [];
                                           for (var item in i.invoices) {
                                             InvoiceFeeDTO dto = item;
@@ -639,6 +645,8 @@ class __InvoiceState extends State<_Invoice> {
                                               value: e.isSelect,
                                               onChanged: (value) {
                                                 if (value != null) {
+                                                  paymentNotifier.value = false;
+
                                                   int index = listInvoice
                                                       .indexWhere((element) =>
                                                           element.invoiceId ==
