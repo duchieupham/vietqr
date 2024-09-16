@@ -277,10 +277,10 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                         setState(() {
                           merchant = value;
                         });
-                        _getOverview(
-                            selected, stringNotifier, bankBloc, widget.dto,
-                            terminalCode:
-                                merchant.terminals.first.terminalCode);
+                        _getOverview(selected,
+                            terminalCode: merchant.terminals.isNotEmpty
+                                ? merchant.terminals.first.terminalCode
+                                : '');
                       }
                     }
                   },
@@ -346,11 +346,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             ),
                           ),
                         ),
-                        // const Icon(
-                        //   Icons.keyboard_arrow_down,
-                        //   size: 20,
-                        //   weight: 0.5,
-                        // )
+                        const SizedBox(height: 20)
                       ],
                     ),
                   ),
@@ -399,16 +395,14 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     );
   }
 
-  void _getOverview(
-      FilterTrans selected, ValueNotifier<String> stringNotifier, bankBloc, dto,
-      {String terminalCode = ''}) {
+  void _getOverview(FilterTrans selected, {String terminalCode = ''}) {
     DateTime now = DateTime.now();
     switch (selected.type) {
       case 1:
         stringNotifier.value = DateFormat('dd/MM/yyyy').format(DateTime.now());
         bankBloc.add(
           GetOverviewBankEvent(
-              bankId: dto.id,
+              bankId: widget.dto.id,
               type: selected.type,
               fromDate: selected.fromDate,
               toDate: selected.toDate,
@@ -429,7 +423,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
             '${DateFormat('dd/MM/yy').format(firstDayOfWeek)} -> ${DateFormat('dd/MM/yy').format(DateTime.now())}';
         bankBloc.add(
           GetOverviewBankEvent(
-              bankId: dto.id,
+              bankId: widget.dto.id,
               type: selected.type,
               fromDate: fromDate,
               toDate: selected.toDate,
@@ -472,57 +466,56 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             setState(() {
                               selected = list[index];
                             });
-                            // DateTime now = DateTime.now();
-                            // switch (selected.type) {
-                            //   case 1:
-                            //     stringNotifier.value = DateFormat('dd/MM/yyyy')
-                            //         .format(DateTime.now());
-                            //     bankBloc.add(
-                            //       GetOverviewBankEvent(
-                            //           bankId: widget.dto.id,
-                            //           type: selected.type,
-                            //           fromDate: selected.fromDate,
-                            //           toDate: selected.toDate),
-                            //     );
-                            //     break;
-                            //   case 2:
-                            //     String fromDate = '';
-                            //     int currentWeekday = now.weekday;
-                            //     DateTime firstDayOfWeek = now.subtract(
-                            //         Duration(days: currentWeekday - 1));
-                            //     if (firstDayOfWeek
-                            //         .isBefore(DateTime(now.year, 1, 1))) {
-                            //       firstDayOfWeek = DateTime(now.year, 1, 1);
-                            //     }
-                            //     fromDate =
-                            //         '${DateFormat('yyyy-MM-dd').format(firstDayOfWeek)} 00:00:00';
-                            //     stringNotifier.value =
-                            //         '${DateFormat('dd/MM/yy').format(firstDayOfWeek)} -> ${DateFormat('dd/MM/yy').format(DateTime.now())}';
-                            //     bankBloc.add(
-                            //       GetOverviewBankEvent(
-                            //           bankId: widget.dto.id,
-                            //           type: selected.type,
-                            //           fromDate: fromDate,
-                            //           toDate: selected.toDate),
-                            //     );
-                            //     break;
-                            //   case 3:
-                            //     stringNotifier.value =
-                            //         'Tháng ${now.month}/${now.year}';
-                            //     bankBloc.add(
-                            //       GetOverviewBankEvent(
-                            //           bankId: widget.dto.id,
-                            //           type: selected.type,
-                            //           fromDate: getSession(),
-                            //           toDate: selected.toDate),
-                            //     );
-                            //     break;
-                            //   default:
-                            // }
-                            _getOverview(
-                                selected, stringNotifier, bankBloc, widget.dto,
-                                terminalCode:
-                                    merchant.terminals.first.terminalCode);
+                            DateTime now = DateTime.now();
+                            switch (selected.type) {
+                              case 1:
+                                stringNotifier.value = DateFormat('dd/MM/yyyy')
+                                    .format(DateTime.now());
+                                bankBloc.add(
+                                  GetOverviewBankEvent(
+                                      bankId: widget.dto.id,
+                                      type: selected.type,
+                                      fromDate: selected.fromDate,
+                                      toDate: selected.toDate),
+                                );
+                                break;
+                              case 2:
+                                String fromDate = '';
+                                int currentWeekday = now.weekday;
+                                DateTime firstDayOfWeek = now.subtract(
+                                    Duration(days: currentWeekday - 1));
+                                if (firstDayOfWeek
+                                    .isBefore(DateTime(now.year, 1, 1))) {
+                                  firstDayOfWeek = DateTime(now.year, 1, 1);
+                                }
+                                fromDate =
+                                    '${DateFormat('yyyy-MM-dd').format(firstDayOfWeek)} 00:00:00';
+                                stringNotifier.value =
+                                    '${DateFormat('dd/MM/yy').format(firstDayOfWeek)} -> ${DateFormat('dd/MM/yy').format(DateTime.now())}';
+                                bankBloc.add(
+                                  GetOverviewBankEvent(
+                                      bankId: widget.dto.id,
+                                      type: selected.type,
+                                      fromDate: fromDate,
+                                      toDate: selected.toDate),
+                                );
+                                break;
+                              case 3:
+                                stringNotifier.value =
+                                    'Tháng ${now.month}/${now.year}';
+                                bankBloc.add(
+                                  GetOverviewBankEvent(
+                                      bankId: widget.dto.id,
+                                      type: selected.type,
+                                      fromDate: getSession(),
+                                      toDate: selected.toDate),
+                                );
+                                break;
+                              default:
+                            }
+                            // _getOverview(selected,
+                            //     terminalCode:
+                            //         merchant.terminals.first.terminalCode);
                           }
                         : null,
                     child: Container(
