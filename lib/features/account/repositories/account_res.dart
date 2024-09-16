@@ -189,6 +189,27 @@ class AccountRepository {
     }
   }
 
+  Future<bool> setNotificationBDSD(int value, String userId) async {
+    try {
+      Map<String, dynamic> body = {};
+      body['value'] = value;
+
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/user/$userId/update-noti';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+
+
   Future<CardDTO> getCardID(String userId) async {
     try {
       final String url =

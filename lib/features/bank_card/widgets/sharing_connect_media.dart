@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/step_progress.dart';
 import 'package:vierqr/features/bank_card/widgets/no_service_widget.dart';
+import 'package:vierqr/features/connect_media/blocs/connect_media_bloc.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
+import 'package:vierqr/features/connect_media/events/connect_media_evens.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/platform_dto.dart';
@@ -25,6 +30,7 @@ class _SharingConnectMediaState extends State<SharingConnectMedia> {
 
   @override
   Widget build(BuildContext context) {
+    final _bloc = getIt.get<ConnectMediaBloc>();
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
       width: double.infinity,
@@ -70,75 +76,8 @@ class _SharingConnectMediaState extends State<SharingConnectMedia> {
                                   height: 45 * widget.list.length.toDouble(),
                                   listItem: List.generate(widget.list.length,
                                       (index) {
-                                    return SizedBox(
-                                      // width: 310,
-                                      height: 40,
-                                      child: widget
-                                              .list[index].platformId.isEmpty
-                                          ? const SizedBox.shrink()
-                                          : Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: AppColor.BLACK
-                                                              .withOpacity(0.1),
-                                                          spreadRadius: 1,
-                                                          blurRadius: 8,
-                                                          offset: const Offset(
-                                                              0, 2),
-                                                        )
-                                                      ]),
-                                                  child: XImage(
-                                                    imagePath:
-                                                        _buildIconPlatform(
-                                                            widget.list[index]
-                                                                .platform),
-                                                    height: 28,
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                Expanded(
-                                                  child: Text(
-                                                    widget
-                                                            .list[index]
-                                                            .platformName
-                                                            .isEmpty
-                                                        ? 'Chia sẻ biến động số dư'
-                                                        : widget.list[index]
-                                                            .platformName,
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                const Text(
-                                                  'Hoạt động',
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColor.GREEN),
-                                                ),
-                                              ],
-                                            ),
-                                    );
+                                    return _buildItem(
+                                        widget.list, index, _bloc);
                                   }),
                                   activeColor: Colors.black),
                             ),
@@ -235,6 +174,123 @@ class _SharingConnectMediaState extends State<SharingConnectMedia> {
                   },
                 )
         ],
+      ),
+    );
+  }
+
+  Widget _buildItem(list, int index, bloc) {
+    return InkWell(
+      onTap: () {
+        String platform = list[index].platform;
+        switch (platform) {
+          case 'Google Chat':
+            Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN,
+                arguments: {'id': widget.list[index].platformId}).then(
+              (value) {
+                bloc.add(const GetListGGChatEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case 'Telegram':
+            Navigator.pushNamed(context, Routes.CONNECT_TELE_SCREEN,
+                arguments: {'id': widget.list[index].platformId}).then(
+              (value) {
+                bloc.add(const GetListTeleEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case 'Lark':
+            Navigator.pushNamed(context, Routes.CONNECT_LARK_SCREEN,
+                arguments: {'id': widget.list[index].platformId}).then(
+              (value) {
+                bloc.add(const GetListLarkEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case 'Slack':
+            Navigator.pushNamed(context, Routes.CONNECT_SLACK_SCREEN,
+                arguments: {'id': widget.list[index].platformId}).then(
+              (value) {
+                bloc.add(const GetListSlackEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case 'Discord':
+            Navigator.pushNamed(context, Routes.CONNECT_DISCORD_SCREEN,
+                arguments: {'id': widget.list[index].platformId}).then(
+              (value) {
+                bloc.add(const GetListDiscordEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          case 'Google Sheet':
+            Navigator.pushNamed(context, Routes.CONNECT_GG_SHEET_SCREEN,
+                arguments: {'id': widget.list[index].platformId}).then(
+              (value) {
+                bloc.add(const GetListGGSheetEvent(
+                    isLoadMore: false, page: 1, size: 20));
+              },
+            );
+            break;
+          default:
+        }
+      },
+      child: SizedBox(
+        // width: 310,
+        height: 40,
+        child: widget.list[index].platformId.isEmpty
+            ? const SizedBox.shrink()
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.BLACK.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          )
+                        ]),
+                    child: XImage(
+                      imagePath: _buildIconPlatform(list[index].platform),
+                      height: 28,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Text(
+                      widget.list[index].platformName.isEmpty
+                          ? 'Chia sẻ biến động số dư'
+                          : list[index].platformName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Text(
+                    'Hoạt động',
+                    style: TextStyle(fontSize: 12, color: AppColor.GREEN),
+                  ),
+                ],
+              ),
       ),
     );
   }

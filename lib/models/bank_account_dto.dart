@@ -33,6 +33,7 @@ class BankAccountDTO extends Equatable {
   int timeActiveKey;
   bool activeKey;
   bool mmsActive;
+  int pushNotification;
 
   //thêm
   Color? bankColor;
@@ -75,6 +76,7 @@ class BankAccountDTO extends Equatable {
     this.keyActive = '',
     this.timeActiveKey = 0,
     this.enableVoice = true,
+    this.pushNotification = 0,
   });
 
   setColor(value) {
@@ -111,6 +113,7 @@ class BankAccountDTO extends Equatable {
       mmsActive: json['mmsActive'] ?? false,
       timeActiveKey: json['timeActiveKey'] ?? 1,
       enableVoice: json['enableVoice'] ?? true,
+      pushNotification: json['pushNotification'],
     );
   }
 
@@ -144,6 +147,7 @@ class BankAccountDTO extends Equatable {
     data['timeActiveKey'] = timeActiveKey;
     data['activeKey'] = activeKey;
     data['mmsActive'] = mmsActive;
+    data['pushNotification'] = pushNotification;
     return data;
   }
 
@@ -177,68 +181,69 @@ class BankAccountDTO extends Equatable {
         timeActiveKey,
         activeKey,
         mmsActive,
+        pushNotification,
       ];
 
-  BankAccountDTO copyWith({
-    String? id,
-    String? bankAccount,
-    String? userBankName,
-    String? bankCode,
-    String? bankShortName,
-    String? bankName,
-    String? imgId,
-    int? type,
-    bool? enableVoice,
-    String? userId,
-    bool? isAuthenticated,
-    bool? isOwner,
-    int? bankTypeStatus,
-    String? qrCode,
-    String? caiValue,
-    String? bankTypeId,
-    String? phoneAuthenticated,
-    String? nationalId,
-    String? ewalletToken,
-    int? unlinkedType,
-    bool? isValidService,
-    int? validFeeFrom,
-    int? validFeeTo,
-    int? transCount,
-    String? keyActive,
-    int? timeActiveKey,
-    bool? activeKey,
-    bool? mmsActive,
-  }) {
+  BankAccountDTO copyWith(
+      {String? id,
+      String? bankAccount,
+      String? userBankName,
+      String? bankCode,
+      String? bankShortName,
+      String? bankName,
+      String? imgId,
+      int? type,
+      bool? enableVoice,
+      String? userId,
+      bool? isAuthenticated,
+      bool? isOwner,
+      int? bankTypeStatus,
+      String? qrCode,
+      String? caiValue,
+      String? bankTypeId,
+      String? phoneAuthenticated,
+      String? nationalId,
+      String? ewalletToken,
+      int? unlinkedType,
+      bool? isValidService,
+      int? validFeeFrom,
+      int? validFeeTo,
+      int? transCount,
+      String? keyActive,
+      int? timeActiveKey,
+      bool? activeKey,
+      bool? mmsActive,
+      int? pushNotification}) {
     return BankAccountDTO(
-      id: id ?? this.id,
-      bankAccount: bankAccount ?? this.bankAccount,
-      userBankName: userBankName ?? this.userBankName,
-      bankCode: bankCode ?? this.bankCode,
-      bankShortName: bankShortName ?? this.bankShortName,
-      bankName: bankName ?? this.bankName,
-      imgId: imgId ?? this.imgId,
-      type: type ?? this.type,
-      enableVoice: enableVoice ?? this.enableVoice,
-      userId: userId ?? this.userId,
-      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
-      isOwner: isOwner ?? this.isOwner,
-      bankTypeStatus: bankTypeStatus ?? this.bankTypeStatus,
-      qrCode: qrCode ?? this.qrCode,
-      caiValue: caiValue ?? this.caiValue,
-      bankTypeId: bankTypeId ?? this.bankTypeId,
-      phoneAuthenticated: phoneAuthenticated ?? this.phoneAuthenticated,
-      nationalId: nationalId ?? this.nationalId,
-      ewalletToken: ewalletToken ?? this.ewalletToken,
-      unlinkedType: unlinkedType ?? this.unlinkedType,
-      isValidService: isValidService ?? this.isValidService,
-      validFeeFrom: validFeeFrom ?? this.validFeeFrom,
-      validFeeTo: validFeeTo ?? this.validFeeTo,
-      transCount: transCount ?? this.transCount,
-      keyActive: keyActive ?? this.keyActive,
-      timeActiveKey: timeActiveKey ?? this.timeActiveKey,
-      activeKey: activeKey ?? this.activeKey,
-      mmsActive: mmsActive ?? this.mmsActive,
-    );
+        id: id ?? this.id,
+        bankAccount: bankAccount ?? this.bankAccount,
+        userBankName: userBankName ?? this.userBankName,
+        bankCode: bankCode ?? this.bankCode,
+        bankShortName: bankShortName ?? this.bankShortName,
+        bankName: bankName ?? this.bankName,
+        imgId: imgId ?? this.imgId,
+        type: type ?? this.type,
+        enableVoice: enableVoice ?? this.enableVoice,
+        userId: userId ?? this.userId,
+        isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+        isOwner: isOwner ?? this.isOwner,
+        bankTypeStatus: bankTypeStatus ?? this.bankTypeStatus,
+        qrCode: qrCode ?? this.qrCode,
+        caiValue: caiValue ?? this.caiValue,
+        bankTypeId: bankTypeId ?? this.bankTypeId,
+        phoneAuthenticated: phoneAuthenticated ?? this.phoneAuthenticated,
+        nationalId: nationalId ?? this.nationalId,
+        ewalletToken: ewalletToken ?? this.ewalletToken,
+        unlinkedType: unlinkedType ?? this.unlinkedType,
+        isValidService: isValidService ?? this.isValidService,
+        validFeeFrom: validFeeFrom ?? this.validFeeFrom,
+        validFeeTo: validFeeTo ?? this.validFeeTo,
+        transCount: transCount ?? this.transCount,
+        keyActive: keyActive ?? this.keyActive,
+        timeActiveKey: timeActiveKey ?? this.timeActiveKey,
+        activeKey: activeKey ?? this.activeKey,
+        mmsActive: mmsActive ?? this.mmsActive,
+        pushNotification: pushNotification ?? this.pushNotification);
   }
 
   String get getBankCodeAndName => '$bankCode - $bankAccount';

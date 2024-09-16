@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -26,6 +27,7 @@ class DisplaySettingWidget extends StatefulWidget {
 
 class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
+  bool onOffBdsd = false;
 
   void _enableVoiceSetting(
       Map<String, dynamic> param, SettingBDSDProvider provider) async {
@@ -53,10 +55,31 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
     }
   }
 
+  void _enablePopupNoti(
+      SettingBDSDProvider provider, int value, String userId) async {
+    try {
+      final listIsOwnerBank = widget.listIsOwnerBank;
+
+      bool enableStatus =
+          await accRepository.setNotificationBDSD(value, userId);
+      if (enableStatus) {
+        if (listIsOwnerBank.isNotEmpty) {
+          for (var e in listIsOwnerBank) {
+            e.pushNotification = (provider.enablePopup) ? 1 : 0;
+          }
+        }
+
+        await SharePrefUtils.saveListOwnerBanks(listIsOwnerBank);
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       width: widget.width,
       child: Consumer<SettingBDSDProvider>(
         builder: (context, provider, child) {
@@ -131,61 +154,61 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
                 ),
               ),
               _buildDashLine(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    const XImage(
-                      imagePath: 'assets/images/ic-popup-settings.png',
-                      color: AppColor.BLUE_TEXT,
-                      height: 40,
-                    ),
-                    const SizedBox(width: 4),
-                    const Expanded(
-                      child: Text(
-                        'Hiển thị Pop-up thông báo BĐSD',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal,
-                        ),
+              Row(
+                children: [
+                  const XImage(
+                    imagePath: 'assets/images/ic-popup-settings.png',
+                    color: AppColor.BLUE_TEXT,
+                    height: 40,
+                  ),
+                  const SizedBox(width: 4),
+                  const Expanded(
+                    child: Text(
+                      'Hiển thị Pop-up thông báo BĐSD',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
-                    Consumer<AuthenProvider>(
-                      builder: (context, provider, _) {
-                        return Switch(
-                          value: provider.settingDTO.keepScreenOn,
-                          trackColor:
-                              WidgetStateProperty.resolveWith<Color>((states) {
-                            if (states.contains(WidgetState.selected)) {
-                              return AppColor.BLUE_TEXT.withOpacity(0.3);
-                            }
-                            return AppColor.GREY_DADADA.withOpacity(0.3);
-                          }),
-                          thumbColor:
-                              WidgetStateProperty.resolveWith<Color>((states) {
-                            if (states.contains(WidgetState.selected)) {
-                              return AppColor.BLUE_TEXT;
-                            }
-                            return AppColor.GREY_DADADA;
-                          }),
-                          trackOutlineColor: WidgetStateProperty.resolveWith(
-                            (final Set<WidgetState> states) {
-                              if (states.contains(WidgetState.selected)) {
-                                return null;
-                              }
+                  ),
+                  Switch(
+                    value: provider.enablePopup,
+                    trackColor:
+                        WidgetStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return AppColor.BLUE_TEXT.withOpacity(0.3);
+                      }
+                      return AppColor.GREY_DADADA.withOpacity(0.3);
+                    }),
+                    thumbColor:
+                        WidgetStateProperty.resolveWith<Color>((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return AppColor.BLUE_TEXT;
+                      }
+                      return AppColor.GREY_DADADA;
+                    }),
+                    trackOutlineColor: WidgetStateProperty.resolveWith(
+                      (final Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return null;
+                        }
 
-                              return AppColor.TRANSPARENT;
-                            },
-                          ),
-                          onChanged: (bool value) {
-                            _bloc.add(UpdateKeepBrightEvent(value));
-                          },
-                        );
+                        return AppColor.TRANSPARENT;
                       },
                     ),
-                  ],
-                ),
+                    onChanged: (bool value) {
+                      provider.updateOpenPopupNoti(value);
+
+                      String userId = SharePrefUtils.getProfile().userId;
+                      // for (var e in provider.listVoiceBank) {
+                      //   e.enableVoice = value;
+                      // }
+                      _enablePopupNoti(provider, value ? 1 : 0, userId);
+                    },
+                  ),
+                ],
               ),
+           
               _buildDashLine(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),

@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/format_date.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 
 class BankInfroV2Widget extends StatefulWidget {
   final BankAccountDTO dto;
@@ -29,6 +33,15 @@ List<String> contents = [
 
 class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
     with DialogHelper {
+  late BankCardBloc bankCardBloc;
+
+  @override
+  void initState() {
+    bankCardBloc = getIt.get<BankCardBloc>(
+        param1: widget.dto.id, param2: widget.isLoading);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -306,9 +319,26 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                     )
                   : InkWell(
                       onTap: () async {
-                        await NavigatorUtils.navigatePage(
-                            context, const AddBankScreen(),
-                            routeName: AddBankScreen.routeName);
+                        BankTypeDTO bankTypeDTO = BankTypeDTO(
+                          id: widget.dto.bankTypeId,
+                          bankCode: widget.dto.bankCode,
+                          bankName: widget.dto.bankName,
+                          imageId: widget.dto.imgId,
+                          bankShortName: widget.dto.bankCode,
+                          status: widget.dto.bankTypeStatus,
+                          caiValue: widget.dto.caiValue,
+                          bankId: widget.dto.id,
+                          bankAccount: widget.dto.bankAccount,
+                          userBankName: widget.dto.userBankName,
+                        );
+                        await NavigatorUtils.navigatePage(context,
+                                AddBankScreen(bankTypeDTO: bankTypeDTO),
+                                routeName: AddBankScreen.routeName)
+                            .then((value) {
+                          if (value is bool) {
+                            bankCardBloc.add(const BankCardGetDetailEvent());
+                          }
+                        });
                       },
                       child: const Text(
                         'Liên kết ngay',
@@ -326,21 +356,31 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
             ),
             InkWell(
               onTap: () async {
-                if (dto.isAuthenticated) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => BankCardDetailNewScreen(
-                          page: 0, dto: dto, bankId: dto.id),
-                      settings: const RouteSettings(
-                        name: Routes.BANK_CARD_DETAIL_NEW,
-                      ),
+                // if (dto.isAuthenticated) {
+                //   Navigator.of(context).push(
+                //     MaterialPageRoute(
+                //       builder: (context) => BankCardDetailNewScreen(
+                //           page: 0, dto: dto, bankId: dto.id),
+                //       settings: const RouteSettings(
+                //         name: Routes.BANK_CARD_DETAIL_NEW,
+                //       ),
+                //     ),
+                //   );
+                // } else {
+                //   await NavigatorUtils.navigatePage(
+                //       context, const AddBankScreen(),
+                //       routeName: AddBankScreen.routeName);
+                // }
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BankCardDetailNewScreen(
+                        page: 0, dto: dto, bankId: dto.id),
+                    settings: const RouteSettings(
+                      name: Routes.BANK_CARD_DETAIL_NEW,
                     ),
-                  );
-                } else {
-                  await NavigatorUtils.navigatePage(
-                      context, const AddBankScreen(),
-                      routeName: AddBankScreen.routeName);
-                }
+                  ),
+                );
               },
               child: Container(
                 width: 80,
