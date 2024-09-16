@@ -654,7 +654,7 @@ class _UserEditViewState extends State<UserEditView> {
                                         textInputAction: TextInputAction.done,
                                         maxLength: 1000,
                                         inputFormatters: [
-                                          VietnameseNameLongTextInputFormatter()
+                                          VietnameseAddressTextInputFormatter()
                                         ],
                                         decoration:
                                             const InputDecoration.collapsed(

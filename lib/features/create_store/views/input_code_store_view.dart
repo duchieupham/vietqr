@@ -148,7 +148,7 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                               hintText: 'Nhập địa chỉ cửa hàng',
                               inputType: TextInputType.text,
                               inputFormatter: [
-                                VietnameseNameLongTextInputFormatter(),
+                                VietnameseAddressTextInputFormatter(),
                               ],
                               keyboardAction: TextInputAction.next,
                               onChange: (value) {

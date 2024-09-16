@@ -652,7 +652,7 @@ class _QrUpdateScreenState extends State<QrUpdateScreen> {
               CustomTextField(
                 isActive: true,
                 textInputType: TextInputType.streetAddress,
-                inputFormatter: [VietnameseNameInputFormatter()],
+                inputFormatter: [VietnameseAddressTextInputFormatter()],
                 controller: addressController,
                 hintText: 'Nhập thông tin địa chỉ',
                 labelText: 'Địa chỉ',
