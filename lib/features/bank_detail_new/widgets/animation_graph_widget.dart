@@ -738,12 +738,12 @@ class AnimatedBar extends StatelessWidget {
     double currentHeight =
         currentAmount != 0 ? (currentAmount / totalAmount) * barHeight : 6;
     bool isFiftyPercent = currentHeight >= barHeight * 0.65;
-    String formatAmount(double amount) {
-      double billions = amount / 1000000;
-      return isLoading
-          ? '...'
-          : '${billions.toStringAsFixed(1).replaceAll('.', ',')} Tr';
-    }
+    // String formatAmount(double amount) {
+    //   double billions = amount / 1000000;
+    //   return isLoading
+    //       ? '...'
+    //       : '${billions.toStringAsFixed(1).replaceAll('.', ',')} Tr';
+    // }
 
     String currentType = '';
     switch (type) {
@@ -759,20 +759,21 @@ class AnimatedBar extends StatelessWidget {
       default:
     }
 
-    // String formatAmount(double amount) {
-    //   if (amount < 1000) {
-    //     return '${amount.toInt()} đ';
-    //   } else if (amount < 1000000) {
-    //     double thousands = amount / 1000;
-    //     return '${thousands.toStringAsFixed(thousands == thousands.toInt() ? 0 : 1).replaceAll('.', ',')} ngàn';
-    //   } else if (amount < 1000000000) {
-    //     double millions = amount / 1000000;
-    //     return '${millions.toStringAsFixed(millions == millions.toInt() ? 0 : 1).replaceAll('.', ',')} tr';
-    //   } else {
-    //     double billions = amount / 1000000000;
-    //     return '${billions.toStringAsFixed(billions == billions.toInt() ? 0 : 1).replaceAll('.', ',')} tỷ';
-    //   }
-    // }
+    String formatAmount(double amount) {
+      // if (amount < 1000) {
+      //   return '${amount.toInt()} đ';
+      // } else if (amount < 1000000) {
+      //   double thousands = amount / 1000;
+      //   return '${thousands.toStringAsFixed(thousands == thousands.toInt() ? 0 : 1).replaceAll('.', ',')} ngàn';
+      // }
+      if (amount < 1000000000) {
+        double millions = amount / 1000000;
+        return '${millions.toStringAsFixed(millions == millions.toInt() ? 0 : 1).replaceAll('.', ',')} tr';
+      } else {
+        double billions = amount / 1000000000;
+        return '${billions.toStringAsFixed(billions == billions.toInt() ? 0 : 1).replaceAll('.', ',')} tỷ';
+      }
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

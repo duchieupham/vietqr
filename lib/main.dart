@@ -96,7 +96,7 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.PROD);
+  await Injection.inject(env: EnvType.STG);
   // await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();

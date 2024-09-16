@@ -13,6 +13,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
 import 'package:vierqr/commons/widgets/step_progress.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
@@ -25,6 +26,7 @@ import 'package:vierqr/features/bank_card/widgets/display_setting_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/no_service_widget.dart';
+import 'package:vierqr/features/bank_card/widgets/sharing_connect_media.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
@@ -351,217 +353,10 @@ class _BankStatisticState extends State<BankStatistic>
                   if (bankSelect != null &&
                       bankSelect?.bankTypeStatus == 1 &&
                       state.listBanks.isNotEmpty) ...[
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Chia sẻ Biến động số động',
-                            style: TextStyle(
-                                color: AppColor.BLACK,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16),
-                          ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          (state.listPlaforms == null ||
-                                  state.listPlaforms!.isEmpty ||
-                                  state.listPlaforms!.length == 1)
-                              ? NoServiceWidget(
-                                  bankSelect: state.bankSelect!,
-                                  onHome: () {
-                                    widget.onHome.call();
-                                  },
-                                )
-                              : Stack(
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(
-                                          left: 12, right: 12, top: 10),
-                                      // padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 300,
-                                      child: StepProgressView(
-                                          curStep: 1,
-                                          height: state.listPlaforms!.length ==
-                                                  5
-                                              ? 280
-                                              : state.listPlaforms!.length == 4
-                                                  ? 200
-                                                  : state.listPlaforms!
-                                                              .length ==
-                                                          3
-                                                      ? 150
-                                                      : 60,
-                                          listItem: List.generate(
-                                              state.listPlaforms!.length,
-                                              (index) {
-                                            return SizedBox(
-                                              width: 310,
-                                              height: 40,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(5),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: AppColor
-                                                                .BLACK
-                                                                .withOpacity(
-                                                                    0.1),
-                                                            spreadRadius: 1,
-                                                            blurRadius: 8,
-                                                            offset:
-                                                                const Offset(
-                                                                    0, 2),
-                                                          )
-                                                        ]),
-                                                    child: XImage(
-                                                      imagePath:
-                                                          _buildIconPlatform(
-                                                              state
-                                                                  .listPlaforms![
-                                                                      index]
-                                                                  .platform),
-                                                      height: 28,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      state.listPlaforms![index]
-                                                          .platformId,
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  const Text(
-                                                    'Hoạt động',
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: AppColor.GREEN),
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                          activeColor: Colors.black),
-                                    ),
-                                    Center(
-                                      child: Container(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, right: 20),
-                                        width: double.infinity,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(35),
-                                          gradient: const LinearGradient(
-                                            colors: [
-                                              Color(0xFFE1EFFF),
-                                              Color(0xFFE5F9FF),
-                                            ],
-                                            end: Alignment.centerRight,
-                                            begin: Alignment.centerLeft,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              height: 30,
-                                              width: 60,
-                                              decoration: BoxDecoration(
-                                                  color: AppColor.WHITE,
-                                                  borderRadius:
-                                                      BorderRadius.circular(5)),
-                                              child: Image(
-                                                image: ImageUtils.instance
-                                                    .getImageNetWork(state
-                                                        .bankSelect!.imgId),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    state.bankSelect!
-                                                        .bankAccount,
-                                                    style: const TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    state.bankSelect!
-                                                        .userBankName,
-                                                    style: const TextStyle(
-                                                        fontSize: 10,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            InkWell(
-                                              onTap: () {
-                                                widget.onHome.call();
-                                              },
-                                              child: Container(
-                                                width: 80,
-                                                height: 30,
-                                                decoration: BoxDecoration(
-                                                  gradient: VietQRTheme
-                                                      .gradientColor
-                                                      .brightBlueLinear,
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                alignment: Alignment.center,
-                                                child: const Text(
-                                                  'Kết nối mới',
-                                                  style: TextStyle(
-                                                    color: AppColor.WHITE,
-                                                    fontSize: 10,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                        ],
-                      ),
+                    SharingConnectMedia(
+                      dto: state.bankSelect!,
+                      list: state.listPlaforms ?? [],
+                      onHome: widget.onHome,
                     ),
                     DisplaySettingWidget(
                         listIsOwnerBank: listIsOwnerBank ?? [],
@@ -601,33 +396,6 @@ class _BankStatisticState extends State<BankStatistic>
   //     },
   //   )
   // ];
-
-  String _buildIconPlatform(String platform) {
-    String img = '';
-    switch (platform) {
-      case 'Google Chat':
-        img = ImageConstant.logoGGChatHome;
-        break;
-      case 'Telegram':
-        img = ImageConstant.logoTelegramDash;
-        break;
-      case 'Lark':
-        img = ImageConstant.logoLarkDash;
-        break;
-      case 'Slack':
-        img = ImageConstant.logoSlackHome;
-        break;
-      case 'Discord':
-        img = ImageConstant.logoDiscordHome;
-        break;
-      case 'Google Sheet':
-        img = ImageConstant.logoGGSheetHome;
-        break;
-      default:
-    }
-
-    return img;
-  }
 
   Widget _voiceWidget() {
     return InkWell(

@@ -48,7 +48,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
             GradientBorderButton(
               gradient: VietQRTheme.gradientColor.aiTextColor,
               borderRadius: BorderRadius.circular(10),
-              borderWidth: 1.5,
+              borderWidth: 0.8,
               widget: Container(
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: Column(
@@ -82,7 +82,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                           child: Text(
                             'Đến ${timestampToDate(widget.dto.validFeeTo)}',
                             style: const TextStyle(
-                              fontSize: 15,
+                              fontSize: 12,
                               color: AppColor.BLACK,
                               fontWeight: FontWeight.normal,
                             ),
@@ -91,8 +91,9 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
 
                         const Icon(
                           Icons.arrow_forward_ios,
+                          color: AppColor.GREY_TEXT,
                           size: 15,
-                          weight: 1,
+                          weight: 0.5,
                         )
                       ],
                     ),
@@ -126,7 +127,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
       child: GradientBorderButton(
         gradient: VietQRTheme.gradientColor.aiTextColor,
         borderRadius: BorderRadius.circular(10),
-        borderWidth: 1.5,
+        borderWidth: 0.8,
         widget: Container(
           padding: const EdgeInsets.fromLTRB(10, 5, 10, 15),
           child: Column(
@@ -170,7 +171,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                             ? 'Hạn ngày cuối'
                             : 'Còn ${inclusiveDays(dto.validFeeTo)} ngày',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 12,
                           color: inclusiveDays(dto.validFeeTo) == 0
                               ? AppColor.RED_FFFF0000
                               : AppColor.ORANGE_DARK,
@@ -186,7 +187,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                       child: Text(
                         'Quá hạn ${inclusiveDays(dto.validFeeTo).abs()} ngày',
                         style: const TextStyle(
-                          fontSize: 15,
+                          fontSize: 12,
                           color: AppColor.RED_FFFF0000,
                           fontWeight: FontWeight.bold,
                         ),
@@ -284,41 +285,42 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
         ),
         Row(
           children: [
-            dto.isAuthenticated
-                ? ShaderMask(
-                    shaderCallback: (bounds) => const LinearGradient(
-                      colors: [
-                        Color(0xFF9CD740),
-                        Color(0xFF2BACE6),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ).createShader(bounds),
-                    child: const Text(
-                      'Đã liên kết',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
+            if (dto.bankTypeStatus != 0)
+              dto.isAuthenticated
+                  ? ShaderMask(
+                      shaderCallback: (bounds) => const LinearGradient(
+                        colors: [
+                          Color(0xFF9CD740),
+                          Color(0xFF2BACE6),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ).createShader(bounds),
+                      child: const Text(
+                        'Đã liên kết',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
+                  : InkWell(
+                      onTap: () async {
+                        await NavigatorUtils.navigatePage(
+                            context, const AddBankScreen(),
+                            routeName: AddBankScreen.routeName);
+                      },
+                      child: const Text(
+                        'Liên kết ngay',
+                        style: TextStyle(
+                            color: AppColor.ORANGE_DARK,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColor.ORANGE_DARK,
+                            decorationThickness: 2,
+                            fontSize: 12,
+                            height: 1.5),
                       ),
                     ),
-                  )
-                : InkWell(
-                    onTap: () async {
-                      await NavigatorUtils.navigatePage(
-                          context, const AddBankScreen(),
-                          routeName: AddBankScreen.routeName);
-                    },
-                    child: const Text(
-                      'Liên kết ngay',
-                      style: TextStyle(
-                        color: AppColor.ORANGE_DARK,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColor.ORANGE_DARK,
-                        decorationThickness: 2,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
             const SizedBox(
               width: 10,
             ),
@@ -343,6 +345,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
               child: Container(
                 width: 80,
                 height: 25,
+                padding: const EdgeInsets.only(right: 6),
                 decoration: BoxDecoration(
                   color: AppColor.BLUE_E1EFFF,
                   borderRadius: BorderRadius.circular(50),

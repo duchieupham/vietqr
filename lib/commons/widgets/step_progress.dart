@@ -31,19 +31,26 @@ class StepProgressView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: _height,
       child: Row(
         children: <Widget>[
-          Column(
-            children: _iconViews(),
+          SizedBox(
+            height: _height,
+            child: Column(
+              children: _iconViews(),
+            ),
           ),
           const SizedBox(
             width: 16,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _itemViews(),
+          Expanded(
+            child: SizedBox(
+              height: _height + (_height / _listItem.length) * 0.6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _itemViews(),
+              ),
+            ),
           ),
         ],
       ),

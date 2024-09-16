@@ -70,170 +70,177 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
                     fontWeight: FontWeight.bold,
                     fontSize: 16),
               ),
-              // const SizedBox(height: 10),
-              Row(
-                children: [
-                  const XImage(
-                    imagePath: 'assets/images/ic-voice-black.png',
-                    color: AppColor.BLUE_TEXT,
-                    height: 40,
-                  ),
-                  const SizedBox(width: 4),
-                  const Expanded(
-                    child: Text(
-                      'Nhận thông báo với giọng nói',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    const XImage(
+                      imagePath: 'assets/images/ic-voice-black.png',
+                      color: AppColor.BLUE_TEXT,
+                      height: 40,
+                    ),
+                    const SizedBox(width: 4),
+                    const Expanded(
+                      child: Text(
+                        'Nhận thông báo với giọng nói',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
-                  ),
-                  Switch(
-                    value: provider.enableVoice,
-                    trackColor:
-                        WidgetStateProperty.resolveWith<Color>((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return AppColor.BLUE_TEXT.withOpacity(0.3);
-                      }
-                      return AppColor.GREY_DADADA.withOpacity(0.3);
-                    }),
-                    thumbColor:
-                        WidgetStateProperty.resolveWith<Color>((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return AppColor.BLUE_TEXT;
-                      }
-                      return AppColor.GREY_DADADA;
-                    }),
-                    trackOutlineColor: WidgetStateProperty.resolveWith(
-                      (final Set<WidgetState> states) {
+                    Switch(
+                      value: provider.enableVoice,
+                      trackColor:
+                          WidgetStateProperty.resolveWith<Color>((states) {
                         if (states.contains(WidgetState.selected)) {
-                          return null;
+                          return AppColor.BLUE_TEXT.withOpacity(0.3);
                         }
+                        return AppColor.GREY_DADADA.withOpacity(0.3);
+                      }),
+                      thumbColor:
+                          WidgetStateProperty.resolveWith<Color>((states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return AppColor.BLUE_TEXT;
+                        }
+                        return AppColor.GREY_DADADA;
+                      }),
+                      trackOutlineColor: WidgetStateProperty.resolveWith(
+                        (final Set<WidgetState> states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return null;
+                          }
 
-                        return AppColor.TRANSPARENT;
+                          return AppColor.TRANSPARENT;
+                        },
+                      ),
+                      onChanged: (bool value) {
+                        provider.updateOpenVoice(value);
+                        Map<String, dynamic> paramEnable = {};
+                        paramEnable['bankIds'] = provider.getListId();
+                        paramEnable['userId'] =
+                            SharePrefUtils.getProfile().userId;
+                        // for (var e in provider.listVoiceBank) {
+                        //   e.enableVoice = value;
+                        // }
+                        _enableVoiceSetting(paramEnable, provider);
                       },
                     ),
-                    onChanged: (bool value) {
-                      provider.updateOpenVoice(value);
-                      Map<String, dynamic> paramEnable = {};
-                      paramEnable['bankIds'] = provider.getListId();
-                      paramEnable['userId'] =
-                          SharePrefUtils.getProfile().userId;
-                      // for (var e in provider.listVoiceBank) {
-                      //   e.enableVoice = value;
-                      // }
-                      _enableVoiceSetting(paramEnable, provider);
-                    },
-                  ),
-                ],
-              ),
-
-              _buildDashLine(),
-              Row(
-                children: [
-                  const XImage(
-                    imagePath: 'assets/images/ic-popup-settings.png',
-                    color: AppColor.BLUE_TEXT,
-                    height: 40,
-                  ),
-                  const SizedBox(width: 4),
-                  const Expanded(
-                    child: Text(
-                      'Hiển thị Pop-up thông báo BĐSD',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
-                  ),
-                  Consumer<AuthenProvider>(
-                    builder: (context, provider, _) {
-                      return Switch(
-                        value: provider.settingDTO.keepScreenOn,
-                        trackColor:
-                            WidgetStateProperty.resolveWith<Color>((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return AppColor.BLUE_TEXT.withOpacity(0.3);
-                          }
-                          return AppColor.GREY_DADADA.withOpacity(0.3);
-                        }),
-                        thumbColor:
-                            WidgetStateProperty.resolveWith<Color>((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return AppColor.BLUE_TEXT;
-                          }
-                          return AppColor.GREY_DADADA;
-                        }),
-                        trackOutlineColor: WidgetStateProperty.resolveWith(
-                          (final Set<WidgetState> states) {
-                            if (states.contains(WidgetState.selected)) {
-                              return null;
-                            }
-
-                            return AppColor.TRANSPARENT;
-                          },
-                        ),
-                        onChanged: (bool value) {
-                          _bloc.add(UpdateKeepBrightEvent(value));
-                        },
-                      );
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
               _buildDashLine(),
-
-              Row(
-                children: [
-                  const XImage(
-                    imagePath: 'assets/images/ic-screenon.png',
-                    color: AppColor.BLUE_TEXT,
-                    height: 40,
-                  ),
-                  const SizedBox(width: 4),
-                  const Expanded(
-                    child: Text(
-                      'Màn hình luôn sáng khi hiển thị QR',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    const XImage(
+                      imagePath: 'assets/images/ic-popup-settings.png',
+                      color: AppColor.BLUE_TEXT,
+                      height: 40,
+                    ),
+                    const SizedBox(width: 4),
+                    const Expanded(
+                      child: Text(
+                        'Hiển thị Pop-up thông báo BĐSD',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
-                  ),
-                  Consumer<AuthenProvider>(
-                    builder: (context, provider, _) {
-                      return Switch(
-                        value: provider.settingDTO.keepScreenOn,
-                        trackColor:
-                            WidgetStateProperty.resolveWith<Color>((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return AppColor.BLUE_TEXT.withOpacity(0.3);
-                          }
-                          return AppColor.GREY_DADADA.withOpacity(0.3);
-                        }),
-                        thumbColor:
-                            WidgetStateProperty.resolveWith<Color>((states) {
-                          if (states.contains(WidgetState.selected)) {
-                            return AppColor.BLUE_TEXT;
-                          }
-                          return AppColor.GREY_DADADA;
-                        }),
-                        trackOutlineColor: WidgetStateProperty.resolveWith(
-                          (final Set<WidgetState> states) {
+                    Consumer<AuthenProvider>(
+                      builder: (context, provider, _) {
+                        return Switch(
+                          value: provider.settingDTO.keepScreenOn,
+                          trackColor:
+                              WidgetStateProperty.resolveWith<Color>((states) {
                             if (states.contains(WidgetState.selected)) {
-                              return null;
+                              return AppColor.BLUE_TEXT.withOpacity(0.3);
                             }
+                            return AppColor.GREY_DADADA.withOpacity(0.3);
+                          }),
+                          thumbColor:
+                              WidgetStateProperty.resolveWith<Color>((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return AppColor.BLUE_TEXT;
+                            }
+                            return AppColor.GREY_DADADA;
+                          }),
+                          trackOutlineColor: WidgetStateProperty.resolveWith(
+                            (final Set<WidgetState> states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return null;
+                              }
 
-                            return AppColor.TRANSPARENT;
+                              return AppColor.TRANSPARENT;
+                            },
+                          ),
+                          onChanged: (bool value) {
+                            _bloc.add(UpdateKeepBrightEvent(value));
                           },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              _buildDashLine(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    const XImage(
+                      imagePath: 'assets/images/ic-screenon.png',
+                      color: AppColor.BLUE_TEXT,
+                      height: 40,
+                    ),
+                    const SizedBox(width: 4),
+                    const Expanded(
+                      child: Text(
+                        'Màn hình luôn sáng khi hiển thị QR',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.normal,
                         ),
-                        onChanged: (bool value) {
-                          _bloc.add(UpdateKeepBrightEvent(value));
-                        },
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    ),
+                    Consumer<AuthenProvider>(
+                      builder: (context, provider, _) {
+                        return Switch(
+                          value: provider.settingDTO.keepScreenOn,
+                          trackColor:
+                              WidgetStateProperty.resolveWith<Color>((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return AppColor.BLUE_TEXT.withOpacity(0.3);
+                            }
+                            return AppColor.GREY_DADADA.withOpacity(0.3);
+                          }),
+                          thumbColor:
+                              WidgetStateProperty.resolveWith<Color>((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return AppColor.BLUE_TEXT;
+                            }
+                            return AppColor.GREY_DADADA;
+                          }),
+                          trackOutlineColor: WidgetStateProperty.resolveWith(
+                            (final Set<WidgetState> states) {
+                              if (states.contains(WidgetState.selected)) {
+                                return null;
+                              }
+
+                              return AppColor.TRANSPARENT;
+                            },
+                          ),
+                          onChanged: (bool value) {
+                            _bloc.add(UpdateKeepBrightEvent(value));
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           );
