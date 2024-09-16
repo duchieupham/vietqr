@@ -50,11 +50,13 @@ part './widgets/extend_annual_fee.dart';
 class BankScreen extends StatefulWidget {
   final ScrollController scrollController;
   final VoidCallback onStore;
+  final VoidCallback onHome;
 
   const BankScreen({
     super.key,
     required this.onStore,
     required this.scrollController,
+    required this.onHome,
   });
 
   @override
@@ -227,6 +229,9 @@ class _BankScreenState extends State<BankScreen> {
                     focusNode: _focusNode,
                     onStore: () {
                       widget.onStore.call();
+                    },
+                    onHome: () {
+                      widget.onHome.call();
                     },
                   )
                 ],
