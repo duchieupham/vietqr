@@ -32,6 +32,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
@@ -280,11 +281,11 @@ class _UserInfoViewState extends State<UserInfoView> {
                   }
                   if (state is UserEditAvatarSuccessState) {
                     //pop loading dialog
-                    
+
                     Navigator.pop(context);
                     Navigator.pop(context);
-                              Provider.of<AuthenProvider>(context, listen: false)
-              .setImage(state.imageFile);
+                    Provider.of<AuthenProvider>(context, listen: false)
+                        .setImage(state.imageFile);
                   }
                   if (state is UserEditAvatarFailedState) {
                     //pop loading dialog
@@ -851,7 +852,7 @@ class _UserInfoViewState extends State<UserInfoView> {
                                 : InkWell(
                                     onTap: () {
                                       NavigatorUtils.navigatePage(
-                                          context, const VerifyEmailScreen(),
+                                          context, const VerifyEmailScreen(email: '',),
                                           routeName:
                                               VerifyEmailScreen.routeName);
                                     },
@@ -926,33 +927,14 @@ class _UserInfoViewState extends State<UserInfoView> {
                                                         end: Alignment
                                                             .centerRight,
                                                       ).createShader(bounds),
-                                                      child: Text(
+                                                      child: const Text(
                                                         ' miễn phí 01 tháng.',
                                                         style: TextStyle(
-                                                          fontSize: 11,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          foreground: Paint()
-                                                            ..shader =
-                                                                const LinearGradient(
-                                                              colors: [
-                                                                Color(
-                                                                    0xFF00C6FF),
-                                                                Color(
-                                                                    0xFF0072FF),
-                                                              ],
-                                                              begin: Alignment
-                                                                  .centerLeft,
-                                                              end: Alignment
-                                                                  .centerRight,
-                                                            ).createShader(
-                                                                    const Rect
-                                                                        .fromLTWH(
-                                                                        0,
-                                                                        0,
-                                                                        200,
-                                                                        30)),
-                                                        ),
+                                                            fontSize: 11,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                AppColor.WHITE),
                                                       ),
                                                     ),
                                                   ],
@@ -1150,6 +1132,42 @@ class _UserInfoViewState extends State<UserInfoView> {
                                         Navigator.of(context)
                                             .pushNamed(Routes.UPDATE_PASSWORD);
                                       },
+                                    ),
+                                    const MySeparator(
+                                      color: AppColor.GREY_DADADA,
+                                    ),
+                                    //cập nhật email
+                                    InkWell(
+                                      onTap: () {
+                                        Map<String, dynamic> param = {};
+                                        param['phoneNum'] =
+                                            SharePrefUtils.getPhone();
+                                        NavigationService.push(
+                                            Routes.UPDATE_EMAIL,
+                                            arguments: param);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 8,
+                                            bottom: 8,
+                                            left: 0,
+                                            right: 8),
+                                        width: double
+                                            .infinity, // Mở rộng chiều rộng của Container
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text('Cập nhật email',
+                                                style: TextStyle(fontSize: 12)),
+                                            XImage(
+                                              imagePath:
+                                                  'assets/images/ic-mail.png',
+                                              width: 15,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                     const MySeparator(
                                       color: AppColor.GREY_DADADA,
@@ -1698,7 +1716,8 @@ class _UserInfoViewState extends State<UserInfoView> {
     );
   }
 
-  Widget buildOptionRow(String title, String path, Function() onTap) {
+  Widget buildOptionRow(String title, String path, Function() onTap,
+      {double? width, EdgeInsetsGeometry? padding}) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -1708,9 +1727,12 @@ class _UserInfoViewState extends State<UserInfoView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title, style: const TextStyle(fontSize: 12)),
-            XImage(
-              imagePath: path,
-              width: 30,
+            Padding(
+              padding: padding ?? EdgeInsets.zero,
+              child: XImage(
+                imagePath: path,
+                width: width ?? 30,
+              ),
             ),
           ],
         ),

@@ -65,3 +65,15 @@ class UserDeactiveFailedState extends UserEditState {
   @override
   List<Object?> get props => [message];
 }
+
+
+class UserEditEmailFailedState extends UserEditState {
+  final String message;
+
+  const UserEditEmailFailedState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class UserEditEmailSuccessState extends UserEditState {}

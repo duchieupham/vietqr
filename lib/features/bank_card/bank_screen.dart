@@ -15,6 +15,7 @@ import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/measure_size.dart';
@@ -24,6 +25,8 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_appbar_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_statistic.dart';
+import 'package:vierqr/features/bank_card/widgets/build_banner_widget.dart';
+import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/list_bank.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -47,11 +50,13 @@ part './widgets/extend_annual_fee.dart';
 class BankScreen extends StatefulWidget {
   final ScrollController scrollController;
   final VoidCallback onStore;
+  final VoidCallback onHome;
 
   const BankScreen({
     super.key,
     required this.onStore,
     required this.scrollController,
+    required this.onHome,
   });
 
   @override
@@ -60,13 +65,16 @@ class BankScreen extends StatefulWidget {
 
 class _BankScreenState extends State<BankScreen> {
   final List<Widget> cardWidgets = [];
-  // final scrollController = ScrollController();
-  final carouselController = CarouselController();
+  final CarouselController carouselController = CarouselController();
   rive.StateMachineController? _riveController;
   late rive.SMITrigger _action;
+
   final GlobalKey _textFieldKey = GlobalKey();
+  final GlobalKey _animatedBarKey = GlobalKey();
+
   final FocusNode _focusNode = FocusNode();
   final ValueNotifier<double> _opacityNotifier = ValueNotifier<double>(0.0);
+  final ValueNotifier<bool> isScrollToChart = ValueNotifier<bool>(false);
 
   late final BankBloc _bloc = getIt.get<BankBloc>();
 
@@ -100,6 +108,15 @@ class _BankScreenState extends State<BankScreen> {
 
   void _onScroll() {
     _opacityNotifier.value = widget.scrollController.offset > 100 ? 1.0 : 0.0;
+    // if (_animatedBarKey.currentContext != null) {
+    //   final RenderBox renderBox =
+    //       _animatedBarKey.currentContext?.findRenderObject() as RenderBox;
+    //   final position = renderBox.localToGlobal(Offset.zero);
+    //   final scrollPosition = widget.scrollController.position;
+    //   isScrollToChart.value = position.dy >= scrollPosition.pixels + 250 &&
+    //       position.dy <=
+    //           scrollPosition.pixels + scrollPosition.viewportDimension;
+    // }
   }
 
   void _scrollToFocusedTextField() {
@@ -155,29 +172,27 @@ class _BankScreenState extends State<BankScreen> {
         _focusNode.unfocus();
       },
       child: Container(
-        color: AppColor.WHITE.withOpacity(0.6),
+        color: AppColor.WHITE,
         child: CustomScrollView(
           controller: widget.scrollController,
           physics: const BouncingScrollPhysics(),
           slivers: [
-            BankAppbarWidget(
-              notifier: _opacityNotifier,
-            ),
+            BankAppbarWidget(notifier: _opacityNotifier),
             CupertinoSliverRefreshControl(
               builder: (context, refreshState, pulledExtent,
                   refreshTriggerPullDistance, refreshIndicatorExtent) {
                 return Stack(
                   children: [
-                    Positioned.fill(
-                      child: Opacity(
-                        opacity: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: VietQRTheme.gradientColor.lilyLinear,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Positioned.fill(
+                    //   child: Opacity(
+                    //     opacity: 1,
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         gradient: VietQRTheme.gradientColor.lilyLinear,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Positioned(
                       top: 0,
                       left: 0,
@@ -204,12 +219,19 @@ class _BankScreenState extends State<BankScreen> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
+                  const InvoiceOverviewWidget(),
+                  const BuildBannerWidget(),
                   const ListBankWidget(),
                   BankStatistic(
+                    animatedKey: _animatedBarKey,
+                    scrollNotifer: isScrollToChart,
                     textFielddKey: _textFieldKey,
                     focusNode: _focusNode,
                     onStore: () {
                       widget.onStore.call();
+                    },
+                    onHome: () {
+                      widget.onHome.call();
                     },
                   )
                 ],

@@ -14,6 +14,8 @@ enum BlocStatus {
   INSERT,
   DONE,
   DELETED_ERROR,
+  REQUEST,
+  REQUEST_ERROR,
 }
 
 enum TypeImage { SAVE, SHARE }
@@ -139,6 +141,13 @@ enum TypeQR {
   NEGATIVE_ONE,
 }
 
+enum UserUpdateEmailType {
+  NONE,
+  SAVE,
+  VERIFY,
+  ERROR,
+}
+
 extension TypeQRExt on TypeQR {
   String get value {
     switch (this) {
@@ -239,6 +248,13 @@ extension TypeContactExt2 on TypeContact {
   }
 }
 
+enum TransManage {
+  NONE,
+  LOADING,
+  GET_TRANS,
+  ERROR,
+}
+
 enum BankDetailType {
   NONE,
   SUCCESS,
@@ -286,6 +302,7 @@ enum BankType {
   QR,
   NONE,
   BANK,
+  SELECT_BANK,
   GET_BANK,
   GET_BANK_LOCAL,
   GET_KEY_FREE,
@@ -314,6 +331,7 @@ enum ConnectMedia {
   MAKE_CONNECTION,
   ADD_BANKS,
   REMOVE_BANK,
+  GET_PLATFORM
 }
 
 enum InvoiceType {
@@ -321,6 +339,7 @@ enum InvoiceType {
   GET_INVOICE_LIST,
   INVOICE_DETAIL,
   FILTER_INVOICE,
+  PAYMENT,
 }
 
 enum MainChargeType {
@@ -477,12 +496,7 @@ enum ForgotPasswordType {
   CHANGE_PASS
 }
 
-enum QrCertificateType{
-  NONE,
-  SCAN,
-  ECOM_ACTIVE,
-  ERROR
-}
+enum QrCertificateType { NONE, SCAN, ECOM_ACTIVE, ERROR }
 
 enum RegisterType {
   NONE,

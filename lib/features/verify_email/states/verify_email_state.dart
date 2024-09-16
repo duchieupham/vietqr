@@ -31,6 +31,7 @@ class SendOTPFailedState extends EmailState {
   List<Object?> get props => [dto];
 }
 
+
 class SendOTPAgainState extends EmailState {}
 
 class SendOTPAgainSuccessfulState extends EmailState {}

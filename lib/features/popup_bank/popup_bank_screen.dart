@@ -64,7 +64,7 @@ class _PopupBankScreen extends StatefulWidget {
 
 class _PopupBankScreenState extends State<_PopupBankScreen> {
   late PopupBankBloc bloc;
-  final bankCardRepository = const BankCardRepository();
+  final bankCardRepository = BankCardRepository();
   final otpController = TextEditingController();
 
   final globalKey = GlobalKey();

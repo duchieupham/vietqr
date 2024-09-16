@@ -12,6 +12,7 @@ import 'package:vierqr/features/login/blocs/forgot_password_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/my_vietqr/bloc/vietqr_store_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
+import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/qr_certificate/blocs/qr_certificate_bloc.dart';
 import 'package:vierqr/features/qr_certificate/repositories/qr_certificate_repository.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
@@ -56,6 +57,9 @@ class BlocModule extends DIModule {
               NavigationService.context!,
               getIt.get<LoginRepository>(),
             ),
+          )
+          ..registerFactory(
+            () => UserEditBloc(),
           )
           ..registerFactory(
             () => QRCodeUnUTBloc(NavigationService.context!),

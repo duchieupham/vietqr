@@ -19,7 +19,7 @@ class CustomerVaBloc extends Bloc<CustomerVaEvent, CustomerVaState>
   }
 
   void _searchBankName(CustomerVaEvent event, Emitter emit) async {
-    BankCardRepository bankCardRepository = const BankCardRepository();
+    BankCardRepository bankCardRepository = BankCardRepository();
 
     try {
       if (event is BankCardSearchNameEvent) {

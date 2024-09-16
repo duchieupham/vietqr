@@ -126,7 +126,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                     const Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Nhận tiền từ mọi ngân hàng và ví điện thử có hỗ trợ VietQR',
+                        'Nhận tiền từ mọi ngân hàng và ví điện tử có hỗ trợ VietQR',
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 12),
                       ),
@@ -382,7 +382,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                 ),
                 Text(
                   description,
-                  style: const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
               ],
             ),

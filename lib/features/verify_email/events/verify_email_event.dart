@@ -32,6 +32,7 @@ class ConfirmOTPEvent extends EmailEvent {
   List<Object?> get props => [param];
 }
 
+
 class GetKeyFreeEvent extends EmailEvent {
   final Map<String, dynamic> param;
   final BankAccountDTO dto;

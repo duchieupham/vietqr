@@ -3,28 +3,21 @@ class BankOverviewDTO {
   final int countCredit;
   final int totalDebit;
   final int countDebit;
-  final String merchantName;
-  final List<String> terminals;
 
   BankOverviewDTO({
-    required this.totalCredit,
-    required this.countCredit,
-    required this.totalDebit,
-    required this.countDebit,
-    required this.merchantName,
-    required this.terminals,
+    this.totalCredit = 0,
+    this.countCredit = 0,
+    this.totalDebit = 0,
+    this.countDebit = 0,
   });
 
   // Factory constructor to create an instance from a JSON map
   factory BankOverviewDTO.fromJson(Map<String, dynamic> json) {
     return BankOverviewDTO(
-      totalCredit: json['totalCredit'],
-      countCredit: json['countCredit'],
-      totalDebit: json['totalDebit'],
-      countDebit: json['countDebit'],
-      merchantName: json['merchantName'] ?? '',
-      terminals:
-          json['terminals'] != null ? List<String>.from(json['terminals']) : [],
+      totalCredit: json['totalCredit'] ?? 0,
+      countCredit: json['countCredit'] ?? 0,
+      totalDebit: json['totalDebit'] ?? 0,
+      countDebit: json['countDebit'] ?? 0,
     );
   }
 
@@ -35,8 +28,6 @@ class BankOverviewDTO {
       'countCredit': countCredit,
       'totalDebit': totalDebit,
       'countDebit': countDebit,
-      'merchantName': merchantName,
-      'terminals': terminals,
     };
   }
 }

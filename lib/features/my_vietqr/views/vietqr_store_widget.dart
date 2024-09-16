@@ -35,18 +35,17 @@ class VietQRStoreWidget extends StatefulWidget {
 
 class _VietQRStoreWidgetState extends State<VietQRStoreWidget> {
   final VietQRStoreBloc _bloc = getIt.get<VietQRStoreBloc>();
-
+  List<VietQRStoreDTO> list = [];
   @override
   void initState() {
     super.initState();
+    list = [];
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        // _bloc.add(GetListStore(bankId: widget.dto.id));
+        _bloc.add(GetListStore(bankId: widget.dto.id));
       },
     );
   }
-
-  List<VietQRStoreDTO> list = [];
 
   @override
   Widget build(BuildContext context) {

@@ -39,6 +39,7 @@ class _RequestActiveKeyNotiState extends State<RequestActiveKeyNoti>
           return const SizedBox.shrink();
         } else {
           if (bankAccount.isAuthenticated &&
+              bankAccount.isOwner &&
               bankAccount.validFeeTo != 0 &&
               inclusiveDays(bankAccount.validFeeTo) <= 15) {
             return AnimatedPositioned(

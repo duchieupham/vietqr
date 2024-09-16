@@ -51,11 +51,12 @@ class VietQRStoreBloc extends Bloc<VietqrStoreEvent, VietQRStoreState> {
             request: VietQrStore.GET_LIST,
             listStore: result,
             storeSelect: result.isNotEmpty ? result.first : null,
-            terminal: state.terminal == null
-                ? terminalDTO
-                : state.terminal!.terminalId.isNotEmpty
-                    ? state.terminal
-                    : terminalDTO,
+            // terminal: state.terminal == null
+            //     ? terminalDTO
+            //     : state.terminal!.terminalId.isNotEmpty
+            //         ? state.terminal
+            //         : terminalDTO,
+            terminal: terminalDTO,
             metadata: _repository.metaDataDTO,
           ));
         } else {

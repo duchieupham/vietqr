@@ -499,43 +499,43 @@ class _UserEditViewState extends State<UserEditView> {
                               ),
                             ),
                             const Padding(padding: EdgeInsets.only(top: 10)),
-                            BoxLayout(
-                              width: width,
-                              // height: 55,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 0),
-                              child: TextFieldWidget(
-                                enable: !SharePrefUtils.getProfile().verify,
-                                width: width,
-                                textfieldType: TextfieldType.LABEL,
-                                isObscureText: false,
-                                title: 'Email',
-                                hintText: 'user@gmail.com',
-                                inputFormatters: [EmailInputFormatter()],
-                                controller: _emailController,
-                                inputType: TextInputType.emailAddress,
-                                keyboardAction: TextInputAction.next,
-                                onChange: (vavlue) {
-                                  provider.setAvailableUpdate(true);
-                                  provider
-                                      .checkValidEmail(_emailController.text);
-                                },
-                              ),
-                            ),
-                            Visibility(
-                              visible: provider.isEmailErr,
-                              child: const Padding(
-                                padding: EdgeInsets.only(top: 5, left: 5),
-                                child: Text(
-                                  'Email không hợp lệ.',
-                                  style: TextStyle(
-                                    color: AppColor.RED_TEXT,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Padding(padding: EdgeInsets.only(top: 10)),
+                            // BoxLayout(
+                            //   width: width,
+                            //   // height: 55,
+                            //   padding: const EdgeInsets.symmetric(
+                            //       horizontal: 20, vertical: 0),
+                            //   child: TextFieldWidget(
+                            //     // enable: false,
+                            //     width: width,
+                            //     textfieldType: TextfieldType.LABEL,
+                            //     isObscureText: false,
+                            //     title: 'Email',
+                            //     hintText: 'user@gmail.com',
+                            //     inputFormatters: [EmailInputFormatter()],
+                            //     controller: _emailController,
+                            //     inputType: TextInputType.emailAddress,
+                            //     keyboardAction: TextInputAction.next,
+                            //     onChange: (vavlue) {
+                            //       provider.setAvailableUpdate(true);
+                            //       provider
+                            //           .checkValidEmail(_emailController.text);
+                            //     },
+                            //   ),
+                            // ),
+                            // Visibility(
+                            //   visible: provider.isEmailErr,
+                            //   child: const Padding(
+                            //     padding: EdgeInsets.only(top: 5, left: 5),
+                            //     child: Text(
+                            //       'Email không hợp lệ.',
+                            //       style: TextStyle(
+                            //         color: AppColor.RED_TEXT,
+                            //         fontSize: 13,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // const Padding(padding: EdgeInsets.only(top: 10)),
                             BoxLayout(
                               width: width,
                               // height: 55,
@@ -654,7 +654,7 @@ class _UserEditViewState extends State<UserEditView> {
                                         textInputAction: TextInputAction.done,
                                         maxLength: 1000,
                                         inputFormatters: [
-                                          VietnameseNameLongTextInputFormatter()
+                                          VietnameseAddressTextInputFormatter()
                                         ],
                                         decoration:
                                             const InputDecoration.collapsed(
