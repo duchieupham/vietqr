@@ -13,6 +13,8 @@ import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/latest_trans_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/filter_time_widget.dart';
 import 'package:vierqr/features/my_vietqr/widgets/select_store_widget.dart';
+import 'package:vierqr/layouts/button/button.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/vietqr_store_dto.dart';
@@ -360,9 +362,33 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          'Quản lý giao dịch',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            const Text(
+              'Quản lý giao dịch',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            if (merchant.merchantId.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              VietQRButton.solid(
+                  width: 30,
+                  height: 30,
+                  borderRadius: 100,
+                  padding: const EdgeInsets.all(2),
+                  onPressed: () {
+                    setState(() {
+                      merchant = VietQRStoreDTO(terminals: []);
+                    });
+                    _getOverview(selected, terminalCode: '');
+                  },
+                  isDisabled: false,
+                  child: const XImage(
+                    imagePath: 'assets/images/ic-remove-checkbox-black.png',
+                    width: 20,
+                    height: 20,
+                  ))
+            ]
+          ],
         ),
         InkWell(
           onTap: () {

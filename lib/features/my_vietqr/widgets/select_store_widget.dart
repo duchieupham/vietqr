@@ -85,7 +85,7 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
-                    'Chọn cửa hàng',
+                    'Chọn cửa hàng thuộc đại lý',
                     style: TextStyle(fontSize: 20),
                   ),
                   InkWell(
@@ -196,8 +196,9 @@ class _SelectStoreWidgetState extends State<SelectStoreWidget> {
                   'Tên cửa hàng: ${termial.terminalName}',
                   maxLines: 1,
                   style: const TextStyle(
-                    overflow: TextOverflow.ellipsis,
-                      fontSize: 14, fontWeight: FontWeight.normal),
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal),
                 ),
                 Text(
                   'Địa chỉ: ${termial.terminalAddress}',
