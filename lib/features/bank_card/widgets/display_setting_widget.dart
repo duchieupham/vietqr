@@ -129,7 +129,64 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
               ),
 
               _buildDashLine(),
+<<<<<<< Updated upstream
 
+=======
+                 Row(
+                children: [
+                  const XImage(
+                    imagePath: 'assets/images/ic-popup-settings.png',
+                    color: AppColor.BLUE_TEXT,
+                    height: 40,
+                  ),
+                  const SizedBox(width: 4),
+                  const Expanded(
+                    child: Text(
+                      'Hiển thị Pop-up thông báo BĐSD',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  Consumer<AuthenProvider>(
+                    builder: (context, provider, _) {
+                      return Switch(
+                        value: provider.settingDTO.keepScreenOn,
+                        trackColor:
+                            WidgetStateProperty.resolveWith<Color>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return AppColor.BLUE_TEXT.withOpacity(0.3);
+                          }
+                          return AppColor.GREY_DADADA.withOpacity(0.3);
+                        }),
+                        thumbColor:
+                            WidgetStateProperty.resolveWith<Color>((states) {
+                          if (states.contains(WidgetState.selected)) {
+                            return AppColor.BLUE_TEXT;
+                          }
+                          return AppColor.GREY_DADADA;
+                        }),
+                        trackOutlineColor: WidgetStateProperty.resolveWith(
+                          (final Set<WidgetState> states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return null;
+                            }
+
+                            return AppColor.TRANSPARENT;
+                          },
+                        ),
+                        onChanged: (bool value) {
+                          _bloc.add(UpdateKeepBrightEvent(value));
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+              _buildDashLine(),
+   
+>>>>>>> Stashed changes
               Row(
                 children: [
                   const XImage(
