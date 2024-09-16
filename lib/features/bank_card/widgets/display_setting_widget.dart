@@ -129,10 +129,7 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
               ),
 
               _buildDashLine(),
-<<<<<<< Updated upstream
-
-=======
-                 Row(
+              Row(
                 children: [
                   const XImage(
                     imagePath: 'assets/images/ic-popup-settings.png',
@@ -185,8 +182,7 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
                 ],
               ),
               _buildDashLine(),
-   
->>>>>>> Stashed changes
+
               Row(
                 children: [
                   const XImage(
