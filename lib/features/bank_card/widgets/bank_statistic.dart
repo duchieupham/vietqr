@@ -355,7 +355,7 @@ class _BankStatisticState extends State<BankStatistic>
                       state.listBanks.isNotEmpty) ...[
                     SharingConnectMedia(
                       dto: state.bankSelect!,
-                      list: state.listPlaforms ?? [],
+                      list: state.listPlaforms,
                       onHome: widget.onHome,
                     ),
                     DisplaySettingWidget(

@@ -31,7 +31,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             listBanner: [0, 1],
             listTrans: [],
             listBanks: [],
-            // colors: [],
+            listPlaforms: [],
             listBankTypeDTO: [],
             listBankAccountTerminal: [])) {
     on<BankCardEventGetList>(_getBankAccounts);

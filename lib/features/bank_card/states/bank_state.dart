@@ -31,7 +31,7 @@ class BankState extends Equatable {
   final String? barCode;
   final bool isEmpty;
   final bool isClose;
-  final List<PlatformItem>? listPlaforms;
+  final List<PlatformItem> listPlaforms;
   final bool isBankSelect;
   final List<BankAccountTerminal> listBankAccountTerminal;
 
@@ -56,7 +56,7 @@ class BankState extends Equatable {
     this.isClose = false,
     this.isBankSelect = false,
     required this.listBankAccountTerminal,
-    this.listPlaforms,
+    required this.listPlaforms,
   });
 
   BankState copyWith({
