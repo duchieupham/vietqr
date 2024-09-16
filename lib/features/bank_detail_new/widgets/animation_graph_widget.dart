@@ -275,7 +275,7 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
                             children: [
                               TextSpan(
                                   text: merchant.merchantName.isEmpty
-                                      ? 'Chọn đại lý'
+                                      ? ' Chọn đại lý'
                                       : ' ${merchant.merchantName}',
                                   style: const TextStyle(
                                       // fontWeight: FontWeight.w600,

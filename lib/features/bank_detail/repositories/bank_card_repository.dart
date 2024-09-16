@@ -48,11 +48,12 @@ class BankCardRepository {
   Future<BankOverviewDTO?> getOverview(
       {required String bankId,
       required String fromDate,
-      required String toDate}) async {
+      required String toDate,
+      String terminalCode = ''}) async {
     try {
       final receivePort = ReceivePort();
       String url =
-          '${EnvConfig.getBaseUrl()}transactions/overview/v2?bankId=$bankId&userId=$userId&fromDate=$fromDate&toDate=$toDate';
+          '${EnvConfig.getBaseUrl()}transactions/overview/v2?bankId=$bankId&userId=$userId&fromDate=$fromDate&toDate=$toDate&terminalCode=$terminalCode';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
