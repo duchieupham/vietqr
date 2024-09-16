@@ -346,44 +346,6 @@ class _AnimationGraphWidgetState extends State<AnimationGraphWidget>
   }
 
   Widget _chart(BankState state) {
-    // if (state.status == BlocStatus.LOADING &&
-    //     state.request == BankType.SELECT_BANK) {
-    //   return Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //     children: [
-    //       Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           const SizedBox(height: 20),
-    //           Row(
-    //             children: List.generate(
-    //               list.length,
-    //               (index) {
-    //                 return const Padding(
-    //                   padding: EdgeInsets.only(right: 8),
-    //                   child: ShimmerBlock(
-    //                     height: 30,
-    //                     width: 60,
-    //                     borderRadius: 50,
-    //                   ),
-    //                 );
-    //               },
-    //             ),
-    //           )
-    //         ],
-    //       ),
-    //       const Row(
-    //         crossAxisAlignment: CrossAxisAlignment.end,
-    //         children: [
-    //           ShimmerBlock(width: 80, height: 120, borderRadius: 4),
-    //           SizedBox(width: 20),
-    //           ShimmerBlock(width: 80, height: 120, borderRadius: 4),
-    //         ],
-    //       ),
-    //     ],
-    //   );
-    // }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -766,6 +728,9 @@ class AnimatedBar extends StatelessWidget {
       //   double thousands = amount / 1000;
       //   return '${thousands.toStringAsFixed(thousands == thousands.toInt() ? 0 : 1).replaceAll('.', ',')} ngàn';
       // }
+      if (isLoading) {
+        return '...';
+      }
       if (amount < 1000000000) {
         double millions = amount / 1000000;
         return '${millions.toStringAsFixed(millions == millions.toInt() ? 0 : 1).replaceAll('.', ',')} tr';
