@@ -833,7 +833,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
           case 0:
             // - Giao dịch chờ thanh toán
             color = AppColor.ORANGE_TRANS;
-            text = 'Thanh toán thành công';
+            text = 'Chờ thanh toán';
             break;
           case 1:
             switch (detail.type) {
@@ -930,6 +930,7 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                       style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
                     const SizedBox(height: 2),
+                   
                     Text(
                       DateFormat('HH:mm:ss dd/MM/yyyy').format(
                           DateTime.fromMillisecondsSinceEpoch(
@@ -949,9 +950,12 @@ class _TransactionDetailScreenState extends State<TransactionDetailScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      DateFormat('HH:mm:ss dd/MM/yyyy').format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              detail.timePaid * 1000)),
+                     detail.timePaid == 0
+                          ? '-'
+                          : DateFormat('HH:mm:ss dd/MM/yyyy').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  detail.timePaid * 1000),
+                            ),
                       style: const TextStyle(
                           fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
