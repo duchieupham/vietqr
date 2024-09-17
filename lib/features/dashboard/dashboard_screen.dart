@@ -31,6 +31,7 @@ import 'package:vierqr/commons/widgets/clip_shadow_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/scroll_to_top_button.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -1064,6 +1065,8 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
                 password: EncryptUtils.instance.encrypted(phone, pin),
               );
               _bloc.add(DashBoardLoginEvent(dto: dto));
+              _bankBloc.add(const BankCardEventGetList(
+                  isGetOverview: true, isLoadInvoice: false));
               // if (!mounted) return;
             },
           );

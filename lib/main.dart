@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,10 +19,7 @@ import 'package:vierqr/commons/enums/env_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
-import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/login/widgets/welcome_login.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_event.dart';
@@ -38,12 +34,10 @@ import 'package:vierqr/services/providers/invoice_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/qr_box_provider.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/splash_screen.dart';
 
-import 'features/bank_card/events/bank_event.dart';
 import 'services/socket_service/socket_service.dart';
 
 //Share Preferences
