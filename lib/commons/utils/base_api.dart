@@ -145,10 +145,13 @@ class BaseAPIClient {
     switch (type) {
       case AuthenticationType.SYSTEM:
         //hết hạn cmnr
+        //dev
         // result['Authorization'] =
         //     'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwidXNlciI6IllXUnRhVzR0ZG5GeUxXRmpkR2wyWlMxclpYa3RNak15Tmc9PSIsImlhdCI6MTcxODU5NDQ4MywiZXhwIjoxNzE4NTk0NTQyfQ.PWoIDbBLI6wmh_iaFEuDcs8uVxYqBB7B_1QlPWDJffnLIXjtWA2tpruyE0z1L4kjwTLjcsQ5ClFCFG1NITiB5w';
+        
+        //prod
         // result['Authorization'] =
-        //     'Bearer eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOiIzNzJjYjAxMS02NzhhLTQ3YzYtYjdmMS03MWQ1MDE5N2JjYWEiLCJwaG9uZU5vIjoiMDkzNTE4MjAyOSIsImZpcnN0TmFtZSI6IlVuZGVmaW5lZCIsIm1pZGRsZU5hbWUiOiIiLCJsYXN0TmFtZSI6IiIsImJpcnRoRGF0ZSI6IjAxLzAxLzE5NzAiLCJnZW5kZXIiOjAsImFkZHJlc3MiOiIiLCJlbWFpbCI6IiIsImltZ0lkIjoiIiwiY2FycmllclR5cGVJZCI6IjIiLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzIyMDE3NzUwLCJleHAiOjE3MjI5MTc3NTB9.fpcV28PPjHt26W51gZ_P5Wa_c9C4qU8ltkt6o71OMFtLfovjukrsgeB2USUGbhfA666JONaHXRZePr3pOzOTDA';
+        //     'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwidXNlciI6IllXUnRhVzR0ZG5GeUxXRmpkR2wyWlMxclpYa3RNak15Tmc9PSIsImlhdCI6MTcxODU5NDQ4MywiZXhwIjoxNzE4NTk0NTQyfQ.PWoIDbBLI6wmh_iaFEuDcs8uVxYqBB7B_1QlPWDJffnLIXjtWA2tpruyE0z1L4kjwTLjcsQ5ClFCFG1NITiB5w';
         result['Authorization'] =
             'Bearer ${(tokenFree.isNotEmpty) ? tokenFree : token}';
 

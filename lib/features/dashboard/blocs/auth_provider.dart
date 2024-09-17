@@ -75,10 +75,18 @@ class AuthenProvider with ChangeNotifier {
 
   bool isError = false;
 
+  // bool isExpired = false;
+
   void checkStateLogin(bool check) {
     isError = check;
     notifyListeners();
   }
+
+  //   void checkIsExpired(bool check) {
+  //   isExpired = check;
+  //   notifyListeners();
+  // }
+
 
   void setImage(File? file) {
     if (file == null) return;

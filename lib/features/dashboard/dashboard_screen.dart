@@ -772,11 +772,11 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   void initialServices({bool isLogin = false}) {
     if (isLogin) {}
     // _bankBloc.add(LoadDataBankEvent());
-    _bloc.add(GetBanksEvent());
+    // _bloc.add(GetBanksEvent());
     _bloc.add(GetUserInformation());
     _bloc.add(GetUserSettingEvent());
     _bloc.add(GetPointEvent());
-    _bloc.add(GetCountNotifyEvent());
+    // _bloc.add(GetCountNotifyEvent());
   }
 
   void requestNotificationPermission() async {
@@ -991,7 +991,9 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     if (state.request == DashBoardType.LOGIN) {
       _provider.checkStateLogin(false);
       initialServices(isLogin: true);
+      _bloc.add(const TokenEventCheckValid());
     }
+
     if (state.request == DashBoardType.LOGIN_ERROR) {
       _provider.checkStateLogin(true);
       _bloc.add(TokenEventLogout());
@@ -999,6 +1001,10 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
 
     if (state.request == DashBoardType.GET_BANK) {
       _isolateStream.saveBankReceiver(state.listBanks);
+      // _provider.checkIsExpired(false);
+      // if (!_provider.isExpired) {
+      //   Navigator.pop(context);
+      // }
     }
 
     if (state.request == DashBoardType.APP_VERSION) {
@@ -1067,7 +1073,9 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
               _bloc.add(DashBoardLoginEvent(dto: dto));
               _bankBloc.add(const BankCardEventGetList(
                   isGetOverview: true, isLoadInvoice: false));
+              // _provider.checkIsExpired(true);
               // if (!mounted) return;
+              Navigator.pop(context);
             },
           );
           // context.read<LoginBloc>().add(event)
