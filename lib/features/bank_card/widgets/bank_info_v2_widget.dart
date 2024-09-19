@@ -173,7 +173,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                       child: Text(
                         (dto.isValidService &&
                                 dto.validFeeTo != 0 &&
-                                inclusiveDays(dto.validFeeTo) <= 15)
+                                inclusiveDays(dto.validFeeTo) <= 15 && inclusiveDays(dto.validFeeTo) >= -5)
                             ? 'Gia hạn dịch vụ VietQR'
                             : 'Đăng ký dịch vụ VietQR',
                         style: const TextStyle(
@@ -206,7 +206,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                     ),
 
                   //dã quá hạn
-                  if (dto.validFeeTo != 0 && inclusiveDays(dto.validFeeTo) < 0)
+                  if (dto.validFeeTo != 0 && inclusiveDays(dto.validFeeTo) < 0 && inclusiveDays(dto.validFeeTo) >= -5)
                     Padding(
                       padding: const EdgeInsets.only(right: 10),
                       child: Text(

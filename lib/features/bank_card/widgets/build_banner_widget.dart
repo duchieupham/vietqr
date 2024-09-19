@@ -172,7 +172,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                     return InkWell(
                       onTap: () async {
                         String url =
-                            "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ3LHREWRRmb24DNqNTapRGTNB";
+                            "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ1LMlzShdTN4NlWWJXbIJTMk4";
                         if (await canLaunchUrl(Uri.parse(url))) {
                           await launchUrl(Uri.parse(url),
                               mode: LaunchMode.externalApplication);
@@ -214,7 +214,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                         onTap: () async {
                                           final Uri url = Uri(
                                             scheme: 'tel',
-                                            path: '0989895905',
+                                            path: '0972568786',
                                           );
                                           if (await canLaunchUrl(url)) {
                                             await launchUrl(url);
@@ -230,7 +230,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                             ),
                                             SizedBox(width: 4),
                                             Text(
-                                              '098.989.5905',
+                                              '097.256.8786',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
