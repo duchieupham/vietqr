@@ -772,11 +772,11 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
   void initialServices({bool isLogin = false}) {
     if (isLogin) {}
     // _bankBloc.add(LoadDataBankEvent());
-    // _bloc.add(GetBanksEvent());
+    _bloc.add(GetBanksEvent());
     _bloc.add(GetUserInformation());
     _bloc.add(GetUserSettingEvent());
     _bloc.add(GetPointEvent());
-    // _bloc.add(GetCountNotifyEvent());
+    _bloc.add(GetCountNotifyEvent());
   }
 
   void requestNotificationPermission() async {

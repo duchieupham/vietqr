@@ -16,7 +16,7 @@ class PopupBidvWidget extends StatefulWidget {
 
 class _PopupBidvWidgetState extends State<PopupBidvWidget> {
   final String url =
-      "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ3LHREWRRmb24DNqNTapRGTNB";
+      "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ1LMlzShdTN4NlWWJXbIJTMk4";
   bool _doNotShowAgain = false;
 
   @override
@@ -101,7 +101,7 @@ class _PopupBidvWidgetState extends State<PopupBidvWidget> {
                               style: const TextStyle(fontSize: 13),
                               children: [
                                 TextSpan(
-                                  text: '098.989.5905',
+                                  text: '097.256.8786',
                                   style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold),

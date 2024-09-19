@@ -89,8 +89,8 @@ class NotifyTransDTO {
   String get icon => (transType.trim() == 'C')
       ? isTransUnclassified
           ? AppImages.icSuccessInBlue
-          : AppImages.icSuccessInGreen
-      : AppImages.icSuccessOut;
+            : AppImages.icSuccessInGreen
+        : AppImages.icSuccessOut;
 
   factory NotifyTransDTO.fromJson(Map<String, dynamic> json) {
     return NotifyTransDTO(

@@ -133,14 +133,14 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                                   ),
                                 )
                               : ShaderMask(
-                                  shaderCallback: (bounds) =>
-                                      const LinearGradient(
-                                    colors: [
-                                      Color(0xFF00C6FF),
-                                      Color(0xFF0072FF),
-                                    ],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      colors: [
+                                        Color(0xFF00C6FF),
+                                        Color(0xFF0072FF),
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
                                   ).createShader(bounds),
                                   child: const Text(
                                     'VN',

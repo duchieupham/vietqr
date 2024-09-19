@@ -363,7 +363,7 @@ class _BankStatisticState extends State<BankStatistic>
                         width: double.infinity),
                   ],
                 ],
-                const SizedBox(height: 100),
+                const SizedBox(height: 150),
               ],
             ),
           ),

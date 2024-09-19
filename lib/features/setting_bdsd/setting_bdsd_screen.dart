@@ -19,6 +19,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
+// ignore: must_be_immutable
 class SettingBDSD extends StatefulWidget {
   SettingBDSD({super.key, required this.listIsOwnerBank});
 

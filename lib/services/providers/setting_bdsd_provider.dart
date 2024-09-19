@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 

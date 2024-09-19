@@ -38,7 +38,7 @@ class _SharingConnectMediaState extends State<SharingConnectMedia> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Chia sẻ Biến động số động',
+            'Chia sẻ Biến động số dư',
             style: TextStyle(
                 color: AppColor.BLACK,
                 fontWeight: FontWeight.bold,

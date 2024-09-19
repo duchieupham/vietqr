@@ -278,6 +278,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         final result = await accRepository.getUserInformation(userId);
         if (result != null) {
           if (result.userId.isNotEmpty) {
+            
             await SharePrefUtils.saveProfileToCache(result);
             getIt.get<BankBloc>().add(GetVerifyEmail());
           } else {

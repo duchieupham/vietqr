@@ -750,6 +750,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   nationalId: _nationalIdController.text,
                                   oldNationalId: _oldNationalIdController.text,
                                   imgId: SharePrefUtils.getProfile().imgId,
+                                  verify: SharePrefUtils.getProfile().verify,
                                 );
 
                                 _userEditBloc.add(
