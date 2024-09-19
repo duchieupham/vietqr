@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -208,7 +209,6 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
                   ),
                 ],
               ),
-           
               _buildDashLine(),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),

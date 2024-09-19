@@ -142,11 +142,6 @@ class _OptionWidgetState extends State<OptionWidget> {
                 'assets/images/ic-remove-black.png', () {
               if (widget.dto.authenticated && widget.isOwner) {
                 _unLink();
-                // DialogWidget.instance.openMsgDialog(
-                //   title: 'Không thể xoá TK',
-                //   msg:
-                //       'Vui lòng huỷ liên kết tài khoản ngân hàng trước khi xoá.',
-                // );
               } else {
                 BankAccountRemoveDTO bankAccountRemoveDTO =
                     BankAccountRemoveDTO(
