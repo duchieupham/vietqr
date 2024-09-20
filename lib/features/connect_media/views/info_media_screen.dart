@@ -1,7 +1,10 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
@@ -85,7 +88,7 @@ class InfoMediaScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoConnect(mediaText, img),
+            _infoConnect(mediaText, img, context),
             const SizedBox(height: 35),
             _bankList(listWidget, mediaText),
             const SizedBox(height: 20),
@@ -128,7 +131,7 @@ class InfoMediaScreen extends StatelessWidget {
     );
   }
 
-  Widget _infoConnect(String media, String img) {
+  Widget _infoConnect(String media, String img, BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -215,8 +218,22 @@ class InfoMediaScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 InkWell(
-                  onTap: () {
-                    Clipboard.setData(ClipboardData(text: dto.chatId ?? ''));
+                  onTap: () async {
+                    // Clipboard.setData(ClipboardData(text: dto.chatId ?? ''));
+
+                    await FlutterClipboard.copy(dto.chatId ?? '').then((value) {
+                      Fluttertoast.showToast(
+                        msg: 'Đã sao chép',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Theme.of(context).cardColor,
+                        textColor: Theme.of(context).hintColor,
+                        fontSize: 15,
+                        webBgColor: 'rgba(255, 255, 255)',
+                        webPosition: 'center',
+                      );
+                    });
                   },
                   child: Align(
                     alignment: Alignment.centerRight,

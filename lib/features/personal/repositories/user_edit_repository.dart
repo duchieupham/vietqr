@@ -188,7 +188,7 @@ class UserEditRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}admin/account-update/$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}admin/account-email/$userId';
       final response = await BaseAPIClient.putAPI(
         url: url,
         body: {'email': email},

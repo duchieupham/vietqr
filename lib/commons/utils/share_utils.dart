@@ -148,4 +148,5 @@ class ShareUtils {
 
     return result;
   }
+
 }
