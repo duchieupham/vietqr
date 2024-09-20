@@ -26,6 +26,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
       phoneNoController.text = '0111111111';
       isEnableButton.value = true;
     }
+    isEnableButton.value = false;
   }
 
   @override
@@ -361,7 +362,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                   return VietQRButton.gradient(
                     onPressed: () {
                       if (value) {
-                        isEnableButton.value = false;
+                        // isEnableButton.value = false;
                         FocusManager.instance.primaryFocus?.unfocus();
                         String phone = getPhone.replaceAll(' ', '');
                         widget.bloc.add(CheckExitsPhoneEvent(phone: phone));
