@@ -28,7 +28,7 @@ class InvoiceFeeDTO {
     required this.qrCode,
     required this.totalAmount,
     required this.fileAttachmentId,
-    this.isSelect = false,
+    this.isSelect = true,
   });
 
   factory InvoiceFeeDTO.fromJson(Map<String, dynamic> json) {
