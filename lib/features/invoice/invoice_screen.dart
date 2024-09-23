@@ -572,14 +572,14 @@ class __InvoiceState extends State<_Invoice> {
                                     arguments: {'id': e.invoiceId});
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 10),
+                                margin: const EdgeInsets.only(bottom: 15),
                                 height: 150,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5),
                                     border: Border.all(
                                         color: AppColor.GREY_DADADA,
-                                        width: 0.5)),
+                                        width: 0.7)),
                                 child: Column(
                                   children: [
                                     Container(
