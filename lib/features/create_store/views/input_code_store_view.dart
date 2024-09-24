@@ -91,7 +91,7 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                                         autoFocus: true,
                                         hintText: '',
                                         maxLength: 10,
-                                        inputType: TextInputType.number,
+                                        inputType: TextInputType.text,
                                         keyboardAction: TextInputAction.next,
                                         onChange: (value) {},
                                       ),

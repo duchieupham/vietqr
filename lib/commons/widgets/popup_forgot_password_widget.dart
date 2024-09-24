@@ -1,11 +1,8 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:custom_clippers/custom_clippers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 import 'button_gradient_border_widget.dart';

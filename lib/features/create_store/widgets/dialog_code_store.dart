@@ -96,9 +96,8 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
                       maxLength: 10,
                       keyboardAction: TextInputAction.next,
                       inputFormatter: [
-                        // FilteringTextInputFormatter.deny(
-                        //     RegExp(r'[^\w\s]', caseSensitive: false)),
-                        VietnameseNameNoSpaceInputFormatter(),
+                        FilteringTextInputFormatter.deny(
+                            RegExp(r'[_\W]', caseSensitive: false)),
                       ],
                       onChange: (value) {
                         setState(() {

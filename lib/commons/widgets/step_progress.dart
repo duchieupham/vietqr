@@ -60,6 +60,7 @@ class StepProgressView extends StatelessWidget {
   List<Widget> _iconViews() {
     var list = <Widget>[];
     _listItem.asMap().forEach((i, item) {
+      // ignore: unused_local_variable
       var circleColor =
           (i == 0 || _curStep > i + 1) ? _activeColor : _inactiveColor;
       var lineColor = _curStep > i + 1 ? _activeColor : _inactiveColor;

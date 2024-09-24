@@ -16,6 +16,7 @@ class VietnameseNameInputFormatter extends TextInputFormatter {
   }
 }
 
+
 class VietnameseNameNoSpaceInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(

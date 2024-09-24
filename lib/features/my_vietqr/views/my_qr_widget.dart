@@ -284,7 +284,7 @@ class _MyQrWidgetState extends State<MyQrWidget> {
                           ),
                     Text(
                       qrGeneratedDTO.amount.isNotEmpty
-                          ? 'Chỉnh sửa số tiền và nội dụng'
+                          ? 'Chỉnh sửa số tiền và nội dung'
                           : 'Thêm số tiền và nội dung',
                       style: const TextStyle(fontSize: 13),
                     ),

@@ -14,7 +14,6 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/features/dashboard/widget/popup_bidv_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 

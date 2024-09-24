@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
@@ -17,7 +16,6 @@ import 'package:vierqr/features/invoice/widgets/popup_filter_widget.dart';
 import 'package:vierqr/features/invoice/widgets/popup_invoice_widget.dart';
 import 'package:vierqr/models/invoice_fee_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
-import 'package:vierqr/models/unpaid_invoice_detail_qr_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/constants/configurations/route.dart';
@@ -259,7 +257,7 @@ class __InvoiceState extends State<_Invoice> {
                 },
                 onShare: () {
                   NavigatorUtils.navigatePage(
-                      context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+                      context, PopupBankShare(dto: dto, type: TypeImage.SHARE),
                       routeName: PopupBankShare.routeName);
                 },
                 invoiceName: requestPayment.invoiceName,
