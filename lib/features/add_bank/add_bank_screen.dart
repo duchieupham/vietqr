@@ -42,8 +42,9 @@ import 'views/bank_input_widget.dart';
 
 class AddBankScreen extends StatelessWidget {
   final BankTypeDTO? bankTypeDTO;
+  final QRGeneratedDTO? qrGenerateDTO;
 
-  const AddBankScreen({super.key, this.bankTypeDTO});
+  const AddBankScreen({super.key, this.bankTypeDTO, this.qrGenerateDTO});
 
   static String routeName = '/add_bank_screen';
 

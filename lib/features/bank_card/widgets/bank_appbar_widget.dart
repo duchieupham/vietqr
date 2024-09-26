@@ -186,7 +186,7 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                             children: [
                               _buildAvatar(),
                               if (opacity == 1.0 &&
-                                  state.bankSelect != null) ...[
+                                  state.bankSelect != null && !state.isEmpty) ...[
                                 AnimatedOpacity(
                                   opacity: 1.0,
                                   duration: const Duration(milliseconds: 300),

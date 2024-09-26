@@ -56,6 +56,9 @@ class AccountLinkView extends StatelessWidget {
           hintText: 'Nhập số điện thoại xác thực',
           inputType: TextInputType.number,
           keyboardAction: TextInputAction.next,
+           inputFormatter: [
+            LengthLimitingTextInputFormatter(10),
+          ],
           onChange: onChangePhone,
         ),
         if (SharePrefUtils.getPhone().isNotEmpty)

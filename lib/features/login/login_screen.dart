@@ -33,6 +33,7 @@ import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/widgets/login_account_screen.dart';
+import 'package:vierqr/features/login/widgets/popup_hotline_widget.dart';
 import 'package:vierqr/features/login/widgets/quick_login_screen.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
@@ -48,11 +49,6 @@ import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
-import 'package:vierqr/splash_screen.dart';
-
-import '../bank_card/events/bank_event.dart';
-import 'widgets/bgr_app_bar_login.dart';
 
 part 'widgets/form_first_login.dart';
 
@@ -82,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
   NfcTag? tag;
 
   Map<String, dynamic>? additionalData;
+  // ignore: unused_field
   final BankBloc _bankBloc = getIt.get<BankBloc>();
   final RegisterBloc _registerBloc = getIt.get<RegisterBloc>();
   late final LoginBloc _bloc = getIt.get<LoginBloc>(param1: context);

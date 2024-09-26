@@ -16,7 +16,11 @@ class ResponseMessageDTO {
       status: json['status'] ?? '',
       message: json['message'] ?? '',
       ewalletToken: json['ewalletToken'] ?? '',
-      data: (json['data'] != null) ? DataObject.fromJson(json['data']) : null,
+      data: json['data'] == ''
+          ? DataObject(merchantId: '', confirmId: '', merchantName: '')
+          : (json['data'] != null)
+              ? DataObject.fromJson(json['data'])
+              : null,
     );
   }
 }

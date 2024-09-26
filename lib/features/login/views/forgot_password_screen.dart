@@ -420,6 +420,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                       .gradientColor.brightBlueLinear
                                       .createShader(bounds),
                                   child: Text(
+                                    // ignore: unnecessary_string_interpolations
                                     "${_formatTime(time)}",
                                     style: const TextStyle(
                                         fontSize: 15,

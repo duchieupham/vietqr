@@ -58,7 +58,12 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
             children: [
               VietQRButton.solid(
                 borderRadius: 50,
-                onPressed: () {},
+                onPressed: () async {
+                  DialogWidget.instance.showModelBottomSheet(
+                      borderRadius: BorderRadius.circular(16),
+                      width: MediaQuery.of(context).size.width,
+                      widget: const PopupHotlineWidget());
+                },
                 isDisabled: false,
                 width: 40,
                 size: VietQRButtonSize.medium,
