@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "84188087131",
+    "project_id": "vietqr-product",
+    "storage_bucket": "vietqr-product.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84188087131:android:80034e1c9cd95b5c4ed07e",
+        "android_client_info": {
+          "package_name": "com.vietqr.kiot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84188087131-jh7je2h9t5ns72l3o9hf95bujialb0pe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtFvWBV6vBMqaR0WOi66xA7DttNg_5b7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84188087131-jh7je2h9t5ns72l3o9hf95bujialb0pe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "84188087131-j7mk2uam251b455g91k0jgutdcea0f24.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vietqr.product"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84188087131:android:882596f7ffa1e5584ed07e",
+        "android_client_info": {
+          "package_name": "com.vietqr.product"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84188087131-b059g6pa1btpi1etbed21t0foq94g9cq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vietqr.product",
+            "certificate_hash": "37c7f36b1350da5cbf835e40ec3c9637e1310b39"
+          }
+        },
+        {
+          "client_id": "84188087131-ddlsglqs4db3dfevfqti6ir4dt7elf5i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vietqr.product",
+            "certificate_hash": "c899460b92cb22964661e1bada6b6392ed3116f7"
+          }
+        },
+        {
+          "client_id": "84188087131-jh7je2h9t5ns72l3o9hf95bujialb0pe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtFvWBV6vBMqaR0WOi66xA7DttNg_5b7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84188087131-jh7je2h9t5ns72l3o9hf95bujialb0pe.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "84188087131-j7mk2uam251b455g91k0jgutdcea0f24.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vietqr.product"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

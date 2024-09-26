@@ -1,0 +1,297 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/numeral.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/widgets/pin_widget_register.dart';
+import 'package:vierqr/layouts/button/button.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/services/providers/pin_provider.dart';
+
+class OTPInputPage extends StatefulWidget {
+  final Function(String) onContinue;
+  final Function() sendOTP;
+  final String email;
+  final bool confirmOTP;
+
+  const OTPInputPage({
+    super.key,
+    required this.onContinue,
+    required this.sendOTP,
+    required this.email,
+    required this.confirmOTP,
+  });
+
+  @override
+  State<OTPInputPage> createState() => _OTPInputPageState();
+}
+
+class _OTPInputPageState extends State<OTPInputPage> {
+  late Timer _timer;
+  final _otpController = TextEditingController();
+  // int _remainingSeconds = 600; // 10 minutes in seconds
+  final ValueNotifier<int> _timerNotifier = ValueNotifier<int>(600);
+  final ValueNotifier<bool> _expriedNotifer = ValueNotifier<bool>(false);
+
+  // bool _isTimerExpired = false;
+  final FocusNode passFocus = FocusNode();
+  bool isFocus = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _startTimer();
+      _resetPin();
+      passFocus.requestFocus();
+      // _requestFocus();
+      // widget.otpController.addListener(() {
+      //   if (mounted) {
+      //     setState(() {});
+      //   }
+      // });
+    });
+  }
+
+  // @override
+  // void didUpdateWidget(covariant OTPInputPage oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (widget.confirmOTP == false) {
+  //     _resetPin();
+  //     _requestFocus();
+  //   }
+  // }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_timerNotifier.value > 0) {
+        _timerNotifier.value--;
+      } else {
+        _expriedNotifer.value = true;
+        _timer.cancel();
+      }
+    });
+  }
+
+  void _resetTimer() {
+    _timerNotifier.value = 600;
+    _expriedNotifer.value = false;
+    // _timer.cancel();
+    _startTimer();
+  }
+
+  void _resetPin() {
+    Provider.of<PinProvider>(context, listen: false).reset();
+  }
+
+  // void _requestFocus() {
+  //   passFocus.requestFocus();
+  // }
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    _timer.cancel();
+    passFocus.dispose();
+    super.dispose();
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secondsRemaining = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${secondsRemaining.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColor.WHITE,
+      bottomNavigationBar: VietQRButton.gradient(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        onPressed: () {
+          widget.onContinue(_otpController.text);
+        },
+        isDisabled: !(_otpController.text.length == 6),
+        size: VietQRButtonSize.large,
+        child: Center(
+          child: Text(
+            'Xác thực',
+            style: TextStyle(
+              color: (_otpController.text.length == 6)
+                  ? AppColor.WHITE
+                  : AppColor.BLACK,
+            ),
+          ),
+        ),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          passFocus.unfocus();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFE1EFFF), Color(0xFFE5F9FF)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
+                        ),
+                        children: [
+                          const TextSpan(
+                              text:
+                                  'Thông tin xác thực đã được gửi\nđến email '),
+                          TextSpan(
+                            text: widget.email,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Mã OTP có hiệu lực trong vòng',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _expriedNotifer,
+                      builder: (context, isExpired, child) {
+                        return isExpired
+                            ? InkWell(
+                                onTap: () {
+                                  _resetTimer();
+                                  widget.sendOTP();
+                                },
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFF00C6FF),
+                                      Color(0xFF0072FF),
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                  ).createShader(bounds),
+                                  child: Text(
+                                    'Gửi lại mã OTP?',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: Colors.transparent,
+                                      decorationThickness: 2,
+                                      foreground: Paint()
+                                        ..shader = const LinearGradient(
+                                          colors: [
+                                            Color(0xFF00C6FF),
+                                            Color(0xFF0072FF),
+                                          ],
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                        ).createShader(
+                                            const Rect.fromLTWH(0, 0, 200, 30)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : ValueListenableBuilder<int>(
+                                valueListenable: _timerNotifier,
+                                builder: (context, time, child) {
+                                  return ShaderMask(
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                      colors: [
+                                        Color(0xFF00C6FF),
+                                        Color(0xFF0072FF),
+                                      ],
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                    ).createShader(bounds),
+                                    child: Text(
+                                      _formatTime(time),
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        decorationThickness: 2,
+                                        foreground: Paint()
+                                          ..shader = const LinearGradient(
+                                            colors: [
+                                              Color(0xFF00C6FF),
+                                              Color(0xFF0072FF),
+                                            ],
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                          ).createShader(const Rect.fromLTWH(
+                                              0, 0, 200, 30)),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.symmetric(horizontal: 30),
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                      color: isFocus ? AppColor.BLUE_TEXT : AppColor.GREY_TEXT,
+                      width: 0.5)),
+              child: PinWidgetRegister(
+                width: MediaQuery.of(context).size.width,
+                pinSize: 15,
+                pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                editingController: _otpController,
+                focusNode: passFocus,
+                autoFocus: true,
+                onDone: (value) {
+                  widget.onContinue(value);
+                },
+              ),
+            ),
+            if (!widget.confirmOTP)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'Mã OTP không hợp lệ. Vui lòng kiểm tra lại thông tin.',
+                      style: TextStyle(fontSize: 11, color: AppColor.RED_TEXT),
+                    )),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

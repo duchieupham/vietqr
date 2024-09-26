@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_feature_scan.dart';
+
+class DialogScanOther extends StatelessWidget {
+  final String code;
+  final GestureTapCallback? onTapSave;
+  final bool isShowIconFirst;
+
+  DialogScanOther({
+    super.key,
+    required this.code,
+    this.onTapSave,
+    this.isShowIconFirst = false,
+  });
+
+  final globalKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RepaintBoundaryWidget(
+            globalKey: globalKey,
+            builder: (key) {
+              return Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: AppColor.WHITE,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: VietQr(
+                  qrGeneratedDTO: null,
+                  qrCode: code,
+                  isEmbeddedImage: true,
+                ),
+              );
+            }),
+        DialogFeatureWidget(
+          dto: null,
+          typeQR: TypeContact.Other,
+          code: code,
+          globalKey: globalKey,
+          isShowIconFirst: isShowIconFirst,
+        ),
+      ],
+    );
+  }
+}

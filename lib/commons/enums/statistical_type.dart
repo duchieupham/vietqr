@@ -1,0 +1,1 @@
+enum TypeStatistical { all, month }
