@@ -113,11 +113,8 @@ class AccountLinkView extends StatelessWidget {
           isRequired: true,
           hintText: 'Nhập chứng minh thư hoặc mã số thuế',
           // controller: provider.introduceController,
-          inputType: TextInputType.number,
+          inputType: TextInputType.text,
           keyboardAction: TextInputAction.next,
-          inputFormatter: [
-            LengthLimitingTextInputFormatter(12),
-          ],
           suffixIcon: GestureDetector(
             onTap: onScan,
             child: Image.asset(
