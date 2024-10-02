@@ -1,16 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
-import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/base_api.dart';
-import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/qr_certificate/blocs/qr_certificate_bloc.dart';
@@ -22,10 +15,8 @@ import 'package:vierqr/features/qr_certificate/view/create_info_connect_view.dar
 import 'package:vierqr/features/qr_certificate/widget/qr_cert_appbar.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/ecommerce_request_dto.dart';
-import 'package:vierqr/models/response_message_dto.dart';
 
 import 'view/connection_info_view.dart';
 

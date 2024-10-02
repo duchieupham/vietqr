@@ -19,13 +19,13 @@ import 'package:vierqr/features/add_bank/blocs/add_bank_provider.dart';
 import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/add_bank/views/account_link_view.dart';
+import 'package:vierqr/features/add_bank/views/app_bar_add_bank.dart';
 import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
 import 'package:vierqr/features/add_bank/views/policy_view.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
@@ -347,15 +347,44 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             return LayoutBuilder(
               builder: (context, constraint) {
                 return Scaffold(
-                  appBar: MAppBar(
-                    title: 'Thêm tài khoản',
+                  backgroundColor: AppColor.WHITE,
+                  appBar:
+                      // MAppBar(
+                      //   title: 'Thêm tài khoản',
+                      //   actions: [
+                      //     GestureDetector(
+                      //       onTap: _onScanQR,
+                      //       child: Padding(
+                      //         padding: const EdgeInsets.all(8.0),
+                      //         child: Image.asset(
+                      //           'assets/images/ic-scan-content.png',
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      AppBarAddBank(
                     actions: [
+                      Image.asset(
+                        'assets/images/ic-viet-qr.png',
+                        height: 40,
+                        width: 80,
+                      ),
                       GestureDetector(
                         onTap: _onScanQR,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.all(2),
                           child: Image.asset(
-                            'assets/images/ic-tb-qr.png',
+                            'assets/images/ic-scan-content.png',
+                            width: 30,
+                            height: 30,
                           ),
                         ),
                       ),
@@ -368,7 +397,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                           child: Container(
                             height: constraint.maxHeight,
                             padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 20),
+                                vertical: 0, horizontal: 20),
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
@@ -430,34 +459,47 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                       return SizedBox(
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
+                                              CrossAxisAlignment.start,
                                           children: [
+                                            const Text(
+                                              'Thêm tài khoản ngân hàng',
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 20),
                                             _buildSelectBankWidget(
                                                 state, provider, height),
                                             const SizedBox(height: 30),
                                             TextFieldCustom(
                                               isObscureText: false,
+                                              titleSize: 15,
                                               maxLines: 1,
                                               enable:
                                                   provider.bankTypeDTO != null,
                                               fillColor:
                                                   provider.bankTypeDTO != null
                                                       ? null
-                                                      : AppColor.GREY_EBEBEB,
+                                                      : AppColor.BLUE_BGR,
                                               controller: bankAccountController,
                                               inputFormatter: [
                                                 BankAccountInputFormatter()
                                               ],
                                               textFieldType:
                                                   TextfieldType.LABEL,
-                                              title: 'Số tài khoản',
+                                              title: 'Số tài khoản*',
                                               focusNode: focusAccount,
-                                              hintText: 'Nhập số tài khoản',
+                                              hintText:
+                                                  'Nhập số tài khoản ngân hàng',
                                               inputType: TextInputType.text,
                                               keyboardAction:
                                                   TextInputAction.next,
                                               onChange: provider
                                                   .updateValidBankAccount,
+                                              height: 50,
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 0),
                                             ),
                                             Visibility(
                                               visible: provider.errorTk != null,
@@ -481,6 +523,11 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
 //
                                             const SizedBox(height: 30),
                                             TextFieldCustom(
+                                              height: 50,
+                                              titleSize: 15,
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 0),
                                               key: provider.keyAccount,
                                               controller: nameController,
                                               isObscureText: false,
@@ -489,11 +536,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                               focusNode: focusName,
                                               fillColor: provider.isEnableName
                                                   ? AppColor.WHITE
-                                                  : AppColor.GREY_EBEBEB,
+                                                  : AppColor.BLUE_BGR,
                                               textFieldType:
                                                   TextfieldType.LABEL,
-                                              title: 'Chủ tài khoản',
-                                              hintText: 'Nhập tên tài khoản',
+                                              title: 'Chủ tài khoản*',
+                                              hintText:
+                                                  'Nhập tên chủ tài khoản ngân hàng',
                                               inputType: TextInputType.text,
                                               keyboardAction:
                                                   TextInputAction.next,
@@ -546,11 +594,13 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                 ? _buildButton(provider, state.requestId ?? '',
                                     state.responseDataOTP)
                                 : MButtonWidget(
-                                    title: 'Lưu tài khoản',
+                                    title: 'Lưu thông tin',
                                     isEnable: provider.isEnableButton,
                                     colorEnableText: provider.isEnableButton
-                                        ? AppColor.WHITE
-                                        : AppColor.GREY_TEXT,
+                                        ? AppColor.BLACK
+                                        : AppColor.WHITE,
+                                    colorDisableBgr: AppColor.BLUE_BGR,
+                                    colorEnableBgr: AppColor.BLUE_TEXT,
                                     onTap: () {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
@@ -769,7 +819,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         isSearch: true,
         data: provider.bankTypeDTO,
       ),
-      height: height * 0.6,
+      height: height * 0.8,
     );
     if (data is int) {
       bankAccountController.clear();
@@ -799,24 +849,24 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text(
-          'Ngân hàng',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          'Ngân hàng*',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
         GestureDetector(
           onTap: () => onSelectBankType(state, provider, height),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 8),
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-              color: AppColor.WHITE,
-            ),
+                // borderRadius: BorderRadius.all(Radius.circular(5)),
+                color: AppColor.WHITE,
+                border:
+                    Border(bottom: BorderSide(color: AppColor.GREY_DADADA))),
             child: Row(
               children: [
                 if (provider.bankTypeDTO != null)
                   Container(
                     width: 60,
-                    height: 30,
+                    height: 50,
                     margin: const EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
                       image: provider.bankTypeDTO!.fileBank != null
@@ -828,15 +878,14 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     ),
                   )
                 else
-                  const SizedBox(width: 16),
-                const SizedBox(width: 4),
+                  const SizedBox(width: 0),
                 Expanded(
                   child: Text(
                     provider.bankTypeDTO?.name ?? 'Chọn ngân hàng',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 15,
                         fontWeight: FontWeight.w400,
                         color: provider.bankTypeDTO != null
                             ? AppColor.BLACK
@@ -847,7 +896,6 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   Icons.keyboard_arrow_down,
                   color: AppColor.GREY_TEXT,
                 ),
-                const SizedBox(width: 20),
               ],
             ),
           ),

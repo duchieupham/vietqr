@@ -193,11 +193,14 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
             height: widget.height,
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
-                color: widget.colorBG, borderRadius: BorderRadius.circular(5)),
+              color: widget.colorBG,
+              borderRadius: BorderRadius.circular(5),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 40, child: textFiledTypeLabel),
+                SizedBox(
+                    height: widget.height ?? 40, child: textFiledTypeLabel),
                 if (_msgError != null && !widget.isShowToast)
                   Container(
                     width: double.infinity,

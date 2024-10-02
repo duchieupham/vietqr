@@ -16,7 +16,7 @@ class PopupBidvWidget extends StatefulWidget {
 
 class _PopupBidvWidgetState extends State<PopupBidvWidget> {
   final String url =
-      "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ1LMlzShdTN4NlWWJXbIJTMk4";
+      "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ2LiVlTBRGTS1VbuVVeYZEZo4";
   bool _doNotShowAgain = false;
 
   @override
@@ -101,7 +101,7 @@ class _PopupBidvWidgetState extends State<PopupBidvWidget> {
                               style: const TextStyle(fontSize: 13),
                               children: [
                                 TextSpan(
-                                  text: '097.256.8786',
+                                  text: '094.888.5828',
                                   style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold),
@@ -109,7 +109,7 @@ class _PopupBidvWidgetState extends State<PopupBidvWidget> {
                                     ..onTap = () async {
                                       final Uri url = Uri(
                                         scheme: 'tel',
-                                        path: '0972568786',
+                                        path: '0948885828',
                                       );
                                       if (await canLaunchUrl(url)) {
                                         await launchUrl(url);
@@ -117,7 +117,7 @@ class _PopupBidvWidgetState extends State<PopupBidvWidget> {
                                     },
                                 ),
                                 TextSpan(
-                                  text: ' - Lại Văn Anh',
+                                  text: ' - Ms Giang',
                                   style: const TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold),
@@ -125,7 +125,7 @@ class _PopupBidvWidgetState extends State<PopupBidvWidget> {
                                     ..onTap = () async {
                                       final Uri url = Uri(
                                         scheme: 'tel',
-                                        path: '0989895905',
+                                        path: '0948885828',
                                       );
                                       if (await canLaunchUrl(url)) {
                                         await launchUrl(url);

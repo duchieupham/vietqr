@@ -5,11 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class BuildBannerWidget extends StatefulWidget {
   const BuildBannerWidget({super.key});
@@ -172,7 +169,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                     return InkWell(
                       onTap: () async {
                         String url =
-                            "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ1LMlzShdTN4NlWWJXbIJTMk4";
+                            "https://omni.bidv.com.vn/static/bidv/share/gioi-thieu-ban-thuong-vo-han.html?data=aH0RHc6MyLk9Cbi5Wa2R2ch1nciRWYr5Wan5nLuZ2LiVlTBRGTS1VbuVVeYZEZo4";
                         if (await canLaunchUrl(Uri.parse(url))) {
                           await launchUrl(Uri.parse(url),
                               mode: LaunchMode.externalApplication);
@@ -214,7 +211,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                         onTap: () async {
                                           final Uri url = Uri(
                                             scheme: 'tel',
-                                            path: '0972568786',
+                                            path: '0948885828',
                                           );
                                           if (await canLaunchUrl(url)) {
                                             await launchUrl(url);
@@ -230,7 +227,7 @@ class _BuildBannerWidgetState extends State<BuildBannerWidget>
                                             ),
                                             SizedBox(width: 4),
                                             Text(
-                                              '097.256.8786',
+                                              '094.888.5828',
                                               style: TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold,
