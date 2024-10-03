@@ -8,14 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
-import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/widgets/measure_size.dart';
-import 'package:vierqr/commons/widgets/slide_fade_transition.dart';
-import 'package:vierqr/commons/widgets/step_progress.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
@@ -23,9 +18,7 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/bank_info_v2_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/display_setting_widget.dart';
-import 'package:vierqr/features/bank_card/widgets/invoice_overview_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/menu_bank_widget.dart';
-import 'package:vierqr/features/bank_card/widgets/no_service_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/sharing_connect_media.dart';
 import 'package:vierqr/features/bank_detail_new/bank_card_detail_new_screen.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/animation_graph_widget.dart';
@@ -267,7 +260,7 @@ class _BankStatisticState extends State<BankStatistic>
                     InkWell(
                       onTap: () async {
                         await NavigatorUtils.navigatePage(
-                            context, const AddBankScreen(),
+                            context, const AddBankScreen(isInstantlyScan: true,),
                             routeName: AddBankScreen.routeName);
                       },
                       child: Container(

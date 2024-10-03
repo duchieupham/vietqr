@@ -7,13 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
-import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
-import 'package:vierqr/features/login/events/login_event.dart';
-import 'package:vierqr/features/login/login_screen.dart';
-import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
@@ -22,7 +17,6 @@ import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/socket_service/socket_service.dart';
 
 import '../../../navigator/app_navigator.dart';
 import 'secure_storage_service.dart';

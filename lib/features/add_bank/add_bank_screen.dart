@@ -43,8 +43,12 @@ import 'views/bank_input_widget.dart';
 class AddBankScreen extends StatelessWidget {
   final BankTypeDTO? bankTypeDTO;
   final QRGeneratedDTO? qrGenerateDTO;
-
-  const AddBankScreen({super.key, this.bankTypeDTO, this.qrGenerateDTO});
+  final bool isInstantlyScan;
+  const AddBankScreen(
+      {super.key,
+      this.bankTypeDTO,
+      this.qrGenerateDTO,
+      this.isInstantlyScan = false});
 
   static String routeName = '/add_bank_screen';
 
@@ -54,7 +58,8 @@ class AddBankScreen extends StatelessWidget {
       create: (BuildContext context) => AddBankBloc(context),
       child: ChangeNotifierProvider(
         create: (_) => AddBankProvider(),
-        child: _AddBankScreenState(bankTypeDTO: bankTypeDTO),
+        child: _AddBankScreenState(
+            bankTypeDTO: bankTypeDTO, isInstantlyScan: isInstantlyScan),
       ),
     );
   }
@@ -62,8 +67,9 @@ class AddBankScreen extends StatelessWidget {
 
 class _AddBankScreenState extends StatefulWidget {
   final BankTypeDTO? bankTypeDTO;
+  final bool? isInstantlyScan;
 
-  const _AddBankScreenState({this.bankTypeDTO});
+  const _AddBankScreenState({this.bankTypeDTO, this.isInstantlyScan});
 
   @override
   State<_AddBankScreenState> createState() => _AddBankScreenStateState();
@@ -96,6 +102,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
           _onSearch();
         }
       });
+      if (widget.isInstantlyScan != null && widget.isInstantlyScan!) {
+        _onScanQR();
+      }
     });
   }
 

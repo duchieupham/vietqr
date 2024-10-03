@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/theme.dart';
@@ -79,8 +80,8 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                           ? "Kích hoạt dịch vụ \nphần mềm VietQR thành công!"
                           : 'Mã VietQR  hết hạn thanh toán',
                       textAlign: TextAlign.center,
-                      style:
-                          const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 25, fontWeight: FontWeight.bold),
                     ),
                     widget.type == 1
                         ? const Text(
@@ -110,11 +111,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
           widget.type == 1
               ? InkWell(
                   onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const DashBoardScreen(),
-                        ));
+                    NavigationService.pushAndRemoveUntil(Routes.DASHBOARD);
                   },
                   child: Container(
                     padding: const EdgeInsets.only(left: 10, right: 10),
@@ -134,16 +131,14 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                   ),
                 )
               : const SizedBox.shrink(),
-          widget.type == 1 ? const SizedBox(height: 10) : const SizedBox.shrink(),
+          widget.type == 1
+              ? const SizedBox(height: 10)
+              : const SizedBox.shrink(),
           InkWell(
             onTap: () {
               widget.type == 1
                   ? Navigator.of(context).pop()
-                  : Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DashBoardScreen(),
-                      ));
+                  : NavigationService.pushAndRemoveUntil(Routes.DASHBOARD);
             },
             child: Container(
               padding: const EdgeInsets.only(left: 10, right: 10),

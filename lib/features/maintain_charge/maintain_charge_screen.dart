@@ -54,9 +54,11 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   final TextEditingController _controller = TextEditingController(text: '');
   final TextEditingController _editingController =
       TextEditingController(text: '');
+  // ignore: unused_field
   final _formKey = GlobalKey<FormState>();
   FocusNode node = FocusNode();
 
+  // ignore: unused_field
   String? _validateTest;
   late MaintainChargeBloc _bloc;
   final userRes = UserRepository.instance;
@@ -156,17 +158,20 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
         Navigator.of(context).pop();
       },
       onDone: (pin) {
-        _bloc.add(MaintainChargeEvent(
+        _bloc.add(
+          MaintainChargeEvent(
             dto: MaintainChargeCreate(
-          type: widget.type,
-          key: keyValue,
-          bankId: widget.bankId,
-          userId: userRes.userId,
-          password: EncryptUtils.instance.encrypted(
-            phone,
-            pin,
+              type: widget.type,
+              key: keyValue,
+              bankId: widget.bankId,
+              userId: userRes.userId,
+              password: EncryptUtils.instance.encrypted(
+                phone,
+                pin,
+              ),
+            ),
           ),
-        )));
+        );
         _editingController.text = '';
       },
     );

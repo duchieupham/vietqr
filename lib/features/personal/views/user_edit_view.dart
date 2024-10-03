@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +20,6 @@ import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
-import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
@@ -327,6 +324,7 @@ class _UserEditViewState extends State<UserEditView> {
                                     color: AppColor.BLACK,
                                   );
                                   if (!mounted) return;
+                                  // ignore: use_build_context_synchronously
                                   startBarcodeScanStream(context);
                                 }
                               },
