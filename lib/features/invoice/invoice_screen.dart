@@ -315,9 +315,9 @@ class __InvoiceState extends State<_Invoice> {
               ),
               body: Column(
                 children: [
-                  const SizedBox(height: 30),
+                  // const SizedBox(height: 15),
                   _invoiceSection(provider, state),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 10),
                   _buildListInvoice(state, provider),
                   ValueListenableBuilder<bool>(
                     valueListenable: paymentNotifier,
@@ -362,7 +362,7 @@ class __InvoiceState extends State<_Invoice> {
             children: [
               const Text(
                 'Danh sách hoá đơn',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               // const SizedBox(height: 20),
               // Text(
@@ -496,7 +496,7 @@ class __InvoiceState extends State<_Invoice> {
   Widget _buildListInvoice(InvoiceStates state, InvoiceProvider provider) {
     return Expanded(
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         controller: scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
@@ -525,7 +525,7 @@ class __InvoiceState extends State<_Invoice> {
                               Text(
                                 'Hóa đơn tháng ${i.monthYear}',
                                 style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                    fontSize: 14, fontWeight: FontWeight.bold),
                               ),
                               if (provider.selectedStatus == 0)
                                 Row(
@@ -533,7 +533,7 @@ class __InvoiceState extends State<_Invoice> {
                                     const Text(
                                       'Tất cả',
                                       style: TextStyle(
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Checkbox(
@@ -570,7 +570,7 @@ class __InvoiceState extends State<_Invoice> {
                                     arguments: {'id': e.invoiceId});
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 15),
+                                margin: const EdgeInsets.only(bottom: 10),
                                 height: 150,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
@@ -591,20 +591,20 @@ class __InvoiceState extends State<_Invoice> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.fromLTRB(
-                                                20, 15, 0, 15),
+                                                20, 10, 0, 10),
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               mainAxisAlignment:
                                                   MainAxisAlignment
-                                                      .spaceBetween,
+                                                      .spaceEvenly,
                                               children: [
                                                 SizedBox(
                                                   width: 260,
                                                   child: Text(
                                                     e.invoiceName,
                                                     style: const TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.bold),
                                                     maxLines: 2,
@@ -615,7 +615,7 @@ class __InvoiceState extends State<_Invoice> {
                                                 Text(
                                                   '${e.bankShortName} - ${e.bankAccount}',
                                                   style: const TextStyle(
-                                                      fontSize: 15),
+                                                      fontSize: 12),
                                                 ),
                                                 if (e.fileAttachmentId != '')
                                                   GestureDetector(
@@ -624,7 +624,7 @@ class __InvoiceState extends State<_Invoice> {
                                                     child: const Text(
                                                       'Xem tệp',
                                                       style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 12,
                                                         color:
                                                             AppColor.BLUE_TEXT,
                                                         decoration:
@@ -724,7 +724,7 @@ class __InvoiceState extends State<_Invoice> {
                                                           const Text(
                                                             'QR thanh toán',
                                                             style: TextStyle(
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                                 color: AppColor
                                                                     .BLUE_TEXT),
                                                           ),
