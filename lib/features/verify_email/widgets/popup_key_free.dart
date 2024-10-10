@@ -6,6 +6,7 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/key_free_dto.dart';
 
+// ignore: must_be_immutable
 class PopUpKeyFree extends StatefulWidget {
   BankAccountDTO? dto;
   KeyFreeDTO keyDTO;

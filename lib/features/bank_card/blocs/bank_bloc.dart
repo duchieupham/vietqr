@@ -18,7 +18,6 @@ import 'package:vierqr/models/bank_overview_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/nearest_transaction_dto.dart';
 import 'package:vierqr/models/platform_dto.dart';
-import 'package:vierqr/models/vietqr_store_dto.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/invoice_overview_dto.dart';
 

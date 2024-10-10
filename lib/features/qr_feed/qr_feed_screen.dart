@@ -203,9 +203,12 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
       QRScannerUtils.instance.onScanNavi(data, context);
+      // ignore: unused_local_variable
       final type = data['type'];
       final typeQR = data['typeQR'] as TypeQR;
+      // ignore: unused_local_variable
       final value = data['data'];
+      // ignore: unused_local_variable
       final bankTypeDTO = data['bankTypeDTO'];
       switch (typeQR) {
         case TypeQR.QR_LINK:

@@ -15,7 +15,6 @@ import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/layouts/button/button.dart';
-import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 

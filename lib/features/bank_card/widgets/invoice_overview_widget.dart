@@ -1,3 +1,4 @@
+// ignore: unnecessary_import
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +8,6 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -123,7 +123,7 @@ class _InvoiceOverviewWidgetState extends State<InvoiceOverviewWidget>
                             height: 40,
                             child: Center(
                               child: GradientText('Thanh toán ngay',
-                                  style: TextStyle(fontSize: 12),
+                                  style:const TextStyle(fontSize: 12),
                                   gradient:
                                       VietQRTheme.gradientColor.aiTextColor),
                             ),

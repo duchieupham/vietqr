@@ -38,7 +38,6 @@ import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/image_dto.dart';
 import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 import 'package:path/path.dart' as path;

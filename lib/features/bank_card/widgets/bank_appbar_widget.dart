@@ -10,7 +10,6 @@ import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
@@ -92,7 +91,7 @@ class _BankAppbarWidgetState extends State<BankAppbarWidget> {
                 background: Container(
                   // height: 120,
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColor.WHITE,
                     // color: opacity == 0.0
                     //     ? AppColor.TRANSPARENT

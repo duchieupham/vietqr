@@ -29,6 +29,7 @@ class _StoreScreenState extends State<StoreScreen>
   final controller = ScrollController();
 
   MerchantDTO _dto = MerchantDTO();
+  // ignore: unused_field
   StreamSubscription? _subscription;
 
   bool _loading = true;

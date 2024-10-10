@@ -6,7 +6,6 @@ import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/pin_widget_register.dart';
 import 'package:vierqr/layouts/button/button.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 class OTPInputPage extends StatefulWidget {

@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
-import 'package:vierqr/models/bank_arrange_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/create_store/create_store.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';

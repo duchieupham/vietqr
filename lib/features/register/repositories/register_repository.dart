@@ -9,8 +9,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
-import '../../../commons/enums/enum_type.dart';
-
 class RegisterRepository {
   RegisterRepository();
 

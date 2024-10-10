@@ -5,7 +5,6 @@ import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/verify_email/views/key_active_free.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 
 class VerifyEmailSuccessScreen extends StatefulWidget {
   final VoidCallback onContinue;

@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -15,6 +13,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 
+// ignore: must_be_immutable
 class DisplaySettingWidget extends StatefulWidget {
   DisplaySettingWidget(
       {super.key, required this.listIsOwnerBank, required this.width});
@@ -280,6 +279,8 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
         double dashHeight = 1;
         final dashCount = (boxWidth / (2 * dashWidth)).floor();
         return Flex(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          direction: Axis.horizontal,
           children: List.generate(dashCount, (_) {
             return SizedBox(
               width: dashWidth,
@@ -289,8 +290,6 @@ class _DisplaySettingWidgetState extends State<DisplaySettingWidget> {
               ),
             );
           }),
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          direction: Axis.horizontal,
         );
       },
     );

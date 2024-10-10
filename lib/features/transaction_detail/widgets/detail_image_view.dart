@@ -37,6 +37,7 @@ class _DetailImageViewState extends State<DetailImageView> {
     // Ask the user to save it
     if (isSave) {
       final params = SaveFileDialogParams(sourceFilePath: file.path);
+      // ignore: unused_local_variable
       final finalPath = await FlutterFileDialog.saveFile(params: params);
     } else {
       final result =
@@ -88,12 +89,11 @@ class _DetailImageViewState extends State<DetailImageView> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Text(
+                    const Text(
                       // path.basename(image),
                       'your_image_name.png',
                       textAlign: TextAlign.center,
-                      style:
-                          const TextStyle(color: AppColor.WHITE, fontSize: 16),
+                      style: TextStyle(color: AppColor.WHITE, fontSize: 16),
                     ),
                   ],
                 ),

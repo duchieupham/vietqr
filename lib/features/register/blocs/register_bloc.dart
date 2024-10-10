@@ -422,6 +422,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       if (event is RegisterEventLoginAfterRegister) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: RegisterType.NONE));
+        // ignore: unused_local_variable
         AccountLoginDTO dto = AccountLoginDTO(
             phoneNo: state.phoneNumber,
             password:

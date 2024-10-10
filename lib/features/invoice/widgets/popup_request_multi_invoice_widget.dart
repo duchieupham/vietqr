@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/models/unpaid_invoice_detail_qr_dto.dart';
 

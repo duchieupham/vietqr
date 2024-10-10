@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/step_progress.dart';
 import 'package:vierqr/features/connect_lark_old/blocs/connect_lark_bloc.dart';
 import 'package:vierqr/features/connect_lark_old/page/choose_bank_page.dart';
 import 'package:vierqr/features/connect_lark_old/page/create_webhook.dart';

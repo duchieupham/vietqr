@@ -81,8 +81,6 @@ class TransactionReceiveDTO {
 
   bool isTimeTT() {
     return (status == 1 && type == 1 && (transType == 'D' || transType == 'C'));
-
-    return false;
   }
 
   String getTitleType() {

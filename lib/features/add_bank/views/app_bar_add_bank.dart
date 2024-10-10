@@ -24,6 +24,7 @@ class AppBarAddBank extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthenProvider>(builder: (context, page, child) {
+      // ignore: unused_local_variable
       String url = page.settingDTO.themeImgUrl;
       return Container(
         decoration: const BoxDecoration(color: AppColor.WHITE),

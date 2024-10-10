@@ -31,22 +31,26 @@ class ScannerOverlay extends CustomPainter {
         ),
       );
 
+    // ignore: unused_local_variable
     final backgroundPaint = Paint()
       ..color = Colors.black.withOpacity(0.5)
       ..style = PaintingStyle.fill
       ..blendMode = BlendMode.dstOut;
 
+    // ignore: unused_local_variable
     final backgroundWithCutout = Path.combine(
       PathOperation.difference,
       backgroundPath,
       cutoutPath,
     );
 
+    // ignore: unused_local_variable
     final borderPaint = Paint()
       ..color = Colors.white.withOpacity(0.2)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 
+    // ignore: unused_local_variable
     final borderRect = RRect.fromRectAndCorners(
       scanWindow,
       topLeft: Radius.circular(borderRadius),
@@ -54,9 +58,6 @@ class ScannerOverlay extends CustomPainter {
       bottomLeft: Radius.circular(borderRadius),
       bottomRight: Radius.circular(borderRadius),
     );
-
-    // canvas.drawPath(backgroundWithCutout, backgroundPaint);
-    // canvas.drawRRect(borderRect, borderPaint);
 
     final cornerPaint = Paint()
       ..color = Colors.white

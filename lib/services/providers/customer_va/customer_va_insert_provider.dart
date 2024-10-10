@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../models/bank_type_dto.dart';
 
 class CustomerVaInsertProvider with ChangeNotifier {
-
-
   final keyAccount = GlobalKey();
   final String _bidvLogoUrl = 'https://dev.vietqr.org/vqr/images/bidv.png';
   bool _isMerchantNameErr = false;

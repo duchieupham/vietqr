@@ -9,7 +9,6 @@ import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/commons/widgets/widget_qr.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/trans_list_dto.dart';
 
@@ -253,7 +252,7 @@ class _SaveShareTransDetailState extends State<SaveShareTransDetail> {
           case 0:
             // - Giao dịch chờ thanh toán
             color = AppColor.ORANGE_TRANS;
-            text = 'Thanh toán thành công';
+            text = 'Chờ thanh toán';
             break;
           case 1:
             switch (detail.type) {

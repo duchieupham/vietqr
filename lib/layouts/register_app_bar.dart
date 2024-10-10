@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -40,6 +39,7 @@ class _RegisterAppBarState extends State<RegisterAppBar> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthenProvider>(builder: (context, page, child) {
+      // ignore: unused_local_variable
       String url = page.settingDTO.themeImgUrl;
       return Container(
         // decoration: showBG

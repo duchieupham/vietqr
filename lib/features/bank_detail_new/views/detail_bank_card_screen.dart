@@ -2,13 +2,10 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
-import 'package:vierqr/commons/helper/dialog_helper.dart';
-import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -27,15 +24,12 @@ import 'package:vierqr/features/bank_detail_new/widgets/qr_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/service_vietqr_widget.dart';
 import 'package:vierqr/features/bank_detail_new/widgets/suggestion_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:vierqr/services/providers/account_bank_detail_provider.dart';
 
 // ignore: must_be_immutable
 class DetailBankCardScreen extends StatefulWidget {
@@ -192,6 +186,7 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final width = MediaQuery.of(context).size.width;
     return BlocConsumer<BankCardBloc, BankCardState>(
       bloc: widget.bankCardBloc,
@@ -417,15 +412,13 @@ class _DetailBankCardScreenState extends State<DetailBankCardScreen> {
                 ],
               ),
               if (qrGeneratedDTO.content.isNotEmpty)
-                Container(
-                  child: Text(
-                    qrGeneratedDTO.content,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColor.GREY_TEXT,
-                    ),
+                Text(
+                  qrGeneratedDTO.content,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColor.GREY_TEXT,
                   ),
                 )
             ],

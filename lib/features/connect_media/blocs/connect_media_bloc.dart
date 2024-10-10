@@ -282,6 +282,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
       if (event is RemoveMediaEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectMedia.NONE));
+        // ignore: unused_local_variable
         bool? result = await _repository.removeBank(
             event.webhookId, event.bankId!, event.type);
         emit(state.copyWith(

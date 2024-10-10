@@ -51,6 +51,7 @@ class InvoiceRepository extends BaseRepo {
     return result;
   }
 
+  // ignore: body_might_complete_normally_nullable
   Future<UnpaidInvoiceDetailQrDTO?> requestPaymnetV2({
     required List<String> invoiceIds,
     String bankIdRecharge = '',

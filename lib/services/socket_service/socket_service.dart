@@ -28,6 +28,7 @@ class SocketService {
 
   BuildContext get context => NavigationService.context!;
 
+  // ignore: unused_field
   static const int _port = 8443;
   Socket? _socket;
   bool _isConnected = false;

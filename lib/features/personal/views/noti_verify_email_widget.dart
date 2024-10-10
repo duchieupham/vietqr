@@ -5,7 +5,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/verify_email/repositories/verify_email_repositories.dart';
 import 'package:vierqr/features/verify_email/verify_email_screen.dart';
 import 'package:vierqr/features/verify_email/widgets/popup_key_free.dart';

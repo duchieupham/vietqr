@@ -97,6 +97,7 @@ class StepProgressView extends StatelessWidget {
   List<Widget> _itemViews() {
     var list = <Widget>[];
     _listItem.asMap().forEach((i, item) {
+      // ignore: unused_local_variable
       var isActive = (i == 0 || _curStep > i + 1);
       list.add(item);
     });

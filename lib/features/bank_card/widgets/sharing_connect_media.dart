@@ -8,7 +8,6 @@ import 'package:vierqr/commons/widgets/measure_size.dart';
 import 'package:vierqr/commons/widgets/step_progress.dart';
 import 'package:vierqr/features/bank_card/widgets/no_service_widget.dart';
 import 'package:vierqr/features/connect_media/blocs/connect_media_bloc.dart';
-import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_media/events/connect_media_evens.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -30,6 +29,7 @@ class _SharingConnectMediaState extends State<SharingConnectMedia> {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: no_leading_underscores_for_local_identifiers
     final _bloc = getIt.get<ConnectMediaBloc>();
     return Container(
       margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
