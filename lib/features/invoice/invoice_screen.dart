@@ -524,23 +524,17 @@ class __InvoiceState extends State<_Invoice> {
                             initiallyExpanded: true,
                             shape: const Border(),
                             title: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Text(
-                                  'Hóa đơn tháng ${i.monthYear}',
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
                                 if (provider.selectedStatus == 0)
                                   Row(
                                     children: [
-                                      const Text(
-                                        'Tất cả',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                      // const Text(
+                                      //   'Tất cả',
+                                      //   style: TextStyle(
+                                      //       fontSize: 14,
+                                      //       fontWeight: FontWeight.bold),
+                                      // ),
                                       Checkbox(
                                         value: i.invoices.every(
                                             (element) => element.isSelect),
@@ -565,6 +559,12 @@ class __InvoiceState extends State<_Invoice> {
                                       )
                                     ],
                                   ),
+                                Text(
+                                  'Hóa đơn tháng ${i.monthYear}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ],
                             ),
                             children: [
@@ -587,7 +587,7 @@ class __InvoiceState extends State<_Invoice> {
                                             width: 0.7)),
                                     child: Column(
                                       children: [
-                                        Container(
+                                        SizedBox(
                                           height: 100,
                                           width: double.infinity,
                                           child: Row(
