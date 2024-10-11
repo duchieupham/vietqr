@@ -519,228 +519,251 @@ class __InvoiceState extends State<_Invoice> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Hóa đơn tháng ${i.monthYear}',
-                                style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
-                              if (provider.selectedStatus == 0)
-                                Row(
-                                  children: [
-                                    const Text(
-                                      'Tất cả',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Checkbox(
-                                      value: i.invoices
-                                          .every((element) => element.isSelect),
-                                      onChanged: (value) {
-                                        if (value != null) {
-                                          paymentNotifier.value = false;
-
-                                          List<InvoiceFeeDTO> list = [];
-                                          for (var item in i.invoices) {
-                                            InvoiceFeeDTO dto = item;
-                                            dto.selected(value);
-                                            list.add(dto);
-                                          }
-                                          setState(() {
-                                            invoiceGroups[index] = InvoiceGroup(
-                                                monthYear: i.monthYear,
-                                                invoices: list);
-                                          });
-                                        }
-                                      },
-                                    )
-                                  ],
+                          ExpansionTile(
+                            tilePadding: const EdgeInsets.only(left: 0),
+                            initiallyExpanded: true,
+                            shape: const Border(),
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Hóa đơn tháng ${i.monthYear}',
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
                                 ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          ...i.invoices.map(
-                            (e) => InkWell(
-                              onTap: () {
-                                Navigator.of(context).pushNamed(
-                                    Routes.INVOICE_DETAIL,
-                                    arguments: {'id': e.invoiceId});
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                height: 150,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                        color: AppColor.GREY_DADADA,
-                                        width: 0.7)),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      height: 100,
-                                      width: double.infinity,
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                20, 10, 0, 10),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceEvenly,
-                                              children: [
-                                                SizedBox(
-                                                  width: 260,
-                                                  child: Text(
-                                                    e.invoiceName,
-                                                    style: const TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '${e.bankShortName} - ${e.bankAccount}',
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
-                                                ),
-                                                if (e.fileAttachmentId != '')
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _openUrl(e.invoiceId),
-                                                    child: const Text(
-                                                      'Xem tệp',
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                        color:
-                                                            AppColor.BLUE_TEXT,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                        decorationColor:
-                                                            AppColor.BLUE_TEXT,
+                                if (provider.selectedStatus == 0)
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'Tất cả',
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Checkbox(
+                                        value: i.invoices.every(
+                                            (element) => element.isSelect),
+                                        onChanged: (value) {
+                                          if (value != null) {
+                                            paymentNotifier.value = false;
+
+                                            List<InvoiceFeeDTO> list = [];
+                                            for (var item in i.invoices) {
+                                              InvoiceFeeDTO dto = item;
+                                              dto.selected(value);
+                                              list.add(dto);
+                                            }
+                                            setState(() {
+                                              invoiceGroups[index] =
+                                                  InvoiceGroup(
+                                                      monthYear: i.monthYear,
+                                                      invoices: list);
+                                            });
+                                          }
+                                        },
+                                      )
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            children: [
+                              const SizedBox(height: 8),
+                              ...i.invoices.map(
+                                (e) => InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                        Routes.INVOICE_DETAIL,
+                                        arguments: {'id': e.invoiceId});
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    height: 150,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                            color: AppColor.GREY_DADADA,
+                                            width: 0.7)),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 100,
+                                          width: double.infinity,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        20, 10, 0, 10),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 260,
+                                                      child: Text(
+                                                        e.invoiceName,
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                        maxLines: 2,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                     ),
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                          if (provider.selectedStatus == 0)
-                                            Checkbox(
-                                              value: e.isSelect,
-                                              onChanged: (value) {
-                                                if (value != null) {
-                                                  paymentNotifier.value = false;
-
-                                                  int index = listInvoice
-                                                      .indexWhere((element) =>
-                                                          element.invoiceId ==
-                                                          e.invoiceId);
-                                                  InvoiceFeeDTO invoice = e;
-                                                  invoice.selected(value);
-
-                                                  setState(() {
-                                                    listInvoice[index] =
-                                                        invoice;
-                                                  });
-                                                }
-                                              },
-                                            )
-                                          else
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 15, top: 20),
-                                              child: Image.asset(
-                                                'assets/images/ic-arrow-right-blue.png',
-                                                width: 15,
+                                                    Text(
+                                                      '${e.bankShortName} - ${e.bankAccount}',
+                                                      style: const TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    if (e.fileAttachmentId !=
+                                                        '')
+                                                      GestureDetector(
+                                                        onTap: () => _openUrl(
+                                                            e.invoiceId),
+                                                        child: const Text(
+                                                          'Xem tệp',
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            color: AppColor
+                                                                .BLUE_TEXT,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                            decorationColor:
+                                                                AppColor
+                                                                    .BLUE_TEXT,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
                                               ),
-                                            )
-                                        ],
-                                      ),
-                                    ),
-                                    const MySeparator(
-                                        color: AppColor.GREY_DADADA),
-                                    Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            20, 10, 20, 10),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              '${CurrencyUtils.instance.getCurrencyFormatted(e.totalAmount.toString())} VND',
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.bold,
-                                                  color:
-                                                      provider.selectedStatus ==
+                                              if (provider.selectedStatus == 0)
+                                                Checkbox(
+                                                  value: e.isSelect,
+                                                  onChanged: (value) {
+                                                    if (value != null) {
+                                                      paymentNotifier.value =
+                                                          false;
+
+                                                      int index = listInvoice
+                                                          .indexWhere((element) =>
+                                                              element
+                                                                  .invoiceId ==
+                                                              e.invoiceId);
+                                                      InvoiceFeeDTO invoice = e;
+                                                      invoice.selected(value);
+
+                                                      setState(() {
+                                                        listInvoice[index] =
+                                                            invoice;
+                                                      });
+                                                    }
+                                                  },
+                                                )
+                                              else
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 15, top: 20),
+                                                  child: Image.asset(
+                                                    'assets/images/ic-arrow-right-blue.png',
+                                                    width: 15,
+                                                  ),
+                                                )
+                                            ],
+                                          ),
+                                        ),
+                                        const MySeparator(
+                                            color: AppColor.GREY_DADADA),
+                                        Expanded(
+                                          child: Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                20, 10, 20, 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  '${CurrencyUtils.instance.getCurrencyFormatted(e.totalAmount.toString())} VND',
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: provider
+                                                                  .selectedStatus ==
                                                               0
                                                           ? AppColor.ORANGE_DARK
                                                           : AppColor.GREEN),
+                                                ),
+                                                provider.selectedStatus == 0
+                                                    ? GestureDetector(
+                                                        onTap: () {
+                                                          _onQrCreate(e);
+                                                        },
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(
+                                                                  10, 4, 10, 4),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: AppColor
+                                                                .BLUE_TEXT
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                          ),
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Image.asset(
+                                                                'assets/images/ic-tb-qr-blue.png',
+                                                                width: 15,
+                                                                height: 15,
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 4),
+                                                              const Text(
+                                                                'QR thanh toán',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                    color: AppColor
+                                                                        .BLUE_TEXT),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox.shrink(),
+                                              ],
                                             ),
-                                            provider.selectedStatus == 0
-                                                ? GestureDetector(
-                                                    onTap: () {
-                                                      _onQrCreate(e);
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .fromLTRB(
-                                                          10, 4, 10, 4),
-                                                      decoration: BoxDecoration(
-                                                        color: AppColor
-                                                            .BLUE_TEXT
-                                                            .withOpacity(0.2),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(15),
-                                                      ),
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          Image.asset(
-                                                            'assets/images/ic-tb-qr-blue.png',
-                                                            width: 15,
-                                                            height: 15,
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 4),
-                                                          const Text(
-                                                            'QR thanh toán',
-                                                            style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: AppColor
-                                                                    .BLUE_TEXT),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  )
-                                                : const SizedBox.shrink(),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       )),

@@ -305,4 +305,71 @@ mixin DialogHelper {
       (value) => dismissPopup(key: keyDialog, willPop: false),
     );
   }
+
+  Future<void> showDialogAddBankOptions(
+    BuildContext context, {
+    Key? key,
+  }) async {
+    Key keyDialog = key ?? _keyForPopup();
+    _allPopups[keyDialog] = context;
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        key: keyDialog,
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        height: MediaQuery.of(context).size.height * 0.6,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Center(
+                  child:  XImage(
+                    imagePath: 'assets/images/ic-add-bank-options.png',
+                    width: 150,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const DefaultTextStyle(
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  child: Text(
+                    "Quét mã VietQR để tự động điền\n thông tin tài khoản ngân hàng.",
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.black,
+                  size: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).then(
+      (value) => dismissPopup(key: keyDialog, willPop: false),
+    );
+  }
 }

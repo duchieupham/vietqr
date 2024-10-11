@@ -1,4 +1,6 @@
 {
   "java.configuration.updateBuildConfiguration": "interactive",
-  "dart.flutterSdkPath": ".fvm/versions/3.22.1"
+  "dart.flutterSdkPath": ".fvm/versions/3.22.1",
+  "editor.fontFamily": "Cascadia Mono, Consolas, 'Courier New', monospace",
+  "editor.fontSize": 13
 }

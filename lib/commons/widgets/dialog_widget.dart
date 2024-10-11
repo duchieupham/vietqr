@@ -163,6 +163,7 @@ class DialogWidget {
     );
   }
 
+
   openPINDialog({required String title, required Function(String) onDone}) {
     final FocusNode focusNode = FocusNode();
     focusNode.requestFocus();

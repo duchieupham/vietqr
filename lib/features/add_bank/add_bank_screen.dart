@@ -9,6 +9,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -75,7 +76,8 @@ class _AddBankScreenState extends StatefulWidget {
   State<_AddBankScreenState> createState() => _AddBankScreenStateState();
 }
 
-class _AddBankScreenStateState extends State<_AddBankScreenState> {
+class _AddBankScreenStateState extends State<_AddBankScreenState>
+    with DialogHelper {
   late AddBankBloc _bloc;
   late AddBankProvider _addBankProvider;
 
@@ -108,7 +110,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     });
   }
 
-  void initData(BuildContext context) {
+  void initData(BuildContext context) async {
     BankTypeDTO? bankTypeDTO = widget.bankTypeDTO;
 
     if (bankTypeDTO == null) {
@@ -140,6 +142,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       _addBankProvider.updateSelectBankType(bankTypeDTO, update: true);
       _addBankProvider.updateEnableName(true);
     }
+    showDialogAddBankOptions(context);
   }
 
   void _onSearch() {

@@ -73,12 +73,14 @@ class _BanksViewState extends State<BanksView> {
                                   .where(
                                     (element) =>
                                         element.bankCode
-                                            .toLowerCase()
-                                            .contains(value) ||
+                                            .toUpperCase()
+                                            .contains(value.toUpperCase()) ||
                                         element.bankName
-                                            .toLowerCase()
-                                            .contains(value) ||
-                                        element.bankShortName!.contains(value),
+                                            .toUpperCase()
+                                            .contains(value.toUpperCase()) ||
+                                        element.bankShortName!
+                                            .toUpperCase()
+                                            .contains(value.toUpperCase()),
                                   )
                                   .toList();
                             });
