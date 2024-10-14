@@ -4,8 +4,10 @@ import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/add_bank/views/dialog_select_bank_type.dart';
 import 'package:vierqr/features/dashboard/widget/popup_bidv_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 
 import '../../features/dashboard/blocs/dashboard_bloc.dart';
 import '../../features/dashboard/events/dashboard_event.dart';
@@ -13,7 +15,11 @@ import '../../features/home/widget/dialog_update.dart';
 
 mixin DialogHelper {
   static final _allPopups = <Key, BuildContext>{};
-
+  static const Color backgroundDiglogColor =
+      CupertinoDynamicColor.withBrightness(
+    color: Color(0x99000000),
+    darkColor: Color(0xFF000000),
+  );
   void dismissAllPopups() {
     for (final context in _allPopups.values) {
       Navigator.of(context).pop();
@@ -28,6 +34,18 @@ mixin DialogHelper {
       if (willPop) {
         Navigator.of(aContext).pop();
       }
+    }
+  }
+
+  dynamic dismissPopupWithValue(
+      {required Key key, bool willPop = true, dynamic value}) {
+    final aContext = _allPopups[key];
+    if (aContext != null) {
+      _allPopups.remove(key);
+      if (willPop) {
+        Navigator.of(aContext).pop(value);
+      }
+      return value;
     }
   }
 
@@ -310,16 +328,22 @@ mixin DialogHelper {
   Future<void> showDialogAddBankOptions(
     BuildContext context, {
     Key? key,
+    Function()? onScan,
+    Function()? onInput,
   }) async {
     Key keyDialog = key ?? _keyForPopup();
     _allPopups[keyDialog] = context;
     await showCupertinoModalPopup(
+      barrierColor: CupertinoDynamicColor.resolve(
+        backgroundDiglogColor,
+        context,
+      ),
       context: context,
       builder: (context) => Container(
         key: keyDialog,
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-        height: MediaQuery.of(context).size.height * 0.6,
+        height: MediaQuery.of(context).size.height * 0.55,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -362,55 +386,64 @@ mixin DialogHelper {
                     "Đảm bảo rằng mã VietQR được hiển thị rõ ràng\n trong khi quét mã. Bạn vẫn có thể thực hiện\n chỉnh sửa sau khi hoàn tất quét.",
                   ),
                 ),
-                const SizedBox(
-                  height: 40,
+                // const SizedBox(
+                //   height: 80,
+                // ),
+                const Expanded(
+                  child: SizedBox(),
                 ),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                    gradient: (VietQRTheme.gradientColor.brightBlueLinear),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Center(
-                    child: DefaultTextStyle(
-                      style: TextStyle(
-                        color: AppColor.WHITE,
-                        fontSize: 12,
-                      ),
-                      child: Text(
-                        'Quét mã VietQR',
+                GestureDetector(
+                  onTap: onScan,
+                  child: Container(
+                    height: 50,
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      gradient: (VietQRTheme.gradientColor.brightBlueLinear),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(
+                      child: DefaultTextStyle(
+                        style: TextStyle(
+                          color: AppColor.WHITE,
+                          fontSize: 12,
+                        ),
+                        child: Text(
+                          'Quét mã VietQR',
+                        ),
                       ),
                     ),
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Container(
-                  height: 50,
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFFE1EFFF),
-                        Color(0xFFE5F9FF),
-                      ],
-                      end: Alignment.centerRight,
-                      begin: Alignment.centerLeft,
-                    ),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Center(
-                    child: DefaultTextStyle(
-                      style: TextStyle(
-                        color: AppColor.BLUE_TEXT,
-                        fontSize: 12,
+                GestureDetector(
+                  onTap: onInput,
+                  child: Container(
+                    height: 50,
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFFE1EFFF),
+                          Color(0xFFE5F9FF),
+                        ],
+                        end: Alignment.centerRight,
+                        begin: Alignment.centerLeft,
                       ),
-                      child: Text(
-                        'Tiếp tục nhập thủ công',
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(
+                      child: DefaultTextStyle(
+                        style: TextStyle(
+                          color: AppColor.BLUE_TEXT,
+                          fontSize: 12,
+                        ),
+                        child: Text(
+                          'Tiếp tục nhập thủ công',
+                        ),
                       ),
                     ),
                   ),
@@ -437,5 +470,35 @@ mixin DialogHelper {
     ).then(
       (value) => dismissPopup(key: keyDialog, willPop: false),
     );
+  }
+
+  Future<dynamic> showDialogSelectBankType(
+    BuildContext context, {
+    Key? key,
+    dynamic data,
+    String? noData,
+    String? searchType,
+    bool isSearch = false,
+    required List<BankTypeDTO> list,
+  }) async {
+    Key keyDialog = key ?? _keyForPopup();
+    _allPopups[keyDialog] = context;
+    return await showCupertinoModalPopup(
+      barrierColor: CupertinoDynamicColor.resolve(
+        backgroundDiglogColor,
+        context,
+      ),
+      context: context,
+      builder: (context) => DialogSelectBankType(
+        keyDialog: keyDialog,
+        list: list,
+        data: data,
+        noData: noData,
+        isSearch: true,
+      ),
+    ).then((value) {
+      return dismissPopupWithValue(
+          key: keyDialog, willPop: false, value: value);
+    });
   }
 }

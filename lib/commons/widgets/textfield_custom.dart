@@ -43,6 +43,8 @@ class TextFieldCustom extends StatefulWidget {
   final bool isRequired;
   final Color? fillColor;
   final InputBorder? inputBorder;
+  final InputBorder? focusedBorder;
+  final InputBorder? disabledBorder;
 
   const TextFieldCustom(
       {super.key,
@@ -81,6 +83,8 @@ class TextFieldCustom extends StatefulWidget {
       this.onTap,
       this.contentPadding,
       this.inputBorder,
+      this.focusedBorder,
+      this.disabledBorder,
       this.readOnly = false,
       this.titleSize});
 
@@ -124,6 +128,8 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                   : AppColor.GREY_TEXT
               : Theme.of(context).hintColor,
         ),
+        focusedBorder: widget.focusedBorder,
+        disabledBorder: widget.disabledBorder,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
         contentPadding:
@@ -193,6 +199,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
             height: widget.height,
             alignment: Alignment.centerLeft,
             decoration: BoxDecoration(
+              // color: Colors.blue,
               color: widget.colorBG,
               borderRadius: BorderRadius.circular(5),
             ),

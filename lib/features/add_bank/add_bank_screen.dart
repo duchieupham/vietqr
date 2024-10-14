@@ -26,6 +26,7 @@ import 'package:vierqr/features/add_bank/views/policy_view.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
@@ -39,7 +40,6 @@ import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
-import 'views/bank_input_widget.dart';
 
 class AddBankScreen extends StatelessWidget {
   final BankTypeDTO? bankTypeDTO;
@@ -142,7 +142,15 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
       _addBankProvider.updateSelectBankType(bankTypeDTO, update: true);
       _addBankProvider.updateEnableName(true);
     }
-    showDialogAddBankOptions(context);
+    showDialogAddBankOptions(
+      context,
+      onScan: () {
+        _onScanQR();
+      },
+      onInput: () {
+        Navigator.pop(context);
+      },
+    );
   }
 
   void _onSearch() {
@@ -512,6 +520,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                               contentPadding:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 0),
+                                              focusedBorder:
+                                                  const UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color:
+                                                        AppColor.GREY_DADADA),
+                                              ),
+                                              disabledBorder:
+                                                  const UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color:
+                                                        AppColor.GREY_DADADA),
+                                              ),
                                             ),
                                             Visibility(
                                               visible: provider.errorTk != null,
@@ -562,6 +582,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                               ],
                                               onChange: provider
                                                   .updateValidUserBankName,
+                                              focusedBorder:
+                                                  const UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color:
+                                                        AppColor.GREY_DADADA),
+                                              ),
+                                              disabledBorder:
+                                                  const UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color:
+                                                        AppColor.GREY_DADADA),
+                                              ),
                                             ),
                                             Visibility(
                                               visible:
@@ -600,6 +632,21 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                             ),
                           ),
                         ),
+                        const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            XImage(
+                              imagePath: 'assets/images/ic-security.png',
+                              width: 20,
+                              fit: BoxFit.cover,
+                            ),
+                            Text(
+                              'Thông tin của bạn được mã hoá và bảo mật an toàn.',
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.normal),
+                            )
+                          ],
+                        ),
                         Consumer<AddBankProvider>(
                           builder: (context, provider, child) {
                             return (provider.bankTypeDTO?.status == 1)
@@ -607,12 +654,17 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                     state.responseDataOTP)
                                 : MButtonWidget(
                                     title: 'Lưu thông tin',
+                                    height: 50,
+                                    radius: 5,
                                     isEnable: provider.isEnableButton,
                                     colorEnableText: provider.isEnableButton
-                                        ? AppColor.BLACK
+                                        ? AppColor.GREY_TEXT
                                         : AppColor.WHITE,
-                                    colorDisableBgr: AppColor.BLUE_BGR,
+                                    colorDisableBgr: AppColor.WHITE,
                                     colorEnableBgr: AppColor.BLUE_TEXT,
+                                    border: Border.all(
+                                      color: AppColor.GREY_DADADA,
+                                    ),
                                     onTap: () {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
@@ -821,17 +873,11 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
   }
 
   void onSelectBankType(AddBankState state, provider, height) async {
-    final data = await DialogWidget.instance.showModelBottomSheet(
-      context: context,
-      padding: EdgeInsets.zero,
-      widget: ModelBottomSheetView(
-        tvTitle: 'Chọn ngân hàng',
-        ctx: context,
-        list: state.listBanks ?? [],
-        isSearch: true,
-        data: provider.bankTypeDTO,
-      ),
-      height: height * 0.8,
+    final data = await showDialogSelectBankType(
+      context,
+      list: state.listBanks ?? [],
+      isSearch: true,
+      data: provider.bankTypeDTO,
     );
     if (data is int) {
       bankAccountController.clear();
@@ -841,6 +887,27 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
       _addBankProvider.updateEnableName(true);
     }
   }
+  // void onSelectBankType(AddBankState state, provider, height) async {
+  //   final data = await DialogWidget.instance.showModelBottomSheet(
+  //     context: context,
+  //     padding: EdgeInsets.zero,
+  //     widget: ModelBottomSheetView(
+  //       tvTitle: 'Chọn ngân hàng',
+  //       ctx: context,
+  //       list: state.listBanks ?? [],
+  //       isSearch: true,
+  //       data: provider.bankTypeDTO,
+  //     ),
+  //     height: height * 0.8,
+  //   );
+  //   if (data is int) {
+  //     bankAccountController.clear();
+  //     nameController.clear();
+  //     provider.resetValidate();
+  //     provider.updateSelectBankType(state.listBanks![data]);
+  //     _addBankProvider.updateEnableName(true);
+  //   }
+  // }
 
   _onResend() {
     String formattedName = StringUtils.instance.removeDiacritic(

@@ -269,26 +269,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
           // const Divider(thickness: 1),
-
-          (data.isEmpty && widget.noData != null)
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 30,
-                    horizontal: 10,
-                  ),
-                  child: Text(
-                    widget.noData!,
-                    // style: tvStyle,
-                  ),
-                )
-              : (isShort)
-                  ? column
-                  : Expanded(
-                      child: column,
-                    ),
-
           if (widget.isSearch)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -344,6 +325,22 @@ class _BodyWidget extends State<ModelBottomSheetView> {
               //   ),
               // ),
             ),
+          (data.isEmpty && widget.noData != null)
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 30,
+                    horizontal: 10,
+                  ),
+                  child: Text(
+                    widget.noData!,
+                    // style: tvStyle,
+                  ),
+                )
+              : (isShort)
+                  ? column
+                  : Expanded(
+                      child: column,
+                    ),
         ],
       ),
     );
