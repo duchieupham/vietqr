@@ -364,7 +364,7 @@ class __InvoiceState extends State<_Invoice> {
                 'Danh sách hoá đơn',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
-              // const SizedBox(height: 20),
+              const SizedBox(height: 10),
               // Text(
               //   provider.selectedStatus == 0
               //       ? 'chưa thanh toán'
@@ -562,7 +562,7 @@ class __InvoiceState extends State<_Invoice> {
                                 Text(
                                   'Hóa đơn tháng ${i.monthYear}',
                                   style: const TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -612,7 +612,7 @@ class __InvoiceState extends State<_Invoice> {
                                                       child: Text(
                                                         e.invoiceName,
                                                         style: const TextStyle(
-                                                            fontSize: 12,
+                                                            fontSize: 13,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .bold),
@@ -624,7 +624,7 @@ class __InvoiceState extends State<_Invoice> {
                                                     Text(
                                                       '${e.bankShortName} - ${e.bankAccount}',
                                                       style: const TextStyle(
-                                                          fontSize: 12),
+                                                          fontSize: 13),
                                                     ),
                                                     if (e.fileAttachmentId !=
                                                         '')

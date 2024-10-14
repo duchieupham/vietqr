@@ -723,14 +723,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
   Widget? _buildButtonSubmit(double height, double width, Function() callback,
       bool isSuccess, bool isCircle, bool isVerify, bool isSamePass) {
-    // bool isEnable =
-    //     RegisterUtils.instance.isEnableButtonPhone(state.phoneNumber);
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
         Container(
           height: 50,
-          // width: double.infinity,
           color: Colors.transparent,
           margin: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom + 20,
@@ -806,53 +803,5 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         ),
       ],
     );
-    // return Container(
-    //   margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-    //   padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-    //   child: VietQRButton.gradient(
-    //     onPressed: () {
-    //       if (isVerify == true && isSamePass == false) {
-    //         callback();
-    //         debugPrint('Pressed');
-    //       }
-    //     },
-    //     isDisabled: (isVerify == true && isSamePass == false) ? false : true,
-    //     borderRadius: 50,
-    //     child: Center(
-    //       child: Text(
-    //         'Xác nhận',
-    //         style: TextStyle(
-    //           color: (isVerify == true && isSamePass == false)
-    //               ? AppColor.WHITE
-    //               : AppColor.BLACK,
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // )
-    // child: GestureDetector(
-    //   onTap: () {
-    //     setState(() {
-    //       isCircle = !isCircle;
-    //     });
-    //   },
-    //   child: AnimatedContainer(
-    //       duration: const Duration(milliseconds: 300),
-    //       width: isCircle ? 60 : 200,
-    //       height: 60,
-    //       decoration: BoxDecoration(
-    //         gradient: VietQRTheme.gradientColor.brightBlueLinear,
-    //         borderRadius: BorderRadius.circular(isCircle ? 30 : 10),
-    //       ),
-    //       alignment: Alignment.center,
-    //       child: !isCircle
-    //           ? const Text(
-    //               "Press",
-    //               style: TextStyle(color: Colors.white, fontSize: 18),
-    //             )
-    //           : const CircularProgressIndicator(
-    //               color: Colors.white,
-    //             )),
-    // ),
   }
 }

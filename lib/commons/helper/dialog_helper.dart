@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/dashboard/widget/popup_bidv_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -316,7 +317,7 @@ mixin DialogHelper {
       context: context,
       builder: (context) => Container(
         key: keyDialog,
-        margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 20),
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
         height: MediaQuery.of(context).size.height * 0.6,
         width: double.infinity,
@@ -331,23 +332,88 @@ mixin DialogHelper {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Center(
-                  child:  XImage(
+                  child: XImage(
                     imagePath: 'assets/images/ic-add-bank-options.png',
                     width: 150,
                     fit: BoxFit.cover,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 15),
                 const DefaultTextStyle(
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
                   child: Text(
                     "Quét mã VietQR để tự động điền\n thông tin tài khoản ngân hàng.",
                   ),
+                ),
+                const SizedBox(height: 20),
+                const DefaultTextStyle(
+                  style: TextStyle(
+                    color: AppColor.GREY_TEXT,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
                   textAlign: TextAlign.center,
+                  child: Text(
+                    "Đảm bảo rằng mã VietQR được hiển thị rõ ràng\n trong khi quét mã. Bạn vẫn có thể thực hiện\n chỉnh sửa sau khi hoàn tất quét.",
+                  ),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    gradient: (VietQRTheme.gradientColor.brightBlueLinear),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Center(
+                    child: DefaultTextStyle(
+                      style: TextStyle(
+                        color: AppColor.WHITE,
+                        fontSize: 12,
+                      ),
+                      child: Text(
+                        'Quét mã VietQR',
+                      ),
+                    ),
+                  ),
+                ),
+                 const SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: 50,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 15),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFFE1EFFF),
+                        Color(0xFFE5F9FF),
+                      ],
+                      end: Alignment.centerRight,
+                      begin: Alignment.centerLeft,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Center(
+                    child: DefaultTextStyle(
+                      style: TextStyle(
+                        color: AppColor.BLUE_TEXT,
+                        fontSize: 12,
+                      ),
+                      child: Text(
+                        'Tiếp tục nhập thủ công',
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
