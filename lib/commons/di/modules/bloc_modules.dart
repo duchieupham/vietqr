@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vierqr/commons/base/di_module.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/add_bank/blocs/add_bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail_new/blocs/transaction_bloc.dart';
@@ -57,6 +58,9 @@ class BlocModule extends DIModule {
               NavigationService.context!,
               getIt.get<LoginRepository>(),
             ),
+          )
+          ..registerFactory(
+            () => AddBankBloc(NavigationService.context!),
           )
           ..registerFactory(
             () => UserEditBloc(),

@@ -40,7 +40,6 @@ import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
-
 class AddBankScreen extends StatelessWidget {
   final BankTypeDTO? bankTypeDTO;
   final QRGeneratedDTO? qrGenerateDTO;
@@ -55,13 +54,10 @@ class AddBankScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AddBankBloc>(
-      create: (BuildContext context) => AddBankBloc(context),
-      child: ChangeNotifierProvider(
-        create: (_) => AddBankProvider(),
-        child: _AddBankScreenState(
-            bankTypeDTO: bankTypeDTO, isInstantlyScan: isInstantlyScan),
-      ),
+    return ChangeNotifierProvider(
+      create: (_) => AddBankProvider(),
+      child: _AddBankScreenState(
+          bankTypeDTO: bankTypeDTO, isInstantlyScan: isInstantlyScan),
     );
   }
 }
@@ -95,7 +91,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
   @override
   void initState() {
     super.initState();
-    _bloc = BlocProvider.of(context);
+    _bloc = getIt.get<AddBankBloc>();
     _addBankProvider = Provider.of<AddBankProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
@@ -196,6 +192,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
           FocusManager.instance.primaryFocus?.unfocus();
         },
         child: BlocConsumer<AddBankBloc, AddBankState>(
+          bloc: _bloc,
           listener: (context, state) async {
             if (state.status == BlocStatus.LOADING) {
               DialogWidget.instance.openLoadingDialog();
@@ -274,6 +271,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
 
             if (state.request == AddBankType.REQUEST_BANK) {
               if (!mounted) return;
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pop();
               _addBankProvider.updateStep(2);
             }
@@ -299,6 +297,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                   bankAccount: bankAccountController.text,
                   ewalletToken: state.ewalletToken ?? '',
                 );
+                // ignore: avoid_print
                 print(
                     '--------------------EWALLET TOKEN: ---------- ${state.ewalletToken}');
                 _bloc.add(BankCardEventRegisterLinkBank(dto: dto));
@@ -308,6 +307,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
+                // ignore: avoid_print
                 print(
                     '--------------------EWALLET TOKEN: ---------- ${state.ewalletToken}');
                 BankCardInsertDTO dto = BankCardInsertDTO(
@@ -421,18 +421,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  Consumer<AddBankProvider>(
-                                      builder: (context, provider, child) {
-                                    return Column(
-                                      children: [
-                                        if (provider.bankTypeDTO?.status ==
-                                            1) ...[
-                                          _BuildHeader(select: provider.step),
-                                          const SizedBox(height: 20),
-                                        ],
-                                      ],
-                                    );
-                                  }),
+                                  // Consumer<AddBankProvider>(
+                                  //     builder: (context, provider, child) {
+                                  //   return Column(
+                                  //     children: [
+                                  //       if (provider.bankTypeDTO?.status ==
+                                  //           1) ...[
+                                  //         _BuildHeader(select: provider.step),
+                                  //         const SizedBox(height: 20),
+                                  //       ],
+                                  //     ],
+                                  //   );
+                                  // }),
                                   Consumer<AddBankProvider>(
                                     builder: (ctx, provider, child) {
                                       if (provider.step == 1) {
