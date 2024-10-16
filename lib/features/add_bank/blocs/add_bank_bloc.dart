@@ -69,8 +69,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   void _searchBankName(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventSearchName) {
-        emit(
-            state.copyWith(status: BlocStatus.NONE, request: AddBankType.NONE));
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: AddBankType.LOAD_SEARCH_BANK));
         BankNameInformationDTO dto =
             await bankCardRepository.searchBankName(event.dto);
         if (dto.accountName.trim().isNotEmpty) {

@@ -7,6 +7,7 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 class TextFieldCustom extends StatefulWidget {
   final String hintText;
   final Color? hintColor;
+  final FontWeight? hintFontWeight;
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
   final VoidCallback? onEditingComplete;
@@ -52,6 +53,7 @@ class TextFieldCustom extends StatefulWidget {
       this.controller,
       this.fillColor,
       this.hintColor,
+      this.hintFontWeight,
       required this.keyboardAction,
       this.onChange,
       required this.inputType,
@@ -122,6 +124,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
         counterText: '',
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
+          fontWeight: widget.hintFontWeight,
           color: (widget.title != null)
               ? widget.hintColor != null
                   ? (widget.hintColor)

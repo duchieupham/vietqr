@@ -13,6 +13,8 @@ import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
+import 'package:vierqr/commons/widgets/circle_loading_animation_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/add_bank/blocs/add_bank_bloc.dart';
@@ -26,6 +28,7 @@ import 'package:vierqr/features/add_bank/views/policy_view.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
+import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
@@ -86,6 +89,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
   final cmtController = TextEditingController();
   final otpController = TextEditingController();
 
+  bool loadingAccountBankName = false;
   bool saveAccountButton = false;
 
   @override
@@ -202,13 +206,19 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
               Navigator.pop(context);
             }
 
-            if (state.request == AddBankType.SEARCH_BANK) {
+            if (state.request == AddBankType.SEARCH_BANK &&
+                state.status == BlocStatus.NONE) {
+              loadingAccountBankName = false;
               nameController.clear();
               nameController.value = nameController.value
                   .copyWith(text: state.informationDTO?.accountName ?? '');
               if (_addBankProvider.bankTypeDTO != null) {
                 _addBankProvider.updateValidUserBankName(nameController.text);
               }
+            }
+
+            if (state.request == AddBankType.LOAD_SEARCH_BANK) {
+              loadingAccountBankName = true;
             }
 
             if (state.request == AddBankType.EXIST_BANK) {
@@ -511,6 +521,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                               focusNode: focusAccount,
                                               hintText:
                                                   'Nhập số tài khoản ngân hàng',
+                                              hintFontWeight: FontWeight.normal,
                                               inputType: TextInputType.text,
                                               keyboardAction:
                                                   TextInputAction.next,
@@ -552,49 +563,56 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                 ),
                                               ),
                                             ),
-//
                                             const SizedBox(height: 30),
-                                            TextFieldCustom(
-                                              height: 50,
-                                              titleSize: 15,
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 0),
-                                              key: provider.keyAccount,
-                                              controller: nameController,
-                                              isObscureText: false,
-                                              maxLines: 1,
-                                              enable: provider.isEnableName,
-                                              focusNode: focusName,
-                                              fillColor: provider.isEnableName
-                                                  ? AppColor.WHITE
-                                                  : AppColor.BLUE_BGR,
-                                              textFieldType:
-                                                  TextfieldType.LABEL,
-                                              title: 'Chủ tài khoản*',
-                                              hintText:
-                                                  'Nhập tên chủ tài khoản ngân hàng',
-                                              inputType: TextInputType.text,
-                                              keyboardAction:
-                                                  TextInputAction.next,
-                                              inputFormatter: [
-                                                UppercaseBankNameInputFormatter(),
-                                              ],
-                                              onChange: provider
-                                                  .updateValidUserBankName,
-                                              focusedBorder:
-                                                  const UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColor.GREY_DADADA),
-                                              ),
-                                              disabledBorder:
-                                                  const UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColor.GREY_DADADA),
-                                              ),
-                                            ),
+                                            loadingAccountBankName
+                                                ? _buildLoadingAccountBankNameWidget()
+                                                : TextFieldCustom(
+                                                    height: 50,
+                                                    titleSize: 15,
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 0),
+                                                    key: provider.keyAccount,
+                                                    controller: nameController,
+                                                    isObscureText: false,
+                                                    maxLines: 1,
+                                                    enable:
+                                                        provider.isEnableName,
+                                                    focusNode: focusName,
+                                                    fillColor:
+                                                        provider.isEnableName
+                                                            ? AppColor.WHITE
+                                                            : AppColor.BLUE_BGR,
+                                                    textFieldType:
+                                                        TextfieldType.LABEL,
+                                                    title: 'Chủ tài khoản*',
+                                                    hintText:
+                                                        'Nhập tên chủ tài khoản ngân hàng',
+                                                    hintFontWeight:
+                                                        FontWeight.normal,
+                                                    inputType:
+                                                        TextInputType.text,
+                                                    keyboardAction:
+                                                        TextInputAction.next,
+                                                    inputFormatter: [
+                                                      UppercaseBankNameInputFormatter(),
+                                                    ],
+                                                    onChange: provider
+                                                        .updateValidUserBankName,
+                                                    focusedBorder:
+                                                        const UnderlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: AppColor
+                                                              .GREY_DADADA),
+                                                    ),
+                                                    disabledBorder:
+                                                        const UnderlineInputBorder(
+                                                      borderSide: BorderSide(
+                                                          color: AppColor
+                                                              .GREY_DADADA),
+                                                    ),
+                                                  ),
                                             Visibility(
                                               visible:
                                                   provider.errorNameTK != null,
@@ -620,7 +638,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                               const SizedBox(
                                                 height: 30,
                                               ),
-                                              _BuildNoteWidget()
+                                              // _BuildNoteWidget()
                                             ],
                                           ],
                                         ),
@@ -637,13 +655,13 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                           children: [
                             XImage(
                               imagePath: 'assets/images/ic-security.png',
-                              width: 20,
+                              width: 21,
                               fit: BoxFit.cover,
                             ),
                             Text(
                               'Thông tin của bạn được mã hoá và bảo mật an toàn.',
                               style: TextStyle(
-                                  fontSize: 10, fontWeight: FontWeight.normal),
+                                  fontSize: 11, fontWeight: FontWeight.normal),
                             )
                           ],
                         ),
@@ -654,8 +672,14 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                     state.responseDataOTP)
                                 : MButtonWidget(
                                     title: 'Lưu thông tin',
+                                    fontSize: 13,
                                     height: 50,
                                     radius: 5,
+                                    margin: const EdgeInsets.only(
+                                        top: 10,
+                                        left: 20,
+                                        right: 20,
+                                        bottom: 20),
                                     isEnable: provider.isEnableButton,
                                     colorEnableText: provider.isEnableButton
                                         ? AppColor.GREY_TEXT
@@ -695,6 +719,42 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
     );
   }
 
+  Widget _buildLoadingAccountBankNameWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Chủ tài khoản*',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: const BoxDecoration(
+              // color: Colors.blue,
+              color: AppColor.WHITE,
+              border: Border(
+                bottom: BorderSide(color: AppColor.GREY_DADADA),
+              )),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 15),
+            height: 30,
+            width: 30,
+            child: const CircleLoadingAnimationWidget(
+              size: 30,
+              color: AppColor.GREY_TEXT,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildButton(
       AddBankProvider provider, String requestId, DataObject? data) {
     final buttonStepFirst = _BuildButton(
@@ -708,7 +768,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
           isSaveButton: true,
         ));
       },
-      onTapLK: () {
+      onTapConnect: () {
         provider.updateLinkBank(true);
         String bankTypeId = provider.bankTypeDTO!.id;
         _bloc.add(BankCardCheckExistedEvent(
@@ -718,7 +778,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
         ));
       },
       isEnableBTSave: provider.isEnableButton,
-      isEnableBTLK: provider.isValidFormUnAuthentication(),
+      isEnableBTConnect: provider.isValidFormUnAuthentication(),
     );
 
     final buttonStepSecond = MButtonWidget(
@@ -923,7 +983,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
     _bloc.add(ResendRequestOTPEvent(dto: dto));
   }
 
-  _buildSelectBankWidget(AddBankState state, AddBankProvider provider, height) {
+  Widget _buildSelectBankWidget(
+      AddBankState state, AddBankProvider provider, height) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -934,20 +995,26 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
         GestureDetector(
           onTap: () => onSelectBankType(state, provider, height),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.only(bottom: 8, top: 10),
             decoration: const BoxDecoration(
-                // borderRadius: BorderRadius.all(Radius.circular(5)),
-                color: AppColor.WHITE,
-                border:
-                    Border(bottom: BorderSide(color: AppColor.GREY_DADADA))),
+              // borderRadius: BorderRadius.all(Radius.circular(5)),
+              color: AppColor.WHITE,
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColor.GREY_DADADA,
+                ),
+              ),
+            ),
             child: Row(
               children: [
                 if (provider.bankTypeDTO != null)
                   Container(
                     width: 60,
-                    height: 50,
-                    margin: const EdgeInsets.only(left: 4),
+                    height: 30,
+                    margin: const EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: AppColor.GREY_DADADA),
                       image: provider.bankTypeDTO!.fileBank != null
                           ? DecorationImage(
                               image: FileImage(provider.bankTypeDTO!.fileBank!))
@@ -960,7 +1027,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                   const SizedBox(width: 0),
                 Expanded(
                   child: Text(
-                    provider.bankTypeDTO?.name ?? 'Chọn ngân hàng',
+                    provider.bankTypeDTO?.shortName ?? 'Chọn ngân hàng',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -1201,44 +1268,104 @@ class _BuildNoteWidget extends StatelessWidget {
 }
 
 class _BuildButton extends StatelessWidget {
-  final GestureTapCallback? onTapSave;
-  final GestureTapCallback? onTapLK;
-  final bool isEnableBTLK;
+  final VoidCallback onTapSave;
+  final VoidCallback onTapConnect;
+  final bool isEnableBTConnect;
   final bool isEnableBTSave;
 
   const _BuildButton(
-      {this.onTapLK,
-      this.onTapSave,
+      {required this.onTapConnect,
+      required this.onTapSave,
       this.isEnableBTSave = false,
-      this.isEnableBTLK = false});
+      this.isEnableBTConnect = false});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
-      child: Row(
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.fromLTRB(
+          20, 10, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+      child: Column(
         children: [
-          Expanded(
-            child: MButtonWidget(
-              title: 'Lưu tài khoản',
-              isEnable: isEnableBTSave,
-              colorEnableBgr: AppColor.WHITE,
-              colorEnableText: AppColor.BLUE_TEXT,
-              margin: EdgeInsets.zero,
-              onTap: onTapSave,
+          // MButtonWidget(
+          //   title: 'Thực hiện liên kết',
+          //   height: 50,
+          //   colorDisableBgr: AppColor.BLUE_BGR,
+          //   colorDisableText: AppColor.BLACK,
+          //   colorEnableBgr: AppColor.BLUE_TEXT,
+          //   colorEnableText: AppColor.WHITE,
+          //   margin: EdgeInsets.zero,
+          //   isEnable: isEnableBTConnect,
+          //   onTap: onTapConnect,
+          // ),
+          // const SizedBox(
+          //   height: 8,
+          // ),
+          // MButtonWidget(
+          //   title: 'Lưu thông tin',
+          //   height: 50,
+          //   colorDisableBgr: AppColor.WHITE,
+          //   colorDisableText: AppColor.BLACK,
+          //   colorEnableBgr: AppColor.BLUE_TEXT,
+          //   colorEnableText: AppColor.WHITE,
+          //   margin: EdgeInsets.zero,
+          //   isEnable: isEnableBTSave,
+          //   onTap: onTapSave,
+          // ),
+          VietQRButton.gradient(
+            onPressed: onTapConnect,
+            height: 50,
+            isDisabled: !isEnableBTConnect,
+            child: Center(
+              child: Text(
+                'Thực hiện liên kết',
+                style: TextStyle(
+                  color: isEnableBTConnect ? AppColor.WHITE : AppColor.BLACK,
+                  fontSize: 13,
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: MButtonWidget(
-              title: 'Liên kết',
-              colorDisableBgr: AppColor.GREY_EBEBEB,
-              colorDisableText: AppColor.GREY_TEXT,
-              colorEnableBgr: AppColor.BLUE_TEXT,
-              colorEnableText: AppColor.WHITE,
-              margin: EdgeInsets.zero,
-              isEnable: isEnableBTLK,
-              onTap: onTapLK,
+          const SizedBox(
+            height: 8,
+          ),
+          GradientBorderButton(
+            gradient: isEnableBTSave
+                ? VietQRTheme.gradientColor.brightBlueLinear
+                : VietQRTheme.gradientColor.disableLightButtonLinear,
+            borderRadius: BorderRadius.circular(5),
+            borderWidth: 1,
+            widget: InkWell(
+              onTap: onTapSave,
+              child: Container(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: isEnableBTSave
+                        ? [
+                            const Color(0xFF00B8F5),
+                            const Color(0xFF0A7AFF),
+                          ]
+                        : [AppColor.GREY_TEXT, AppColor.GREY_TEXT],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ).createShader(bounds),
+                  child: const Center(
+                    child: Text(
+                      'Lưu thông tin',
+                      style: TextStyle(
+                          fontSize: 13,
+                          color: AppColor.WHITE,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ],

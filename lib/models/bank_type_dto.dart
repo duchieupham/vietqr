@@ -62,6 +62,7 @@ class BankTypeDTO extends HiveObject {
   }
 
   get name => '${(bankShortName ?? '')} - $bankName';
+  get shortName => (bankShortName ?? '');
 
   factory BankTypeDTO.fromJson(Map<String, dynamic> json) {
     return BankTypeDTO(

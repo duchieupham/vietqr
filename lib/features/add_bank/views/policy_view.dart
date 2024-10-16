@@ -286,19 +286,20 @@ class _PolicyViewState extends State<PolicyView> {
                       //   onTap: widget.onTap,
                       // ),
                       VietQRButton.gradient(
-                          onPressed: () {
-                            widget.onTap?.call();
-                          },
-                          isDisabled: !isAgreeWithPolicy,
-                          child: Center(
-                            child: Text(
-                              'Xác nhận',
-                              style: TextStyle(
-                                  color: isAgreeWithPolicy
-                                      ? AppColor.WHITE
-                                      : AppColor.BLACK),
-                            ),
-                          ))
+                        onPressed: () {
+                          widget.onTap?.call();
+                        },
+                        isDisabled: !isAgreeWithPolicy,
+                        child: Center(
+                          child: Text(
+                            'Xác nhận',
+                            style: TextStyle(
+                                color: isAgreeWithPolicy
+                                    ? AppColor.WHITE
+                                    : AppColor.BLACK),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),

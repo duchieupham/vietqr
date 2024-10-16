@@ -126,6 +126,14 @@ class GradientColor {
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
   );
+    LinearGradient disableLightButtonLinear = const LinearGradient(
+    colors: [
+      AppColor.GREY_DADADA,
+      AppColor.GREY_DADADA,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
   LinearGradient rainbowLinear = const LinearGradient(colors: [
     Color(0xFFD8ECF8),
     Color(0xFFFFEAD9),
