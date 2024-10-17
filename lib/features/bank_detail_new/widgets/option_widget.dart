@@ -102,7 +102,7 @@ class _OptionWidgetState extends State<OptionWidget> {
                   userBankName: widget.dto.userBankName,
                 );
                 await NavigatorUtils.navigatePage(
-                        context, AddBankScreen(bankTypeDTO: bankTypeDTO),
+                        context, AddBankScreen(bankTypeDTO: bankTypeDTO, isSaved: true,),
                         routeName: AddBankScreen.routeName)
                     .then((value) {
                   if (value is bool) {

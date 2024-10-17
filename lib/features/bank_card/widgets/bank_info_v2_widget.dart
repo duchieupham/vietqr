@@ -344,7 +344,7 @@ class _BankInfroV2WidgetState extends State<BankInfroV2Widget>
                           userBankName: widget.dto.userBankName,
                         );
                         await NavigatorUtils.navigatePage(context,
-                                AddBankScreen(bankTypeDTO: bankTypeDTO),
+                                AddBankScreen(bankTypeDTO: bankTypeDTO, isSaved: true,),
                                 routeName: AddBankScreen.routeName)
                             .then((value) {
                           if (value is bool) {

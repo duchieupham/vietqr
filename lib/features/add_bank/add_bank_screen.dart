@@ -21,19 +21,17 @@ import 'package:vierqr/features/add_bank/blocs/add_bank_bloc.dart';
 import 'package:vierqr/features/add_bank/blocs/add_bank_provider.dart';
 import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
-import 'package:vierqr/features/add_bank/views/account_link_view.dart';
 import 'package:vierqr/features/add_bank/views/app_bar_add_bank.dart';
 import 'package:vierqr/features/add_bank/views/close_connect_widget.dart';
 import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
 import 'package:vierqr/features/add_bank/views/loading_account_bank_name_widget.dart';
-import 'package:vierqr/features/add_bank/views/policy_view.dart';
+import 'package:vierqr/features/add_bank/views/policy_view_widget.dart';
 import 'package:vierqr/features/add_bank/views/save_connect_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
 import 'package:vierqr/layouts/button/button.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
@@ -50,10 +48,12 @@ class AddBankScreen extends StatelessWidget {
   final BankTypeDTO? bankTypeDTO;
   final QRGeneratedDTO? qrGenerateDTO;
   final bool isInstantlyScan;
+  final bool isSaved;
   const AddBankScreen(
       {super.key,
       this.bankTypeDTO,
       this.qrGenerateDTO,
+      this.isSaved = false,
       this.isInstantlyScan = false});
 
   static String routeName = '/add_bank_screen';
@@ -63,7 +63,10 @@ class AddBankScreen extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => AddBankProvider(),
       child: _AddBankScreenState(
-          bankTypeDTO: bankTypeDTO, isInstantlyScan: isInstantlyScan),
+        bankTypeDTO: bankTypeDTO,
+        isInstantlyScan: isInstantlyScan,
+        isSaved: isSaved,
+      ),
     );
   }
 }
@@ -71,8 +74,10 @@ class AddBankScreen extends StatelessWidget {
 class _AddBankScreenState extends StatefulWidget {
   final BankTypeDTO? bankTypeDTO;
   final bool? isInstantlyScan;
+  final bool? isSaved;
 
-  const _AddBankScreenState({this.bankTypeDTO, this.isInstantlyScan});
+  const _AddBankScreenState(
+      {this.bankTypeDTO, this.isInstantlyScan, this.isSaved});
 
   @override
   State<_AddBankScreenState> createState() => _AddBankScreenStateState();
@@ -85,6 +90,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
 
   final focusAccount = FocusNode();
   final focusName = FocusNode();
+  final focusPhone = FocusNode();
+  final focusCMT = FocusNode();
 
   final bankAccountController = TextEditingController();
   final nameController = TextEditingController();
@@ -105,6 +112,11 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
       focusAccount.addListener(() {
         if (!focusAccount.hasFocus) {
           _onSearch();
+        }
+      });
+      focusPhone.addListener(() {
+        if (!focusPhone.hasFocus) {
+          focusCMT.requestFocus();
         }
       });
       if (widget.isInstantlyScan != null && widget.isInstantlyScan!) {
@@ -139,21 +151,23 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
       }
 
       if (bankAccount.isNotEmpty && bankId.isNotEmpty && userName.isNotEmpty) {
-        _addBankProvider.updateStep(1);
+        // _addBankProvider.updateStep(1);
       }
 
       _addBankProvider.updateSelectBankType(bankTypeDTO, update: true);
       _addBankProvider.updateEnableName(true);
     }
-    showDialogAddBankOptions(
-      context,
-      onScan: () {
-        _onScanQR(isFromPopUp: true);
-      },
-      onInput: () {
-        Navigator.pop(context);
-      },
-    );
+    if (!widget.isSaved!) {
+      showDialogAddBankOptions(
+        context,
+        onScan: () {
+          _onScanQR(isFromPopUp: true);
+        },
+        onInput: () {
+          Navigator.pop(context);
+        },
+      );
+    }
   }
 
   void _onSearch() {
@@ -255,6 +269,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
             if (state.request == AddBankType.ERROR_SEARCH_NAME) {
               if (!mounted) return;
               _addBankProvider.updateEnableName(true);
+              loadingAccountBankName = false;
             }
 
             if (state.request == AddBankType.ERROR) {
@@ -285,7 +300,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
             if (state.request == AddBankType.REQUEST_BANK) {
               if (!mounted) return;
               // ignore: use_build_context_synchronously
-              Navigator.of(context).pop();
+              // Navigator.of(context).pop();
               _addBankProvider.updateStep(2);
             }
             if (state.request == AddBankType.RESENT_REQUEST_BANK) {}
@@ -397,29 +412,55 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                       //   ],
                       // ),
                       AppBarAddBank(
+                    onPressed: () {
+                      if (_addBankProvider.step == 0) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        Navigator.of(context).pop();
+                      } else if (_addBankProvider.step == 1) {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        _addBankProvider.updateStep(0);
+                        _addBankProvider.updatePolicy(false);
+                      } else {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        _addBankProvider.updateStep(1);
+                        _addBankProvider.updatePolicy(false);
+                      }
+                    },
                     actions: [
                       Image.asset(
                         'assets/images/ic-viet-qr.png',
                         height: 40,
                         width: 80,
                       ),
-                      GestureDetector(
-                        onTap: _onScanQR,
-                        child: Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          padding: const EdgeInsets.all(2),
-                          child: Image.asset(
-                            'assets/images/ic-scan-content.png',
-                            width: 30,
-                            height: 30,
-                          ),
-                        ),
+                      Consumer<AddBankProvider>(
+                        builder: (ctx, provider, child) {
+                          if (_addBankProvider.step == 0) {
+                            return GestureDetector(
+                              onTap: _onScanQR,
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  gradient:
+                                      VietQRTheme.gradientColor.lilyLinear,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                padding: const EdgeInsets.all(2),
+                                child: Image.asset(
+                                  'assets/images/ic-scan-content.png',
+                                  width: 30,
+                                  height: 30,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox(
+                              width: 20,
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -434,49 +475,74 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  // Consumer<AddBankProvider>(
-                                  //     builder: (context, provider, child) {
-                                  //   return Column(
-                                  //     children: [
-                                  //       if (provider.bankTypeDTO?.status ==
-                                  //           1) ...[
-                                  //         _BuildHeader(select: provider.step),
-                                  //         const SizedBox(height: 20),
-                                  //       ],
-                                  //     ],
-                                  //   );
-                                  // }),
                                   Consumer<AddBankProvider>(
                                     builder: (ctx, provider, child) {
                                       if (provider.step == 1) {
-                                        return AccountLinkView(
-                                          bankTypeDTO: provider.bankTypeDTO!,
+                                        // return AccountLinkView(
+                                        //   bankTypeDTO: provider.bankTypeDTO!,
+                                        //   bankAccount:
+                                        //       bankAccountController.text,
+                                        //   bankUserName: nameController.text,
+                                        //   phone: phoneController,
+                                        //   cmt: cmtController,
+                                        //   onChangePhone: (value) {
+                                        //     provider.onChangePhone(value,
+                                        //         cmt: cmtController.text);
+                                        //   },
+                                        //   onChangeCMT: (value) {
+                                        //     provider.onChangeCMT(value,
+                                        //         phone: phoneController.text);
+                                        //   },
+                                        //   errorPhone: provider.errorSDT,
+                                        //   errorCMT: provider.errorCMT,
+                                        //   onScan: () {
+                                        //     FocusManager.instance.primaryFocus
+                                        //         ?.unfocus();
+                                        //     // startBarcodeScanStream(context);
+                                        //     scanBarcode();
+                                        //   },
+                                        //   onEdit: () {
+                                        //     phoneController.clear();
+                                        //     cmtController.clear();
+                                        //     provider.updateStep(0);
+                                        //     provider.updateEdit(false);
+                                        //   },
+                                        // );
+                                        return PolicyViewWidget(
+                                          onSelectPolicy: provider.updatePolicy,
+                                          isAgreeWithPolicy:
+                                              provider.isAgreeWithPolicy,
                                           bankAccount:
                                               bankAccountController.text,
-                                          bankUserName: nameController.text,
-                                          phone: phoneController,
-                                          cmt: cmtController,
-                                          onChangePhone: (value) {
-                                            provider.onChangePhone(value,
-                                                cmt: cmtController.text);
-                                          },
-                                          onChangeCMT: (value) {
-                                            provider.onChangeCMT(value,
-                                                phone: phoneController.text);
-                                          },
-                                          errorPhone: provider.errorSDT,
-                                          errorCMT: provider.errorCMT,
-                                          onScan: () {
-                                            FocusManager.instance.primaryFocus
-                                                ?.unfocus();
-                                            // startBarcodeScanStream(context);
-                                            scanBarcode();
-                                          },
-                                          onEdit: () {
-                                            phoneController.clear();
-                                            cmtController.clear();
-                                            provider.updateStep(0);
-                                            provider.updateEdit(false);
+                                          bankCode:
+                                              provider.bankTypeDTO?.bankCode ??
+                                                  '',
+                                          onTap: () {
+                                            if (provider.isAgreeWithPolicy) {
+                                              String formattedName = StringUtils
+                                                  .instance
+                                                  .removeDiacritic(StringUtils
+                                                      .instance
+                                                      .capitalFirstCharacter(
+                                                          nameController.text));
+                                              BankCardRequestOTP dto =
+                                                  BankCardRequestOTP(
+                                                nationalId: cmtController.text,
+                                                accountNumber:
+                                                    bankAccountController.text
+                                                        .replaceAll(' ', ''),
+                                                accountName: formattedName,
+                                                applicationType: 'MOBILE',
+                                                phoneNumber:
+                                                    phoneController.text,
+                                                bankCode: provider.bankTypeDTO
+                                                        ?.bankCode ??
+                                                    '',
+                                              );
+                                              context.read<AddBankBloc>().add(
+                                                  BankCardEventRequestOTP(
+                                                      dto: dto));
+                                            }
                                           },
                                         );
                                       } else if (provider.step == 2) {
@@ -613,6 +679,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                 TextFieldCustom(
                                                   height: 50,
                                                   titleSize: 15,
+                                                  focusNode: focusPhone,
                                                   contentPadding:
                                                       const EdgeInsets
                                                           .symmetric(
@@ -665,6 +732,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                           onTap: () {
                                                             phoneController
                                                                 .clear();
+                                                            provider.onChangePhone(
+                                                                phoneController
+                                                                    .text,
+                                                                cmt:
+                                                                    cmtController
+                                                                        .text);
                                                           },
                                                           child: const Icon(
                                                             Icons.close,
@@ -709,6 +782,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                           .symmetric(
                                                           horizontal: 0),
                                                   isObscureText: false,
+                                                  focusNode: focusCMT,
                                                   maxLines: 1,
                                                   controller: cmtController,
                                                   textFieldType:
@@ -719,14 +793,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                       'Nhập thông tin định danh với ngân hàng',
                                                   hintFontWeight:
                                                       FontWeight.normal,
-                                                  inputType:
-                                                      TextInputType.number,
+                                                  inputType: TextInputType.text,
                                                   keyboardAction:
                                                       TextInputAction.next,
-                                                  inputFormatter: [
-                                                    LengthLimitingTextInputFormatter(
-                                                        10),
-                                                  ],
                                                   onChange: (value) {
                                                     provider.onChangeCMT(value,
                                                         phone: phoneController
@@ -755,6 +824,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                           onTap: () {
                                                             cmtController
                                                                 .clear();
+                                                            provider.onChangeCMT(
+                                                                cmtController
+                                                                    .text,
+                                                                phone:
+                                                                    phoneController
+                                                                        .text);
                                                           },
                                                           child: const Icon(
                                                             Icons.close,
@@ -798,9 +873,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                               ),
                                               SaveConnectWidget(
                                                 list: state.listBanks ?? [],
-                                                onTap: () {},
+                                                provider: provider,
+                                                bankAccountController:
+                                                    bankAccountController,
+                                                nameController: nameController,
                                               )
-                                            ]
+                                            ],
                                           ],
                                         ),
                                       );
@@ -811,48 +889,85 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                             ),
                           ),
                         ),
-                        _buildSecurityWidget(),
-
+                        Consumer<AddBankProvider>(
+                          builder: (ctx, provider, child) {
+                            if (_addBankProvider.step == 0) {
+                              return _buildSecurityWidget();
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
                         //build button
                         Consumer<AddBankProvider>(
                           builder: (context, provider, child) {
                             return (provider.bankTypeDTO?.status == 1)
                                 ? _buildButton(provider, state.requestId ?? '',
                                     state.responseDataOTP)
-                                : MButtonWidget(
-                                    title: 'Lưu thông tin',
-                                    fontSize: 13,
-                                    height: 50,
-                                    radius: 5,
+                                : GradientBorderButton(
+                                    gradient: provider.isEnableButton
+                                        ? VietQRTheme
+                                            .gradientColor.brightBlueLinear
+                                        : VietQRTheme.gradientColor
+                                            .disableLightButtonLinear,
+                                    borderRadius: BorderRadius.circular(5),
                                     margin: const EdgeInsets.only(
                                         top: 10,
                                         left: 20,
                                         right: 20,
                                         bottom: 20),
-                                    isEnable: provider.isEnableButton,
-                                    colorEnableText: provider.isEnableButton
-                                        ? AppColor.GREY_TEXT
-                                        : AppColor.WHITE,
-                                    colorDisableBgr: AppColor.WHITE,
-                                    colorEnableBgr: AppColor.BLUE_TEXT,
-                                    border: Border.all(
-                                      color: AppColor.GREY_DADADA,
-                                    ),
-                                    onTap: () {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                      String bankTypeId =
-                                          provider.bankTypeDTO!.id;
-                                      _bloc.add(
-                                        BankCardCheckExistedEvent(
-                                          bankAccount:
-                                              bankAccountController.text,
-                                          bankTypeId: bankTypeId,
-                                          type: ExitsType.ADD.name,
-                                          isSaveButton: true,
+                                    borderWidth: 1,
+                                    widget: InkWell(
+                                      onTap: () {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
+                                        String bankTypeId =
+                                            provider.bankTypeDTO!.id;
+                                        _bloc.add(
+                                          BankCardCheckExistedEvent(
+                                            bankAccount:
+                                                bankAccountController.text,
+                                            bankTypeId: bankTypeId,
+                                            type: ExitsType.ADD.name,
+                                            isSaveButton: true,
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.WHITE,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
                                         ),
-                                      );
-                                    },
+                                        child: ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              LinearGradient(
+                                            colors: provider.isEnableButton
+                                                ? [
+                                                    const Color(0xFF00B8F5),
+                                                    const Color(0xFF0A7AFF),
+                                                  ]
+                                                : [
+                                                    AppColor.GREY_TEXT,
+                                                    AppColor.GREY_TEXT
+                                                  ],
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                          ).createShader(bounds),
+                                          child: const Center(
+                                            child: Text(
+                                              'Lưu thông tin',
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: AppColor.WHITE,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   );
                           },
                         ),
@@ -993,98 +1108,226 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
         ));
       },
       onTapConnect: () {
-        provider.updateLinkBank(true);
-        String bankTypeId = provider.bankTypeDTO!.id;
-        _bloc.add(BankCardCheckExistedEvent(
-          bankAccount: bankAccountController.text,
-          bankTypeId: bankTypeId,
-          type: ExitsType.LINKED.name,
-        ));
-      },
-      isEnableBTSave: provider.isEnableButton,
-      isEnableBTConnect: provider.isValidFormUnAuthentication(),
-    );
-
-    final buttonStepSecond = MButtonWidget(
-      title: 'Liên kết',
-      isEnable: provider.isValidForm(),
-      colorEnableText:
-          provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
-      onTap: () async {
-        FocusManager.instance.primaryFocus?.unfocus();
-        await showGeneralDialog(
-          context: context,
-          barrierDismissible: true,
-          barrierLabel:
-              MaterialLocalizations.of(context).modalBarrierDismissLabel,
-          barrierColor: Colors.black45,
-          transitionDuration: const Duration(milliseconds: 200),
-          pageBuilder: (BuildContext buildContext, Animation animation,
-              Animation secondaryAnimation) {
-            return PolicyView(
-              onSelectPolicy: provider.updatePolicy,
-              isAgreeWithPolicy: provider.isAgreeWithPolicy,
-              bankAccount: bankAccountController.text,
-              bankCode: provider.bankTypeDTO?.bankCode ?? '',
-              onTap: () {
-                if (provider.isAgreeWithPolicy) {
-                  String formattedName = StringUtils.instance.removeDiacritic(
-                      StringUtils.instance
-                          .capitalFirstCharacter(nameController.text));
-                  BankCardRequestOTP dto = BankCardRequestOTP(
-                    nationalId: cmtController.text,
-                    accountNumber:
-                        bankAccountController.text.replaceAll(' ', ''),
-                    accountName: formattedName,
-                    applicationType: 'MOBILE',
-                    phoneNumber: phoneController.text,
-                    bankCode: provider.bankTypeDTO?.bankCode ?? '',
-                  );
-                  context
-                      .read<AddBankBloc>()
-                      .add(BankCardEventRequestOTP(dto: dto));
-                }
-              },
-            );
-          },
-        );
-      },
-    );
-
-    final buttonStepThree = MButtonWidget(
-      title: 'Xác thực',
-      isEnable: provider.isValidForm(),
-      colorEnableText:
-          provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
-      onTap: () async {
-        if (provider.bankTypeDTO!.bankCode.contains('BIDV')) {
-          ConfirmOTPBidvDTO otpBidvDTO = ConfirmOTPBidvDTO(
-              bankCode: provider.bankTypeDTO!.bankCode,
-              bankAccount: provider.bankTypeDTO!.bankAccount,
-              merchantId: data!.merchantId,
-              merchantName: data.merchantName,
-              confirmId: data.confirmId,
-              otpNumber: otpController.text);
-          _bloc.add(BankCardEventConfirmOTP(dto: otpBidvDTO));
+        if (widget.isSaved!) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          Future.delayed(const Duration(milliseconds: 500)).then(
+            (value) {
+              _addBankProvider.updateStep(1);
+            },
+          );
         } else {
           FocusManager.instance.primaryFocus?.unfocus();
-          ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
-            requestId: requestId,
-            otpValue: otpController.text,
-            applicationType: 'MOBILE',
-            bankAccount: bankAccountController.text,
-            bankCode: provider.bankTypeDTO?.bankCode ?? '',
+          provider.updateLinkBank(true);
+          String bankTypeId = provider.bankTypeDTO!.id;
+          _bloc.add(
+            BankCardCheckExistedEvent(
+              bankAccount: bankAccountController.text,
+              bankTypeId: bankTypeId,
+              type: ExitsType.LINKED.name,
+            ),
           );
-          _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
         }
       },
+      isEnableBTSave: provider.isOpenConnect
+          ? (provider.isValidForm())
+          : (provider.isValidFormUnAuthentication()),
+      isEnableBTConnect: provider.isValidForm(),
+      provider: provider,
+    );
+
+    // final buttonStepSecond = MButtonWidget(
+    //   title: 'Liên kết',
+    //   isEnable: provider.isValidForm(),
+    //   colorEnableText:
+    //       provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
+    //   onTap: () async {
+    //     FocusManager.instance.primaryFocus?.unfocus();
+    //     await showGeneralDialog(
+    //       context: context,
+    //       barrierDismissible: true,
+    //       barrierLabel:
+    //           MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    //       barrierColor: Colors.black45,
+    //       transitionDuration: const Duration(milliseconds: 200),
+    //       pageBuilder: (BuildContext buildContext, Animation animation,
+    //           Animation secondaryAnimation) {
+    //         return PolicyView(
+    //           onSelectPolicy: provider.updatePolicy,
+    //           isAgreeWithPolicy: provider.isAgreeWithPolicy,
+    //           bankAccount: bankAccountController.text,
+    //           bankCode: provider.bankTypeDTO?.bankCode ?? '',
+    //           onTap: () {
+    //             if (provider.isAgreeWithPolicy) {
+    //               String formattedName = StringUtils.instance.removeDiacritic(
+    //                   StringUtils.instance
+    //                       .capitalFirstCharacter(nameController.text));
+    //               BankCardRequestOTP dto = BankCardRequestOTP(
+    //                 nationalId: cmtController.text,
+    //                 accountNumber:
+    //                     bankAccountController.text.replaceAll(' ', ''),
+    //                 accountName: formattedName,
+    //                 applicationType: 'MOBILE',
+    //                 phoneNumber: phoneController.text,
+    //                 bankCode: provider.bankTypeDTO?.bankCode ?? '',
+    //               );
+    //               context
+    //                   .read<AddBankBloc>()
+    //                   .add(BankCardEventRequestOTP(dto: dto));
+    //             }
+    //           },
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
+
+    final buttonSecondStep = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Checkbox(
+                checkColor: AppColor.WHITE,
+                activeColor: AppColor.BLUE_TEXT,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: WidgetStateBorderSide.resolveWith(
+                  (states) => const BorderSide(
+                    width: 1.0,
+                    color: AppColor.BLUE_TEXT,
+                  ),
+                ),
+                value: provider.isAgreeWithPolicy,
+                onChanged: (value) {
+                  provider.updatePolicy(value);
+                },
+              ),
+              const Text(
+                'Tôi đã đọc và đồng ý với các điều khoản',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                  color: AppColor.BLACK,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.fromLTRB(
+              20, 5, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+          child: VietQRButton.gradient(
+            onPressed: () {
+              if (provider.isAgreeWithPolicy) {
+                String formattedName = StringUtils.instance.removeDiacritic(
+                    StringUtils.instance
+                        .capitalFirstCharacter(nameController.text));
+                BankCardRequestOTP dto = BankCardRequestOTP(
+                  nationalId: cmtController.text,
+                  accountNumber: bankAccountController.text.replaceAll(' ', ''),
+                  accountName: formattedName,
+                  applicationType: 'MOBILE',
+                  phoneNumber: phoneController.text,
+                  bankCode: provider.bankTypeDTO?.bankCode ?? '',
+                );
+
+                _bloc.add(BankCardEventRequestOTP(dto: dto));
+              }
+            },
+            height: 50,
+            isDisabled: !provider.isAgreeWithPolicy,
+            child: Center(
+              child: Text(
+                'Xác nhận',
+                style: TextStyle(
+                  color: provider.isAgreeWithPolicy
+                      ? AppColor.WHITE
+                      : AppColor.BLACK,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+
+    // final buttonThirdStep = MButtonWidget(
+    //   title: 'Xác thực',
+    //   isEnable: provider.isValidForm(),
+    //   colorEnableText:
+    //       provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
+    //   onTap: () async {
+    //     if (provider.bankTypeDTO!.bankCode.contains('BIDV')) {
+    //       ConfirmOTPBidvDTO otpBidvDTO = ConfirmOTPBidvDTO(
+    //           bankCode: provider.bankTypeDTO!.bankCode,
+    //           bankAccount: provider.bankTypeDTO!.bankAccount,
+    //           merchantId: data!.merchantId,
+    //           merchantName: data.merchantName,
+    //           confirmId: data.confirmId,
+    //           otpNumber: otpController.text);
+    //       _bloc.add(BankCardEventConfirmOTP(dto: otpBidvDTO));
+    //     } else {
+    //       FocusManager.instance.primaryFocus?.unfocus();
+    //       ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+    //         requestId: requestId,
+    //         otpValue: otpController.text,
+    //         applicationType: 'MOBILE',
+    //         bankAccount: bankAccountController.text,
+    //         bankCode: provider.bankTypeDTO?.bankCode ?? '',
+    //       );
+    //       _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
+    //     }
+    //   },
+    // );
+    final buttonThirdStep = Container(
+      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      child: VietQRButton.gradient(
+        onPressed: () {
+          if (provider.bankTypeDTO!.bankCode.contains('BIDV')) {
+            ConfirmOTPBidvDTO otpBidvDTO = ConfirmOTPBidvDTO(
+                bankCode: provider.bankTypeDTO!.bankCode,
+                bankAccount: provider.bankTypeDTO!.bankAccount,
+                merchantId: data!.merchantId,
+                merchantName: data.merchantName,
+                confirmId: data.confirmId,
+                otpNumber: otpController.text);
+            _bloc.add(BankCardEventConfirmOTP(dto: otpBidvDTO));
+          } else {
+            FocusManager.instance.primaryFocus?.unfocus();
+            ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+              requestId: requestId,
+              otpValue: otpController.text,
+              applicationType: 'MOBILE',
+              bankAccount: bankAccountController.text,
+              bankCode: provider.bankTypeDTO?.bankCode ?? '',
+            );
+            _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
+          }
+        },
+        height: 50,
+        isDisabled: !provider.isValidForm(),
+        child: Center(
+          child: Text(
+            'Xác thực',
+            style: TextStyle(
+              color: provider.isValidForm() ? AppColor.WHITE : AppColor.BLACK,
+              fontSize: 13,
+            ),
+          ),
+        ),
+      ),
     );
 
     return provider.step == 0
         ? buttonStepFirst
         : provider.step == 1
-            ? buttonStepSecond
-            : buttonStepThree;
+            ? buttonSecondStep
+            : buttonThirdStep;
   }
 
   void _navigateBack(BuildContext context) {
@@ -1166,9 +1409,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
     if (data is int) {
       bankAccountController.clear();
       nameController.clear();
+      phoneController.clear();
+      cmtController.clear();
       provider.resetValidate();
       provider.updateSelectBankType(state.listBanks![data]);
       _addBankProvider.updateEnableName(true);
+      _addBankProvider.updateOpenConnect(true);
     }
   }
   // void onSelectBankType(AddBankState state, provider, height) async {
@@ -1499,10 +1745,12 @@ class _BuildButton extends StatelessWidget {
   final VoidCallback onTapConnect;
   final bool isEnableBTConnect;
   final bool isEnableBTSave;
+  final AddBankProvider provider;
 
   const _BuildButton(
       {required this.onTapConnect,
       required this.onTapSave,
+      required this.provider,
       this.isEnableBTSave = false,
       this.isEnableBTConnect = false});
 
@@ -1514,45 +1762,21 @@ class _BuildButton extends StatelessWidget {
           20, 10, 20, MediaQuery.of(context).viewInsets.bottom + 20),
       child: Column(
         children: [
-          // MButtonWidget(
-          //   title: 'Thực hiện liên kết',
-          //   height: 50,
-          //   colorDisableBgr: AppColor.BLUE_BGR,
-          //   colorDisableText: AppColor.BLACK,
-          //   colorEnableBgr: AppColor.BLUE_TEXT,
-          //   colorEnableText: AppColor.WHITE,
-          //   margin: EdgeInsets.zero,
-          //   isEnable: isEnableBTConnect,
-          //   onTap: onTapConnect,
-          // ),
-          // const SizedBox(
-          //   height: 8,
-          // ),
-          // MButtonWidget(
-          //   title: 'Lưu thông tin',
-          //   height: 50,
-          //   colorDisableBgr: AppColor.WHITE,
-          //   colorDisableText: AppColor.BLACK,
-          //   colorEnableBgr: AppColor.BLUE_TEXT,
-          //   colorEnableText: AppColor.WHITE,
-          //   margin: EdgeInsets.zero,
-          //   isEnable: isEnableBTSave,
-          //   onTap: onTapSave,
-          // ),
-          VietQRButton.gradient(
-            onPressed: onTapConnect,
-            height: 50,
-            isDisabled: !isEnableBTConnect,
-            child: Center(
-              child: Text(
-                'Thực hiện liên kết',
-                style: TextStyle(
-                  color: isEnableBTConnect ? AppColor.WHITE : AppColor.BLACK,
-                  fontSize: 13,
+          if (provider.isOpenConnect)
+            VietQRButton.gradient(
+              onPressed: onTapConnect,
+              height: 50,
+              isDisabled: !isEnableBTConnect,
+              child: Center(
+                child: Text(
+                  'Thực hiện liên kết',
+                  style: TextStyle(
+                    color: isEnableBTConnect ? AppColor.WHITE : AppColor.BLACK,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),
-          ),
           const SizedBox(
             height: 8,
           ),
@@ -1598,6 +1822,32 @@ class _BuildButton extends StatelessWidget {
         ],
       ),
     );
+
+    // MButtonWidget(
+    //   title: 'Thực hiện liên kết',
+    //   height: 50,
+    //   colorDisableBgr: AppColor.BLUE_BGR,
+    //   colorDisableText: AppColor.BLACK,
+    //   colorEnableBgr: AppColor.BLUE_TEXT,
+    //   colorEnableText: AppColor.WHITE,
+    //   margin: EdgeInsets.zero,
+    //   isEnable: isEnableBTConnect,
+    //   onTap: onTapConnect,
+    // ),
+    // const SizedBox(
+    //   height: 8,
+    // ),
+    // MButtonWidget(
+    //   title: 'Lưu thông tin',
+    //   height: 50,
+    //   colorDisableBgr: AppColor.WHITE,
+    //   colorDisableText: AppColor.BLACK,
+    //   colorEnableBgr: AppColor.BLUE_TEXT,
+    //   colorEnableText: AppColor.WHITE,
+    //   margin: EdgeInsets.zero,
+    //   isEnable: isEnableBTSave,
+    //   onTap: onTapSave,
+    // ),
   }
 }
 
