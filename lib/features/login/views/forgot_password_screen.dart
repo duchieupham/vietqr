@@ -168,7 +168,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               (state.request == ForgotPasswordType.SEND_OTP ||
                   state.request == ForgotPasswordType.RESEND_OTP)) {
             Fluttertoast.showToast(
-              msg: state.msg ?? '',
+              msg: state.msg,
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
@@ -257,7 +257,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
 
             DialogWidget.instance.openMsgDialog(
                 title: 'Không thể cập nhật Mật khẩu',
-                msg: state.msg ?? '',
+                msg: state.msg,
                 // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
                 function: () {
                   Navigator.pop(context);

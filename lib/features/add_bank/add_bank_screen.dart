@@ -14,8 +14,8 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_gradient_border_widget.dart';
-import 'package:vierqr/commons/widgets/circle_loading_animation_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/switch_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/add_bank/blocs/add_bank_bloc.dart';
 import 'package:vierqr/features/add_bank/blocs/add_bank_provider.dart';
@@ -23,8 +23,11 @@ import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/add_bank/views/account_link_view.dart';
 import 'package:vierqr/features/add_bank/views/app_bar_add_bank.dart';
+import 'package:vierqr/features/add_bank/views/close_connect_widget.dart';
 import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
+import 'package:vierqr/features/add_bank/views/loading_account_bank_name_widget.dart';
 import 'package:vierqr/features/add_bank/views/policy_view.dart';
+import 'package:vierqr/features/add_bank/views/save_connect_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_view_screen.dart';
@@ -145,7 +148,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
     showDialogAddBankOptions(
       context,
       onScan: () {
-        _onScanQR();
+        _onScanQR(isFromPopUp: true);
       },
       onInput: () {
         Navigator.pop(context);
@@ -497,53 +500,16 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            const SizedBox(height: 20),
+                                            const SizedBox(
+                                              height: 25,
+                                            ),
                                             _buildSelectBankWidget(
                                                 state, provider, height),
-                                            const SizedBox(height: 30),
-                                            TextFieldCustom(
-                                              isObscureText: false,
-                                              titleSize: 15,
-                                              maxLines: 1,
-                                              enable:
-                                                  provider.bankTypeDTO != null,
-                                              fillColor:
-                                                  provider.bankTypeDTO != null
-                                                      ? null
-                                                      : AppColor.BLUE_BGR,
-                                              controller: bankAccountController,
-                                              inputFormatter: [
-                                                BankAccountInputFormatter()
-                                              ],
-                                              textFieldType:
-                                                  TextfieldType.LABEL,
-                                              title: 'Số tài khoản*',
-                                              focusNode: focusAccount,
-                                              hintText:
-                                                  'Nhập số tài khoản ngân hàng',
-                                              hintFontWeight: FontWeight.normal,
-                                              inputType: TextInputType.text,
-                                              keyboardAction:
-                                                  TextInputAction.next,
-                                              onChange: provider
-                                                  .updateValidBankAccount,
-                                              height: 50,
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 0),
-                                              focusedBorder:
-                                                  const UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColor.GREY_DADADA),
-                                              ),
-                                              disabledBorder:
-                                                  const UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColor.GREY_DADADA),
-                                              ),
+                                            const SizedBox(
+                                              height: 25,
                                             ),
+                                            _buildTextAccountBankField(
+                                                provider),
                                             Visibility(
                                               visible: provider.errorTk != null,
                                               child: Container(
@@ -563,56 +529,13 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(height: 30),
+                                            const SizedBox(
+                                              height: 25,
+                                            ),
                                             loadingAccountBankName
-                                                ? _buildLoadingAccountBankNameWidget()
-                                                : TextFieldCustom(
-                                                    height: 50,
-                                                    titleSize: 15,
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 0),
-                                                    key: provider.keyAccount,
-                                                    controller: nameController,
-                                                    isObscureText: false,
-                                                    maxLines: 1,
-                                                    enable:
-                                                        provider.isEnableName,
-                                                    focusNode: focusName,
-                                                    fillColor:
-                                                        provider.isEnableName
-                                                            ? AppColor.WHITE
-                                                            : AppColor.BLUE_BGR,
-                                                    textFieldType:
-                                                        TextfieldType.LABEL,
-                                                    title: 'Chủ tài khoản*',
-                                                    hintText:
-                                                        'Nhập tên chủ tài khoản ngân hàng',
-                                                    hintFontWeight:
-                                                        FontWeight.normal,
-                                                    inputType:
-                                                        TextInputType.text,
-                                                    keyboardAction:
-                                                        TextInputAction.next,
-                                                    inputFormatter: [
-                                                      UppercaseBankNameInputFormatter(),
-                                                    ],
-                                                    onChange: provider
-                                                        .updateValidUserBankName,
-                                                    focusedBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: AppColor
-                                                              .GREY_DADADA),
-                                                    ),
-                                                    disabledBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: AppColor
-                                                              .GREY_DADADA),
-                                                    ),
-                                                  ),
+                                                ? const LoadingAccountBankNameWidget()
+                                                : _buildTextAccountBankNameField(
+                                                    provider),
                                             Visibility(
                                               visible:
                                                   provider.errorNameTK != null,
@@ -636,10 +559,248 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                                             if (provider.bankTypeDTO?.status ==
                                                 1) ...[
                                               const SizedBox(
-                                                height: 30,
+                                                height: 25,
                                               ),
-                                              // _BuildNoteWidget()
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  SwitchVietQRWidget(
+                                                    onChanged: (value) {
+                                                      provider
+                                                          .updateOpenConnect(
+                                                              value);
+                                                    },
+                                                    value:
+                                                        provider.isOpenConnect,
+                                                  ),
+                                                  const Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        'Liên kết tài khoản ngân hàng',
+                                                        style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'Nhập các thông tin xác thực để liên kết TK ngân hàng.',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                            color: AppColor
+                                                                .GREY_TEXT),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                              if (provider.isOpenConnect) ...[
+                                                TextFieldCustom(
+                                                  height: 50,
+                                                  titleSize: 15,
+                                                  contentPadding:
+                                                      const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 0),
+                                                  isObscureText: false,
+                                                  maxLines: 1,
+                                                  controller: phoneController,
+                                                  textFieldType:
+                                                      TextfieldType.LABEL,
+                                                  title:
+                                                      'Số điện thoại xác thực*',
+                                                  hintText:
+                                                      'Nhập SĐT đăng ký xác thực với ngân hàng',
+                                                  hintFontWeight:
+                                                      FontWeight.normal,
+                                                  inputType:
+                                                      TextInputType.number,
+                                                  keyboardAction:
+                                                      TextInputAction.next,
+                                                  inputFormatter: [
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                  ],
+                                                  onChange: (value) {
+                                                    provider.onChangePhone(
+                                                        value,
+                                                        cmt:
+                                                            cmtController.text);
+                                                  },
+                                                  focusedBorder:
+                                                      const UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: AppColor
+                                                            .GREY_DADADA),
+                                                  ),
+                                                  disabledBorder:
+                                                      const UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: AppColor
+                                                            .GREY_DADADA),
+                                                  ),
+                                                  suffixIconConstraints:
+                                                      const BoxConstraints(
+                                                    minWidth: 2,
+                                                    minHeight: 2,
+                                                  ),
+                                                  suffixIcon: phoneController
+                                                          .value.text.isNotEmpty
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            phoneController
+                                                                .clear();
+                                                          },
+                                                          child: const Icon(
+                                                            Icons.close,
+                                                            size: 20,
+                                                            color: AppColor
+                                                                .GREY_TEXT,
+                                                          ),
+                                                        )
+                                                      : null,
+                                                ),
+                                                Visibility(
+                                                  visible:
+                                                      provider.errorSDT != null,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 8),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    child: Text(
+                                                      provider.errorSDT ?? '',
+                                                      maxLines: 2,
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: Styles.errorStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 25,
+                                                ),
+                                                TextFieldCustom(
+                                                  height: 50,
+                                                  titleSize: 15,
+                                                  contentPadding:
+                                                      const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 0),
+                                                  isObscureText: false,
+                                                  maxLines: 1,
+                                                  controller: cmtController,
+                                                  textFieldType:
+                                                      TextfieldType.LABEL,
+                                                  title:
+                                                      'Định danh CCCD/MST/DKKD/HC*',
+                                                  hintText:
+                                                      'Nhập thông tin định danh với ngân hàng',
+                                                  hintFontWeight:
+                                                      FontWeight.normal,
+                                                  inputType:
+                                                      TextInputType.number,
+                                                  keyboardAction:
+                                                      TextInputAction.next,
+                                                  inputFormatter: [
+                                                    LengthLimitingTextInputFormatter(
+                                                        10),
+                                                  ],
+                                                  onChange: (value) {
+                                                    provider.onChangeCMT(value,
+                                                        phone: phoneController
+                                                            .text);
+                                                  },
+                                                  focusedBorder:
+                                                      const UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: AppColor
+                                                            .GREY_DADADA),
+                                                  ),
+                                                  disabledBorder:
+                                                      const UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: AppColor
+                                                            .GREY_DADADA),
+                                                  ),
+                                                  suffixIconConstraints:
+                                                      const BoxConstraints(
+                                                    minWidth: 2,
+                                                    minHeight: 2,
+                                                  ),
+                                                  suffixIcon: cmtController
+                                                          .value.text.isNotEmpty
+                                                      ? InkWell(
+                                                          onTap: () {
+                                                            cmtController
+                                                                .clear();
+                                                          },
+                                                          child: const Icon(
+                                                            Icons.close,
+                                                            size: 20,
+                                                            color: AppColor
+                                                                .GREY_TEXT,
+                                                          ),
+                                                        )
+                                                      : null,
+                                                ),
+                                                Visibility(
+                                                  visible:
+                                                      provider.errorCMT != null,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 8),
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 10),
+                                                    child: Text(
+                                                      provider.errorCMT ?? '',
+                                                      maxLines: 2,
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: Styles.errorStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ] else
+                                                const CloseConnectWidget()
                                             ],
+                                            if (provider.bankTypeDTO?.status ==
+                                                0) ...[
+                                              const SizedBox(
+                                                height: 25,
+                                              ),
+                                              SaveConnectWidget(
+                                                list: state.listBanks ?? [],
+                                                onTap: () {},
+                                              )
+                                            ]
                                           ],
                                         ),
                                       );
@@ -650,21 +811,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
                             ),
                           ),
                         ),
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            XImage(
-                              imagePath: 'assets/images/ic-security.png',
-                              width: 21,
-                              fit: BoxFit.cover,
-                            ),
-                            Text(
-                              'Thông tin của bạn được mã hoá và bảo mật an toàn.',
-                              style: TextStyle(
-                                  fontSize: 11, fontWeight: FontWeight.normal),
-                            )
-                          ],
-                        ),
+                        _buildSecurityWidget(),
+
+                        //build button
                         Consumer<AddBankProvider>(
                           builder: (context, provider, child) {
                             return (provider.bankTypeDTO?.status == 1)
@@ -719,39 +868,114 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
     );
   }
 
-  Widget _buildLoadingAccountBankNameWidget() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSecurityWidget() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
-          'Chủ tài khoản*',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
+        XImage(
+          imagePath: 'assets/images/ic-security.png',
+          width: 21,
+          fit: BoxFit.cover,
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: const BoxDecoration(
-              // color: Colors.blue,
-              color: AppColor.WHITE,
-              border: Border(
-                bottom: BorderSide(color: AppColor.GREY_DADADA),
-              )),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 15),
-            height: 30,
-            width: 30,
-            child: const CircleLoadingAnimationWidget(
-              size: 30,
-              color: AppColor.GREY_TEXT,
-            ),
-          ),
-        ),
+        Text(
+          'Thông tin của bạn được mã hoá và bảo mật an toàn.',
+          style: TextStyle(fontSize: 11, fontWeight: FontWeight.normal),
+        )
       ],
+    );
+  }
+
+  Widget _buildTextAccountBankNameField(AddBankProvider provider) {
+    return TextFieldCustom(
+      height: 50,
+      titleSize: 15,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+      key: provider.keyAccount,
+      controller: nameController,
+      isObscureText: false,
+      maxLines: 1,
+      enable: provider.isEnableName,
+      focusNode: focusName,
+      fillColor: provider.isEnableName ? AppColor.WHITE : AppColor.BLUE_BGR,
+      textFieldType: TextfieldType.LABEL,
+      title: 'Chủ tài khoản*',
+      hintText: 'Nhập tên chủ tài khoản ngân hàng',
+      hintFontWeight: FontWeight.normal,
+      inputType: TextInputType.text,
+      keyboardAction: TextInputAction.next,
+      inputFormatter: [
+        UppercaseBankNameInputFormatter(),
+      ],
+      onChange: provider.updateValidUserBankName,
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColor.GREY_DADADA),
+      ),
+      disabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColor.GREY_DADADA),
+      ),
+      suffixIconConstraints: const BoxConstraints(
+        minWidth: 2,
+        minHeight: 2,
+      ),
+      suffixIcon: nameController.value.text.isNotEmpty
+          ? InkWell(
+              onTap: () {
+                nameController.clear();
+                provider.updateValidUserBankName(nameController.text);
+              },
+              child: const Icon(
+                Icons.close,
+                size: 20,
+                color: AppColor.GREY_TEXT,
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _buildTextAccountBankField(AddBankProvider provider) {
+    return TextFieldCustom(
+      isObscureText: false,
+      titleSize: 15,
+      maxLines: 1,
+      enable: provider.bankTypeDTO != null,
+      fillColor: provider.bankTypeDTO != null ? null : AppColor.BLUE_BGR,
+      controller: bankAccountController,
+      inputFormatter: [BankAccountInputFormatter()],
+      textFieldType: TextfieldType.LABEL,
+      title: 'Số tài khoản*',
+      focusNode: focusAccount,
+      hintText: 'Nhập số tài khoản ngân hàng',
+      hintFontWeight: FontWeight.normal,
+      inputType: TextInputType.text,
+      keyboardAction: TextInputAction.next,
+      onChange: provider.updateValidBankAccount,
+      height: 50,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColor.GREY_DADADA),
+      ),
+      disabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: AppColor.GREY_DADADA),
+      ),
+      suffixIconConstraints: const BoxConstraints(
+        minWidth: 2,
+        minHeight: 2,
+      ),
+      suffixIcon: bankAccountController.value.text.isNotEmpty
+          ? InkWell(
+              onTap: () {
+                bankAccountController.clear();
+                nameController.clear();
+                provider.updateValidUserBankName(nameController.text);
+              },
+              child: const Icon(
+                Icons.close,
+                size: 20,
+                color: AppColor.GREY_TEXT,
+              ),
+            )
+          : null,
     );
   }
 
@@ -1050,7 +1274,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
     );
   }
 
-  void _onScanQR() async {
+  void _onScanQR({bool isFromPopUp = false}) async {
     Map<String, dynamic> param = {};
     param['typeScan'] = TypeScan.ADD_BANK_SCAN_QR;
     final data = await NavigationService.push(Routes.SCAN_QR_VIEW_SCREEN,
@@ -1081,6 +1305,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState>
             Provider.of<AddBankProvider>(context, listen: false)
                 .updateValidUserBankName(nameController.text);
           }
+        }
+        if (isFromPopUp) {
+          Navigator.pop(context);
         }
       } else {
         DialogWidget.instance.openMsgDialog(

@@ -36,6 +36,7 @@ class TextFieldCustom extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatter;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final BoxConstraints? suffixIconConstraints;
   final GestureTapCallback? onTap;
   final EdgeInsetsGeometry? contentPadding;
   final bool readOnly;
@@ -81,6 +82,7 @@ class TextFieldCustom extends StatefulWidget {
       this.colorBG,
       this.subTitle,
       this.suffixIcon,
+      this.suffixIconConstraints,
       this.isRequired = false,
       this.onTap,
       this.contentPadding,
@@ -135,6 +137,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
         disabledBorder: widget.disabledBorder,
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
+        suffixIconConstraints: widget.suffixIconConstraints,
         contentPadding:
             widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 16),
         fillColor: widget.fillColor ?? AppColor.WHITE,
@@ -196,7 +199,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                 ),
               ),
             ],
-            const SizedBox(height: 8),
+            // const SizedBox(height: 8),
           ],
           Container(
             height: widget.height,

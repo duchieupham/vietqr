@@ -11,6 +11,7 @@ class AddBankProvider with ChangeNotifier {
   bool isEnableName = false;
   bool isEnableButton = false;
   bool isEnableBTLK = false;
+  bool isOpenConnect = true;
 
   //
   int step = 0;
@@ -42,6 +43,11 @@ class AddBankProvider with ChangeNotifier {
 
   void updatePolicy(value) {
     _isAgreeWithPolicy = value;
+    notifyListeners();
+  }
+
+  void updateOpenConnect(value) {
+    isOpenConnect = value;
     notifyListeners();
   }
 
